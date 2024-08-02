@@ -1,0 +1,1 @@
+class BackgroundLocationService extends Object {}

@@ -1,0 +1,31 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // [required] flutter_background_geolocation
+        // maven { url "${project(':flutter_background_geolocation').projectDir}/libs" }
+        maven { url 'https://developer.huawei.com/repo/' }
+        // [required] background_fetch
+        // maven { url "${project(':background_fetch').projectDir}/libs" }
+    }
+    ext {
+        compileSdkVersion   = 33                // or higher / as desired
+        targetSdkVersion    = 33                // or higher / as desired
+        minSdkVersion       = 21                // Required minimum
+        appCompatVersion    = "1.4.2"           // or higher / as desired
+        playServicesLocationVersion = "21.0.1"  // or higher / as desired
+        kotlin_version = '1.8.10'
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
