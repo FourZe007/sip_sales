@@ -75,41 +75,47 @@ class _LoginPageState extends State<LoginPage> {
         if (isUserGranted) {
           toggleIsLoading();
           userLogin = await GlobalAPI.fetchUserAccount(nip, password);
-          if (userLogin[0].flag == 1) {
-            setState(() {
-              loginStatus = 'Login berhasil.';
-            });
-
-            Future.delayed(const Duration(seconds: 2)).then((value) async {
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              await prefs.setInt('flag', 1);
-              await prefs.setString('nip', nip);
-              await prefs.setString('password', password);
-              await prefs.setBool('attendanceStatus', false);
-              await prefs.setString('branch', userLogin[0].branch);
-              await prefs.setString('shop', userLogin[0].shop);
-              await prefs.setInt('isManager', userLogin[0].code);
-              await prefs.setBool('isLocationGranted', false);
-              toggleIsLoading();
-
-              Navigator.pushReplacementNamed(context, '/location');
-            });
-          } else if (userLogin[0].flag == 2) {
-            toggleIsLoading();
-            setState(() {
-              loginStatus = userLogin[0].memo;
-            });
-          } else {
-            toggleIsLoading();
-            setState(() {
-              loginStatus = 'Wrong username or password.';
-            });
-
-            Future.delayed(const Duration(seconds: 2)).then((value) async {
+          if (userLogin.isNotEmpty) {
+            if (userLogin[0].flag == 1) {
               setState(() {
-                loginStatus = '';
+                loginStatus = 'Login berhasil.';
               });
+
+              Future.delayed(const Duration(seconds: 2)).then((value) async {
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                await prefs.setInt('flag', 1);
+                await prefs.setString('nip', nip);
+                await prefs.setString('password', password);
+                await prefs.setBool('attendanceStatus', false);
+                await prefs.setString('branch', userLogin[0].branch);
+                await prefs.setString('shop', userLogin[0].shop);
+                await prefs.setInt('isManager', userLogin[0].code);
+                await prefs.setBool('isLocationGranted', false);
+                toggleIsLoading();
+
+                Navigator.pushReplacementNamed(context, '/location');
+              });
+            } else if (userLogin[0].flag == 2) {
+              toggleIsLoading();
+              setState(() {
+                loginStatus = userLogin[0].memo;
+              });
+            } else {
+              toggleIsLoading();
+              setState(() {
+                loginStatus = 'Wrong username or password.';
+              });
+
+              Future.delayed(const Duration(seconds: 2)).then((value) async {
+                setState(() {
+                  loginStatus = '';
+                });
+              });
+            }
+          } else {
+            setState(() {
+              loginStatus = 'Try again.';
             });
           }
         } else {
@@ -196,7 +202,8 @@ class _LoginPageState extends State<LoginPage> {
       GlobalFunction.displayProminentDisclosure(
         context,
         Container(
-          height: MediaQuery.of(context).size.height * 0.35,
+          // height: MediaQuery.of(context).size.height * 0.35,
+          height: MediaQuery.of(context).size.height * 0.25,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
           ),
@@ -213,7 +220,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 10),
               Text(
-                'SIP Sales collects location data, especially for background location service to enable live-tracking feature, map display, and activity insertation even when the app is closed or not in use.',
+                'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
                 style: GlobalFont.mediumgiantfontR,
                 textAlign: TextAlign.center,
               ),

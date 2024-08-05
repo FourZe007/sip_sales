@@ -525,41 +525,42 @@ class ProfilePageState extends State<ProfilePage> {
                           style: GlobalFont.mediumgiantfontRBold,
                         ),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.05,
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                          bottom: MediaQuery.of(context).size.height * 0.005,
-                        ),
-                        padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.height * 0.02,
-                          0.0,
-                          MediaQuery.of(context).size.height * 0.005,
-                          0.0,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.location_on, size: 30.0),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.height * 0.04,
-                            ),
-                            Text(
-                              'Background Location',
-                              style: GlobalFont.mediumgiantfontR,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.2,
-                            ),
-                            Switch(
-                              value: isLocationEnabled,
-                              onChanged: toggleLocationSwitch,
-                              activeColor: Colors.blue,
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Background Location Service Switch Button
+                      // Container(
+                      //   height: MediaQuery.of(context).size.height * 0.05,
+                      //   alignment: Alignment.centerLeft,
+                      //   margin: EdgeInsets.only(
+                      //     top: MediaQuery.of(context).size.height * 0.01,
+                      //     bottom: MediaQuery.of(context).size.height * 0.005,
+                      //   ),
+                      //   padding: EdgeInsets.fromLTRB(
+                      //     MediaQuery.of(context).size.height * 0.02,
+                      //     0.0,
+                      //     MediaQuery.of(context).size.height * 0.005,
+                      //     0.0,
+                      //   ),
+                      //   child: Row(
+                      //     crossAxisAlignment: CrossAxisAlignment.center,
+                      //     children: [
+                      //       const Icon(Icons.location_on, size: 30.0),
+                      //       SizedBox(
+                      //         width: MediaQuery.of(context).size.height * 0.04,
+                      //       ),
+                      //       Text(
+                      //         'Background Location',
+                      //         style: GlobalFont.mediumgiantfontR,
+                      //       ),
+                      //       SizedBox(
+                      //         width: MediaQuery.of(context).size.width * 0.2,
+                      //       ),
+                      //       Switch(
+                      //         value: isLocationEnabled,
+                      //         onChanged: toggleLocationSwitch,
+                      //         activeColor: Colors.blue,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       Container(
                         height: MediaQuery.of(context).size.height * 0.075,
                         alignment: Alignment.centerLeft,

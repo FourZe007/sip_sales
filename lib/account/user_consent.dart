@@ -130,7 +130,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
                             Expanded(
                               flex: 6,
                               child: Text(
-                                "SIP Sales would like to use device's location service in order to make the main feature which are live-tracking, open exact position in a map dan activity insertation.",
+                                "SIP Sales would like to use device's location service in order to make the main feature, which are activity insertation works.",
                                 style: GlobalFont.mediumgiantfontR,
                               ),
                             ),
@@ -280,7 +280,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
 
             // Devider
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.075,
+              height: MediaQuery.of(context).size.height * 0.12,
             ),
 
             // Return Button

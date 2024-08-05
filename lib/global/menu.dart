@@ -19,7 +19,8 @@ class MenuPage extends StatefulWidget {
 }
 
 class MenuPageState extends State<MenuPage> {
-  int _selectedIndex = 0;
+  // int _selectedIndex = 0;
+  int _selectedIndex = 1;
   String title = '';
   String displayDate = ''; // date for UI/UX display
   String date = ''; // date for store in database
@@ -195,36 +196,37 @@ class MenuPageState extends State<MenuPage> {
                           ),
                           child: Wrap(
                             children: [
-                              InkWell(
-                                onTap: () {
-                                  // Update the state of the app
-                                  _onItemTapped(0);
-
-                                  menuState.clearState();
-
-                                  // Then close the drawer
-                                  Navigator.pop(context);
-                                },
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Attendance',
-                                      style: GlobalFont.mediumgiantfontM,
-                                      textAlign: TextAlign.start,
-                                    ),
-                                    const Icon(
-                                      Icons.qr_code_rounded,
-                                      size: 30,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.05,
-                              ),
+                              // Attendance Menu
+                              // InkWell(
+                              //   onTap: () {
+                              //     // Update the state of the app
+                              //     _onItemTapped(0);
+                              //
+                              //     menuState.clearState();
+                              //
+                              //     // Then close the drawer
+                              //     Navigator.pop(context);
+                              //   },
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: [
+                              //       Text(
+                              //         'Attendance',
+                              //         style: GlobalFont.mediumgiantfontM,
+                              //         textAlign: TextAlign.start,
+                              //       ),
+                              //       const Icon(
+                              //         Icons.qr_code_rounded,
+                              //         size: 30,
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height:
+                              //       MediaQuery.of(context).size.height * 0.05,
+                              // ),
                               InkWell(
                                 onTap: () {
                                   // Update the state of the app
