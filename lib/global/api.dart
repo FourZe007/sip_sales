@@ -523,4 +523,90 @@ class GlobalAPI {
       return activityTypesList;
     }
   }
+
+  static Future<List<ModelSalesActivities>> fetchSalesActivity(
+    String employeeID,
+    String date,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/EmployeeActivity',
+    );
+
+    Map mapSalesActivity = {
+      "EmployeeID": employeeID,
+      "CurrentDate": date,
+    };
+
+    List<ModelSalesActivities> activityTypesList = [];
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapSalesActivity), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      if (response.statusCode <= 200) {
+        var jsonSalesActivity = jsonDecode(response.body);
+        if (jsonSalesActivity['code'] == '100' &&
+            jsonSalesActivity['msg'] == 'Sukses') {
+          activityTypesList = (jsonSalesActivity['data'] as List)
+              .map<ModelSalesActivities>(
+                  (list) => ModelSalesActivities.fromJson(list))
+              .toList();
+
+          return activityTypesList;
+        } else {
+          return activityTypesList;
+        }
+      } else {}
+      return activityTypesList;
+    } catch (e) {
+      print(e.toString());
+      return activityTypesList;
+    }
+  }
+
+  static Future<List<ModelManagerActivities>> fetchManagerActivity(
+    String employeeID,
+    String date,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/EmployeeActivitySM',
+    );
+
+    Map mapManagerActivity = {
+      "EmployeeID": employeeID,
+      "CurrentDate": date,
+    };
+
+    List<ModelManagerActivities> activityTypesList = [];
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapManagerActivity), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      if (response.statusCode <= 200) {
+        var jsonManagerActivity = jsonDecode(response.body);
+        if (jsonManagerActivity['code'] == '100' &&
+            jsonManagerActivity['msg'] == 'Sukses') {
+          activityTypesList = (jsonManagerActivity['data'] as List)
+              .map<ModelManagerActivities>(
+                  (list) => ModelManagerActivities.fromJson(list))
+              .toList();
+
+          return activityTypesList;
+        } else {
+          return activityTypesList;
+        }
+      } else {}
+      return activityTypesList;
+    } catch (e) {
+      print(e.toString());
+      return activityTypesList;
+    }
+  }
 }

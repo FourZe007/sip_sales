@@ -67,6 +67,7 @@ class GlobalSize {
   static double gigafont = 28;
   static double terafont = 30;
   static double petafont = 32;
+  static double peta2xfont = 50;
   static double titleMenuFont1 = 32;
   static double titleMenuFont2 = 36;
   static double dateFont1 = 40;
@@ -489,6 +490,13 @@ class GlobalFont {
     color: Colors.black,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.dateFont2,
+    fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle peta2xfontRBold = TextStyle(
+    color: Colors.black,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.peta2xfont,
     fontWeight: FontWeight.bold,
   );
 }

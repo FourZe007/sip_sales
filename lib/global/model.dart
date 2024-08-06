@@ -331,3 +331,114 @@ class ModelNewActivityDetails {
     required this.image,
   });
 }
+
+// Model for Sales Activities
+class ModelSalesActivities {
+  String date;
+  String startTime;
+  String endTime;
+  double lat;
+  double lng;
+  int duration;
+  String activityID;
+  String activityName;
+  String activityDescription;
+  String contactName;
+  String contactPhoneNo;
+  int pic1;
+  int pic2;
+  int pic3;
+  int pic4;
+  int pic5;
+
+  ModelSalesActivities({
+    required this.date,
+    required this.startTime,
+    required this.endTime,
+    required this.lat,
+    required this.lng,
+    required this.duration,
+    required this.activityID,
+    required this.activityName,
+    required this.activityDescription,
+    required this.contactName,
+    required this.contactPhoneNo,
+    required this.pic1,
+    required this.pic2,
+    required this.pic3,
+    required this.pic4,
+    required this.pic5,
+  });
+
+  factory ModelSalesActivities.fromJson(Map<String, dynamic> json) {
+    return ModelSalesActivities(
+      date: json['currentDate'],
+      startTime: json['startTime'],
+      endTime: json['endTime'],
+      lat: json['lat'],
+      lng: json['lng'],
+      duration: json['duration'],
+      activityID: json['activityID'],
+      activityName: json['activityName'],
+      activityDescription: json['activityDescription'],
+      contactName: json['contactName'],
+      contactPhoneNo: json['contactPhoneNo'],
+      pic1: json['pic1'],
+      pic2: json['pic2'],
+      pic3: json['pic3'],
+      pic4: json['pic4'],
+      pic5: json['pic5'],
+    );
+  }
+}
+
+// Model for Shop Manager Activities
+class ModelManagerActivities {
+  String employeeId;
+  String employeeName;
+  String branch;
+  String shopId;
+  String shopName;
+  String date;
+  String time;
+  double lat;
+  double lng;
+  String activityId;
+  String activityName;
+  String activityDescription;
+  String pic1;
+
+  ModelManagerActivities({
+    required this.employeeId,
+    required this.employeeName,
+    required this.branch,
+    required this.shopId,
+    required this.shopName,
+    required this.date,
+    required this.time,
+    required this.lat,
+    required this.lng,
+    required this.activityId,
+    required this.activityName,
+    required this.activityDescription,
+    required this.pic1,
+  });
+
+  factory ModelManagerActivities.fromJson(Map<String, dynamic> json) {
+    return ModelManagerActivities(
+      employeeId: json['employeeID'],
+      employeeName: json['eName'],
+      branch: json['branch'],
+      shopId: json['shop'],
+      shopName: json['bsName'],
+      date: json['currentDate'],
+      time: json['currentTime'],
+      lat: json['lat'],
+      lng: json['lng'],
+      activityId: json['activityID'],
+      activityName: json['activityName'],
+      activityDescription: json['activityDescription'],
+      pic1: json['pic1'],
+    );
+  }
+}

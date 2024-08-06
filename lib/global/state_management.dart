@@ -2,8 +2,6 @@
 
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image/image.dart' as images;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1232,5 +1230,51 @@ class SipSalesState with ChangeNotifier {
 
   void setIsLocationGranted(bool value) {
     isLocationEnable = value;
+  }
+
+  // =============================================================
+  // =================== Salesman Activities =====================
+  // =============================================================
+  List<ModelSalesActivities> salesActivitiesList = [];
+
+  List<ModelSalesActivities> get fetchSalesActivitiesList =>
+      salesActivitiesList;
+
+  Future<List<ModelSalesActivities>> fetchSalesActivities(
+    String date,
+  ) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    eId = prefs.getString('nip')!;
+
+    salesActivitiesList.clear();
+    salesActivitiesList = await GlobalAPI.fetchSalesActivity(
+      eId,
+      date,
+    );
+
+    return salesActivitiesList;
+  }
+
+  // =============================================================
+  // =================== Manager Activities =====================
+  // =============================================================
+  List<ModelManagerActivities> managerActivitiesList = [];
+
+  List<ModelManagerActivities> get getManagerActivitiesList =>
+      managerActivitiesList;
+
+  Stream<List<ModelManagerActivities>> fetchManagerActivities(
+    String date,
+  ) async* {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    eId = prefs.getString('nip')!;
+
+    managerActivitiesList.clear();
+    managerActivitiesList = await GlobalAPI.fetchManagerActivity(
+      eId,
+      date,
+    );
+
+    yield managerActivitiesList;
   }
 }
