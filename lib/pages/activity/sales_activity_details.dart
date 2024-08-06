@@ -3,14 +3,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 
-class ActivityDetails extends StatelessWidget {
-  ActivityDetails(this.index, {super.key});
+class SalesActivityDetails extends StatelessWidget {
+  SalesActivityDetails(this.imageUrl, this.index, {super.key});
 
+  String imageUrl;
   int index;
 
   @override
@@ -49,39 +49,39 @@ class ActivityDetails extends StatelessWidget {
           horizontal: MediaQuery.of(context).size.width * 0.05,
           vertical: MediaQuery.of(context).size.height * 0.025,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Image.memory(
-                base64Decode(
-                  activityDetailsState.managerActivitiesList[index].pic1,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Image.memory(
+                  base64Decode(imageUrl),
+                  fit: BoxFit.cover,
                 ),
-                fit: BoxFit.cover,
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Text(
-                'Coordinate: (${activityDetailsState.managerActivitiesList[index].lat}, ${activityDetailsState.managerActivitiesList[index].lng})',
-                style: GlobalFont.bigfontR,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
               ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Text(
-                activityDetailsState
-                    .managerActivitiesList[index].activityDescription,
-                style: GlobalFont.bigfontR,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Text(
+                  'Coordinate: (${activityDetailsState.salesActivitiesList[index].lat}, ${activityDetailsState.salesActivitiesList[index].lng})',
+                  style: GlobalFont.bigfontR,
+                ),
               ),
-            ),
-          ],
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Text(
+                  activityDetailsState
+                      .salesActivitiesList[index].activityDescription,
+                  style: GlobalFont.bigfontR,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

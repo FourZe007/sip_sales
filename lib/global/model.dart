@@ -345,11 +345,11 @@ class ModelSalesActivities {
   String activityDescription;
   String contactName;
   String contactPhoneNo;
-  int pic1;
-  int pic2;
-  int pic3;
-  int pic4;
-  int pic5;
+  String pic1;
+  String pic2;
+  String pic3;
+  String pic4;
+  String pic5;
 
   ModelSalesActivities({
     required this.date,

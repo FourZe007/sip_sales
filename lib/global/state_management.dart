@@ -1240,9 +1240,9 @@ class SipSalesState with ChangeNotifier {
   List<ModelSalesActivities> get fetchSalesActivitiesList =>
       salesActivitiesList;
 
-  Future<List<ModelSalesActivities>> fetchSalesActivities(
+  Stream<List<ModelSalesActivities>> fetchSalesActivities(
     String date,
-  ) async {
+  ) async* {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     eId = prefs.getString('nip')!;
 
@@ -1252,7 +1252,7 @@ class SipSalesState with ChangeNotifier {
       date,
     );
 
-    return salesActivitiesList;
+    yield salesActivitiesList;
   }
 
   // =============================================================
