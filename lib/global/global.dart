@@ -371,7 +371,7 @@ class GlobalFont {
     fontSize: GlobalSize.mediumgiantfont,
   );
 
-  static TextStyle mediumgiantfontRBlue = TextStyle(
+  static TextStyle mediumgiantfontRBlueUnderlined = TextStyle(
     color: Colors.blue,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.mediumgiantfont,
@@ -380,6 +380,13 @@ class GlobalFont {
 
   static TextStyle mediumgiantfontRBold = TextStyle(
     color: Colors.black,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumgiantfont,
+    fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle mediumgiantfontRBoldBlue = TextStyle(
+    color: Colors.blue,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.mediumgiantfont,
     fontWeight: FontWeight.bold,

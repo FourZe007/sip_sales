@@ -60,7 +60,10 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void displayProminentDisclosure(bool isAccept) async {
+  void displayProminentDisclosure(
+    bool isAccept,
+    SipSalesState state,
+  ) async {
     if (isAccept) {
       Navigator.of(context).pop();
 
@@ -73,8 +76,10 @@ class _LoginPageState extends State<LoginPage> {
         );
 
         if (isUserGranted) {
+          state.setIsUserAgree(true);
           Navigator.pushReplacementNamed(context, '/location');
         } else {
+          state.setIsUserAgree(false);
           GlobalFunction.tampilkanDialog(
             context,
             true,
@@ -112,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       });
     } else {
+      state.setIsUserAgree(false);
       Navigator.of(context).pop();
 
       GlobalFunction.tampilkanDialog(
@@ -176,62 +182,74 @@ class _LoginPageState extends State<LoginPage> {
             await prefs.setBool('isLocationGranted', false);
             toggleIsLoading();
 
-            GlobalFunction.displayProminentDisclosure(
-              context,
-              Container(
-                // height: MediaQuery.of(context).size.height * 0.35,
-                height: MediaQuery.of(context).size.height * 0.25,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.025,
-                  vertical: MediaQuery.of(context).size.height * 0.01,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'SIP Care',
-                      style: GlobalFont.giantfontRBold,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                      style: GlobalFont.mediumgiantfontR,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => displayProminentDisclosure(false),
-                          style: ElevatedButton.styleFrom(
-                            side: const BorderSide(
-                                color: Colors.blue, width: 2.5),
-                          ),
-                          child: Text(
-                            'Deny',
-                            style: GlobalFont.bigfontR,
-                          ),
+            if (state.getIsUserAgree == true) {
+              Navigator.pushReplacementNamed(context, '/location');
+            } else {
+              GlobalFunction.displayProminentDisclosure(
+                context,
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.275,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.025,
+                    vertical: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'SIP Care',
+                          style: GlobalFont.giantfontRBold,
                         ),
-                        ElevatedButton(
-                          onPressed: () => displayProminentDisclosure(true),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                          ),
-                          child: Text(
-                            'Accept',
-                            style: GlobalFont.bigfontRWhite,
-                          ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
+                          style: GlobalFont.mediumgiantfontR,
+                          textAlign: TextAlign.center,
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () =>
+                                  displayProminentDisclosure(false, state),
+                              style: ElevatedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: Colors.blue,
+                                  width: 2.5,
+                                ),
+                              ),
+                              child: Text(
+                                'Deny',
+                                style: GlobalFont.bigfontR,
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  displayProminentDisclosure(true, state),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                              ),
+                              child: Text(
+                                'Accept',
+                                style: GlobalFont.bigfontRWhite,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           });
         } else if (userLogin[0].flag == 2) {
           toggleIsLoading();
@@ -284,7 +302,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final loginState = Provider.of<SipSalesState>(context);
+    final signInState = Provider.of<SipSalesState>(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -380,7 +398,7 @@ class _LoginPageState extends State<LoginPage> {
                     shadowColor: Colors.black,
                     elevation: 7.5,
                   ),
-                  onPressed: () => login(loginState),
+                  onPressed: () => login(signInState),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 50,

@@ -256,7 +256,8 @@ class _UserConsentPageState extends State<UserConsentPage> {
                                     onTap: () => launchLink(context),
                                     child: Text(
                                       "https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html",
-                                      style: GlobalFont.mediumgiantfontRBlue,
+                                      style: GlobalFont
+                                          .mediumgiantfontRBlueUnderlined,
                                     ),
                                   ),
                                 ],

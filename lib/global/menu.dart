@@ -5,7 +5,6 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/activity/manager_activity.dart';
 import 'package:sip_sales/pages/activity/sales_activity.dart';
-import 'package:sip_sales/pages/attendance/attendance.dart';
 import 'package:sip_sales/pages/attendance/attendance_history.dart';
 import 'package:sip_sales/pages/location/activity_route.dart';
 import 'package:sip_sales/pages/location/sales_new_activity.dart';
@@ -27,7 +26,7 @@ class MenuPageState extends State<MenuPage> {
   String date = ''; // date for store in database
 
   final List<Widget> salesWidgetOptions = <Widget>[
-    const AttendancePage(),
+    // const AttendancePage(),
     const AttendanceHistoryPage(),
     const ActivityRoutePage(),
     const SalesNewActivityPage(),
@@ -245,7 +244,7 @@ class MenuPageState extends State<MenuPage> {
                                   InkWell(
                                     onTap: () {
                                       // Update the state of the app
-                                      _onItemTapped(1);
+                                      _onItemTapped(0);
 
                                       menuState.clearState();
 
@@ -281,7 +280,7 @@ class MenuPageState extends State<MenuPage> {
                                   InkWell(
                                     onTap: () {
                                       // Update the state of the app
-                                      _onItemTapped(2);
+                                      _onItemTapped(1);
 
                                       menuState.clearState();
 
@@ -317,7 +316,7 @@ class MenuPageState extends State<MenuPage> {
                                   InkWell(
                                     onTap: () {
                                       // Update the state of the app
-                                      _onItemTapped(3);
+                                      _onItemTapped(2);
 
                                       menuState.clearState();
 
@@ -354,7 +353,7 @@ class MenuPageState extends State<MenuPage> {
                                   InkWell(
                                     onTap: () {
                                       // Update the state of the app
-                                      _onItemTapped(4);
+                                      _onItemTapped(3);
 
                                       menuState.clearState();
 

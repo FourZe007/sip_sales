@@ -1277,4 +1277,15 @@ class SipSalesState with ChangeNotifier {
 
     yield managerActivitiesList;
   }
+
+  // =============================================================
+  // =================== App Rule Agreement ======================
+  // =============================================================
+  bool isUserAgree = false;
+
+  bool get getIsUserAgree => isUserAgree;
+
+  void setIsUserAgree(bool value) {
+    isUserAgree = value;
+  }
 }

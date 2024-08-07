@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/pages/location/image_view.dart';
 
 class ManagerActivityDetails extends StatelessWidget {
   ManagerActivityDetails(this.index, {super.key});
@@ -52,35 +53,6 @@ class ManagerActivityDetails extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: Image.memory(
-                      base64Decode(
-                        activityDetailsState.managerActivitiesList[index].pic1,
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    padding: const EdgeInsets.all(5.0),
-                    margin: const EdgeInsets.all(7.5),
-                    child: Text(
-                      activityDetailsState.managerActivitiesList[index].time,
-                      style: GlobalFont.mediumgiantfontRBold,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
               Container(
                 width: MediaQuery.of(context).size.width,
                 margin: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -98,6 +70,71 @@ class ManagerActivityDetails extends StatelessWidget {
                   style: GlobalFont.bigfontR,
                 ),
               ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              (activityDetailsState.managerActivitiesList[index].pic1 != '')
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1.5),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0,
+                        vertical: 7.5,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  child: Image.memory(
+                                    base64Decode(
+                                      activityDetailsState
+                                          .managerActivitiesList[index].pic1,
+                                    ),
+                                    fit: BoxFit.cover,
+                                    scale: 7.5,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.03,
+                                ),
+                                Text(
+                                  'Bukti Aktivitas',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImageView(
+                                    activityDetailsState
+                                        .managerActivitiesList[index].pic1,
+                                    startTime: activityDetailsState
+                                        .managerActivitiesList[index].time,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Lihat',
+                              style: GlobalFont.mediumgiantfontRBoldBlue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),
