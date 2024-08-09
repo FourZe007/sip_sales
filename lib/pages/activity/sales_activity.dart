@@ -44,7 +44,6 @@ class _SalesActivityPageState extends State<SalesActivityPage> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    // print('Selected Date: $picked');
 
     if (picked != null && picked != DateTime.parse(tgl)) {
       setState(() {
@@ -56,7 +55,6 @@ class _SalesActivityPageState extends State<SalesActivityPage> {
       }
 
       if (isStart == true) {
-        // getHistory(startDate: tgl);
         toggleIsDateInit();
       }
     }
@@ -102,12 +100,10 @@ class _SalesActivityPageState extends State<SalesActivityPage> {
                 children: [
                   // Open Filter Button
                   InkWell(
-                    // onTap: toggleFilter,
                     onTap: null,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.1,
                       decoration: BoxDecoration(
-                        // border: Border.all(color: Colors.black, width: 1.5),
                         color: Colors.grey[400],
                         borderRadius: BorderRadius.circular(15.0),
                       ),

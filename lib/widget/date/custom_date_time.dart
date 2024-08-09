@@ -30,24 +30,7 @@ class _CustomDateTimeState extends State<CustomDateTime> {
     day = Format.dateFormat(date);
     month = Format.monthFormat(date);
     year = Format.yearFormat(date);
-
-    // print('$day-$month-$year');
   }
-
-  // final List<String> _monthOptions = [
-  //   'January',
-  //   'February',
-  //   'March',
-  //   'April',
-  //   'May',
-  //   'June',
-  //   'July',
-  //   'August',
-  //   'September',
-  //   'October',
-  //   'November',
-  //   'December',
-  // ];
 
   final List<String> _monthOptions = [
     'Januari',
@@ -91,7 +74,7 @@ class _CustomDateTimeState extends State<CustomDateTime> {
               border: Border.all(width: 3.0, color: Colors.black),
               color: Colors.black,
               shape: BoxShape.circle,
-            ), // decoration
+            ),
             width: MediaQuery.of(context).size.width * 0.5,
             height: MediaQuery.of(context).size.height * 0.25,
             isLive: true,

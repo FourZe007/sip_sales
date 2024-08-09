@@ -63,7 +63,6 @@ class _CustomDropDownState extends State<CustomDropDown> {
         items: widget.disable == true
             ? null
             : widget.listData.asMap().entries.map((entry) {
-                // final int index = entry.key;
                 final ModelActivities activities = entry.value;
 
                 return DropdownMenuItem(
@@ -78,13 +77,10 @@ class _CustomDropDownState extends State<CustomDropDown> {
         onChanged: (newValues) {
           if (value != newValues) {
             setState(() => value = newValues.toString());
-            // print('Dropdown value: $value');
             if (widget.hint == 'Manager Activity Type') {
               dropdownState.setTypeListener(value, true);
               for (ModelActivities value in widget.listData) {
                 if (value.activityName == newValues) {
-                  // print(newValues);
-                  // print(value.activityTemplate);
                   widget.handle(newValues, value.activityTemplate);
                   break;
                 }

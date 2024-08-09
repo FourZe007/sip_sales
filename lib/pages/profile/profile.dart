@@ -1,7 +1,5 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/global.dart';
@@ -14,8 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
-  // ModelUser userData;;
-
   @override
   State<ProfilePage> createState() => ProfilePageState();
 }
@@ -27,77 +23,16 @@ class ProfilePageState extends State<ProfilePage> {
   bool isFake = false;
   bool isLocationEnabled = false;
 
-  // void openAppSettings() async {
-  //   await AppSettings.openAppSettings();
-  // }
-  //
-  // Future<bool> requestPermission() async {
-  //   location = Location();
-  //   // final permission = await location.requestPermission();
-  //   // return permission == PermissionStatus.granted;
-  //
-  //   print('Pressed!');
-  //   bool _serviceEnabled;
-  //   PermissionStatus _permissionGranted;
-  //
-  //   print('Service Enabled In');
-  //   _serviceEnabled = await location.serviceEnabled();
-  //   print('Service Enabled: $_serviceEnabled');
-  //   if (!_serviceEnabled) {
-  //     _serviceEnabled = await location.requestService();
-  //     print('Request Service: $_serviceEnabled');
-  //     if (!_serviceEnabled) {
-  //       return false;
-  //     }
-  //   }
-  //   print('Service Enabled Out');
-  //
-  //   print('Permission Granted In');
-  //   _permissionGranted = await location.hasPermission();
-  //   print('Permission Granted: $_permissionGranted');
-  //   if (_permissionGranted == PermissionStatus.denied) {
-  //     _permissionGranted = await location.requestPermission();
-  //     print('Request Permission: $_permissionGranted');
-  //     if (_permissionGranted != PermissionStatus.granted) {
-  //       print('$_permissionGranted != permission status granted');
-  //       return false;
-  //     }
-  //   } else {
-  //     _permissionGranted = await location.requestPermission();
-  //   }
-  //   print('Permission Granted Out');
-  //
-  //   isFake = await DetectFakeLocation().detectFakeLocation();
-  //   if (isFake == true) {
-  //     return false;
-  //   }
-  //
-  //   return true;
-  // }
-  //
-  // void openAppSettings() {
-  //   requestPermission().then((value) {
-  //     print('Request Permission: $value');
-  //     if (value == true) {
-  //       setState(() => GlobalVar.isDisabled = false);
-  //     }
-  //   });
-  // }
-
   void logout(Function resetLocationIndex) async {
-    // print('isLoading Before 1: $isLoading');
     setState(() {
       isLoading = true;
     });
-    // print('isLoading After 1: $isLoading');
-    // print('Logout Button pressed!');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     setState(() {
       isLoading = false;
     });
     resetLocationIndex(0);
-    // print('isLoading After 2: $isLoading');
 
     Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);
   }
@@ -166,7 +101,6 @@ class ProfilePageState extends State<ProfilePage> {
                 style: GlobalFont.terafontRBold,
               ),
         leading: IconButton(
-          // onPressed: () => Navigator.pushReplacementNamed(context, '/menu'),
           onPressed: () => Navigator.of(context).pop(),
           icon: Icon(
             Icons.arrow_back_ios,
@@ -187,7 +121,6 @@ class ProfilePageState extends State<ProfilePage> {
           builder: (context, constraints) {
             if (constraints.maxWidth < 800) {
               return Container(
-                // height: MediaQuery.of(context).size.height * 0.4,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -359,7 +292,6 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
                 padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.height * 0.016,
-                  // horizontal: MediaQuery.of(context).size.width * 0.05,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -624,7 +556,6 @@ class ProfilePageState extends State<ProfilePage> {
                       horizontal: MediaQuery.of(context).size.width * 0.03,
                     ),
                     child: ElevatedButton(
-                      // onPressed: logout,
                       onPressed: toggleLogOutPage,
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(

@@ -80,9 +80,7 @@ class _CustomUserInputState extends State<CustomUserInput>
           style: GlobalFont.mediumbigfontM,
           decoration: InputDecoration(
             filled: true,
-            // fillColor: widget.mode == 0 ? Colors.white54 : Colors.grey[400],
             fillColor: widget.mode == 0 ? Colors.white54 : Colors.grey[400],
-            // fillColor: Colors.transparent,
             contentPadding: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.02,
             ),
@@ -135,7 +133,6 @@ class _CustomUserInputState extends State<CustomUserInput>
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white54,
-            // fillColor: Colors.transparent,
             contentPadding: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.02,
             ),

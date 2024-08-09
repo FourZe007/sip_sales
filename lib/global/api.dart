@@ -89,42 +89,6 @@ class GlobalAPI {
     }
 
     return list;
-    //   final response = await http
-    //       .post(url, body: jsonEncode(mapAttendanceHistory), headers: {
-    //     'Content-Type': 'application/json',
-    //   }).timeout(const Duration(seconds: 60));
-    //
-    //   print('Response');
-    //   print(response.body);
-    //   List<ModelAttendanceHistory> list = [];
-    //
-    //   if (response.statusCode <= 200) {
-    //     var jsonAttendanceHistory = jsonDecode(response.body);
-    //     if (jsonAttendanceHistory['Code'] == '100' ||
-    //         jsonAttendanceHistory['Msg'] == 'Sukses') {
-    //       List<ModelAttendanceHistory> list =
-    //           (jsonAttendanceHistory['Data'] as List)
-    //               .map<ModelAttendanceHistory>(
-    //                   (data) => ModelAttendanceHistory.fromJson(data))
-    //               .toList();
-    //
-    //       return list;
-    //     } else {
-    //       List<ModelAttendanceHistory> list =
-    //           (jsonAttendanceHistory['Data'] as List)
-    //               .map<ModelAttendanceHistory>(
-    //                   (data) => ModelAttendanceHistory.fromJson(data))
-    //               .toList();
-    //
-    //       return list;
-    //     }
-    //   }
-    //
-    //   return list;
-    // } catch (e) {
-    //   print(e.toString());
-    //   return throw e;
-    // }
   }
 
   static Future<List<ModelResultMessage>> fetchModifyAttendance(

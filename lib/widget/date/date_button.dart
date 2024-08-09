@@ -75,7 +75,6 @@ class _DateFilterButtonState extends State<DateFilterButton> {
                 size: 20,
               ),
             ),
-            // const SizedBox(width: 10),
             Expanded(
               flex: 4,
               child: Text(

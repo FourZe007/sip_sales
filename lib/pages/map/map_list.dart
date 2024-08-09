@@ -36,7 +36,7 @@ class _MapListPageState extends State<MapListPage> {
       );
     } else {
       if (list[index].detail.length > 1) {
-        print('more than 1');
+        // print('more than 1');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -44,7 +44,7 @@ class _MapListPageState extends State<MapListPage> {
           ),
         );
       } else {
-        print('less than equal to 1');
+        // print('less than equal to 1');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -86,7 +86,6 @@ class _MapListPageState extends State<MapListPage> {
       body: FlutterMap(
         options: MapOptions(
           initialCenter: LatLng(
-            // Note -> error disini
             widget.activityRouteList[0].lat,
             widget.activityRouteList[0].lng,
           ),

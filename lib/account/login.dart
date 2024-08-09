@@ -32,12 +32,10 @@ class _LoginPageState extends State<LoginPage> {
 
   void setNIP(String value) {
     nip = value;
-    // print('NIP: $nip');
   }
 
   void setPassword(String value) {
     password = value;
-    // print('Password: $password');
   }
 
   void toggleIsLoading() {
@@ -313,7 +311,6 @@ class _LoginPageState extends State<LoginPage> {
           child: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            // color: Colors.grey[300],
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black),
               color: Colors.grey[300],
@@ -357,15 +354,6 @@ class _LoginPageState extends State<LoginPage> {
                   icon: Icons.lock,
                   hint: 'Password',
                 ),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Text(
-                //     loginStatus,
-                //     style: (MediaQuery.of(context).size.width < 800)
-                //         ? GlobalFont.mediumbigfontM
-                //         : GlobalFont.mediumgigafontR,
-                //   ),
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

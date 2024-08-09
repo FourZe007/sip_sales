@@ -29,10 +29,6 @@ class _AttendancePageState extends State<AttendancePage> {
   bool isLocationEnable = false;
   double longitude = 0;
   double latitude = 0;
-  // Delete -> remove later
-  // double anchorLatitude = 0.0;
-  // double anchorLongitude = 0.0;
-  // String anchorTime = '';
 
   // Difference Variables with value 2 coordinates and time
   List<ModelWithinRadius> differences = [];
@@ -44,9 +40,7 @@ class _AttendancePageState extends State<AttendancePage> {
   List<ModelResultMessage> checkInList = [];
   List<ModelResultMessage> checkOutList = [];
   bool isPressed = false;
-  // bool isCheckedIn = false;
   bool onProgress = false;
-  // List<ModelCoordinate> coordinateList = [];
   double radiusInMeters = 10.0;
   bool isWithinRadius = false;
 

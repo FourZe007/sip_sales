@@ -76,7 +76,6 @@ class _UserConsentPageState extends State<UserConsentPage> {
             ? MediaQuery.of(context).size.height * 0.075
             : MediaQuery.of(context).size.height * 0.075,
         leading: IconButton(
-          // onPressed: () => Navigator.pushReplacementNamed(context, '/menu'),
           onPressed: () => Navigator.of(context).pop(false),
           icon: Icon(
             Icons.arrow_back_ios,

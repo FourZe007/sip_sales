@@ -51,7 +51,6 @@ class MenuPageState extends State<MenuPage> {
         builder: (context) => const ProfilePage(),
       ),
     );
-    // Navigator.pushReplacementNamed(context, '/profile');
   }
 
   Future<double> getDeviceWidth() async {

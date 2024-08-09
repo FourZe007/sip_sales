@@ -134,12 +134,6 @@ class ModelWithinRadius {
     required this.latitude2,
     required this.timeDifference,
   });
-
-  // factory ModelWithinRadius.fromJson(Map<String, dynamic> json) {
-  //   return ModelCoordinate(
-  //     resultMessage: json['ResultMessage'],
-  //   );
-  // }
 }
 
 class ModelCoordinate {

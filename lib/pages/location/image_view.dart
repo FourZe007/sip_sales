@@ -110,7 +110,6 @@ class ImageView extends StatelessWidget {
             Expanded(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
-                // height: MediaQuery.of(context).size.height * 0.055,
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: ElevatedButton.styleFrom(

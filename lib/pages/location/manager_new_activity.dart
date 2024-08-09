@@ -134,20 +134,17 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     BuildContext context,
     SipSalesState state,
   ) async {
-    print('Gallery Permission');
+    // print('Gallery Permission');
     AndroidDeviceInfo androidInfo;
     if (Platform.isAndroid) {
       androidInfo = await DeviceInfoPlugin().androidInfo;
       // Note -> below Android 12
       if (androidInfo.version.sdkInt <= 32) {
         var storageStatus = await Permission.storage.status;
-        print(storageStatus);
+        // print(storageStatus);
         if (storageStatus.isGranted) {
           // print('Camera Permission granted');
           if (!await state.uploadImageFromGallery(context)) {
-            // Note -> function for handle showPopUp of 2 option (gallery & camera)
-            // Navigator.of(context).pop();
-
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 duration: Duration(seconds: 1),
@@ -157,13 +154,12 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               ),
             );
           } else {
-            // Note -> function for handle showPopUp of 2 option (gallery & camera)
-            // Navigator.of(context).pop();
+            // do nothing
           }
         } else {
           // print('Gallery Permission denied');
           storageStatus = await Permission.storage.request();
-          print(storageStatus);
+          // print(storageStatus);
           if (storageStatus != PermissionStatus.granted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -181,13 +177,10 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       // Note -> above Android 13
       else {
         var galleryStatus = await Permission.photos.status;
-        print(galleryStatus);
+        // print(galleryStatus);
         if (galleryStatus.isGranted || galleryStatus.isLimited) {
           // print('Camera Permission granted');
           if (!await state.uploadImageFromGallery(context)) {
-            // Note -> function for handle showPopUp of 2 option (gallery & camera)
-            // Navigator.of(context).pop();
-
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 duration: Duration(seconds: 1),
@@ -197,13 +190,12 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               ),
             );
           } else {
-            // Note -> function for handle showPopUp of 2 option (gallery & camera)
-            // Navigator.of(context).pop();
+            // do nothing
           }
         } else {
           // print('Gallery Permission denied');
           galleryStatus = await Permission.photos.request();
-          print(galleryStatus);
+          // print(galleryStatus);
           if (galleryStatus != PermissionStatus.granted ||
               galleryStatus.isLimited) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -221,13 +213,10 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       }
     } else if (Platform.isIOS) {
       var storageStatus = await Permission.storage.status;
-      print(storageStatus);
+      // print(storageStatus);
       if (storageStatus.isGranted) {
         // print('Camera Permission granted');
         if (!await state.uploadImageFromGallery(context)) {
-          // Note -> function for handle showPopUp of 2 option (gallery & camera)
-          // Navigator.of(context).pop();
-
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               duration: Duration(seconds: 1),
@@ -237,13 +226,12 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
             ),
           );
         } else {
-          // Note -> function for handle showPopUp of 2 option (gallery & camera)
-          // Navigator.of(context).pop();
+          // do nothing
         }
       } else {
         // print('Gallery Permission denied');
         storageStatus = await Permission.storage.request();
-        print(storageStatus);
+        // print(storageStatus);
         if (storageStatus != PermissionStatus.granted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -258,66 +246,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         }
       }
     }
-
-    // Note -> Old Gallery Access
-    // PermissionStatus galleryStatus = PermissionStatus.denied;
-    // AndroidDeviceInfo androidInfo;
-    //
-    // if (Platform.isAndroid) {
-    //   androidInfo = await DeviceInfoPlugin().androidInfo;
-    //   if (androidInfo.version.sdkInt <= 32) {
-    //     galleryStatus = await Permission.storage.status;
-    //   } else {
-    //     galleryStatus = await Permission.photos.status;
-    //   }
-    // }
-    //
-    // if (galleryStatus.isGranted) {
-    //   // print('Camera Permission granted');
-    //   if (!await state.uploadImageFromGallery(context)) {
-    //     // Note -> function for handle showPopUp of 2 option (gallery & camera)
-    //     // Navigator.of(context).pop();
-    //
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(
-    //         duration: Duration(seconds: 1),
-    //         content: Text(
-    //           'Upload image cancelled.',
-    //         ),
-    //       ),
-    //     );
-    //   } else {
-    //     // Note -> function for handle showPopUp of 2 option (gallery & camera)
-    //     // Navigator.of(context).pop();
-    //   }
-    // } else {
-    //   // print('Camera Permission denied');
-    //   if (Platform.isAndroid) {
-    //     androidInfo = await DeviceInfoPlugin().androidInfo;
-    //     if (androidInfo.version.sdkInt <= 32) {
-    //       print('Android below 32');
-    //       galleryStatus = await Permission.storage.status;
-    //       galleryStatus = await Permission.storage.request();
-    //     } else {
-    //       print('Android above 33');
-    //       galleryStatus = await Permission.photos.status;
-    //       galleryStatus = await Permission.photos.request();
-    //     }
-    //   }
-    //   print('Permission Status: $galleryStatus');
-    //   if (galleryStatus != PermissionStatus.granted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(
-    //         duration: Duration(seconds: 1),
-    //         content: Text(
-    //           'Please change your gallery permission in app settings.',
-    //         ),
-    //       ),
-    //     );
-    //   } else {
-    //     uploadImageFromGallery(context, state);
-    //   }
-    // }
   }
 
   void uploadImageFromCamera(
@@ -326,15 +254,10 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     bool isRecruitment = false,
   }) async {
     var cameraStatus = await Permission.camera.status;
-    print('Camera Permission');
+    // print('Camera Permission');
     if (cameraStatus.isGranted) {
       // print('Camera Permission granted');
       if (!await state.uploadImageFromCamera(context)) {
-        // Note -> function for handle showPopUp of 2 option (gallery & camera)
-        // if (isRecruitment) {
-        //   Navigator.of(context).pop();
-        // }
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             duration: Duration(seconds: 1),
@@ -344,10 +267,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
           ),
         );
       } else {
-        // Note -> function for handle showPopUp of 2 option (gallery & camera)
-        // if (isRecruitment) {
-        //   Navigator.of(context).pop();
-        // }
+        // do nothing
       }
     } else {
       // print('Camera Permission denied');
@@ -775,7 +695,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 1),
                       width: MediaQuery.of(context).size.width,
-                      // height: MediaQuery.of(context).size.height * 0.04,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: Colors.black,

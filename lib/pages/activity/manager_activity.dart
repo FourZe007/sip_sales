@@ -44,7 +44,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    // print('Selected Date: $picked');
 
     if (picked != null && picked != DateTime.parse(tgl)) {
       setState(() {
@@ -56,7 +55,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
       }
 
       if (isStart == true) {
-        // getHistory(startDate: tgl);
         toggleIsDateInit();
       }
     }

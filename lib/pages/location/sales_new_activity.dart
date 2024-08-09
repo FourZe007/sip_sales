@@ -42,8 +42,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
   String activityDescription = '';
   String activityTemplate = '';
 
-  // Images
-
   // Loading
   bool isLoading = false;
 
@@ -122,88 +120,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
       child: Text(value),
     );
   }
-
-  // Delete -> remove later
-  // Future showOptions(
-  //   BuildContext context,
-  //   Function getImageFromGallery,
-  //   Function getImageFromCamera,
-  // ) async {
-  //   showCupertinoModalPopup(
-  //     context: context,
-  //     builder: (context) => CupertinoActionSheet(
-  //       actions: [
-  //         CupertinoActionSheetAction(
-  //           child: const Text('Gallery'),
-  //           onPressed: () {
-  //             // close the options modal
-  //             Navigator.of(context).pop();
-  //
-  //             // get image from gallery
-  //             getImageFromGallery(context);
-  //           },
-  //         ),
-  //         CupertinoActionSheetAction(
-  //           child: const Text('Camera'),
-  //           onPressed: () {
-  //             // close the options modal
-  //             Navigator.of(context).pop();
-  //
-  //             // get image from camera
-  //             getImageFromCamera(context);
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // void uploadImage() async {
-  //   // Pick image from gallery or camera
-  //   // pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-  //
-  //   pickedFileList = await ImagePicker().pickMultiImage(
-  //     imageQuality: 100,
-  //     maxHeight: 1000,
-  //     maxWidth: 1000,
-  //   );
-  //
-  //   // Check if image was picked
-  //   if (pickedFileList.isNotEmpty) return null;
-  //
-  //   // Read image bytes
-  //   // imageBytesList = await pickedFileList!.readAsBytes();
-  //   for (var file in pickedFileList) {
-  //     imageBytesList.add(await file!.readAsBytes());
-  //   }
-  //
-  //   // Resize image (optional)
-  //   imgList.addAll(
-  //       imageBytesList.map((imageByte) => images.decodeImage(imageByte)!));
-  //
-  //   // images.Image resized = images.copyResize(
-  //   //   img,
-  //   //   width: img.width.toInt(),
-  //   //   height: img.height.toInt(),
-  //   // );
-  //
-  //   // Encode image to base64
-  //   base64ImageList
-  //       .addAll(imgList.map((image) => base64Encode(images.encodePng(image))));
-  //
-  //   // DISPLAY USER IMAGE
-  //   // Decode base64 string to bytes
-  //   bytesList.addAll(
-  //       base64ImageList.map((base64Image) => base64Decode(base64Image)));
-  //
-  //   // Display the image
-  //   setState(() {
-  //     // Update the state with the image &
-  //     // Create Image object from bytes
-  //     // displayImageList.add(Image.memory(bytes));
-  //     displayImageList.addAll(bytesList.map((byte) => Image.memory(byte)));
-  //   });
-  // }
 
   void onTap() {
     isOpen = !isOpen;
@@ -438,7 +354,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                       height: MediaQuery.of(context).size.height * 0.04,
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
-                        // border: Border.all(color: Colors.black, width: 1.5),
                         color: Colors.grey[400],
                         borderRadius: BorderRadius.circular(15.0),
                       ),
@@ -552,7 +467,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                         height: MediaQuery.of(context).size.height * 0.04,
                         alignment: Alignment.centerLeft,
                         decoration: BoxDecoration(
-                          // border: Border.all(color: Colors.black, width: 1.5),
                           color: Colors.grey[400],
                           borderRadius: BorderRadius.circular(15.0),
                         ),
@@ -570,51 +484,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                 ],
               ),
             ),
-            // Delete -> remove later
-            // Container(
-            //   margin: EdgeInsets.only(
-            //     top: MediaQuery.of(context).size.height * 0.01,
-            //   ),
-            //   child: Row(
-            //     children: [
-            //       Expanded(
-            //         child: Text(
-            //           'Time',
-            //           style: GlobalFont.mediumgiantfontR,
-            //         ),
-            //       ),
-            //       Expanded(
-            //         flex: 2,
-            //         child: InkWell(
-            //           onTap: () => setInsertationTime(
-            //             context,
-            //             time,
-            //             setTime,
-            //           ),
-            //           child: Container(
-            //             height: MediaQuery.of(context).size.height * 0.04,
-            //             alignment: Alignment.centerLeft,
-            //             decoration: BoxDecoration(
-            //               // border: Border.all(color: Colors.black, width: 1.5),
-            //               color: Colors.grey[400],
-            //               borderRadius: BorderRadius.circular(15.0),
-            //             ),
-            //             padding: EdgeInsets.symmetric(
-            //               horizontal:
-            //                   MediaQuery.of(context).size.width * 0.04,
-            //               vertical:
-            //                   MediaQuery.of(context).size.height * 0.005,
-            //             ),
-            //             child: Text(
-            //               time,
-            //               style: GlobalFont.mediumgiantfontR,
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             Container(
               margin: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.03,
@@ -787,14 +656,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                       ),
                     ],
                   ),
-                  // Note -> Delete button, remove if it's not used
-                  // IconButton(
-                  //   onPressed: () => salesActivityState.removeImages(),
-                  //   icon: const Icon(
-                  //     Icons.delete_rounded,
-                  //     size: 30.0,
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -906,7 +767,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 2),
                       width: MediaQuery.of(context).size.width,
-                      // height: MediaQuery.of(context).size.height * 0.04,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: Colors.grey,
@@ -949,7 +809,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 1),
                       width: MediaQuery.of(context).size.width,
-                      // height: MediaQuery.of(context).size.height * 0.04,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: Colors.black,

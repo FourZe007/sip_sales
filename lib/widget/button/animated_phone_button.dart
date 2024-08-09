@@ -29,7 +29,6 @@ class AnimatedPhoneButton extends StatefulWidget {
 }
 
 class AnimatedPhoneButtonState extends State<AnimatedPhoneButton> {
-  // bool disable = false;
   int mode = 1;
 
   @override
@@ -66,9 +65,7 @@ class AnimatedPhoneButtonState extends State<AnimatedPhoneButton> {
             ],
             borderRadius: BorderRadius.circular(20),
             color: widget.disable == false ? widget.color : Colors.grey,
-            // color: Colors.black,
           ),
-          // alignment: Alignment.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -114,7 +111,6 @@ class AnimatedPhoneButtonState extends State<AnimatedPhoneButton> {
             ],
             borderRadius: BorderRadius.circular(20),
             color: widget.disable == false ? widget.color : Colors.grey,
-            // color: Colors.black,
           ),
           alignment: Alignment.center,
           child: Text(

@@ -85,7 +85,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: GlobalFont.terafontRBold,
               ),
         leading: IconButton(
-          // onPressed: () => Navigator.pushReplacementNamed(context, '/menu'),
           onPressed: () => Navigator.of(context).pop(),
           icon: Icon(
             Icons.arrow_back_ios,

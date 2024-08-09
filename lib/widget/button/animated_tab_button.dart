@@ -31,7 +31,6 @@ class AnimatedTabButton extends StatefulWidget {
 }
 
 class AnimatedTabButtonState extends State<AnimatedTabButton> {
-  // bool disable = false;
   int mode = 1;
 
   @override
@@ -68,9 +67,7 @@ class AnimatedTabButtonState extends State<AnimatedTabButton> {
             ],
             borderRadius: BorderRadius.circular(20),
             color: widget.color,
-            // color: Colors.black,
           ),
-          // alignment: Alignment.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -116,7 +113,6 @@ class AnimatedTabButtonState extends State<AnimatedTabButton> {
             ],
             borderRadius: BorderRadius.circular(20),
             color: widget.color,
-            // color: Colors.black,
           ),
           alignment: Alignment.center,
           child: Text(

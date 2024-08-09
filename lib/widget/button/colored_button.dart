@@ -28,7 +28,6 @@ class _ColoredButtonState extends State<ColoredButton> {
           horizontal: MediaQuery.of(context).size.width * 0.03,
         ),
         child: ElevatedButton(
-          // onPressed: logout,
           onPressed: () => widget.handle(),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -55,7 +54,6 @@ class _ColoredButtonState extends State<ColoredButton> {
           horizontal: MediaQuery.of(context).size.width * 0.03,
         ),
         child: ElevatedButton(
-          // onPressed: logout,
           onPressed: () => widget.handle(),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(

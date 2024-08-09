@@ -17,8 +17,6 @@ class AttendanceHistoryPage extends StatefulWidget {
 }
 
 class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
-  // String beginString = 'Start Date';
-  // String endString = 'End Date';
   String beginDate = '';
   String endDate = '';
   bool isBeginInit = false;
@@ -52,17 +50,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     });
   }
 
-  // void toggleFilter() {
-  //   setState(() {
-  //     isOpened = !isOpened;
-  //     if (isOpened == true) {
-  //       panelController.open();
-  //     } else {
-  //       panelController.close();
-  //     }
-  //   });
-  // }
-
   void openProfile() {
     Navigator.push(
       context,
@@ -70,18 +57,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
         builder: (context) => const ProfilePage(),
       ),
     );
-    // Navigator.pushReplacementNamed(context, '/profile');
   }
-
-  // void setDate() {
-  //   beginDate = DateTime.now().toString().split(' ')[0];
-  //   endDate = DateTime.now().toString().split(' ')[0];
-  //   DateTime currentDate = DateFormat('yyyy-MM-dd').parse(endDate);
-  //   DateTime futureDate = currentDate.add(const Duration(days: 2));
-  //   endDate = DateFormat('yyyy-MM-dd').format(futureDate);
-  //   print('Begin Date: $beginDate');
-  //   print('End Date: $endDate');
-  // }
 
   Stream<List<ModelAttendanceHistory>> getHistory({
     String startDate = '',
@@ -112,7 +88,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    // print('Selected Date: $picked');
 
     if (picked != null && picked != DateTime.parse(tgl)) {
       setState(() {
@@ -134,7 +109,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   }
 
   Future<double> getDeviceWidth() async {
-    // print('Device Width: ${MediaQuery.of(context).size.width}');
     return MediaQuery.of(context).size.width;
   }
 
@@ -427,7 +401,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                   children: [
                     // Open Filter Button
                     InkWell(
-                      // onTap: toggleFilter,
                       onTap: null,
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.1,

@@ -55,13 +55,11 @@ class MapPage extends StatelessWidget {
                   longitude,
                 ),
                 child: const Icon(
-                  // Icons.pin_drop_rounded,
                   Icons.location_on_rounded,
                   color: Colors.black,
                   size: 50.0,
                 ),
               ),
-              // Add more markers as needed using the same structure
             ],
           ),
         ],

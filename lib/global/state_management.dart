@@ -18,24 +18,6 @@ import 'dart:math' as math;
 import 'package:sip_sales/widget/popup/kotak_pesan.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-// class LocationTimeState with ChangeNotifier {
-//   List<ModelCoordinate> coordinateList = [];
-//
-//   List<ModelCoordinate> get fetchCoordinateList => coordinateList;
-//
-//   void addCoordinate(ModelCoordinate location) {
-//     coordinateList.add(location);
-//     // Notify listeners when locations are added
-//     notifyListeners();
-//   }
-//
-//   void clearCoordinate() {
-//     coordinateList.clear();
-//     // Notify listeners when locations are cleared
-//     notifyListeners();
-//   }
-// }
-
 class SipSalesState with ChangeNotifier {
   // ========================== Not Used ===============================
   // ====================== Sliding Up Panel ========================
@@ -81,9 +63,6 @@ class SipSalesState with ChangeNotifier {
       employeeID,
       date,
     );
-
-    print('activityRouteList length: ${activityRouteList.length}');
-    print('State management index: $getLocationIndex');
 
     return activityRouteList;
   }
@@ -659,13 +638,11 @@ class SipSalesState with ChangeNotifier {
           DateTime.now().toString().split(' ')[0],
           coordinateList,
         );
-        print('Result: $activityTimestampList');
 
         // Delete -> remove later
         bool byPass = true;
 
         // Delete -> remove later
-        print('Send Coordinates to Whatsapp');
         // ~:NEW:~
         List<dynamic> latList = [];
         List<dynamic> lngList = [];
@@ -710,7 +687,7 @@ class SipSalesState with ChangeNotifier {
         // ~:NEW:~
 
         if (activityTimestampList.isNotEmpty) {
-          print('Activity Timestamp List is not empty');
+          // print('Activity Timestamp List is not empty');
           if (byPass == true &&
               // if (checkOutList[0].resultMessage == 'SUKSES' &&
               activityTimestampList[0].resultMessage == 'SUKSES') {
@@ -724,7 +701,7 @@ class SipSalesState with ChangeNotifier {
               ),
             );
           } else {
-            print('Check Out fail');
+            // print('Check Out fail');
             GlobalFunction.tampilkanDialog(
               context,
               false,
@@ -736,7 +713,7 @@ class SipSalesState with ChangeNotifier {
             );
           }
         } else {
-          print('Activity Timestamp List is empty');
+          // print('Activity Timestamp List is empty');
           GlobalFunction.tampilkanDialog(
             context,
             false,
@@ -750,7 +727,7 @@ class SipSalesState with ChangeNotifier {
       }
       pressTrigger();
     } else {
-      print('Not Checked In yet');
+      // print('Not Checked In yet');
       GlobalFunction.tampilkanDialog(
         context,
         false,
@@ -798,8 +775,6 @@ class SipSalesState with ChangeNotifier {
 
   List<ModelActivities> get fetchSalesActivityTypes => salesActivityTypeList;
 
-  // List<String> get fetchFilteredList => filteredList;
-
   List<String> get fetchFilteredList => filteredList;
 
   ValueNotifier<bool> isLoading = ValueNotifier(false);
@@ -823,11 +798,9 @@ class SipSalesState with ChangeNotifier {
   }
 
   void clearState() {
-    // salesActivityTypeList.clear();
     pickedFileList.clear();
     imageBytesList.clear();
     imgList.clear();
-    // base64ImageList.value.clear();
     base64ImageList.clear();
     filteredList.clear();
     salesListener = ValueNotifier('PROSPEK');
@@ -848,18 +821,19 @@ class SipSalesState with ChangeNotifier {
   Future<ModelNewActivityDetails> fetchSalesActivityData() async {
     await getSalesActivityTypes();
 
+    // Delete -> remove if it's not used
     // filteredList.clear();
     // if (base64ImageList.length > 5) {
     //   filteredList.addAll(base64ImageList.take(5));
     // } else {
     //   filteredList.addAll(base64ImageList);
     // }
-
+    //
     // newActivity = ModelNewActivityDetails(
     //   activities: salesActivityTypeList,
     //   image: filteredList,
     // );
-
+    //
     // print('~:New Activity:~');
     // print('Activities: ${newActivity.activities.length}');
     // print('Image: ${newActivity.image.length}');
@@ -870,18 +844,19 @@ class SipSalesState with ChangeNotifier {
   Future<List<ModelActivities>> fetchManagerActivityData() async {
     await getManagerActivityTypes();
 
+    // Delete -> remove if it's not used
     // filteredList.clear();
     // if (base64ImageList.value.length > 5) {
     //   filteredList.addAll(base64ImageList.value.take(5));
     // } else {
     //   filteredList.addAll(base64ImageList.value);
     // }
-
+    //
     // newActivity = ModelNewActivityDetails(
     //   activities: managerActivityTypeList,
     //   image: filteredList,
     // );
-
+    //
     // print('~:New Activity:~');
     // print('Activities: ${newActivity.activities.length}');
     // print('Image: ${newActivity.image.length}');

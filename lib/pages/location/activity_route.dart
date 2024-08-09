@@ -24,7 +24,6 @@ class ActivityRoutePage extends StatefulWidget {
 class _ActivityRoutePageState extends State<ActivityRoutePage> {
   // Map Details
   String employeeID = '';
-  // String mapDate = '';
   List<ModelActivityRoute> activityRouteList = [];
 
   // Filter
@@ -35,9 +34,6 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
   double? latitude = 0.0;
   double? longitude = 0.0;
   String time = '';
-
-  // Delete -> temporary variable
-  int imageIndex = 0;
 
   void setDate(String value) {
     filterDate = value;
@@ -91,7 +87,7 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
       );
     } else {
       if (list[index].detail.length > 1) {
-        print('more than 1');
+        // print('more than 1');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -99,7 +95,7 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
           ),
         );
       } else {
-        print('less than equal to 1');
+        // print('less than equal to 1');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -108,10 +104,6 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
         );
       }
     }
-  }
-
-  Future<int> getImageIndex() async {
-    return imageIndex;
   }
 
   @override
