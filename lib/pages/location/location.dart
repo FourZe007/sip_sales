@@ -244,6 +244,8 @@ class _LocationPageState extends State<LocationPage> {
           await state.fetchSalesActivityData();
         }
 
+        state.setIsDisable(true);
+
         Navigator.pushReplacementNamed(context, '/menu');
       } else {
         // do nothing

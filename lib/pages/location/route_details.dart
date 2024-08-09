@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/pages/location/image_view.dart';
 
 class RouteDetailsPage extends StatefulWidget {
   const RouteDetailsPage({super.key});
@@ -69,71 +70,71 @@ class RouteDetailsPageState extends State<RouteDetailsPage> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.015,
                     ),
-                    (routeDetailsState.imageList[routeDetailsState.getIsActive]
-                                .isNotEmpty &&
-                            routeDetailsState
-                                        .imageList[
-                                            routeDetailsState.getIsActive]
-                                            [routeDetailsState.getSelectedImage]
-                                        .imageDir
-                                        .length %
-                                    4 ==
-                                0)
-                        ? InkWell(
-                            onTap: () => routeDetailsState.openImageView(
-                              context,
-                              routeDetailsState
-                                  .imageList[routeDetailsState.getIsActive]
-                                      [routeDetailsState.getSelectedImage]
-                                  .imageDir,
-                            ),
-                            child: Container(
-                              // height:
-                              //     MediaQuery.of(context).size.height * 0.425,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              margin: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.01,
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.01,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20.0),
-                                child: Image.memory(
-                                  base64Decode(
-                                    routeDetailsState
-                                        .imageList[
-                                            routeDetailsState.getIsActive]
-                                            [routeDetailsState.getSelectedImage]
-                                        .imageDir,
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            width: MediaQuery.of(context).size.width,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            margin: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.01,
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.01,
-                            ),
-                            child: Text(
-                              'Photos are not available',
-                              style: GlobalFont.mediumgiantfontR,
-                            ),
-                          ),
+                    // (routeDetailsState.imageList[routeDetailsState.getIsActive]
+                    //             .isNotEmpty &&
+                    //         routeDetailsState
+                    //                     .imageList[
+                    //                         routeDetailsState.getIsActive]
+                    //                         [routeDetailsState.getSelectedImage]
+                    //                     .imageDir
+                    //                     .length %
+                    //                 4 ==
+                    //             0)
+                    //     ? InkWell(
+                    //         onTap: () => routeDetailsState.openImageView(
+                    //           context,
+                    //           routeDetailsState
+                    //               .imageList[routeDetailsState.getIsActive]
+                    //                   [routeDetailsState.getSelectedImage]
+                    //               .imageDir,
+                    //         ),
+                    //         child: Container(
+                    //           // height:
+                    //           //     MediaQuery.of(context).size.height * 0.425,
+                    //           width: MediaQuery.of(context).size.width,
+                    //           decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(20.0),
+                    //           ),
+                    //           margin: EdgeInsets.symmetric(
+                    //             horizontal:
+                    //                 MediaQuery.of(context).size.width * 0.01,
+                    //             vertical:
+                    //                 MediaQuery.of(context).size.height * 0.01,
+                    //           ),
+                    //           child: ClipRRect(
+                    //             borderRadius: BorderRadius.circular(20.0),
+                    //             child: Image.memory(
+                    //               base64Decode(
+                    //                 routeDetailsState
+                    //                     .imageList[
+                    //                         routeDetailsState.getIsActive]
+                    //                         [routeDetailsState.getSelectedImage]
+                    //                     .imageDir,
+                    //               ),
+                    //               fit: BoxFit.cover,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       )
+                    //     : Container(
+                    //         height: MediaQuery.of(context).size.height * 0.25,
+                    //         width: MediaQuery.of(context).size.width,
+                    //         alignment: Alignment.center,
+                    //         decoration: BoxDecoration(
+                    //           border: Border.all(color: Colors.black),
+                    //           borderRadius: BorderRadius.circular(20.0),
+                    //         ),
+                    //         margin: EdgeInsets.symmetric(
+                    //           horizontal:
+                    //               MediaQuery.of(context).size.width * 0.01,
+                    //           vertical:
+                    //               MediaQuery.of(context).size.height * 0.01,
+                    //         ),
+                    //         child: Text(
+                    //           'Photos are not available',
+                    //           style: GlobalFont.mediumgiantfontR,
+                    //         ),
+                    //       ),
                     SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,6 +289,143 @@ class RouteDetailsPageState extends State<RouteDetailsPage> {
                                         ),
                                       )
                                     : const SizedBox(),
+                                (routeDetailsState
+                                            .imageList[
+                                                routeDetailsState.getIsActive]
+                                            .isNotEmpty &&
+                                        routeDetailsState
+                                                    .imageList[routeDetailsState
+                                                            .getIsActive][
+                                                        routeDetailsState
+                                                            .getSelectedImage]
+                                                    .imageDir
+                                                    .length %
+                                                4 ==
+                                            0)
+                                    ? InkWell(
+                                        onTap: () =>
+                                            routeDetailsState.openImageView(
+                                          context,
+                                          routeDetailsState
+                                              .imageList[
+                                                  routeDetailsState.getIsActive]
+                                                  [routeDetailsState
+                                                      .getSelectedImage]
+                                              .imageDir,
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey, width: 1.5),
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0,
+                                            vertical: 7.5,
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Wrap(
+                                                spacing: 15.0,
+                                                crossAxisAlignment:
+                                                    WrapCrossAlignment.center,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                    child: Image.memory(
+                                                      base64Decode(
+                                                        routeDetailsState
+                                                            .imageList[
+                                                                routeDetailsState
+                                                                    .getIsActive]
+                                                                [
+                                                                routeDetailsState
+                                                                    .getSelectedImage]
+                                                            .imageDir,
+                                                      ),
+                                                      fit: BoxFit.cover,
+                                                      scale: 10.0,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.15,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.075,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Bukti Aktivitas',
+                                                    style: GlobalFont.bigfontR,
+                                                  ),
+                                                ],
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ImageView(
+                                                        routeDetailsState
+                                                            .imageList[
+                                                                routeDetailsState
+                                                                    .getIsActive]
+                                                                [
+                                                                routeDetailsState
+                                                                    .getSelectedImage]
+                                                            .imageDir,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Text(
+                                                  'Lihat',
+                                                  style: GlobalFont
+                                                      .mediumgiantfontRBoldBlue,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox(),
+                                // : Container(
+                                //     height:
+                                //         MediaQuery.of(context).size.height *
+                                //             0.25,
+                                //     width:
+                                //         MediaQuery.of(context).size.width,
+                                //     alignment: Alignment.center,
+                                //     decoration: BoxDecoration(
+                                //       border:
+                                //           Border.all(color: Colors.black),
+                                //       borderRadius:
+                                //           BorderRadius.circular(20.0),
+                                //     ),
+                                //     margin: EdgeInsets.symmetric(
+                                //       horizontal: MediaQuery.of(context)
+                                //               .size
+                                //               .width *
+                                //           0.01,
+                                //       vertical: MediaQuery.of(context)
+                                //               .size
+                                //               .height *
+                                //           0.01,
+                                //     ),
+                                //     child: Text(
+                                //       'Photos are not available',
+                                //       style: GlobalFont.mediumgiantfontR,
+                                //     ),
+                                //   ),
                               ],
                             ),
                           ),

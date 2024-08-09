@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
@@ -86,31 +87,26 @@ class ManagerActivityDetails extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  child: Image.memory(
-                                    base64Decode(
-                                      activityDetailsState
-                                          .managerActivitiesList[index].pic1,
-                                    ),
-                                    fit: BoxFit.cover,
-                                    scale: 7.5,
+                          Wrap(
+                            spacing: 15.0,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: Image.memory(
+                                  base64Decode(
+                                    activityDetailsState
+                                        .managerActivitiesList[index].pic1,
                                   ),
+                                  fit: BoxFit.cover,
+                                  scale: 7.5,
                                 ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.03,
-                                ),
-                                Text(
-                                  'Bukti Aktivitas',
-                                  style: GlobalFont.bigfontR,
-                                ),
-                              ],
-                            ),
+                              ),
+                              Text(
+                                'Bukti Aktivitas',
+                                style: GlobalFont.bigfontR,
+                              ),
+                            ],
                           ),
                           InkWell(
                             onTap: () {
