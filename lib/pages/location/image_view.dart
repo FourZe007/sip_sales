@@ -1,17 +1,23 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:sip_sales/global/global.dart';
 
 // ignore: must_be_immutable
 class ImageView extends StatelessWidget {
-  ImageView(this.imageDir, {this.startTime = '', this.endTime = '', super.key});
+  ImageView(
+    this.imageDir, {
+    this.startTime = '',
+    this.endTime = '',
+    this.isManager = false,
+    super.key,
+  });
 
   String imageDir;
   String startTime;
   String endTime;
+  bool isManager;
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +63,45 @@ class ImageView extends StatelessWidget {
                           scale: 0.55,
                         ),
                       ),
-                      (startTime != '' && endTime != '')
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[350],
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              padding: const EdgeInsets.all(5.0),
-                              margin: const EdgeInsets.all(5.0),
-                              child: Text(
-                                '$startTime - $endTime',
-                                style: GlobalFont.mediumgiantfontRBold,
-                              ),
-                            )
-                          : const SizedBox(),
+                      Builder(
+                        builder: (context) {
+                          if (isManager) {
+                            if (startTime != '') {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[350],
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                padding: const EdgeInsets.all(5.0),
+                                margin: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  startTime,
+                                  style: GlobalFont.mediumgiantfontRBold,
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          } else {
+                            if (startTime != '' && endTime != '') {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[350],
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                padding: const EdgeInsets.all(5.0),
+                                margin: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  '$startTime - $endTime',
+                                  style: GlobalFont.mediumgiantfontRBold,
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),

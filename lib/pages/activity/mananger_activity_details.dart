@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
@@ -118,6 +117,7 @@ class ManagerActivityDetails extends StatelessWidget {
                                         .managerActivitiesList[index].pic1,
                                     startTime: activityDetailsState
                                         .managerActivitiesList[index].time,
+                                    isManager: true,
                                   ),
                                 ),
                               );

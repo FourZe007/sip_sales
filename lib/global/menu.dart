@@ -58,34 +58,11 @@ class MenuPageState extends State<MenuPage> {
     return MediaQuery.of(context).size.width;
   }
 
-  // Stream<List<ModelUser>> checkUser() async* {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   GlobalVar.nip = prefs.getString('nip');
-  //   GlobalVar.password = prefs.getString('password');
-  //
-  //   if (GlobalVar.nip != '' && GlobalVar.password != '') {
-  //     GlobalVar.userAccountList = await GlobalAPI.fetchUserAccount(
-  //       GlobalVar.nip!,
-  //       GlobalVar.password!,
-  //     );
-  //
-  //     // if (GlobalVar.userAccountList.isNotEmpty) {
-  //     //   print('User Name: ${GlobalVar.userAccountList[0].bsName}');
-  //     // } else {
-  //     //   print('User Account is empty');
-  //     // }
-  //
-  //     yield GlobalVar.userAccountList;
-  //   } else {
-  //     yield [];
-  //   }
-  // }
-
   @override
   void initState() {
     // TODO: implement initState
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent, //or set color with: Color(0xFF0000FF)
+      statusBarColor: Colors.transparent,
     ));
 
     super.initState();
@@ -328,7 +305,7 @@ class MenuPageState extends State<MenuPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Activity Insertion',
+                                          'Insert Activity',
                                           style: GlobalFont.mediumgiantfontM,
                                           textAlign: TextAlign.start,
                                         ),
@@ -365,7 +342,7 @@ class MenuPageState extends State<MenuPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'View Activity',
+                                          'View Activities',
                                           style: GlobalFont.mediumgiantfontM,
                                           textAlign: TextAlign.start,
                                         ),
