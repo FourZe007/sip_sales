@@ -1,6 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -58,11 +61,32 @@ class _UserConsentPageState extends State<UserConsentPage> {
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Can't launch URL"),
-        ),
-      );
+      // Custom Alert Dialog for Android and iOS
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Unable to open the link. Please check the URL and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oops!',
+          'Unable to open the link. Please check the URL and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
+
+      // Delete -> remove later
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text("Can't launch URL"),
+      //   ),
+      // );
     }
   }
 

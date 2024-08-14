@@ -1,16 +1,17 @@
 // ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import "dart:async";
-import 'package:app_settings/app_settings.dart';
 import 'package:sip_sales/global/state_management.dart';
-import 'package:sip_sales/widget/popup/kotak_pesan.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -29,30 +30,116 @@ class _LocationPageState extends State<LocationPage> {
 
   bool isUserGranted = false;
 
+  // (NVM) Ganti format location service, sehingga user HARUS mengaktifkan location service
   Future<bool> requestPermission(SipSalesState state) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     state.setIsLocationGranted(prefs.getBool('isLocationGranted')!);
 
-    if (!state.getIsLocationGranted) {
-      PermissionStatus permissionStatus;
-
-      permissionStatus = await location.hasPermission();
-      if (permissionStatus == PermissionStatus.denied ||
-          permissionStatus == PermissionStatus.deniedForever) {
-        permissionStatus = await location.requestPermission();
-        if (permissionStatus == PermissionStatus.denied ||
-            permissionStatus == PermissionStatus.deniedForever) {
-          await prefs.setBool('isLocationGranted', false);
-          return false;
+    // Alert Dialog for iOS
+    if (Platform.isIOS) {
+      bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+      print('isDialogGranted: $isDialogGranted');
+      if (!isDialogGranted) {
+        if (await GlobalDialog.showIOSPermissionGranted(
+          context,
+          'Location Permission',
+          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+        )) {
+          print('Granted');
+          prefs.setBool('isDialogGranted', true);
+          isDialogGranted = prefs.getBool('isDialogGranted')!;
+        } else {
+          print('Denied');
+          prefs.setBool('isDialogGranted', false);
+          isDialogGranted = prefs.getBool('isDialogGranted')!;
         }
       }
 
-      await prefs.setBool('isLocationGranted', true);
-      return true;
-    } else {
-      await prefs.setBool('isLocationGranted', true);
-      return true;
+      // print('isDialogGranted: $isDialogGranted');
+      if (isDialogGranted) {
+        print('User dialog granted, checking location permision');
+        if (!state.getIsLocationGranted) {
+          PermissionStatus permissionStatus;
+
+          permissionStatus = await location.hasPermission();
+          if (permissionStatus == PermissionStatus.denied ||
+              permissionStatus == PermissionStatus.deniedForever) {
+            permissionStatus = await location.requestPermission();
+            if (permissionStatus == PermissionStatus.denied ||
+                permissionStatus == PermissionStatus.deniedForever) {
+              await prefs.setBool('isLocationGranted', false);
+              return false;
+            }
+          }
+
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        } else {
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        }
+      } else {
+        await GlobalDialog.showCustomIOSDialog(
+          context,
+          'WARNING',
+          'App location permission denied, you can change your permission in App Settings.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isDismissible: true,
+        );
+      }
     }
+    // Alert Dialog for Android
+    else {
+      bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+      if (!isDialogGranted) {
+        if (await GlobalDialog.showAndroidPermissionGranted(
+          context,
+          'Location Permission',
+          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+        )) {
+          prefs.setBool('isDialogGranted', true);
+        } else {
+          prefs.setBool('isDialogGranted', false);
+        }
+        isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+      }
+
+      if (isDialogGranted) {
+        if (!state.getIsLocationGranted) {
+          PermissionStatus permissionStatus;
+
+          permissionStatus = await location.hasPermission();
+          if (permissionStatus == PermissionStatus.denied ||
+              permissionStatus == PermissionStatus.deniedForever) {
+            permissionStatus = await location.requestPermission();
+            if (permissionStatus == PermissionStatus.denied ||
+                permissionStatus == PermissionStatus.deniedForever) {
+              await prefs.setBool('isLocationGranted', false);
+              return false;
+            }
+          }
+
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        } else {
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        }
+      } else {
+        await GlobalDialog.showCustomAndroidDialog(
+          context,
+          'WARNING',
+          'App location permission denied, you can change your permission in App Settings.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isDismissible: true,
+        );
+      }
+    }
+
+    await prefs.setBool('isLocationGranted', false);
+    return false;
   }
 
   Future<bool> serviceRequest() async {
@@ -70,83 +157,42 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   void checkPermission(
+    BuildContext context,
     SipSalesState state,
-    bool isAllowed,
   ) async {
-    if (isAllowed) {
-      if (await serviceRequest()) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        GlobalVar.nip = prefs.getString('nip');
-        GlobalVar.password = prefs.getString('password');
-        attendanceStatus = prefs.getBool('attendanceStatus');
-        state.setIsManager(prefs.getInt('isManager'));
+    // Note -> this is how to open app settings
+    // await AppSettings.openAppSettings();
 
-        if (GlobalVar.nip != '' && GlobalVar.password != '') {
-          GlobalVar.userAccountList = await GlobalAPI.fetchUserAccount(
-            GlobalVar.nip!,
-            GlobalVar.password!,
-          );
-        }
+    if (await serviceRequest()) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      GlobalVar.nip = prefs.getString('nip');
+      GlobalVar.password = prefs.getString('password');
+      attendanceStatus = prefs.getBool('attendanceStatus');
+      state.setIsManager(prefs.getInt('isManager'));
 
-        if (prefs.getInt('isManager') == 0) {
-          // Note -> get Activity Insertation dropdown for Manager
-          await state.fetchManagerActivityData();
-        } else {
-          // Note -> get Activity Insertation dropdown for Sales
-          await state.fetchSalesActivityData();
-        }
-
-        state.setIsDisable(true);
-
-        Navigator.pushReplacementNamed(context, '/menu');
-      } else {
-        // do nothing
-        // let the user press the button until
-        // the user enable the location service
-      }
-    } else {
-      if (await requestPermission(state)) {
-        if (await serviceRequest()) {
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          GlobalVar.nip = prefs.getString('nip');
-          GlobalVar.password = prefs.getString('password');
-          attendanceStatus = prefs.getBool('attendanceStatus');
-          state.setIsManager(prefs.getInt('isManager')!);
-
-          if (GlobalVar.nip != '' && GlobalVar.password != '') {
-            GlobalVar.userAccountList = await GlobalAPI.fetchUserAccount(
-              GlobalVar.nip!,
-              GlobalVar.password!,
-            );
-          }
-
-          // Note -> get Activity Insertation dropdown for Sales
-          // write here for sales
-          // Note -> get Activity Insertation dropdown for Manager
-          state.fetchManagerActivityData();
-
-          Navigator.pushReplacementNamed(context, '/menu');
-        } else {
-          // do nothing
-          // let the user press the button until
-          // the user enable the location service
-        }
-      } else {
-        GlobalFunction.tampilkanDialog(
-          context,
-          false,
-          KotakPesan(
-            'WARNING',
-            'Please update your permission',
-            tinggi: MediaQuery.of(context).size.height * 0.2,
-            text: 'Update Settings',
-            function: () async {
-              await AppSettings.openAppSettings();
-              Navigator.pop(context);
-            },
-          ),
+      if (GlobalVar.nip != '' && GlobalVar.password != '') {
+        GlobalVar.userAccountList = await GlobalAPI.fetchUserAccount(
+          GlobalVar.nip!,
+          GlobalVar.password!,
         );
       }
+
+      if (prefs.getInt('isManager') == 0) {
+        // Note -> get Activity Insertation dropdown for Manager
+        await state.fetchManagerActivityData();
+      } else {
+        // Note -> get Activity Insertation dropdown for Sales
+        await state.fetchSalesActivityData();
+      }
+
+      state.setIsDisable(true);
+      state.clearState();
+
+      Navigator.pushReplacementNamed(context, '/menu');
+    } else {
+      // do nothing
+      // let the user press the button until
+      // the user enable the location service
     }
   }
 
@@ -164,7 +210,7 @@ class _LocationPageState extends State<LocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final locationState = Provider.of<SipSalesState>(context);
+    final locationState = Provider.of<SipSalesState>(context, listen: false);
 
     return FutureBuilder(
       future: requestPermission(locationState),
@@ -229,8 +275,8 @@ class _LocationPageState extends State<LocationPage> {
                           ),
                           InkWell(
                             onTap: () => checkPermission(
+                              context,
                               locationState,
-                              snapshot.data!,
                             ),
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.35,
@@ -327,8 +373,8 @@ class _LocationPageState extends State<LocationPage> {
                           ),
                           InkWell(
                             onTap: () => checkPermission(
+                              context,
                               locationState,
-                              snapshot.data!,
                             ),
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.35,

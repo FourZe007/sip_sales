@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/widget/textfield/customuserinput2.dart';
 
@@ -29,40 +32,103 @@ class _RegisterPageState extends State<RegisterPage> {
   void createDummyAccount() {
     if (username != '' && password != '' && confirmation != '') {
       if (password != confirmation) {
-        final snackBar = SnackBar(
-          backgroundColor: Colors.grey[300],
-          content: Text(
-            'Please check your input again.',
-            style: GlobalFont.mediumgiantfontR,
-          ),
-        );
+        // Custom Alert Dialog for Android and iOS
+        if (Platform.isIOS) {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Oops!',
+            'Please check and review your input and try again.',
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
+          );
+        } else {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Oops!',
+            'Please check and review your input and try again.',
+            () => Navigator.pop(context),
+            'Dismiss',
+          );
+        }
 
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // Delete -> remove later
+        // final snackBar = SnackBar(
+        //   backgroundColor: Colors.grey[300],
+        //   content: Text(
+        //     'Please check your input again.',
+        //     style: GlobalFont.mediumgiantfontR,
+        //   ),
+        // );
+        //
+        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
-        final snackBar = SnackBar(
-          backgroundColor: Colors.grey[300],
-          content: Text(
+        // Custom Alert Dialog for Android and iOS
+        if (Platform.isIOS) {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'You did it!',
             'Account successfully registered, Please wait for the account creation approval.',
-            style: GlobalFont.mediumgiantfontR,
-          ),
-        );
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
+          );
+        } else {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'You did it!',
+            'Account successfully registered, Please wait for the account creation approval.',
+            () => Navigator.pop(context),
+            'Dismiss',
+          );
+        }
 
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // Delete -> remove later
+        // final snackBar = SnackBar(
+        //   backgroundColor: Colors.grey[300],
+        //   content: Text(
+        //     'Account successfully registered, Please wait for the account creation approval.',
+        //     style: GlobalFont.mediumgiantfontR,
+        //   ),
+        // );
+
+        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
         Future.delayed(const Duration(seconds: 1)).then((value) {
           Navigator.pop(context);
         });
       }
     } else {
-      final snackBar = SnackBar(
-        backgroundColor: Colors.grey[400],
-        content: Text(
-          'Please check your input again.',
-          style: GlobalFont.mediumgiantfontR,
-        ),
-      );
+      // Custom Alert Dialog for Android and iOS
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oops!',
+          'Please check and review your input and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oops!',
+          'Please check and review your input and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
 
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // Delete -> remove later
+      // final snackBar = SnackBar(
+      //   backgroundColor: Colors.grey[400],
+      //   content: Text(
+      //     'Please check your input again.',
+      //     style: GlobalFont.mediumgiantfontR,
+      //   ),
+      // );
+      //
+      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 

@@ -6,8 +6,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/dropdown/custom_dropdown.dart';
@@ -43,6 +46,9 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
   // Loading
   bool isLoading = false;
 
+  Location location = Location();
+  bool isUserGranted = false;
+
   void setActivityType(String value, String value2) {
     activityType = value;
     activityDescription = value2;
@@ -70,35 +76,130 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     state.removeImage(index);
     onTap();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Image successfully deleted'),
-      ),
-    );
+    if (Platform.isIOS) {
+      GlobalDialog.showCrossPlatformDialog(
+        context,
+        'Success!',
+        'The image has been deleted successfully.',
+        () => Navigator.pop(context),
+        'Dismiss',
+        isIOS: true,
+      );
+    } else {
+      GlobalDialog.showCrossPlatformDialog(
+        context,
+        'Success!',
+        'The image has been deleted successfully.',
+        () => Navigator.pop(context),
+        'Dismiss',
+      );
+    }
+
+    // Delete -> remove later
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(
+    //     content: Text('Image successfully deleted'),
+    //   ),
+    // );
   }
 
   void assetHandler(SipSalesState state) async {
-    if (state.fetchFilteredList.isEmpty) {
-      if (activityType == state.fetchManagerActivityTypeList[2].activityName) {
-        uploadImageFromGallery(
-          context,
-          state,
-        );
+    if (Platform.isIOS) {
+      if (state.fetchFilteredList.isEmpty) {
+        if (activityType ==
+            state.fetchManagerActivityTypeList[2].activityName) {
+          await GlobalDialog.showIOSPermissionGranted(
+            context,
+            'Photo Permission',
+            'This app needs access to your photo to image asset. Would you like to allow photo access?',
+          ).then(
+            (isPermissionGranted) async {
+              if (isPermissionGranted) {
+                uploadImageFromGallery(
+                  context,
+                  state,
+                );
+              } else {
+                await GlobalDialog.showCustomIOSDialog(
+                  context,
+                  'Warning',
+                  'You need to allow photo access to upload image.',
+                  () => Navigator.pop(context),
+                  'Dismiss',
+                  isDismissible: true,
+                );
+              }
+            },
+          );
+        } else {
+          await GlobalDialog.showIOSPermissionGranted(
+            context,
+            'Photo Permission',
+            'This app needs access to your photo to image asset. Would you like to allow photo access?',
+          ).then(
+            (isPermissionGranted) async {
+              if (isPermissionGranted) {
+                uploadImageFromCamera(
+                  context,
+                  state,
+                );
+              } else {
+                await GlobalDialog.showCustomIOSDialog(
+                  context,
+                  'Warning',
+                  'You need to allow camera access to upload image.',
+                  () => Navigator.pop(context),
+                  'Dismiss',
+                  isDismissible: true,
+                );
+              }
+            },
+          );
+        }
       } else {
-        uploadImageFromCamera(
+        await GlobalDialog.showCrossPlatformDialog(
           context,
-          state,
+          'Warning',
+          'You only allowed to upload 1 image, please delete your image first.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
         );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          duration: Duration(seconds: 5),
-          content: Text(
-            'You only allowed to upload 1 image, please delete your image first',
-          ),
-        ),
-      );
+      if (state.fetchFilteredList.isEmpty) {
+        await GlobalDialog.showAndroidPermissionGranted(
+          context,
+          'Photo Permission',
+          'This app needs access to your photo to image asset. Would you like to allow photo access?',
+        ).then(
+          (isPermissionGranted) async {
+            if (isPermissionGranted) {
+              uploadImageFromGallery(
+                context,
+                state,
+              );
+            } else {
+              await GlobalDialog.showCustomIOSDialog(
+                context,
+                'Warning',
+                'You need to allow camera access to upload image.',
+                () => Navigator.pop(context),
+                'Dismiss',
+                isDismissible: true,
+              );
+            }
+          },
+        );
+      } else {
+        await GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Warning',
+          'You only allowed to upload 1 image, please delete your image first.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
     }
   }
 
@@ -140,35 +241,53 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       androidInfo = await DeviceInfoPlugin().androidInfo;
       // Note -> below Android 12
       if (androidInfo.version.sdkInt <= 32) {
-        var storageStatus = await Permission.storage.status;
+        var storageStatus = await handler.Permission.storage.status;
         // print(storageStatus);
         if (storageStatus.isGranted) {
           // print('Camera Permission granted');
           if (!await state.uploadImageFromGallery(context)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                duration: Duration(seconds: 1),
-                content: Text(
-                  'Upload image cancelled.',
-                ),
-              ),
+            await GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Failed!',
+              'Upload image cancelled.',
+              () => Navigator.pop(context),
+              'Dismiss',
             );
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     duration: Duration(seconds: 1),
+            //     content: Text(
+            //       'Upload image cancelled.',
+            //     ),
+            //   ),
+            // );
           } else {
             // do nothing
           }
         } else {
           // print('Gallery Permission denied');
-          storageStatus = await Permission.storage.request();
+          storageStatus = await handler.Permission.storage.request();
           // print(storageStatus);
-          if (storageStatus != PermissionStatus.granted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                duration: Duration(seconds: 1),
-                content: Text(
-                  'Please change your Photo and Video permission.',
-                ),
-              ),
+          if (storageStatus != handler.PermissionStatus.granted) {
+            await GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Warning!',
+              'Please change your Photo and Video permission.',
+              () => Navigator.pop(context),
+              'Dismiss',
             );
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     duration: Duration(seconds: 1),
+            //     content: Text(
+            //       'Please change your Photo and Video permission.',
+            //     ),
+            //   ),
+            // );
           } else {
             uploadImageFromGallery(context, state);
           }
@@ -176,71 +295,109 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       }
       // Note -> above Android 13
       else {
-        var galleryStatus = await Permission.photos.status;
+        var galleryStatus = await handler.Permission.photos.status;
         // print(galleryStatus);
         if (galleryStatus.isGranted || galleryStatus.isLimited) {
           // print('Camera Permission granted');
           if (!await state.uploadImageFromGallery(context)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                duration: Duration(seconds: 1),
-                content: Text(
-                  'Upload image cancelled.',
-                ),
-              ),
+            await GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Failed!',
+              'Upload image cancelled.',
+              () => Navigator.pop(context),
+              'Dismiss',
             );
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     duration: Duration(seconds: 1),
+            //     content: Text(
+            //       'Upload image cancelled.',
+            //     ),
+            //   ),
+            // );
           } else {
             // do nothing
           }
         } else {
           // print('Gallery Permission denied');
-          galleryStatus = await Permission.photos.request();
+          galleryStatus = await handler.Permission.photos.request();
           // print(galleryStatus);
-          if (galleryStatus != PermissionStatus.granted ||
+          if (galleryStatus != handler.PermissionStatus.granted ||
               galleryStatus.isLimited) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                duration: Duration(seconds: 1),
-                content: Text(
-                  'Please change your Photo and Video permission.',
-                ),
-              ),
+            await GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Warning!',
+              'Please change your Photo and Video permission.',
+              () => Navigator.pop(context),
+              'Dismiss',
             );
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     duration: Duration(seconds: 1),
+            //     content: Text(
+            //       'Please change your Photo and Video permission.',
+            //     ),
+            //   ),
+            // );
           } else {
             uploadImageFromGallery(context, state);
           }
         }
       }
     } else if (Platform.isIOS) {
-      var storageStatus = await Permission.storage.status;
+      var storageStatus = await handler.Permission.storage.status;
       // print(storageStatus);
       if (storageStatus.isGranted) {
         // print('Camera Permission granted');
         if (!await state.uploadImageFromGallery(context)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              duration: Duration(seconds: 1),
-              content: Text(
-                'Upload image cancelled.',
-              ),
-            ),
+          await GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Failed!',
+            'Upload image cancelled.',
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
           );
-        } else {
+
+          // Delete -> remove later
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     const SnackBar(
+          //       duration: Duration(seconds: 1),
+          //       content: Text(
+          //         'Upload image cancelled.',
+          //       ),
+          //     ),
+          //   );
+          // } else {
           // do nothing
         }
       } else {
         // print('Gallery Permission denied');
-        storageStatus = await Permission.storage.request();
+        storageStatus = await handler.Permission.storage.request();
         // print(storageStatus);
-        if (storageStatus != PermissionStatus.granted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              duration: Duration(seconds: 1),
-              content: Text(
-                'Please change your Photo and Video permission.',
-              ),
-            ),
+        if (storageStatus != handler.PermissionStatus.granted) {
+          await GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Warning!',
+            'Please change your Photo and Video permission.',
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
           );
+
+          // Delete -> remove later
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(
+          //     duration: Duration(seconds: 1),
+          //     content: Text(
+          //       'Please change your Photo and Video permission.',
+          //     ),
+          //   ),
+          // );
         } else {
           uploadImageFromGallery(context, state);
         }
@@ -253,38 +410,185 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     SipSalesState state, {
     bool isRecruitment = false,
   }) async {
-    var cameraStatus = await Permission.camera.status;
+    var cameraStatus = await handler.Permission.camera.status;
     // print('Camera Permission');
     if (cameraStatus.isGranted) {
       // print('Camera Permission granted');
       if (!await state.uploadImageFromCamera(context)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(seconds: 1),
-            content: Text(
-              'Upload image cancelled.',
-            ),
-          ),
-        );
+        if (Platform.isIOS) {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Failed!',
+            'Upload image cancelled.',
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
+          );
+        } else {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Failed!',
+            'Upload image cancelled.',
+            () => Navigator.pop(context),
+            'Dismiss',
+          );
+        }
+
+        // Delete -> remove later
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     duration: Duration(seconds: 1),
+        //     content: Text(
+        //       'Upload image cancelled.',
+        //     ),
+        //   ),
+        // );
       } else {
         // do nothing
       }
     } else {
       // print('Camera Permission denied');
-      cameraStatus = await Permission.camera.request();
-      if (cameraStatus != PermissionStatus.granted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(seconds: 1),
-            content: Text(
-              'Please change your Camera permission.',
-            ),
-          ),
-        );
+      cameraStatus = await handler.Permission.camera.request();
+      if (cameraStatus != handler.PermissionStatus.granted) {
+        if (Platform.isIOS) {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Warning!',
+            'Please change your Camera permission.',
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
+          );
+        } else {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Warning!',
+            'Please change your Camera permission.',
+            () => Navigator.pop(context),
+            'Dismiss',
+          );
+        }
+
+        // Delete -> remove later
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     duration: Duration(seconds: 1),
+        //     content: Text(
+        //       'Please change your Camera permission.',
+        //     ),
+        //   ),
+        // );
       } else {
         uploadImageFromCamera(context, state);
       }
     }
+  }
+
+  Future<bool> requestPermission(SipSalesState state) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    state.setIsLocationGranted(prefs.getBool('isLocationGranted')!);
+
+    // Alert Dialog for iOS
+    if (Platform.isIOS) {
+      bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+      if (!isDialogGranted) {
+        if (await GlobalDialog.showIOSPermissionGranted(
+          context,
+          'Location Permission',
+          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+        )) {
+          prefs.setBool('isDialogGranted', true);
+          isDialogGranted = prefs.getBool('isDialogGranted')!;
+        } else {
+          prefs.setBool('isDialogGranted', false);
+          isDialogGranted = prefs.getBool('isDialogGranted')!;
+        }
+      }
+
+      // print('isDialogGranted: $isDialogGranted');
+      if (isDialogGranted) {
+        if (!state.getIsLocationGranted) {
+          PermissionStatus permissionStatus;
+
+          permissionStatus = await location.hasPermission();
+          if (permissionStatus == PermissionStatus.denied ||
+              permissionStatus == PermissionStatus.deniedForever) {
+            permissionStatus = await location.requestPermission();
+            if (permissionStatus == PermissionStatus.denied ||
+                permissionStatus == PermissionStatus.deniedForever) {
+              await prefs.setBool('isLocationGranted', false);
+              return false;
+            }
+          }
+
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        } else {
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        }
+      } else {
+        await GlobalDialog.showCustomIOSDialog(
+          context,
+          'WARNING',
+          'App location permission denied, you can change your permission in App Settings.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isDismissible: true,
+        );
+      }
+    }
+    // Alert Dialog for Android
+    else {
+      bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+      if (!isDialogGranted) {
+        if (await GlobalDialog.showAndroidPermissionGranted(
+          context,
+          'Location Permission',
+          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+        )) {
+          prefs.setBool('isDialogGranted', true);
+        } else {
+          prefs.setBool('isDialogGranted', false);
+        }
+        isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+      }
+
+      if (isDialogGranted) {
+        if (!state.getIsLocationGranted) {
+          PermissionStatus permissionStatus;
+
+          permissionStatus = await location.hasPermission();
+          if (permissionStatus == PermissionStatus.denied ||
+              permissionStatus == PermissionStatus.deniedForever) {
+            permissionStatus = await location.requestPermission();
+            if (permissionStatus == PermissionStatus.denied ||
+                permissionStatus == PermissionStatus.deniedForever) {
+              await prefs.setBool('isLocationGranted', false);
+              return false;
+            }
+          }
+
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        } else {
+          await prefs.setBool('isLocationGranted', true);
+          return true;
+        }
+      } else {
+        await GlobalDialog.showCustomAndroidDialog(
+          context,
+          'WARNING',
+          'App location permission denied, you can change your permission in App Settings.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isDismissible: true,
+        );
+      }
+    }
+
+    await prefs.setBool('isLocationGranted', false);
+    return false;
   }
 
   @override
@@ -646,11 +950,31 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                 if (value == true) {
                   return InkWell(
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please check your input again'),
-                        ),
-                      );
+                      if (Platform.isIOS) {
+                        GlobalDialog.showCrossPlatformDialog(
+                          context,
+                          'Warning',
+                          'Please check your input again.',
+                          () => Navigator.pop(context),
+                          'Dismiss',
+                          isIOS: true,
+                        );
+                      } else {
+                        GlobalDialog.showCrossPlatformDialog(
+                          context,
+                          'Warning',
+                          'Please check your input again.',
+                          () => Navigator.pop(context),
+                          'Dismiss',
+                        );
+                      }
+
+                      // Delete -> remove later
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(
+                      //     content: Text('Please check your input again'),
+                      //   ),
+                      // );
                     },
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 2),
@@ -686,12 +1010,17 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                   );
                 } else {
                   return InkWell(
-                    onTap: () => managerActivityState.createShopManagerActivity(
-                      context,
-                      managerActivityState.fetchManagerActivityTypeList,
-                      activityType,
-                      activityDescription,
-                    ),
+                    onTap: () async {
+                      if (await requestPermission(
+                          Provider.of<SipSalesState>(context, listen: false))) {
+                        managerActivityState.createShopManagerActivity(
+                          context,
+                          managerActivityState.fetchManagerActivityTypeList,
+                          activityType,
+                          activityDescription,
+                        );
+                      }
+                    },
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 1),
                       width: MediaQuery.of(context).size.width,

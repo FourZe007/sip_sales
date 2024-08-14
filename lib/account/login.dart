@@ -1,11 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/account/register.dart';
 import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
@@ -62,9 +65,9 @@ class _LoginPageState extends State<LoginPage> {
     bool isAccept,
     SipSalesState state,
   ) async {
-    if (isAccept) {
-      Navigator.of(context).pop();
+    Navigator.pop(context);
 
+    if (isAccept) {
       await Future.delayed(const Duration(seconds: 1)).then((_) async {
         isUserGranted = await Navigator.push(
           context,
@@ -78,80 +81,122 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacementNamed(context, '/location');
         } else {
           state.setIsUserAgree(false);
-          GlobalFunction.tampilkanDialog(
-            context,
-            true,
-            Container(
-              height: MediaQuery.of(context).size.height * 0.25,
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.01,
-                vertical: MediaQuery.of(context).size.height * 0.01,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'SIP Care',
-                    style: GlobalFont.giantfontRBold,
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Please enable at least one permission inside SIP User Consent page in order to continue.',
-                    style: GlobalFont.mediumgiantfontR,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
-                    'Tap anywhere to dismiss.',
-                    style: GlobalFont.mediumbigfontR,
-                  ),
-                ],
-              ),
-            ),
-          );
+
+          if (Platform.isIOS) {
+            GlobalDialog.showCustomIOSDialog(
+              context,
+              'SIP Care',
+              'Please enable at least one permission inside SIP User Consent page in order to continue.',
+              () => Navigator.pop(context),
+              'Dismiss',
+              isDismissible: true,
+            );
+          } else {
+            GlobalDialog.showCustomAndroidDialog(
+              context,
+              'SIP Care',
+              'Please enable at least one permission inside SIP User Consent page in order to continue.',
+              () => Navigator.pop(context),
+              'Dismiss',
+              isDismissible: true,
+            );
+          }
+
+          // Delete -> remove later
+          // GlobalFunction.tampilkanDialog(
+          //   context,
+          //   true,
+          //   Container(
+          //     height: MediaQuery.of(context).size.height * 0.25,
+          //     padding: EdgeInsets.symmetric(
+          //       horizontal: MediaQuery.of(context).size.width * 0.01,
+          //       vertical: MediaQuery.of(context).size.height * 0.01,
+          //     ),
+          //     decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(20.0),
+          //     ),
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text(
+          //           'SIP Care',
+          //           style: GlobalFont.giantfontRBold,
+          //         ),
+          //         const SizedBox(height: 20),
+          //         Text(
+          //           'Please enable at least one permission inside SIP User Consent page in order to continue.',
+          //           style: GlobalFont.mediumgiantfontR,
+          //           textAlign: TextAlign.center,
+          //         ),
+          //         const SizedBox(height: 30),
+          //         Text(
+          //           'Tap anywhere to dismiss.',
+          //           style: GlobalFont.mediumbigfontR,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // );
         }
       });
     } else {
       state.setIsUserAgree(false);
-      Navigator.of(context).pop();
 
-      GlobalFunction.tampilkanDialog(
-        context,
-        true,
-        Container(
-          height: MediaQuery.of(context).size.height * 0.25,
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.01,
-            vertical: MediaQuery.of(context).size.height * 0.01,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'SIP Care',
-                style: GlobalFont.giantfontRBold,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Please make sure you accept the SIP Care in order to maximize the App Performance.',
-                style: GlobalFont.mediumgiantfontR,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              Text(
-                'Tap anywhere to dismiss.',
-                style: GlobalFont.mediumbigfontR,
-              ),
-            ],
-          ),
-        ),
-      );
+      if (Platform.isIOS) {
+        GlobalDialog.showCustomIOSDialog(
+          context,
+          'SIP Care',
+          'Please make sure you accept the SIP Care in order to maximize the App Performance.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isDismissible: true,
+        );
+      } else {
+        GlobalDialog.showCustomAndroidDialog(
+          context,
+          'SIP Care',
+          'Please make sure you accept the SIP Care in order to maximize the App Performance.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isDismissible: true,
+        );
+      }
+
+      // Delete -> remove later
+      // GlobalFunction.tampilkanDialog(
+      //   context,
+      //   true,
+      //   Container(
+      //     height: MediaQuery.of(context).size.height * 0.25,
+      //     padding: EdgeInsets.symmetric(
+      //       horizontal: MediaQuery.of(context).size.width * 0.01,
+      //       vertical: MediaQuery.of(context).size.height * 0.01,
+      //     ),
+      //     decoration: BoxDecoration(
+      //       borderRadius: BorderRadius.circular(20.0),
+      //     ),
+      //     child: Column(
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         Text(
+      //           'SIP Care',
+      //           style: GlobalFont.giantfontRBold,
+      //         ),
+      //         const SizedBox(height: 20),
+      //         Text(
+      //           'Please make sure you accept the SIP Care in order to maximize the App Performance.',
+      //           style: GlobalFont.mediumgiantfontR,
+      //           textAlign: TextAlign.center,
+      //         ),
+      //         const SizedBox(height: 30),
+      //         Text(
+      //           'Tap anywhere to dismiss.',
+      //           style: GlobalFont.mediumbigfontR,
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // );
     }
   }
 
@@ -167,88 +212,99 @@ class _LoginPageState extends State<LoginPage> {
             loginStatus = 'Login berhasil.';
           });
 
-          Future.delayed(const Duration(seconds: 2)).then((value) async {
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            await prefs.setInt('flag', 1);
-            await prefs.setString('nip', nip);
-            await prefs.setString('password', password);
-            await prefs.setBool('attendanceStatus', false);
-            await prefs.setString('branch', userLogin[0].branch);
-            await prefs.setString('shop', userLogin[0].shop);
-            await prefs.setInt('isManager', userLogin[0].code);
-            await prefs.setBool('isLocationGranted', false);
-            toggleIsLoading();
+          Future.delayed(const Duration(seconds: 2)).then(
+            (value) async {
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              await prefs.setInt('flag', 1);
+              await prefs.setString('nip', nip);
+              await prefs.setString('password', password);
+              await prefs.setBool('attendanceStatus', false);
+              await prefs.setString('branch', userLogin[0].branch);
+              await prefs.setString('shop', userLogin[0].shop);
+              await prefs.setInt('isManager', userLogin[0].code);
+              await prefs.setBool('isLocationGranted', false);
+              toggleIsLoading();
 
-            if (state.getIsUserAgree == true) {
-              Navigator.pushReplacementNamed(context, '/location');
-            } else {
-              GlobalFunction.displayProminentDisclosure(
-                context,
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.275,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.025,
-                    vertical: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'SIP Care',
-                          style: GlobalFont.giantfontRBold,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                          style: GlobalFont.mediumgiantfontR,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () =>
-                                  displayProminentDisclosure(false, state),
-                              style: ElevatedButton.styleFrom(
-                                side: const BorderSide(
-                                  color: Colors.blue,
-                                  width: 2.5,
-                                ),
-                              ),
-                              child: Text(
-                                'Deny',
-                                style: GlobalFont.bigfontR,
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () =>
-                                  displayProminentDisclosure(true, state),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                              ),
-                              child: Text(
-                                'Accept',
-                                style: GlobalFont.bigfontRWhite,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          });
+              if (state.getIsUserAgree == true) {
+                Navigator.pushReplacementNamed(context, '/location');
+              } else {
+                GlobalDialog.showCustomIOSDialog(
+                  context,
+                  'SIP Care',
+                  'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
+                  () => displayProminentDisclosure(true, state),
+                  'Accept',
+                  cancelHandler: () => displayProminentDisclosure(false, state),
+                  cancelText: 'Deny',
+                );
+                // GlobalFunction.displayProminentDisclosure(
+                //   context,
+                //   Container(
+                //     height: MediaQuery.of(context).size.height * 0.275,
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(20.0),
+                //     ),
+                //     padding: EdgeInsets.symmetric(
+                //       horizontal: MediaQuery.of(context).size.width * 0.025,
+                //       vertical: MediaQuery.of(context).size.height * 0.01,
+                //     ),
+                //     child: Column(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         Expanded(
+                //           child: Text(
+                //             'SIP Care',
+                //             style: GlobalFont.giantfontRBold,
+                //           ),
+                //         ),
+                //         Expanded(
+                //           flex: 2,
+                //           child: Text(
+                //             'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
+                //             style: GlobalFont.mediumgiantfontR,
+                //             textAlign: TextAlign.center,
+                //           ),
+                //         ),
+                //         Expanded(
+                //           child: Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //             children: [
+                //               ElevatedButton(
+                //                 onPressed: () =>
+                //                     displayProminentDisclosure(false, state),
+                //                 style: ElevatedButton.styleFrom(
+                //                   side: const BorderSide(
+                //                     color: Colors.blue,
+                //                     width: 2.5,
+                //                   ),
+                //                 ),
+                //                 child: Text(
+                //                   'Deny',
+                //                   style: GlobalFont.bigfontR,
+                //                 ),
+                //               ),
+                //               ElevatedButton(
+                //                 onPressed: () =>
+                //                     displayProminentDisclosure(true, state),
+                //                 style: ElevatedButton.styleFrom(
+                //                   backgroundColor: Colors.blue,
+                //                 ),
+                //                 child: Text(
+                //                   'Accept',
+                //                   style: GlobalFont.bigfontRWhite,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // );
+              }
+            },
+          );
         } else if (userLogin[0].flag == 2) {
           toggleIsLoading();
           setState(() {

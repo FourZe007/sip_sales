@@ -67,6 +67,7 @@ android {
     signingConfigs {
         release {
             storeFile file('C:/Users/Joseph Angelus/my-keystore.jks')
+            // storeFile file('/Users/itbasra/Documents/Joseph/Documentations/Development Files')
             storePassword 'josephangelus'
             keyAlias = 'meteor'
             keyPassword 'josephangelus'

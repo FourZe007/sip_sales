@@ -1,9 +1,12 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
@@ -25,15 +28,35 @@ class _MapListPageState extends State<MapListPage> {
     List<ModelActivityRoute> list,
   ) {
     if (list[index].detail.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.grey[400],
-          content: Text(
-            'Activity details are not available',
-            style: GlobalFont.mediumgiantfontR,
-          ),
-        ),
-      );
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Details are not available.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Details are not available.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
+
+      // Delete -> remove later
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: Colors.grey[400],
+      //     content: Text(
+      //       'Activity details are not available',
+      //       style: GlobalFont.mediumgiantfontR,
+      //     ),
+      //   ),
+      // );
     } else {
       if (list[index].detail.length > 1) {
         // print('more than 1');

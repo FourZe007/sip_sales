@@ -27,7 +27,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs your location to provide location features. You can disable location access at any time in Settings.</string>
+	<string>App would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>App would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>App would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

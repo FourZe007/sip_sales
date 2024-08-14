@@ -1,11 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/dropdown/custom_dropdown.dart';
@@ -110,17 +112,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
     handle(time);
   }
 
-  Future showPopUpInformation(String value) async {
-    print('pressed');
-    InfoPopupWidget(
-      arrowTheme: const InfoPopupArrowTheme(
-        color: Colors.pink,
-      ),
-      contentTitle: 'INFORMATION',
-      child: Text(value),
-    );
-  }
-
   void onTap() {
     isOpen = !isOpen;
     if (isOpen == true) {
@@ -132,19 +123,82 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
 
   void assetHandler(SipSalesState state) async {
     if (state.fetchFilteredList.isEmpty) {
-      uploadImage(
-        context,
-        state,
-      );
+      if (Platform.isIOS) {
+        await GlobalDialog.showIOSPermissionGranted(
+          context,
+          'Camera Permission',
+          'This app needs access to your camera. Would you like to allow camera access?',
+        ).then(
+          (isPermissionGranted) async {
+            if (isPermissionGranted) {
+              uploadImage(
+                context,
+                state,
+              );
+            } else {
+              await GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Warning',
+                'You need to allow camera access to upload image.',
+                () => Navigator.pop(context),
+                'Dismiss',
+              );
+            }
+          },
+        );
+      } else {
+        await GlobalDialog.showAndroidPermissionGranted(
+          context,
+          'Camera Permission',
+          'This app needs access to your camera. Would you like to allow camera access?',
+        ).then(
+          (isPermissionGranted) async {
+            if (isPermissionGranted) {
+              uploadImage(
+                context,
+                state,
+              );
+            } else {
+              await GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Warning',
+                'You need to allow camera access to upload image.',
+                () => Navigator.pop(context),
+                'Dismiss',
+              );
+            }
+          },
+        );
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          duration: Duration(seconds: 5),
-          content: Text(
-            'You only allowed to upload 1 image, please delete your image first',
-          ),
-        ),
-      );
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'You only allowed to upload 1 image, please delete your image first.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'You only allowed to upload 1 image, please delete your image first.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
+
+      // Delete -> remove later
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     duration: Duration(seconds: 5),
+      //     content: Text(
+      //       'You only allowed to upload 1 image, please delete your image first',
+      //     ),
+      //   ),
+      // );
     }
   }
 
@@ -153,11 +207,31 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
     state.removeImage(index);
     onTap();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Image successfully deleted'),
-      ),
-    );
+    if (Platform.isIOS) {
+      GlobalDialog.showCrossPlatformDialog(
+        context,
+        'Success!',
+        'The image has been deleted successfully.',
+        () => Navigator.pop(context),
+        'Dismiss',
+        isIOS: true,
+      );
+    } else {
+      GlobalDialog.showCrossPlatformDialog(
+        context,
+        'Success!',
+        'The image has been deleted successfully.',
+        () => Navigator.pop(context),
+        'Dismiss',
+      );
+    }
+
+    // Delete -> remove later
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(
+    //     content: Text('Image successfully deleted'),
+    //   ),
+    // );
   }
 
   void uploadImage(
@@ -168,27 +242,67 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
     if (cameraStatus.isGranted) {
       // print('Camera Permission granted');
       if (!await state.uploadImageFromCamera(context)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(seconds: 1),
-            content: Text(
-              'Upload image cancelled.',
-            ),
-          ),
-        );
+        if (Platform.isIOS) {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Failed!',
+            'Upload image cancelled.',
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
+          );
+        } else {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Failed!',
+            'Upload image cancelled.',
+            () => Navigator.pop(context),
+            'Dismiss',
+          );
+        }
+
+        // Delete -> remove later
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     duration: Duration(seconds: 1),
+        //     content: Text(
+        //       'Upload image cancelled.',
+        //     ),
+        //   ),
+        // );
       }
     } else {
       // print('Camera Permission denied');
       cameraStatus = await Permission.camera.request();
       if (cameraStatus != PermissionStatus.granted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(seconds: 1),
-            content: Text(
-              'Please change your camera permission in app settings.',
-            ),
-          ),
-        );
+        if (Platform.isIOS) {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Warning!',
+            'Please change your Camera permission.',
+            () => Navigator.pop(context),
+            'Dismiss',
+            isIOS: true,
+          );
+        } else {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Warning!',
+            'Please change your Camera permission.',
+            () => Navigator.pop(context),
+            'Dismiss',
+          );
+        }
+
+        // Delete -> remove later
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     duration: Duration(seconds: 1),
+        //     content: Text(
+        //       'Please change your camera permission in app settings.',
+        //     ),
+        //   ),
+        // );
       } else {
         uploadImage(context, state);
       }
@@ -763,7 +877,26 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
               builder: (context, value, child) {
                 if (value == true) {
                   return InkWell(
-                    onTap: null,
+                    onTap: () {
+                      if (Platform.isIOS) {
+                        GlobalDialog.showCrossPlatformDialog(
+                          context,
+                          'Warning',
+                          'Please check your input again.',
+                          () => Navigator.pop(context),
+                          'Dismiss',
+                          isIOS: true,
+                        );
+                      } else {
+                        GlobalDialog.showCrossPlatformDialog(
+                          context,
+                          'Warning',
+                          'Please check your input again.',
+                          () => Navigator.pop(context),
+                          'Dismiss',
+                        );
+                      }
+                    },
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 2),
                       width: MediaQuery.of(context).size.width,

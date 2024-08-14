@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/activity/mananger_activity_details.dart';
@@ -252,14 +255,34 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Coming Soon',
-                                            ),
-                                          ),
-                                        );
+                                        if (Platform.isIOS) {
+                                          GlobalDialog.showCrossPlatformDialog(
+                                            context,
+                                            'Stay Tuned',
+                                            'New features are on the way!',
+                                            () => Navigator.pop(context),
+                                            'Dismiss',
+                                            isIOS: true,
+                                          );
+                                        } else {
+                                          GlobalDialog.showCrossPlatformDialog(
+                                            context,
+                                            'Stay Tuned',
+                                            'New features are on the way!',
+                                            () => Navigator.pop(context),
+                                            'Dismiss',
+                                          );
+                                        }
+
+                                        // Delete -> remove later
+                                        // ScaffoldMessenger.of(context)
+                                        //     .showSnackBar(
+                                        //   const SnackBar(
+                                        //     content: Text(
+                                        //       'Coming Soon',
+                                        //     ),
+                                        //   ),
+                                        // );
                                       },
                                       icon: const Icon(
                                         Icons.more_vert_rounded,

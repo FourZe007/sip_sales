@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:image/image.dart' as images;
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:background_location/background_location.dart'
@@ -1048,51 +1050,139 @@ class SipSalesState with ChangeNotifier {
         if (newActivitiesList.isNotEmpty) {
           if (newActivitiesList[0].resultMessage == 'SUKSES') {
             setIsLoading(false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.grey[400],
-                content: Text(
-                  'Input New Activities success!',
-                  style: GlobalFont.mediumgiantfontR,
-                ),
-              ),
-            );
+
+            // Custom Alert Dialog for Android and iOS
+            if (Platform.isIOS) {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Yey!',
+                'Activity inserted succedfully!',
+                () => Navigator.pop(context),
+                'Dismiss',
+                isIOS: true,
+              );
+            } else {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Yey!',
+                'Activity inserted succedfully!',
+                () => Navigator.pop(context),
+                'Dismiss',
+              );
+            }
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     backgroundColor: Colors.grey[400],
+            //     content: Text(
+            //       'Input New Activities success!',
+            //       style: GlobalFont.mediumgiantfontR,
+            //     ),
+            //   ),
+            // );
           } else {
             setIsLoading(false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.grey[400],
-                content: Text(
-                  'Input New Activities fail',
-                  style: GlobalFont.mediumgiantfontR,
-                ),
-              ),
-            );
+
+            // Custom Alert Dialog for Android and iOS
+            if (Platform.isIOS) {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Oh no!',
+                'Failed to insert activity.',
+                () => Navigator.pop(context),
+                'Dismiss',
+                isIOS: true,
+              );
+            } else {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Oh no!',
+                'Failed to insert activity.',
+                () => Navigator.pop(context),
+                'Dismiss',
+              );
+            }
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     backgroundColor: Colors.grey[400],
+            //     content: Text(
+            //       'Input New Activities fail',
+            //       style: GlobalFont.mediumgiantfontR,
+            //     ),
+            //   ),
+            // );
           }
         } else {
           setIsLoading(false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.grey[400],
-              content: Text(
-                'Please try again',
-                style: GlobalFont.mediumgiantfontR,
-              ),
-            ),
-          );
+
+          // Custom Alert Dialog for Android and iOS
+          if (Platform.isIOS) {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Oh no!',
+              'You have already submitted today\'s activity. Please try again tomorrow.',
+              () => Navigator.pop(context),
+              'Dismiss',
+              isIOS: true,
+            );
+          } else {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Oh no!',
+              'You have already submitted today\'s activity. Please try again tomorrow.',
+              () => Navigator.pop(context),
+              'Dismiss',
+            );
+          }
+
+          // Delete -> remove later
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     backgroundColor: Colors.grey[400],
+          //     content: Text(
+          //       'Please try again',
+          //       style: GlobalFont.mediumgiantfontR,
+          //     ),
+          //   ),
+          // );
         }
       });
     } else {
       setIsLoading(false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.grey,
-          content: Text(
-            'Please check your input again',
-            style: GlobalFont.mediumgiantfontR,
-          ),
-        ),
-      );
+
+      // Custom Alert Dialog for Android and iOS
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Please check your input and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Please check your input and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
+
+      // Delete -> remove later
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: Colors.grey,
+      //     content: Text(
+      //       'Please check your input again',
+      //       style: GlobalFont.mediumgiantfontR,
+      //     ),
+      //   ),
+      // );
     }
   }
 
@@ -1140,51 +1230,135 @@ class SipSalesState with ChangeNotifier {
         if (newActivitiesList.isNotEmpty) {
           if (newActivitiesList[0].resultMessage == 'SUKSES') {
             setIsLoading(false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.grey[400],
-                content: Text(
-                  'Input New Activities success!',
-                  style: GlobalFont.mediumgiantfontR,
-                ),
-              ),
-            );
+
+            if (Platform.isIOS) {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Yey!',
+                'Activity inserted succedfully!',
+                () => Navigator.pop(context),
+                'Dismiss',
+                isIOS: true,
+              );
+            } else {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Yey!',
+                'Activity inserted succedfully!',
+                () => Navigator.pop(context),
+                'Dismiss',
+              );
+            }
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     backgroundColor: Colors.grey[400],
+            //     content: Text(
+            //       'Input New Activities success!',
+            //       style: GlobalFont.mediumgiantfontR,
+            //     ),
+            //   ),
+            // );
           } else {
             setIsLoading(false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.grey[400],
-                content: Text(
-                  'Input New Activities fail',
-                  style: GlobalFont.mediumgiantfontR,
-                ),
-              ),
-            );
+
+            if (Platform.isIOS) {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Oh no!',
+                'Failed to insert activity.',
+                () => Navigator.pop(context),
+                'Dismiss',
+                isIOS: true,
+              );
+            } else {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Oh no!',
+                'Failed to insert activity.',
+                () => Navigator.pop(context),
+                'Dismiss',
+              );
+            }
+
+            // Delete -> remove later
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     backgroundColor: Colors.grey[400],
+            //     content: Text(
+            //       'Input New Activities fail',
+            //       style: GlobalFont.mediumgiantfontR,
+            //     ),
+            //   ),
+            // );
           }
         } else {
           setIsLoading(false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.grey[400],
-              content: Text(
-                "You already submitted today's activity, please try again tomorrow.",
-                style: GlobalFont.mediumgiantfontR,
-              ),
-            ),
-          );
+
+          if (Platform.isIOS) {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Oh no!',
+              'You have already submitted today\'s activity. Please try again tomorrow.',
+              () => Navigator.pop(context),
+              'Dismiss',
+              isIOS: true,
+            );
+          } else {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Oh no!',
+              'You have already submitted today\'s activity. Please try again tomorrow.',
+              () => Navigator.pop(context),
+              'Dismiss',
+            );
+          }
+
+          // Delete -> remove later
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     backgroundColor: Colors.grey[400],
+          //     content: Text(
+          //       "You already submitted today's activity, please try again tomorrow.",
+          //       style: GlobalFont.mediumgiantfontR,
+          //     ),
+          //   ),
+          // );
         }
       });
     } else {
       setIsLoading(false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.grey,
-          content: Text(
-            'Please check your input again',
-            style: GlobalFont.mediumgiantfontR,
-          ),
-        ),
-      );
+
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Please check your input and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Please check your input and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
+
+      // Delete -> remove later
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: Colors.grey,
+      //     content: Text(
+      //       'Please check your input and try again.',
+      //       style: GlobalFont.mediumgiantfontR,
+      //     ),
+      //   ),
+      // );
     }
   }
 
