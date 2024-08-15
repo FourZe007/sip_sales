@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sip_sales/global/global.dart';
 
 class GlobalDialog {
   static Future<bool> showIOSPermissionGranted(
@@ -108,16 +109,38 @@ class GlobalDialog {
     return await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
-            return CupertinoAlertDialog(
-              title: Text(title),
-              content: Text(content),
+            return AlertDialog(
+              actionsAlignment: MainAxisAlignment.center,
+              title: Text(
+                title,
+                textAlign: TextAlign.center,
+              ),
+              content: Text(
+                content,
+                textAlign: TextAlign.center,
+              ),
               actions: <Widget>[
-                CupertinoDialogAction(
-                  child: const Text('Deny'),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    side: const BorderSide(
+                      color: Colors.blue,
+                      width: 2.0,
+                    ),
+                  ),
+                  child: Text(
+                    'Deny',
+                    style: GlobalFont.bigfontR,
+                  ),
                   onPressed: () => Navigator.pop(context, false),
                 ),
-                CupertinoDialogAction(
-                  child: const Text('Allow'),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                  ),
+                  child: Text(
+                    'Allow',
+                    style: GlobalFont.bigfontRBold,
+                  ),
                   onPressed: () => Navigator.pop(context, true),
                 ),
               ],
@@ -141,16 +164,38 @@ class GlobalDialog {
       return showDialog(
         context: context,
         builder: (context) {
-          return CupertinoAlertDialog(
-            title: Text(title),
-            content: Text(content),
+          return AlertDialog(
+            actionsAlignment: MainAxisAlignment.center,
+            title: Text(
+              title,
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              content,
+              textAlign: TextAlign.center,
+            ),
             actions: [
-              CupertinoDialogAction(
-                child: Text(cancelText),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  side: const BorderSide(
+                    color: Colors.blue,
+                    width: 2.0,
+                  ),
+                ),
+                child: Text(
+                  cancelText,
+                  style: GlobalFont.bigfontR,
+                ),
                 onPressed: () => cancelHandler!(),
               ),
-              CupertinoDialogAction(
-                child: Text(acceptText),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                ),
+                child: Text(
+                  acceptText,
+                  style: GlobalFont.bigfontR,
+                ),
                 onPressed: () => acceptHandler(),
               ),
             ],
@@ -161,12 +206,28 @@ class GlobalDialog {
       return showDialog(
         context: context,
         builder: (context) {
-          return CupertinoAlertDialog(
-            title: Text(title),
-            content: Text(content),
+          return AlertDialog(
+            actionsAlignment: MainAxisAlignment.center,
+            title: Text(
+              title,
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              content,
+              textAlign: TextAlign.center,
+            ),
             actions: [
-              CupertinoDialogAction(
-                child: Text(acceptText),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  side: const BorderSide(
+                    color: Colors.blue,
+                    width: 2.0,
+                  ),
+                ),
+                child: Text(
+                  acceptText,
+                  style: GlobalFont.bigfontR,
+                ),
                 onPressed: () => acceptHandler(),
               ),
             ],
@@ -205,12 +266,28 @@ class GlobalDialog {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text(title),
-            content: Text(content),
+            actionsAlignment: MainAxisAlignment.center,
+            title: Text(
+              title,
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              content,
+              textAlign: TextAlign.center,
+            ),
             actions: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  side: const BorderSide(
+                    color: Colors.blue,
+                    width: 2.0,
+                  ),
+                ),
+                child: Text(
+                  text,
+                  style: GlobalFont.bigfontR,
+                ),
                 onPressed: () => handler(),
-                child: Text(text),
               ),
             ],
           );

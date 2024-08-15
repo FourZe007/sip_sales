@@ -229,15 +229,29 @@ class _LoginPageState extends State<LoginPage> {
               if (state.getIsUserAgree == true) {
                 Navigator.pushReplacementNamed(context, '/location');
               } else {
-                GlobalDialog.showCustomIOSDialog(
-                  context,
-                  'SIP Care',
-                  'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                  () => displayProminentDisclosure(true, state),
-                  'Accept',
-                  cancelHandler: () => displayProminentDisclosure(false, state),
-                  cancelText: 'Deny',
-                );
+                if (Platform.isIOS) {
+                  GlobalDialog.showCustomIOSDialog(
+                    context,
+                    'SIP Care',
+                    'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
+                    () => displayProminentDisclosure(true, state),
+                    'Accept',
+                    cancelHandler: () =>
+                        displayProminentDisclosure(false, state),
+                    cancelText: 'Deny',
+                  );
+                } else {
+                  GlobalDialog.showCustomAndroidDialog(
+                    context,
+                    'SIP Care',
+                    'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
+                    () => displayProminentDisclosure(true, state),
+                    'Accept',
+                    cancelHandler: () =>
+                        displayProminentDisclosure(false, state),
+                    cancelText: 'Deny',
+                  );
+                }
                 // GlobalFunction.displayProminentDisclosure(
                 //   context,
                 //   Container(

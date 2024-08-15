@@ -38,18 +38,18 @@ class _LocationPageState extends State<LocationPage> {
     // Alert Dialog for iOS
     if (Platform.isIOS) {
       bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
-      print('isDialogGranted: $isDialogGranted');
+      // print('isDialogGranted: $isDialogGranted');
       if (!isDialogGranted) {
         if (await GlobalDialog.showIOSPermissionGranted(
           context,
           'Location Permission',
           'This app needs access to your location to provide accurate services. Would you like to allow location access?',
         )) {
-          print('Granted');
+          // print('Granted');
           prefs.setBool('isDialogGranted', true);
           isDialogGranted = prefs.getBool('isDialogGranted')!;
         } else {
-          print('Denied');
+          // print('Denied');
           prefs.setBool('isDialogGranted', false);
           isDialogGranted = prefs.getBool('isDialogGranted')!;
         }
@@ -57,7 +57,7 @@ class _LocationPageState extends State<LocationPage> {
 
       // print('isDialogGranted: $isDialogGranted');
       if (isDialogGranted) {
-        print('User dialog granted, checking location permision');
+        // print('User dialog granted, checking location permision');
         if (!state.getIsLocationGranted) {
           PermissionStatus permissionStatus;
 
