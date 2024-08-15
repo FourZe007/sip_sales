@@ -142,6 +142,7 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                 'You need to allow camera access to upload image.',
                 () => Navigator.pop(context),
                 'Dismiss',
+                isIOS: true,
               );
             }
           },

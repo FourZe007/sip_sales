@@ -142,25 +142,26 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       state.setIsUserAgree(false);
 
-      if (Platform.isIOS) {
-        GlobalDialog.showCustomIOSDialog(
-          context,
-          'SIP Care',
-          'Please make sure you accept the SIP Care in order to maximize the App Performance.',
-          () => Navigator.pop(context),
-          'Dismiss',
-          isDismissible: true,
-        );
-      } else {
-        GlobalDialog.showCustomAndroidDialog(
-          context,
-          'SIP Care',
-          'Please make sure you accept the SIP Care in order to maximize the App Performance.',
-          () => Navigator.pop(context),
-          'Dismiss',
-          isDismissible: true,
-        );
-      }
+      // Delete -> remove later
+      // if (Platform.isIOS) {
+      //   GlobalDialog.showCustomIOSDialog(
+      //     context,
+      //     'SIP Care',
+      //     'Please make sure you accept the SIP Care in order to maximize the App Performance.',
+      //     () => Navigator.pop(context),
+      //     'Dismiss',
+      //     isDismissible: true,
+      //   );
+      // } else {
+      //   GlobalDialog.showCustomAndroidDialog(
+      //     context,
+      //     'SIP Care',
+      //     'Please make sure you accept the SIP Care in order to maximize the App Performance.',
+      //     () => Navigator.pop(context),
+      //     'Dismiss',
+      //     isDismissible: true,
+      //   );
+      // }
 
       // Delete -> remove later
       // GlobalFunction.tampilkanDialog(
@@ -208,10 +209,6 @@ class _LoginPageState extends State<LoginPage> {
       userLogin = await GlobalAPI.fetchUserAccount(nip, password);
       if (userLogin.isNotEmpty) {
         if (userLogin[0].flag == 1) {
-          setState(() {
-            loginStatus = 'Login berhasil.';
-          });
-
           Future.delayed(const Duration(seconds: 2)).then(
             (value) async {
               final SharedPreferences prefs =
@@ -234,24 +231,46 @@ class _LoginPageState extends State<LoginPage> {
                     context,
                     'SIP Care',
                     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                    () => displayProminentDisclosure(true, state),
-                    'Accept',
-                    cancelHandler: () =>
-                        displayProminentDisclosure(false, state),
-                    cancelText: 'Deny',
+                    () {
+                      displayProminentDisclosure(true, state);
+                      setState(() {
+                        loginStatus = 'Login Success.';
+                      });
+                    },
+                    'Continue',
+                    cancelHandler: () {
+                      displayProminentDisclosure(false, state);
+                      setState(() {
+                        loginStatus = 'Sign in cancelled.';
+                      });
+                    },
+                    cancelText: 'Cancel',
                   );
                 } else {
                   GlobalDialog.showCustomAndroidDialog(
                     context,
                     'SIP Care',
                     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                    () => displayProminentDisclosure(true, state),
-                    'Accept',
-                    cancelHandler: () =>
-                        displayProminentDisclosure(false, state),
-                    cancelText: 'Deny',
+                    () {
+                      displayProminentDisclosure(true, state);
+                      setState(() {
+                        loginStatus = 'Login Success.';
+                      });
+                    },
+                    'Continue',
+                    cancelHandler: () {
+                      Navigator.pop(context);
+                      // Delete -> remove later
+                      // displayProminentDisclosure(false, state);
+                      setState(() {
+                        loginStatus = 'Sign in cancelled.';
+                      });
+                    },
+                    cancelText: 'Cancel',
                   );
                 }
+
+                // Delete -> remove later
                 // GlobalFunction.displayProminentDisclosure(
                 //   context,
                 //   Container(

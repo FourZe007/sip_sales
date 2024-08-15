@@ -27,11 +27,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>App would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>App would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>App would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -51,8 +51,8 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs your camera to provide camera features.</string>
+	<string>SIP Sales would like to access your camera to be able to directly access the device camera. You can disable camera access at any time in Settings.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs your photo to provide photo features.</string>
+	<string>SIP Sales would like to access your photos to be able to directly access the device photos. You can disable photos access at any time in Settings.</string>
 </dict>
 </plist>

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -111,7 +112,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
           await GlobalDialog.showIOSPermissionGranted(
             context,
             'Photo Permission',
-            'This app needs access to your photo to image asset. Would you like to allow photo access?',
+            // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
+            'SIP Sales accesses your photo library to let you choose. This allows you to personalize your activity in form of an image. For example, you can select photos from your library to create a new activity.',
           ).then(
             (isPermissionGranted) async {
               if (isPermissionGranted) {
@@ -122,8 +124,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               } else {
                 await GlobalDialog.showCustomIOSDialog(
                   context,
-                  'Warning',
-                  'You need to allow photo access to upload image.',
+                  'Oh no!',
+                  'Upload image cancelled.',
                   () => Navigator.pop(context),
                   'Dismiss',
                   isDismissible: true,
@@ -134,8 +136,9 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         } else {
           await GlobalDialog.showIOSPermissionGranted(
             context,
-            'Photo Permission',
-            'This app needs access to your photo to image asset. Would you like to allow photo access?',
+            'Camera Permission',
+            // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
+            'SIP Sales uses your camera to capture photos. This allows you personalize your activity in form of an image. For example, you can take a picture/scan receipts for create a new activity.',
           ).then(
             (isPermissionGranted) async {
               if (isPermissionGranted) {
@@ -146,7 +149,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               } else {
                 await GlobalDialog.showCustomIOSDialog(
                   context,
-                  'Warning',
+                  'Oh no!',
                   'You need to allow camera access to upload image.',
                   () => Navigator.pop(context),
                   'Dismiss',
@@ -159,7 +162,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       } else {
         await GlobalDialog.showCrossPlatformDialog(
           context,
-          'Warning',
+          'Oh no!',
           'You only allowed to upload 1 image, please delete your image first.',
           () => Navigator.pop(context),
           'Dismiss',
@@ -170,8 +173,9 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       if (state.fetchFilteredList.isEmpty) {
         await GlobalDialog.showAndroidPermissionGranted(
           context,
-          'Photo Permission',
-          'This app needs access to your photo to image asset. Would you like to allow photo access?',
+          'Camera Permission',
+          // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
+          'SIP Sales uses your camera to capture photos. This allows you personalize your activity in form of an image. For example, you can take a picture/scan receipts for create a new activity.',
         ).then(
           (isPermissionGranted) async {
             if (isPermissionGranted) {
@@ -180,9 +184,9 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                 state,
               );
             } else {
-              await GlobalDialog.showCustomIOSDialog(
+              await GlobalDialog.showCustomAndroidDialog(
                 context,
-                'Warning',
+                'Oh no!',
                 'You need to allow camera access to upload image.',
                 () => Navigator.pop(context),
                 'Dismiss',
@@ -194,7 +198,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       } else {
         await GlobalDialog.showCrossPlatformDialog(
           context,
-          'Warning',
+          'Oh no!',
           'You only allowed to upload 1 image, please delete your image first.',
           () => Navigator.pop(context),
           'Dismiss',
@@ -495,7 +499,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         if (await GlobalDialog.showIOSPermissionGranted(
           context,
           'Location Permission',
-          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          // 'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
         )) {
           prefs.setBool('isDialogGranted', true);
           isDialogGranted = prefs.getBool('isDialogGranted')!;
@@ -528,14 +533,17 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
           return true;
         }
       } else {
-        await GlobalDialog.showCustomIOSDialog(
-          context,
-          'WARNING',
-          'App location permission denied, you can change your permission in App Settings.',
-          () => Navigator.pop(context),
-          'Dismiss',
-          isDismissible: true,
-        );
+        // do nothing
+
+        // Delete -> remove later
+        // await GlobalDialog.showCustomIOSDialog(
+        //   context,
+        //   'WARNING',
+        //   'App location permission denied, you can change your permission in App Settings.',
+        //   () => Navigator.pop(context),
+        //   'Dismiss',
+        //   isDismissible: true,
+        // );
       }
     }
     // Alert Dialog for Android
@@ -545,7 +553,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         if (await GlobalDialog.showAndroidPermissionGranted(
           context,
           'Location Permission',
-          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          // 'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
         )) {
           prefs.setBool('isDialogGranted', true);
         } else {
@@ -1011,14 +1020,56 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                 } else {
                   return InkWell(
                     onTap: () async {
-                      if (await requestPermission(
-                          Provider.of<SipSalesState>(context, listen: false))) {
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      bool locPermission =
+                          prefs.getBool('isLocationGranted') ?? false;
+                      if (locPermission) {
+                        // Note -> request permission inside the app
+                        // await requestPermission(
+                        //     Provider.of<SipSalesState>(context, listen: false));
                         managerActivityState.createShopManagerActivity(
                           context,
                           managerActivityState.fetchManagerActivityTypeList,
                           activityType,
                           activityDescription,
                         );
+                      } else {
+                        if (await requestPermission(Provider.of<SipSalesState>(
+                            context,
+                            listen: false))) {
+                          managerActivityState.createShopManagerActivity(
+                            context,
+                            managerActivityState.fetchManagerActivityTypeList,
+                            activityType,
+                            activityDescription,
+                          );
+                        } else {
+                          if (Platform.isIOS) {
+                            GlobalDialog.showCrossPlatformDialog(
+                              context,
+                              'Warning',
+                              'Your location permission is denied, please try again or allow it in App Settings.',
+                              () async {
+                                await AppSettings.openAppSettings();
+                              },
+                              'Open Settings',
+                              isIOS: true,
+                              isDismissable: true,
+                            );
+                          } else {
+                            GlobalDialog.showCrossPlatformDialog(
+                              context,
+                              'Warning',
+                              'Your location permission is denied, please try again or allow it in App Settings.',
+                              () async {
+                                await AppSettings.openAppSettings();
+                              },
+                              'Open Settings',
+                              isDismissable: true,
+                            );
+                          }
+                        }
                       }
                     },
                     child: AnimatedContainer(

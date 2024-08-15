@@ -6,8 +6,10 @@ class GlobalDialog {
   static Future<bool> showIOSPermissionGranted(
     BuildContext context,
     String title,
-    String content,
-  ) async {
+    String content, {
+    String acceptText = 'Allow',
+    String denyText = 'Deny',
+  }) async {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (BuildContext context) {
@@ -16,11 +18,11 @@ class GlobalDialog {
               content: Text(content),
               actions: <Widget>[
                 CupertinoDialogAction(
-                  child: const Text('Deny'),
+                  child: Text(denyText),
                   onPressed: () => Navigator.pop(context, false),
                 ),
                 CupertinoDialogAction(
-                  child: const Text('Allow'),
+                  child: Text(acceptText),
                   onPressed: () => Navigator.pop(context, true),
                 ),
               ],
@@ -244,10 +246,12 @@ class GlobalDialog {
     Function handler,
     String text, {
     bool isIOS = false,
+    bool isDismissable = false,
   }) {
     if (isIOS) {
       return showCupertinoDialog(
         context: context,
+        barrierDismissible: isDismissable,
         builder: (context) {
           return CupertinoAlertDialog(
             title: Text(title),
@@ -264,6 +268,7 @@ class GlobalDialog {
     } else {
       return showDialog(
         context: context,
+        barrierDismissible: isDismissable,
         builder: (context) {
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.center,

@@ -43,7 +43,8 @@ class _LocationPageState extends State<LocationPage> {
         if (await GlobalDialog.showIOSPermissionGranted(
           context,
           'Location Permission',
-          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          // 'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
         )) {
           // print('Granted');
           prefs.setBool('isDialogGranted', true);
@@ -79,14 +80,16 @@ class _LocationPageState extends State<LocationPage> {
           return true;
         }
       } else {
-        await GlobalDialog.showCustomIOSDialog(
-          context,
-          'WARNING',
-          'App location permission denied, you can change your permission in App Settings.',
-          () => Navigator.pop(context),
-          'Dismiss',
-          isDismissible: true,
-        );
+        // Note -> instead of giving a warning, you can request the permission again
+        // if the user want to use a feature that need the permission
+        // await GlobalDialog.showCustomIOSDialog(
+        //   context,
+        //   'WARNING',
+        //   'App location permission denied, you can change your permission in App Settings.',
+        //   () => Navigator.pop(context),
+        //   'Dismiss',
+        //   isDismissible: true,
+        // );
       }
     }
     // Alert Dialog for Android
@@ -96,7 +99,8 @@ class _LocationPageState extends State<LocationPage> {
         if (await GlobalDialog.showAndroidPermissionGranted(
           context,
           'Location Permission',
-          'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          // 'This app needs access to your location to provide accurate services. Would you like to allow location access?',
+          'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
         )) {
           prefs.setBool('isDialogGranted', true);
         } else {
