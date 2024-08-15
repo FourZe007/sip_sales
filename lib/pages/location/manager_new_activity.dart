@@ -138,7 +138,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
             context,
             'Camera Permission',
             // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
-            'SIP Sales uses your camera to capture photos. This allows you personalize your activity in form of an image. For example, you can take a picture/scan receipts for create a new activity.',
+            'SIP Sales uses your camera to capture photos. This allows you personalize your activity in form of an image. For example, you can take a picture for create a new activity.',
           ).then(
             (isPermissionGranted) async {
               if (isPermissionGranted) {
@@ -171,30 +171,82 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       }
     } else {
       if (state.fetchFilteredList.isEmpty) {
-        await GlobalDialog.showAndroidPermissionGranted(
-          context,
-          'Camera Permission',
-          // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
-          'SIP Sales uses your camera to capture photos. This allows you personalize your activity in form of an image. For example, you can take a picture/scan receipts for create a new activity.',
-        ).then(
-          (isPermissionGranted) async {
-            if (isPermissionGranted) {
-              uploadImageFromGallery(
-                context,
-                state,
-              );
-            } else {
-              await GlobalDialog.showCustomAndroidDialog(
-                context,
-                'Oh no!',
-                'You need to allow camera access to upload image.',
-                () => Navigator.pop(context),
-                'Dismiss',
-                isDismissible: true,
-              );
-            }
-          },
-        );
+        if (activityType ==
+            state.fetchManagerActivityTypeList[2].activityName) {
+          await GlobalDialog.showAndroidPermissionGranted(
+            context,
+            'Photo Permission',
+            // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
+            'SIP Sales accesses your photo library to let you choose. This allows you to personalize your activity in form of an image. For example, you can select photos from your library to create a new activity.',
+          ).then(
+            (isPermissionGranted) async {
+              if (isPermissionGranted) {
+                uploadImageFromGallery(
+                  context,
+                  state,
+                );
+              } else {
+                await GlobalDialog.showCustomAndroidDialog(
+                  context,
+                  'Oh no!',
+                  'Upload image cancelled.',
+                  () => Navigator.pop(context),
+                  'Dismiss',
+                  isDismissible: true,
+                );
+              }
+            },
+          );
+        } else {
+          await GlobalDialog.showAndroidPermissionGranted(
+            context,
+            'Camera Permission',
+            // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
+            'SIP Sales uses your camera to capture photos. This allows you personalize your activity in form of an image. For example, you can take a picture for create a new activity.',
+          ).then(
+            (isPermissionGranted) async {
+              if (isPermissionGranted) {
+                uploadImageFromCamera(
+                  context,
+                  state,
+                );
+              } else {
+                await GlobalDialog.showCustomAndroidDialog(
+                  context,
+                  'Oh no!',
+                  'You need to allow camera access to upload image.',
+                  () => Navigator.pop(context),
+                  'Dismiss',
+                  isDismissible: true,
+                );
+              }
+            },
+          );
+        }
+        // await GlobalDialog.showAndroidPermissionGranted(
+        //   context,
+        //   'Photo Permission',
+        //   // 'This app needs access to your photo to image asset. Would you like to allow photo access?',
+        //   'SIP Sales accesses your photo library to let you choose. This allows you to personalize your activity in form of an image. For example, you can select photos from your library to create a new activity.',
+        // ).then(
+        //   (isPermissionGranted) async {
+        //     if (isPermissionGranted) {
+        //       uploadImageFromGallery(
+        //         context,
+        //         state,
+        //       );
+        //     } else {
+        //       await GlobalDialog.showCustomAndroidDialog(
+        //         context,
+        //         'Oh no!',
+        //         'You need to allow camera access to upload image.',
+        //         () => Navigator.pop(context),
+        //         'Dismiss',
+        //         isDismissible: true,
+        //       );
+        //     }
+        //   },
+        // );
       } else {
         await GlobalDialog.showCrossPlatformDialog(
           context,
