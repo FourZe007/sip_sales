@@ -121,7 +121,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                   'Upload image cancelled.',
                   () => Navigator.pop(context),
                   'Dismiss',
-                  isDismissible: true,
                 );
               }
             },
@@ -146,7 +145,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                   'You need to allow camera access to upload image.',
                   () => Navigator.pop(context),
                   'Dismiss',
-                  isDismissible: true,
                 );
               }
             },
@@ -185,7 +183,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                   'Upload image cancelled.',
                   () => Navigator.pop(context),
                   'Dismiss',
-                  isDismissible: true,
                 );
               }
             },
@@ -210,7 +207,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                   'You need to allow camera access to upload image.',
                   () => Navigator.pop(context),
                   'Dismiss',
-                  isDismissible: true,
                 );
               }
             },
@@ -544,7 +540,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
           'App location permission denied, you can change your permission in App Settings.',
           () => Navigator.pop(context),
           'Dismiss',
-          isDismissible: true,
         );
       }
     }

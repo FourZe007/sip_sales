@@ -61,7 +61,6 @@ class GlobalDialog {
     String content,
     Function acceptHandler,
     String acceptText, {
-    bool isDismissible = false,
     Function? cancelHandler,
     String cancelText = '',
   }) async {
@@ -154,14 +153,13 @@ class GlobalDialog {
     String content,
     Function acceptHandler,
     String acceptText, {
-    bool isDismissible = false,
     Function? cancelHandler,
     String cancelText = '',
   }) {
-    if (!isDismissible) {
-      return showDialog(
-        context: context,
-        builder: (context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        if (cancelText != '' && cancelHandler != null) {
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.center,
             title: Text(
@@ -182,9 +180,9 @@ class GlobalDialog {
                 ),
                 child: Text(
                   cancelText,
-                  style: GlobalFont.bigfontR,
+                  textAlign: TextAlign.center,
                 ),
-                onPressed: () => cancelHandler!(),
+                onPressed: () => cancelHandler(),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -193,17 +191,13 @@ class GlobalDialog {
                 child: Text(
                   acceptText,
                   style: GlobalFont.bigfontR,
+                  textAlign: TextAlign.center,
                 ),
                 onPressed: () => acceptHandler(),
               ),
             ],
           );
-        },
-      );
-    } else {
-      return showDialog(
-        context: context,
-        builder: (context) {
+        } else {
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.center,
             title: Text(
@@ -217,22 +211,19 @@ class GlobalDialog {
             actions: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.blue,
-                    width: 2.0,
-                  ),
+                  backgroundColor: Colors.blue,
                 ),
                 child: Text(
                   acceptText,
-                  style: GlobalFont.bigfontR,
+                  style: GlobalFont.bigfontRBold,
                 ),
                 onPressed: () => acceptHandler(),
               ),
             ],
           );
-        },
-      );
-    }
+        }
+      },
+    );
   }
 
   static Future<void> showCrossPlatformDialog(
@@ -279,10 +270,7 @@ class GlobalDialog {
             actions: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.blue,
-                    width: 2.0,
-                  ),
+                  backgroundColor: Colors.blue,
                 ),
                 child: Text(
                   text,

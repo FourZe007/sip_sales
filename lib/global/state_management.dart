@@ -808,8 +808,8 @@ class SipSalesState with ChangeNotifier {
   }
 
   Future<List<ModelActivities>> fetchManagerActivityData() async {
-    salesActivityTypeList.clear();
-    salesActivityTypeList.addAll(await GlobalAPI.fetchSalesActivityTypes());
+    managerActivityTypeList.clear();
+    managerActivityTypeList.addAll(await GlobalAPI.fetchManagerActivityTypes());
 
     return managerActivityTypeList;
   }

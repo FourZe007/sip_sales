@@ -91,16 +91,16 @@ class _LocationPageState extends State<LocationPage> {
     else {
       bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
       if (!isDialogGranted) {
-        if (await GlobalDialog.showAndroidPermissionGranted(
+        await GlobalDialog.showCrossPlatformDialog(
           context,
           'Location Permission',
           'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
-        )) {
+          () => Navigator.pop(context),
+          'Continue',
+        ).then((_) {
           prefs.setBool('isDialogGranted', true);
-        } else {
-          prefs.setBool('isDialogGranted', false);
-        }
-        isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+          isDialogGranted = prefs.getBool('isDialogGranted')!;
+        });
       }
 
       if (isDialogGranted) {
@@ -131,7 +131,6 @@ class _LocationPageState extends State<LocationPage> {
           'App location permission denied, you can change your permission in App Settings.',
           () => Navigator.pop(context),
           'Dismiss',
-          isDismissible: true,
         );
       }
     }

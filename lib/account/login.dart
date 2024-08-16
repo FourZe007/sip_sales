@@ -89,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
               'Please enable at least one permission inside SIP User Consent page in order to continue.',
               () => Navigator.pop(context),
               'Dismiss',
-              isDismissible: true,
             );
           } else {
             GlobalDialog.showCustomAndroidDialog(
@@ -98,7 +97,6 @@ class _LoginPageState extends State<LoginPage> {
               'Please enable at least one permission inside SIP User Consent page in order to continue.',
               () => Navigator.pop(context),
               'Dismiss',
-              isDismissible: true,
             );
           }
         }
