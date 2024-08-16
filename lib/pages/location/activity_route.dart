@@ -97,17 +97,6 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
           'Dismiss',
         );
       }
-
-      // Delete -> remove later
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     backgroundColor: Colors.grey[400],
-      //     content: Text(
-      //       'Activity details are not available',
-      //       style: GlobalFont.mediumgiantfontR,
-      //     ),
-      //   ),
-      // );
     } else {
       if (list[index].detail.length > 1) {
         // print('more than 1');
@@ -136,7 +125,6 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     employeeID = '';
     activityRouteList.clear();
     filterDate = '';

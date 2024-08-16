@@ -9,6 +9,7 @@ class GlobalDialog {
     String content, {
     String acceptText = 'Allow',
     String denyText = 'Deny',
+    int actionButtonAmount = 1,
   }) async {
     return await showCupertinoDialog<bool>(
           context: context,
@@ -64,17 +65,17 @@ class GlobalDialog {
     Function? cancelHandler,
     String cancelText = '',
   }) async {
-    if (!isDismissible) {
-      return showCupertinoDialog(
-        context: context,
-        builder: (context) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        if (cancelText != '' && cancelHandler != null) {
           return CupertinoAlertDialog(
             title: Text(title),
             content: Text(content),
             actions: [
               CupertinoDialogAction(
                 child: Text(cancelText),
-                onPressed: () => cancelHandler!(),
+                onPressed: () => cancelHandler(),
               ),
               CupertinoDialogAction(
                 child: Text(acceptText),
@@ -82,12 +83,7 @@ class GlobalDialog {
               ),
             ],
           );
-        },
-      );
-    } else {
-      return showCupertinoDialog(
-        context: context,
-        builder: (context) {
+        } else {
           return CupertinoAlertDialog(
             title: Text(title),
             content: Text(content),
@@ -98,9 +94,9 @@ class GlobalDialog {
               ),
             ],
           );
-        },
-      );
-    }
+        }
+      },
+    );
   }
 
   static Future<bool> showAndroidPermissionGranted(

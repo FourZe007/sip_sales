@@ -101,103 +101,10 @@ class _LoginPageState extends State<LoginPage> {
               isDismissible: true,
             );
           }
-
-          // Delete -> remove later
-          // GlobalFunction.tampilkanDialog(
-          //   context,
-          //   true,
-          //   Container(
-          //     height: MediaQuery.of(context).size.height * 0.25,
-          //     padding: EdgeInsets.symmetric(
-          //       horizontal: MediaQuery.of(context).size.width * 0.01,
-          //       vertical: MediaQuery.of(context).size.height * 0.01,
-          //     ),
-          //     decoration: BoxDecoration(
-          //       borderRadius: BorderRadius.circular(20.0),
-          //     ),
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           'SIP Care',
-          //           style: GlobalFont.giantfontRBold,
-          //         ),
-          //         const SizedBox(height: 20),
-          //         Text(
-          //           'Please enable at least one permission inside SIP User Consent page in order to continue.',
-          //           style: GlobalFont.mediumgiantfontR,
-          //           textAlign: TextAlign.center,
-          //         ),
-          //         const SizedBox(height: 30),
-          //         Text(
-          //           'Tap anywhere to dismiss.',
-          //           style: GlobalFont.mediumbigfontR,
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // );
         }
       });
     } else {
       state.setIsUserAgree(false);
-
-      // Delete -> remove later
-      // if (Platform.isIOS) {
-      //   GlobalDialog.showCustomIOSDialog(
-      //     context,
-      //     'SIP Care',
-      //     'Please make sure you accept the SIP Care in order to maximize the App Performance.',
-      //     () => Navigator.pop(context),
-      //     'Dismiss',
-      //     isDismissible: true,
-      //   );
-      // } else {
-      //   GlobalDialog.showCustomAndroidDialog(
-      //     context,
-      //     'SIP Care',
-      //     'Please make sure you accept the SIP Care in order to maximize the App Performance.',
-      //     () => Navigator.pop(context),
-      //     'Dismiss',
-      //     isDismissible: true,
-      //   );
-      // }
-
-      // Delete -> remove later
-      // GlobalFunction.tampilkanDialog(
-      //   context,
-      //   true,
-      //   Container(
-      //     height: MediaQuery.of(context).size.height * 0.25,
-      //     padding: EdgeInsets.symmetric(
-      //       horizontal: MediaQuery.of(context).size.width * 0.01,
-      //       vertical: MediaQuery.of(context).size.height * 0.01,
-      //     ),
-      //     decoration: BoxDecoration(
-      //       borderRadius: BorderRadius.circular(20.0),
-      //     ),
-      //     child: Column(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Text(
-      //           'SIP Care',
-      //           style: GlobalFont.giantfontRBold,
-      //         ),
-      //         const SizedBox(height: 20),
-      //         Text(
-      //           'Please make sure you accept the SIP Care in order to maximize the App Performance.',
-      //           style: GlobalFont.mediumgiantfontR,
-      //           textAlign: TextAlign.center,
-      //         ),
-      //         const SizedBox(height: 30),
-      //         Text(
-      //           'Tap anywhere to dismiss.',
-      //           style: GlobalFont.mediumbigfontR,
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // );
     }
   }
 
@@ -209,6 +116,10 @@ class _LoginPageState extends State<LoginPage> {
       userLogin = await GlobalAPI.fetchUserAccount(nip, password);
       if (userLogin.isNotEmpty) {
         if (userLogin[0].flag == 1) {
+          setState(() {
+            loginStatus = 'Login Success.';
+          });
+
           Future.delayed(const Duration(seconds: 2)).then(
             (value) async {
               final SharedPreferences prefs =
@@ -231,110 +142,18 @@ class _LoginPageState extends State<LoginPage> {
                     context,
                     'SIP Care',
                     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                    () {
-                      displayProminentDisclosure(true, state);
-                      setState(() {
-                        loginStatus = 'Login Success.';
-                      });
-                    },
+                    () => displayProminentDisclosure(true, state),
                     'Continue',
-                    cancelHandler: () {
-                      displayProminentDisclosure(false, state);
-                      setState(() {
-                        loginStatus = 'Sign in cancelled.';
-                      });
-                    },
-                    cancelText: 'Cancel',
                   );
                 } else {
                   GlobalDialog.showCustomAndroidDialog(
                     context,
                     'SIP Care',
                     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                    () {
-                      displayProminentDisclosure(true, state);
-                      setState(() {
-                        loginStatus = 'Login Success.';
-                      });
-                    },
+                    () => displayProminentDisclosure(true, state),
                     'Continue',
-                    cancelHandler: () {
-                      Navigator.pop(context);
-                      // Delete -> remove later
-                      // displayProminentDisclosure(false, state);
-                      setState(() {
-                        loginStatus = 'Sign in cancelled.';
-                      });
-                    },
-                    cancelText: 'Cancel',
                   );
                 }
-
-                // Delete -> remove later
-                // GlobalFunction.displayProminentDisclosure(
-                //   context,
-                //   Container(
-                //     height: MediaQuery.of(context).size.height * 0.275,
-                //     decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(20.0),
-                //     ),
-                //     padding: EdgeInsets.symmetric(
-                //       horizontal: MediaQuery.of(context).size.width * 0.025,
-                //       vertical: MediaQuery.of(context).size.height * 0.01,
-                //     ),
-                //     child: Column(
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: [
-                //         Expanded(
-                //           child: Text(
-                //             'SIP Care',
-                //             style: GlobalFont.giantfontRBold,
-                //           ),
-                //         ),
-                //         Expanded(
-                //           flex: 2,
-                //           child: Text(
-                //             'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                //             style: GlobalFont.mediumgiantfontR,
-                //             textAlign: TextAlign.center,
-                //           ),
-                //         ),
-                //         Expanded(
-                //           child: Row(
-                //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //             children: [
-                //               ElevatedButton(
-                //                 onPressed: () =>
-                //                     displayProminentDisclosure(false, state),
-                //                 style: ElevatedButton.styleFrom(
-                //                   side: const BorderSide(
-                //                     color: Colors.blue,
-                //                     width: 2.5,
-                //                   ),
-                //                 ),
-                //                 child: Text(
-                //                   'Deny',
-                //                   style: GlobalFont.bigfontR,
-                //                 ),
-                //               ),
-                //               ElevatedButton(
-                //                 onPressed: () =>
-                //                     displayProminentDisclosure(true, state),
-                //                 style: ElevatedButton.styleFrom(
-                //                   backgroundColor: Colors.blue,
-                //                 ),
-                //                 child: Text(
-                //                   'Accept',
-                //                   style: GlobalFont.bigfontRWhite,
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // );
               }
             },
           );

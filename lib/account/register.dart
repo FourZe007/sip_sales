@@ -51,17 +51,6 @@ class _RegisterPageState extends State<RegisterPage> {
             'Dismiss',
           );
         }
-
-        // Delete -> remove later
-        // final snackBar = SnackBar(
-        //   backgroundColor: Colors.grey[300],
-        //   content: Text(
-        //     'Please check your input again.',
-        //     style: GlobalFont.mediumgiantfontR,
-        //   ),
-        // );
-        //
-        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
         // Custom Alert Dialog for Android and iOS
         if (Platform.isIOS) {
@@ -82,17 +71,6 @@ class _RegisterPageState extends State<RegisterPage> {
             'Dismiss',
           );
         }
-
-        // Delete -> remove later
-        // final snackBar = SnackBar(
-        //   backgroundColor: Colors.grey[300],
-        //   content: Text(
-        //     'Account successfully registered, Please wait for the account creation approval.',
-        //     style: GlobalFont.mediumgiantfontR,
-        //   ),
-        // );
-
-        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
         Future.delayed(const Duration(seconds: 1)).then((value) {
           Navigator.pop(context);
@@ -118,17 +96,6 @@ class _RegisterPageState extends State<RegisterPage> {
           'Dismiss',
         );
       }
-
-      // Delete -> remove later
-      // final snackBar = SnackBar(
-      //   backgroundColor: Colors.grey[400],
-      //   content: Text(
-      //     'Please check your input again.',
-      //     style: GlobalFont.mediumgiantfontR,
-      //   ),
-      // );
-      //
-      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 

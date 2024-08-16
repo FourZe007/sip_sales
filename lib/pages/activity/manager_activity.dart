@@ -273,16 +273,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                             'Dismiss',
                                           );
                                         }
-
-                                        // Delete -> remove later
-                                        // ScaffoldMessenger.of(context)
-                                        //     .showSnackBar(
-                                        //   const SnackBar(
-                                        //     content: Text(
-                                        //       'Coming Soon',
-                                        //     ),
-                                        //   ),
-                                        // );
                                       },
                                       icon: const Icon(
                                         Icons.more_vert_rounded,

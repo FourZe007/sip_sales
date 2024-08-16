@@ -95,13 +95,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         'Dismiss',
       );
     }
-
-    // Delete -> remove later
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(
-    //     content: Text('Image successfully deleted'),
-    //   ),
-    // );
   }
 
   void assetHandler(SipSalesState state) async {
@@ -309,16 +302,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               () => Navigator.pop(context),
               'Dismiss',
             );
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   const SnackBar(
-            //     duration: Duration(seconds: 1),
-            //     content: Text(
-            //       'Upload image cancelled.',
-            //     ),
-            //   ),
-            // );
           } else {
             // do nothing
           }
@@ -334,16 +317,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               () => Navigator.pop(context),
               'Dismiss',
             );
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   const SnackBar(
-            //     duration: Duration(seconds: 1),
-            //     content: Text(
-            //       'Please change your Photo and Video permission.',
-            //     ),
-            //   ),
-            // );
           } else {
             uploadImageFromGallery(context, state);
           }
@@ -363,16 +336,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               () => Navigator.pop(context),
               'Dismiss',
             );
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   const SnackBar(
-            //     duration: Duration(seconds: 1),
-            //     content: Text(
-            //       'Upload image cancelled.',
-            //     ),
-            //   ),
-            // );
           } else {
             // do nothing
           }
@@ -389,16 +352,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               () => Navigator.pop(context),
               'Dismiss',
             );
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   const SnackBar(
-            //     duration: Duration(seconds: 1),
-            //     content: Text(
-            //       'Please change your Photo and Video permission.',
-            //     ),
-            //   ),
-            // );
           } else {
             uploadImageFromGallery(context, state);
           }
@@ -418,18 +371,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
             'Dismiss',
             isIOS: true,
           );
-
-          // Delete -> remove later
-          //   ScaffoldMessenger.of(context).showSnackBar(
-          //     const SnackBar(
-          //       duration: Duration(seconds: 1),
-          //       content: Text(
-          //         'Upload image cancelled.',
-          //       ),
-          //     ),
-          //   );
-          // } else {
-          // do nothing
         }
       } else {
         // print('Gallery Permission denied');
@@ -444,16 +385,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
             'Dismiss',
             isIOS: true,
           );
-
-          // Delete -> remove later
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(
-          //     duration: Duration(seconds: 1),
-          //     content: Text(
-          //       'Please change your Photo and Video permission.',
-          //     ),
-          //   ),
-          // );
         } else {
           uploadImageFromGallery(context, state);
         }
@@ -489,16 +420,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
             'Dismiss',
           );
         }
-
-        // Delete -> remove later
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     duration: Duration(seconds: 1),
-        //     content: Text(
-        //       'Upload image cancelled.',
-        //     ),
-        //   ),
-        // );
       } else {
         // do nothing
       }
@@ -524,16 +445,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
             'Dismiss',
           );
         }
-
-        // Delete -> remove later
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     duration: Duration(seconds: 1),
-        //     content: Text(
-        //       'Please change your Camera permission.',
-        //     ),
-        //   ),
-        // );
       } else {
         uploadImageFromCamera(context, state);
       }
@@ -586,16 +497,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         }
       } else {
         // do nothing
-
-        // Delete -> remove later
-        // await GlobalDialog.showCustomIOSDialog(
-        //   context,
-        //   'WARNING',
-        //   'App location permission denied, you can change your permission in App Settings.',
-        //   () => Navigator.pop(context),
-        //   'Dismiss',
-        //   isDismissible: true,
-        // );
       }
     }
     // Alert Dialog for Android
@@ -1029,13 +930,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                           'Dismiss',
                         );
                       }
-
-                      // Delete -> remove later
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   const SnackBar(
-                      //     content: Text('Please check your input again'),
-                      //   ),
-                      // );
                     },
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 2),

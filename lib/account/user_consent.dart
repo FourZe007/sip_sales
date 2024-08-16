@@ -80,13 +80,6 @@ class _UserConsentPageState extends State<UserConsentPage> {
           'Dismiss',
         );
       }
-
-      // Delete -> remove later
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text("Can't launch URL"),
-      //   ),
-      // );
     }
   }
 

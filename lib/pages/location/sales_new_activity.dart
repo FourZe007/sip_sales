@@ -190,16 +190,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
           'Dismiss',
         );
       }
-
-      // Delete -> remove later
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     duration: Duration(seconds: 5),
-      //     content: Text(
-      //       'You only allowed to upload 1 image, please delete your image first',
-      //     ),
-      //   ),
-      // );
     }
   }
 
@@ -226,13 +216,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
         'Dismiss',
       );
     }
-
-    // Delete -> remove later
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(
-    //     content: Text('Image successfully deleted'),
-    //   ),
-    // );
   }
 
   void uploadImage(
@@ -261,16 +244,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
             'Dismiss',
           );
         }
-
-        // Delete -> remove later
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     duration: Duration(seconds: 1),
-        //     content: Text(
-        //       'Upload image cancelled.',
-        //     ),
-        //   ),
-        // );
       }
     } else {
       // print('Camera Permission denied');
@@ -294,16 +267,6 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
             'Dismiss',
           );
         }
-
-        // Delete -> remove later
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     duration: Duration(seconds: 1),
-        //     content: Text(
-        //       'Please change your camera permission in app settings.',
-        //     ),
-        //   ),
-        // );
       } else {
         uploadImage(context, state);
       }

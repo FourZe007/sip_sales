@@ -59,7 +59,6 @@ class MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -69,7 +68,6 @@ class MenuPageState extends State<MenuPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 

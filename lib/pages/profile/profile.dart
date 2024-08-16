@@ -87,19 +87,11 @@ class ProfilePageState extends State<ProfilePage> {
           'Dismiss',
         );
       }
-
-      // Delete -> remove later
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text("Can't launch URL"),
-      //   ),
-      // );
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

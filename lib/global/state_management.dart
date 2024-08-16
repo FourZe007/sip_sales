@@ -18,26 +18,8 @@ import 'package:sip_sales/pages/location/image_view.dart';
 import 'package:sip_sales/pages/map/map.dart';
 import 'dart:math' as math;
 import 'package:sip_sales/widget/popup/kotak_pesan.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SipSalesState with ChangeNotifier {
-  // ========================== Not Used ===============================
-  // ====================== Sliding Up Panel ========================
-  // ================================================================
-  PanelController panelController = PanelController();
-  bool isShifted = false;
-
-  void shiftSlidingUpPanel() {
-    isShifted = !isShifted;
-    notifyListeners();
-
-    if (isShifted == true) {
-      panelController.open();
-    } else {
-      panelController.close();
-    }
-  }
-
   // ================================================================
   // ======================= Activity Route =========================
   // ================================================================
@@ -689,9 +671,8 @@ class SipSalesState with ChangeNotifier {
         // ~:NEW:~
 
         if (activityTimestampList.isNotEmpty) {
-          // print('Activity Timestamp List is not empty');
+          // Activity Timestamp is not empty
           if (byPass == true &&
-              // if (checkOutList[0].resultMessage == 'SUKSES' &&
               activityTimestampList[0].resultMessage == 'SUKSES') {
             GlobalFunction.tampilkanDialog(
               context,
@@ -703,7 +684,7 @@ class SipSalesState with ChangeNotifier {
               ),
             );
           } else {
-            // print('Check Out fail');
+            // Check Out Failed
             GlobalFunction.tampilkanDialog(
               context,
               false,
@@ -715,7 +696,7 @@ class SipSalesState with ChangeNotifier {
             );
           }
         } else {
-          // print('Activity Timestamp List is empty');
+          // Activity Timestamp is empty
           GlobalFunction.tampilkanDialog(
             context,
             false,
@@ -762,7 +743,6 @@ class SipSalesState with ChangeNotifier {
   List<XFile?> pickedFileList = [];
   List<Uint8List> imageBytesList = [];
   List<images.Image> imgList = [];
-  // ValueNotifier<List<String>> base64ImageList = ValueNotifier([]);
   List<String> base64ImageList = [];
   List<String> filteredList = [];
 
@@ -821,59 +801,17 @@ class SipSalesState with ChangeNotifier {
   }
 
   Future<ModelNewActivityDetails> fetchSalesActivityData() async {
-    await getSalesActivityTypes();
-
-    // Delete -> remove if it's not used
-    // filteredList.clear();
-    // if (base64ImageList.length > 5) {
-    //   filteredList.addAll(base64ImageList.take(5));
-    // } else {
-    //   filteredList.addAll(base64ImageList);
-    // }
-    //
-    // newActivity = ModelNewActivityDetails(
-    //   activities: salesActivityTypeList,
-    //   image: filteredList,
-    // );
-    //
-    // print('~:New Activity:~');
-    // print('Activities: ${newActivity.activities.length}');
-    // print('Image: ${newActivity.image.length}');
+    salesActivityTypeList.clear();
+    salesActivityTypeList.addAll(await GlobalAPI.fetchSalesActivityTypes());
 
     return newActivity;
   }
 
   Future<List<ModelActivities>> fetchManagerActivityData() async {
-    await getManagerActivityTypes();
-
-    // Delete -> remove if it's not used
-    // filteredList.clear();
-    // if (base64ImageList.value.length > 5) {
-    //   filteredList.addAll(base64ImageList.value.take(5));
-    // } else {
-    //   filteredList.addAll(base64ImageList.value);
-    // }
-    //
-    // newActivity = ModelNewActivityDetails(
-    //   activities: managerActivityTypeList,
-    //   image: filteredList,
-    // );
-    //
-    // print('~:New Activity:~');
-    // print('Activities: ${newActivity.activities.length}');
-    // print('Image: ${newActivity.image.length}');
-
-    return managerActivityTypeList;
-  }
-
-  Future<void> getSalesActivityTypes() async {
     salesActivityTypeList.clear();
     salesActivityTypeList.addAll(await GlobalAPI.fetchSalesActivityTypes());
-  }
 
-  Future<void> getManagerActivityTypes() async {
-    managerActivityTypeList.clear();
-    managerActivityTypeList.addAll(await GlobalAPI.fetchManagerActivityTypes());
+    return managerActivityTypeList;
   }
 
   Future<bool> uploadImageFromGallery(BuildContext context) async {
@@ -1070,17 +1008,6 @@ class SipSalesState with ChangeNotifier {
                 'Dismiss',
               );
             }
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     backgroundColor: Colors.grey[400],
-            //     content: Text(
-            //       'Input New Activities success!',
-            //       style: GlobalFont.mediumgiantfontR,
-            //     ),
-            //   ),
-            // );
           } else {
             setIsLoading(false);
 
@@ -1103,17 +1030,6 @@ class SipSalesState with ChangeNotifier {
                 'Dismiss',
               );
             }
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     backgroundColor: Colors.grey[400],
-            //     content: Text(
-            //       'Input New Activities fail',
-            //       style: GlobalFont.mediumgiantfontR,
-            //     ),
-            //   ),
-            // );
           }
         } else {
           setIsLoading(false);
@@ -1137,17 +1053,6 @@ class SipSalesState with ChangeNotifier {
               'Dismiss',
             );
           }
-
-          // Delete -> remove later
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     backgroundColor: Colors.grey[400],
-          //     content: Text(
-          //       'Please try again',
-          //       style: GlobalFont.mediumgiantfontR,
-          //     ),
-          //   ),
-          // );
         }
       });
     } else {
@@ -1172,17 +1077,6 @@ class SipSalesState with ChangeNotifier {
           'Dismiss',
         );
       }
-
-      // Delete -> remove later
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     backgroundColor: Colors.grey,
-      //     content: Text(
-      //       'Please check your input again',
-      //       style: GlobalFont.mediumgiantfontR,
-      //     ),
-      //   ),
-      // );
     }
   }
 
@@ -1249,17 +1143,6 @@ class SipSalesState with ChangeNotifier {
                 'Dismiss',
               );
             }
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     backgroundColor: Colors.grey[400],
-            //     content: Text(
-            //       'Input New Activities success!',
-            //       style: GlobalFont.mediumgiantfontR,
-            //     ),
-            //   ),
-            // );
           } else {
             setIsLoading(false);
 
@@ -1281,17 +1164,6 @@ class SipSalesState with ChangeNotifier {
                 'Dismiss',
               );
             }
-
-            // Delete -> remove later
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     backgroundColor: Colors.grey[400],
-            //     content: Text(
-            //       'Input New Activities fail',
-            //       style: GlobalFont.mediumgiantfontR,
-            //     ),
-            //   ),
-            // );
           }
         } else {
           setIsLoading(false);
@@ -1314,17 +1186,6 @@ class SipSalesState with ChangeNotifier {
               'Dismiss',
             );
           }
-
-          // Delete -> remove later
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     backgroundColor: Colors.grey[400],
-          //     content: Text(
-          //       "You already submitted today's activity, please try again tomorrow.",
-          //       style: GlobalFont.mediumgiantfontR,
-          //     ),
-          //   ),
-          // );
         }
       });
     } else {
@@ -1348,17 +1209,6 @@ class SipSalesState with ChangeNotifier {
           'Dismiss',
         );
       }
-
-      // Delete -> remove later
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     backgroundColor: Colors.grey,
-      //     content: Text(
-      //       'Please check your input and try again.',
-      //       style: GlobalFont.mediumgiantfontR,
-      //     ),
-      //   ),
-      // );
     }
   }
 
