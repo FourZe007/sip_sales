@@ -1225,10 +1225,10 @@ class SipSalesState with ChangeNotifier {
 
   bool isLocationGranted = false;
 
-  bool get getIsLocationGranted => isLocationEnable;
+  bool get getIsLocationGranted => isLocationGranted;
 
   void setIsLocationGranted(bool value) {
-    isLocationEnable = value;
+    isLocationGranted = value;
   }
 
   // =============================================================

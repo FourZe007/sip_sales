@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:app_settings/app_settings.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
@@ -30,113 +32,131 @@ class _LocationPageState extends State<LocationPage> {
 
   bool isUserGranted = false;
 
-  // (NVM) Ganti format location service, sehingga user HARUS mengaktifkan location service
   Future<bool> requestPermission(SipSalesState state) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     state.setIsLocationGranted(prefs.getBool('isLocationGranted')!);
 
+    PermissionStatus permissionStatus;
+    permissionStatus = await location.hasPermission();
+    if (permissionStatus == PermissionStatus.denied ||
+        permissionStatus == PermissionStatus.deniedForever) {
+      permissionStatus = await location.requestPermission();
+      print('Permission Status: $permissionStatus');
+      if (permissionStatus == PermissionStatus.denied ||
+          permissionStatus == PermissionStatus.deniedForever) {
+        await prefs.setBool('isLocationGranted', false);
+        return false;
+      }
+    }
+
+    print('Permission Status: $permissionStatus');
+
+    await prefs.setBool('isLocationGranted', true);
+    return true;
+
+    // Delete -> remove later
     // Alert Dialog for iOS
-    if (Platform.isIOS) {
-      bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
-      // print('isDialogGranted: $isDialogGranted');
-      if (!isDialogGranted) {
-        await GlobalDialog.showCrossPlatformDialog(
-          context,
-          'Location Permission',
-          'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
-          () => Navigator.pop(context),
-          'Continue',
-          isIOS: true,
-        ).then((_) {
-          prefs.setBool('isDialogGranted', true);
-          isDialogGranted = prefs.getBool('isDialogGranted')!;
-        });
-      }
-
-      if (isDialogGranted) {
-        if (!state.getIsLocationGranted) {
-          PermissionStatus permissionStatus;
-
-          permissionStatus = await location.hasPermission();
-          if (permissionStatus == PermissionStatus.denied ||
-              permissionStatus == PermissionStatus.deniedForever) {
-            permissionStatus = await location.requestPermission();
-            if (permissionStatus == PermissionStatus.denied ||
-                permissionStatus == PermissionStatus.deniedForever) {
-              await prefs.setBool('isLocationGranted', false);
-              return false;
-            }
-          }
-
-          await prefs.setBool('isLocationGranted', true);
-          return true;
-        } else {
-          await prefs.setBool('isLocationGranted', true);
-          return true;
-        }
-      } else {
-        // Note -> instead of giving a warning, you can request the permission again
-        // if the user want to use a feature that need the permission
-        // await GlobalDialog.showCustomIOSDialog(
-        //   context,
-        //   'WARNING',
-        //   'App location permission denied, you can change your permission in App Settings.',
-        //   () => Navigator.pop(context),
-        //   'Dismiss',
-        //   isDismissible: true,
-        // );
-      }
-    }
+    // if (Platform.isIOS) {
+    //   bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+    //   // print('isDialogGranted: $isDialogGranted');
+    //   if (!isDialogGranted) {
+    //     await GlobalDialog.showCrossPlatformDialog(
+    //       context,
+    //       'Location Permission',
+    //       'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
+    //       () => Navigator.pop(context),
+    //       'Continue',
+    //       isIOS: true,
+    //     ).then((_) {
+    //       prefs.setBool('isDialogGranted', true);
+    //       isDialogGranted = prefs.getBool('isDialogGranted')!;
+    //     });
+    //   }
+    //
+    //   if (isDialogGranted) {
+    //     if (!state.getIsLocationGranted) {
+    //       PermissionStatus permissionStatus;
+    //
+    //       permissionStatus = await location.hasPermission();
+    //       if (permissionStatus == PermissionStatus.denied ||
+    //           permissionStatus == PermissionStatus.deniedForever) {
+    //         permissionStatus = await location.requestPermission();
+    //         if (permissionStatus == PermissionStatus.denied ||
+    //             permissionStatus == PermissionStatus.deniedForever) {
+    //           await prefs.setBool('isLocationGranted', false);
+    //           return false;
+    //         }
+    //       }
+    //
+    //       await prefs.setBool('isLocationGranted', true);
+    //       return true;
+    //     } else {
+    //       await prefs.setBool('isLocationGranted', true);
+    //       return true;
+    //     }
+    //   } else {
+    //     // Note -> instead of giving a warning, you can request the permission again
+    //     // if the user want to use a feature that need the permission
+    //     // await GlobalDialog.showCustomIOSDialog(
+    //     //   context,
+    //     //   'WARNING',
+    //     //   'App location permission denied, you can change your permission in App Settings.',
+    //     //   () => Navigator.pop(context),
+    //     //   'Dismiss',
+    //     //   isDismissible: true,
+    //     // );
+    //   }
+    // }
     // Alert Dialog for Android
-    else {
-      bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
-      if (!isDialogGranted) {
-        await GlobalDialog.showCrossPlatformDialog(
-          context,
-          'Location Permission',
-          'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
-          () => Navigator.pop(context),
-          'Continue',
-        ).then((_) {
-          prefs.setBool('isDialogGranted', true);
-          isDialogGranted = prefs.getBool('isDialogGranted')!;
-        });
-      }
-
-      if (isDialogGranted) {
-        if (!state.getIsLocationGranted) {
-          PermissionStatus permissionStatus;
-
-          permissionStatus = await location.hasPermission();
-          if (permissionStatus == PermissionStatus.denied ||
-              permissionStatus == PermissionStatus.deniedForever) {
-            permissionStatus = await location.requestPermission();
-            if (permissionStatus == PermissionStatus.denied ||
-                permissionStatus == PermissionStatus.deniedForever) {
-              await prefs.setBool('isLocationGranted', false);
-              return false;
-            }
-          }
-
-          await prefs.setBool('isLocationGranted', true);
-          return true;
-        } else {
-          await prefs.setBool('isLocationGranted', true);
-          return true;
-        }
-      } else {
-        await GlobalDialog.showCustomAndroidDialog(
-          context,
-          'WARNING',
-          'App location permission denied, you can change your permission in App Settings.',
-          () => Navigator.pop(context),
-          'Dismiss',
-        );
-      }
-    }
-
-    await prefs.setBool('isLocationGranted', false);
-    return false;
+    // else {
+    //   bool isDialogGranted = prefs.getBool('isDialogGranted') ?? false;
+    //   if (!isDialogGranted) {
+    //     await GlobalDialog.showCrossPlatformDialog(
+    //       context,
+    //       'Location Permission',
+    //       'SIP Sales uses your location to find your precise location and grant access of all app feature. For example, you can create an activity for keep and access your data online.',
+    //       () => Navigator.pop(context),
+    //       'Continue',
+    //     ).then((_) {
+    //       prefs.setBool('isDialogGranted', true);
+    //       isDialogGranted = prefs.getBool('isDialogGranted')!;
+    //     });
+    //   }
+    //
+    //   if (isDialogGranted) {
+    //     if (!state.getIsLocationGranted) {
+    //       PermissionStatus permissionStatus;
+    //
+    //       permissionStatus = await location.hasPermission();
+    //       if (permissionStatus == PermissionStatus.denied ||
+    //           permissionStatus == PermissionStatus.deniedForever) {
+    //         permissionStatus = await location.requestPermission();
+    //         if (permissionStatus == PermissionStatus.denied ||
+    //             permissionStatus == PermissionStatus.deniedForever) {
+    //           await prefs.setBool('isLocationGranted', false);
+    //           return false;
+    //         }
+    //       }
+    //
+    //       await prefs.setBool('isLocationGranted', true);
+    //       return true;
+    //     } else {
+    //       await prefs.setBool('isLocationGranted', true);
+    //       return true;
+    //     }
+    //   } else {
+    //     await GlobalDialog.showCustomAndroidDialog(
+    //       context,
+    //       'WARNING',
+    //       'App location permission denied, you can change your permission in App Settings.',
+    //       () => Navigator.pop(context),
+    //       'Dismiss',
+    //     );
+    //   }
+    // }
+    //
+    // await prefs.setBool('isLocationGranted', false);
+    // return false;
   }
 
   Future<bool> serviceRequest() async {
@@ -210,7 +230,7 @@ class _LocationPageState extends State<LocationPage> {
     return FutureBuilder(
       future: requestPermission(locationState),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData == true) {
           return LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 800) {

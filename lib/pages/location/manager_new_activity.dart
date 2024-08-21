@@ -548,6 +548,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     return false;
   }
 
+  void createActivity(SipSalesState state) async {}
+
   @override
   Widget build(BuildContext context) {
     // State Management
@@ -960,59 +962,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                   );
                 } else {
                   return InkWell(
-                    onTap: () async {
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      bool locPermission =
-                          prefs.getBool('isLocationGranted') ?? false;
-                      if (locPermission) {
-                        // Note -> request permission inside the app
-                        // await requestPermission(
-                        //     Provider.of<SipSalesState>(context, listen: false));
-                        managerActivityState.createShopManagerActivity(
-                          context,
-                          managerActivityState.fetchManagerActivityTypeList,
-                          activityType,
-                          activityDescription,
-                        );
-                      } else {
-                        if (await requestPermission(Provider.of<SipSalesState>(
-                            context,
-                            listen: false))) {
-                          managerActivityState.createShopManagerActivity(
-                            context,
-                            managerActivityState.fetchManagerActivityTypeList,
-                            activityType,
-                            activityDescription,
-                          );
-                        } else {
-                          if (Platform.isIOS) {
-                            GlobalDialog.showCrossPlatformDialog(
-                              context,
-                              'Warning',
-                              'Your location permission is denied, please try again or allow it in App Settings.',
-                              () async {
-                                await AppSettings.openAppSettings();
-                              },
-                              'Open Settings',
-                              isIOS: true,
-                              isDismissable: true,
-                            );
-                          } else {
-                            GlobalDialog.showCrossPlatformDialog(
-                              context,
-                              'Warning',
-                              'Your location permission is denied, please try again or allow it in App Settings.',
-                              () async {
-                                await AppSettings.openAppSettings();
-                              },
-                              'Open Settings',
-                              isDismissable: true,
-                            );
-                          }
-                        }
-                      }
-                    },
+                    onTap: () => createActivity(managerActivityState),
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 1),
                       width: MediaQuery.of(context).size.width,

@@ -61,48 +61,85 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void displayProminentDisclosure(
-    bool isAccept,
-    SipSalesState state,
-  ) async {
-    Navigator.pop(context);
+  // void displayProminentDisclosure(
+  //   bool isAccept,
+  //   SipSalesState state,
+  // ) async {
+  //   Navigator.pop(context);
+  //
+  //   if (isAccept) {
+  //     await Future.delayed(const Duration(seconds: 1)).then((_) async {
+  //       isUserGranted = await Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => const UserConsentPage(),
+  //         ),
+  //       );
+  //
+  //       if (isUserGranted) {
+  //         state.setIsUserAgree(true);
+  //         Navigator.pushReplacementNamed(context, '/location');
+  //       } else {
+  //         state.setIsUserAgree(false);
+  //
+  //         if (Platform.isIOS) {
+  //           GlobalDialog.showCustomIOSDialog(
+  //             context,
+  //             'SIP Care',
+  //             'Please enable at least one permission inside SIP User Consent page in order to continue.',
+  //             () => Navigator.pop(context),
+  //             'Dismiss',
+  //           );
+  //         } else {
+  //           GlobalDialog.showCustomAndroidDialog(
+  //             context,
+  //             'SIP Care',
+  //             'Please enable at least one permission inside SIP User Consent page in order to continue.',
+  //             () => Navigator.pop(context),
+  //             'Dismiss',
+  //           );
+  //         }
+  //       }
+  //     });
+  //   } else {
+  //     state.setIsUserAgree(false);
+  //   }
+  // }
 
-    if (isAccept) {
-      await Future.delayed(const Duration(seconds: 1)).then((_) async {
-        isUserGranted = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const UserConsentPage(),
-          ),
-        );
+  void displayProminentDisclosure(SipSalesState state) async {
+    isUserGranted = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UserConsentPage(),
+      ),
+    );
 
-        if (isUserGranted) {
-          state.setIsUserAgree(true);
-          Navigator.pushReplacementNamed(context, '/location');
-        } else {
-          state.setIsUserAgree(false);
-
-          if (Platform.isIOS) {
-            GlobalDialog.showCustomIOSDialog(
-              context,
-              'SIP Care',
-              'Please enable at least one permission inside SIP User Consent page in order to continue.',
-              () => Navigator.pop(context),
-              'Dismiss',
-            );
-          } else {
-            GlobalDialog.showCustomAndroidDialog(
-              context,
-              'SIP Care',
-              'Please enable at least one permission inside SIP User Consent page in order to continue.',
-              () => Navigator.pop(context),
-              'Dismiss',
-            );
-          }
-        }
-      });
+    if (isUserGranted) {
+      state.setIsUserAgree(true);
+      Navigator.pushReplacementNamed(context, '/location');
     } else {
       state.setIsUserAgree(false);
+      setState(() {
+        loginStatus = 'Login Cancelled.';
+      });
+
+      // if (Platform.isIOS) {
+      //   GlobalDialog.showCustomIOSDialog(
+      //     context,
+      //     'SIP Care',
+      //     'Please enable at least one permission inside SIP User Consent page in order to continue.',
+      //     () => Navigator.pop(context),
+      //     'Dismiss',
+      //   );
+      // } else {
+      //   GlobalDialog.showCustomAndroidDialog(
+      //     context,
+      //     'SIP Care',
+      //     'Please enable at least one permission inside SIP User Consent page in order to continue.',
+      //     () => Navigator.pop(context),
+      //     'Dismiss',
+      //   );
+      // }
     }
   }
 
@@ -135,23 +172,24 @@ class _LoginPageState extends State<LoginPage> {
               if (state.getIsUserAgree == true) {
                 Navigator.pushReplacementNamed(context, '/location');
               } else {
-                if (Platform.isIOS) {
-                  GlobalDialog.showCustomIOSDialog(
-                    context,
-                    'SIP Care',
-                    'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                    () => displayProminentDisclosure(true, state),
-                    'Continue',
-                  );
-                } else {
-                  GlobalDialog.showCustomAndroidDialog(
-                    context,
-                    'SIP Care',
-                    'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                    () => displayProminentDisclosure(true, state),
-                    'Continue',
-                  );
-                }
+                displayProminentDisclosure(state);
+                // if (Platform.isIOS) {
+                //   GlobalDialog.showCustomIOSDialog(
+                //     context,
+                //     'SIP Care',
+                //     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
+                //     () => displayProminentDisclosure(true, state),
+                //     'Continue',
+                //   );
+                // } else {
+                //   GlobalDialog.showCustomAndroidDialog(
+                //     context,
+                //     'SIP Care',
+                //     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
+                //     () => displayProminentDisclosure(true, state),
+                //     'Continue',
+                //   );
+                // }
               }
             },
           );
