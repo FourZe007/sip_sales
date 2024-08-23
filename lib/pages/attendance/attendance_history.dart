@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:sip_sales/global/api.dart';
@@ -261,7 +264,11 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const CircleLoading(),
+                          Platform.isIOS
+                              ? const CupertinoActivityIndicator(
+                                  radius: 17.5,
+                                )
+                              : const CircleLoading(),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.025,
                           ),
@@ -501,7 +508,11 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const CircleLoading(),
+                          Platform.isIOS
+                              ? const CupertinoActivityIndicator(
+                                  radius: 17.5,
+                                )
+                              : const CircleLoading(),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.025,
                           ),

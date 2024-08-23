@@ -110,6 +110,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
           vertical: MediaQuery.of(context).size.height * 0.02,
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -293,11 +294,6 @@ class _UserConsentPageState extends State<UserConsentPage> {
                   ),
                 ),
               ],
-            ),
-
-            // Devider
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.12,
             ),
 
             // Return Button

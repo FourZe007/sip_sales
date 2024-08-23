@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -218,7 +219,11 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircleLoading(),
+                      Platform.isIOS
+                          ? const CupertinoActivityIndicator(
+                              radius: 17.5,
+                            )
+                          : const CircleLoading(),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),

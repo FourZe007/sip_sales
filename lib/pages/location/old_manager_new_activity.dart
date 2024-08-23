@@ -698,7 +698,11 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const CircleLoading(),
+                            Platform.isIOS
+                                ? const CupertinoActivityIndicator(
+                                    radius: 17.5,
+                                  )
+                                : const CircleLoading(),
                             const SizedBox(height: 7.5),
                             Text(
                               'Loading...',
@@ -811,6 +815,12 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                         valueListenable: managerActivityState.isLoading,
                         builder: (context, value, child) {
                           if (value == true) {
+                            if (Platform.isIOS) {
+                              const CupertinoActivityIndicator(
+                                radius: 17.5,
+                                color: Colors.white,
+                              );
+                            }
                             return const CircleLoading(
                               warna: Colors.white,
                             );
@@ -873,6 +883,12 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                         valueListenable: managerActivityState.isLoading,
                         builder: (context, value, child) {
                           if (value == true) {
+                            if (Platform.isIOS) {
+                              const CupertinoActivityIndicator(
+                                radius: 17.5,
+                                color: Colors.white,
+                              );
+                            }
                             return const CircleLoading(
                               warna: Colors.white,
                             );

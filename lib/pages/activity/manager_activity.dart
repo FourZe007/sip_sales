@@ -76,7 +76,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
     SipSalesState state,
     String date,
   ) async {
-    print('Date: $date');
     managerController = StreamController<List<ModelManagerActivities>>();
     managerController.add(await state.fetchManagerActivities(date));
   }
@@ -154,18 +153,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.02,
                   ),
-                  // child: isDateInit == true
-                  //     ? Text(
-                  //         // 'Date',
-                  //         Format.tanggalFormat(
-                  //           DateTime.now().toString().substring(0, 10),
-                  //         ),
-                  //         style: GlobalFont.mediumgiantfontR,
-                  //       )
-                  //     : Text(
-                  //         Format.tanggalFormat(date),
-                  //         style: GlobalFont.mediumgiantfontR,
-                  //       ),
                   child: Text(
                     Format.tanggalFormat(date),
                     style: GlobalFont.mediumgiantfontR,
@@ -188,7 +175,11 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const CircleLoading(),
+                    Platform.isIOS
+                        ? const CupertinoActivityIndicator(
+                            radius: 17.5,
+                          )
+                        : const CircleLoading(),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.025,
                     ),
@@ -422,10 +413,20 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
           vertical: MediaQuery.of(context).size.height * 0.02,
         ),
         child: Platform.isIOS
-            ? CupertinoSliverRefreshControl(
-                onRefresh: () => fetchData(
-                  managerActivityState,
-                  date,
+            ? CupertinoScrollbar(
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: <Widget>[
+                    CupertinoSliverRefreshControl(
+                      onRefresh: () => fetchData(
+                        managerActivityState,
+                        date,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: activityView(context),
+                    ),
+                  ],
                 ),
               )
             : RefreshIndicator(

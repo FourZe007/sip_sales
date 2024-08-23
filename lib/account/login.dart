@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // Note -> This function is not used in the current codebase
   // void displayProminentDisclosure(
   //   bool isAccept,
   //   SipSalesState state,
@@ -119,24 +123,6 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         loginStatus = 'Login Cancelled.';
       });
-
-      // if (Platform.isIOS) {
-      //   GlobalDialog.showCustomIOSDialog(
-      //     context,
-      //     'SIP Care',
-      //     'Please enable at least one permission inside SIP User Consent page in order to continue.',
-      //     () => Navigator.pop(context),
-      //     'Dismiss',
-      //   );
-      // } else {
-      //   GlobalDialog.showCustomAndroidDialog(
-      //     context,
-      //     'SIP Care',
-      //     'Please enable at least one permission inside SIP User Consent page in order to continue.',
-      //     () => Navigator.pop(context),
-      //     'Dismiss',
-      //   );
-      // }
     }
   }
 
@@ -166,29 +152,10 @@ class _LoginPageState extends State<LoginPage> {
               await prefs.setBool('isLocationGranted', false);
               toggleIsLoading();
 
-              // displayProminentDisclosure(state);
-
               if (state.getIsUserAgree == true) {
                 Navigator.pushReplacementNamed(context, '/location');
               } else {
                 displayProminentDisclosure(state);
-                // if (Platform.isIOS) {
-                //   GlobalDialog.showCustomIOSDialog(
-                //     context,
-                //     'SIP Care',
-                //     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                //     () => displayProminentDisclosure(true, state),
-                //     'Continue',
-                //   );
-                // } else {
-                //   GlobalDialog.showCustomAndroidDialog(
-                //     context,
-                //     'SIP Care',
-                //     'SIP Sales collects location data for location service to enable an activity insertation when the app is in use.',
-                //     () => displayProminentDisclosure(true, state),
-                //     'Continue',
-                //   );
-                // }
               }
             },
           );
@@ -338,9 +305,11 @@ class _LoginPageState extends State<LoginPage> {
                       vertical: MediaQuery.of(context).size.height * 0.01,
                     ),
                     child: isLoading
-                        ? const CircleLoading(
-                            warna: Colors.white,
-                          )
+                        ? Platform.isIOS
+                            ? const CupertinoActivityIndicator(
+                                radius: 17.5,
+                              )
+                            : const CircleLoading()
                         : Text(
                             'SIGN IN',
                             style: (MediaQuery.of(context).size.width < 800)

@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
@@ -202,7 +204,11 @@ class _AttendancePageState extends State<AttendancePage> {
               : Center(
                   child: Column(
                     children: [
-                      const CircleLoading(),
+                      Platform.isIOS
+                          ? const CupertinoActivityIndicator(
+                              radius: 17.5,
+                            )
+                          : const CircleLoading(),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),

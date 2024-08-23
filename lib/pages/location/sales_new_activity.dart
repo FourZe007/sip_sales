@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -770,7 +771,11 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const CircleLoading(),
+                            Platform.isIOS
+                                ? const CupertinoActivityIndicator(
+                                    radius: 17.5,
+                                  )
+                                : const CircleLoading(),
                             const SizedBox(height: 7.5),
                             Text(
                               'Loading...',
@@ -879,6 +884,12 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                         valueListenable: salesActivityState.isLoading,
                         builder: (context, value, child) {
                           if (value == true) {
+                            if (Platform.isIOS) {
+                              const CupertinoActivityIndicator(
+                                radius: 17.5,
+                                color: Colors.white,
+                              );
+                            }
                             return const CircleLoading(
                               warna: Colors.white,
                             );
@@ -921,6 +932,12 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                         valueListenable: salesActivityState.isLoading,
                         builder: (context, value, child) {
                           if (value == true) {
+                            if (Platform.isIOS) {
+                              const CupertinoActivityIndicator(
+                                radius: 17.5,
+                                color: Colors.white,
+                              );
+                            }
                             return const CircleLoading(
                               warna: Colors.white,
                             );

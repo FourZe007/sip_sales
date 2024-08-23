@@ -1154,85 +1154,85 @@ class SipSalesState with ChangeNotifier {
           filteredList,
         ));
 
-        setIsLoading(false);
-        if (newActivitiesList.isNotEmpty) {
-          print('New Activities List is not empty');
-        } else {
-          print('New Activities List: ${newActivitiesList[0].resultMessage}');
-        }
-
+        // setIsLoading(false);
         // if (newActivitiesList.isNotEmpty) {
-        //   if (newActivitiesList[0].resultMessage == 'SUKSES') {
-        //     setIsLoading(false);
-
-        //     if (Platform.isIOS) {
-        //       GlobalDialog.showCrossPlatformDialog(
-        //         context,
-        //         'Sukses!',
-        //         'Aktivitas berhasil dibuat.',
-        //         () => Navigator.pop(context),
-        //         'Tutup',
-        //         isIOS: true,
-        //       );
-        //     } else {
-        //       GlobalDialog.showCrossPlatformDialog(
-        //         context,
-        //         'Sukses!',
-        //         'Aktivitas berhasil dibuat.',
-        //         () => Navigator.pop(context),
-        //         'Tutup',
-        //       );
-        //     }
-
-        //     return true;
-        //   } else {
-        //     setIsLoading(false);
-
-        //     if (Platform.isIOS) {
-        //       GlobalDialog.showCrossPlatformDialog(
-        //         context,
-        //         'Gagal!',
-        //         'Aktivitas gagal dibuat.',
-        //         () => Navigator.pop(context),
-        //         'Tutup',
-        //         isIOS: true,
-        //       );
-        //     } else {
-        //       GlobalDialog.showCrossPlatformDialog(
-        //         context,
-        //         'Gagal!',
-        //         'Aktivitas gagal dibuat.',
-        //         () => Navigator.pop(context),
-        //         'Tutup',
-        //       );
-        //     }
-
-        //     return false;
-        //   }
+        //   print('New Activities List is not empty');
         // } else {
-        //   setIsLoading(false);
-
-        //   if (Platform.isIOS) {
-        //     GlobalDialog.showCrossPlatformDialog(
-        //       context,
-        //       'Gagal!',
-        //       'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
-        //       () => Navigator.pop(context),
-        //       'Tutup',
-        //       isIOS: true,
-        //     );
-        //   } else {
-        //     GlobalDialog.showCrossPlatformDialog(
-        //       context,
-        //       'Gagal!',
-        //       'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
-        //       () => Navigator.pop(context),
-        //       'Tutup',
-        //     );
-        //   }
-
-        //   return false;
+        //   print('New Activities List: ${newActivitiesList[0].resultMessage}');
         // }
+
+        if (newActivitiesList.isNotEmpty) {
+          if (newActivitiesList[0].resultMessage == 'SUKSES') {
+            setIsLoading(false);
+
+            if (Platform.isIOS) {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Sukses!',
+                'Aktivitas berhasil dibuat.',
+                () => Navigator.pop(context),
+                'Tutup',
+                isIOS: true,
+              );
+            } else {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Sukses!',
+                'Aktivitas berhasil dibuat.',
+                () => Navigator.pop(context),
+                'Tutup',
+              );
+            }
+
+            return true;
+          } else {
+            setIsLoading(false);
+
+            if (Platform.isIOS) {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Gagal!',
+                'Aktivitas gagal dibuat.',
+                () => Navigator.pop(context),
+                'Tutup',
+                isIOS: true,
+              );
+            } else {
+              GlobalDialog.showCrossPlatformDialog(
+                context,
+                'Gagal!',
+                'Aktivitas gagal dibuat.',
+                () => Navigator.pop(context),
+                'Tutup',
+              );
+            }
+
+            return false;
+          }
+        } else {
+          setIsLoading(false);
+
+          if (Platform.isIOS) {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Gagal!',
+              'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+              () => Navigator.pop(context),
+              'Tutup',
+              isIOS: true,
+            );
+          } else {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Gagal!',
+              'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+              () => Navigator.pop(context),
+              'Tutup',
+            );
+          }
+
+          return false;
+        }
       });
     } else {
       setIsLoading(false);
@@ -1318,7 +1318,7 @@ class SipSalesState with ChangeNotifier {
     if (date == '') {
       date = DateTime.now().toString().split(' ')[0];
     }
-    print('Manager Activities Date: $date');
+    // print('Manager Activities Date: $date');
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     eId = prefs.getString('nip')!;
@@ -1329,7 +1329,7 @@ class SipSalesState with ChangeNotifier {
       date,
     ));
 
-    print('Manager Activities List length: ${managerActivitiesList.length}');
+    // print('Manager Activities List length: ${managerActivitiesList.length}');
 
     return managerActivitiesList;
   }

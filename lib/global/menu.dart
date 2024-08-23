@@ -33,6 +33,7 @@ class MenuPageState extends State<MenuPage> {
     const SalesActivityPage(),
   ];
 
+  // Note -> keep this for future use, but temporarily disable it
   final List<Widget> managerWidgetOptions = <Widget>[
     const ManagerNewActivityPage(),
     const ManagerActivityPage(),
@@ -530,9 +531,6 @@ class MenuPageState extends State<MenuPage> {
                     ],
                   ),
                 ),
-                // (menuState.getIsManager == 1)
-                //     ? salesWidgetOptions[_selectedIndex]
-                //     : managerWidgetOptions[_selectedIndex],
                 (menuState.getIsManager == 1)
                     ? salesWidgetOptions[_selectedIndex]
                     : const ManagerActivityPage(),

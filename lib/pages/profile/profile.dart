@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -584,7 +585,12 @@ class ProfilePageState extends State<ProfilePage> {
                         backgroundColor: Colors.blue[300],
                       ),
                       child: isLoading == true
-                          ? const CircleLoading(warna: Colors.white)
+                          ? Platform.isIOS
+                              ? const CupertinoActivityIndicator(
+                                  radius: 17.5,
+                                  color: Colors.white,
+                                )
+                              : const CircleLoading(warna: Colors.white)
                           : Text(
                               'LOG OUT',
                               style: GlobalFont.giantfontR,

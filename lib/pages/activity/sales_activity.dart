@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
@@ -166,7 +167,11 @@ class _SalesActivityPageState extends State<SalesActivityPage> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircleLoading(),
+                        Platform.isIOS
+                            ? const CupertinoActivityIndicator(
+                                radius: 17.5,
+                              )
+                            : const CircleLoading(),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.025,
                         ),

@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:provider/provider.dart';
@@ -562,7 +561,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                             ),
                             dismissTriggerBehavior:
                                 PopupDismissTriggerBehavior.onTapArea,
-                            contentTitle: 'Jenis dan Deskripsi Aktivitas.',
+                            contentTitle:
+                                'Masukkan jenis dan deskripsi aktivitas.',
                             child: Icon(
                               Icons.info_outlined,
                               color: Colors.black,
@@ -740,7 +740,11 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                                   return Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const CircleLoading(),
+                                      Platform.isIOS
+                                          ? const CupertinoActivityIndicator(
+                                              radius: 17.5,
+                                            )
+                                          : const CircleLoading(),
                                       const SizedBox(height: 7.5),
                                       Text(
                                         'Loading...',
@@ -872,6 +876,12 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                               valueListenable: managerActivityState.isLoading,
                               builder: (context, value, child) {
                                 if (value == true) {
+                                  if (Platform.isIOS) {
+                                    return const CupertinoActivityIndicator(
+                                      radius: 17.5,
+                                      color: Colors.white,
+                                    );
+                                  }
                                   return const CircleLoading(
                                     warna: Colors.white,
                                   );
@@ -937,6 +947,12 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                               valueListenable: managerActivityState.isLoading,
                               builder: (context, value, child) {
                                 if (value == true) {
+                                  if (Platform.isIOS) {
+                                    return const CupertinoActivityIndicator(
+                                      radius: 17.5,
+                                      color: Colors.white,
+                                    );
+                                  }
                                   return const CircleLoading(
                                     warna: Colors.white,
                                   );
