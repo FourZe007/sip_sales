@@ -308,6 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                         ? Platform.isIOS
                             ? const CupertinoActivityIndicator(
                                 radius: 17.5,
+                                color: Colors.white,
                               )
                             : const CircleLoading()
                         : Text(

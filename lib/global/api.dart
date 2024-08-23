@@ -562,7 +562,7 @@ class GlobalAPI {
                   (list) => ModelManagerActivities.fromJson(list))
               .toList();
 
-          print('Activity List: $activityTypesList');
+          // print('Activity List: $activityTypesList');
 
           return activityTypesList;
         } else {

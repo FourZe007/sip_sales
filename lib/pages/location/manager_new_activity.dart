@@ -542,7 +542,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
               children: [
                 // ========================= Sections ==========================
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.625,
                   child: Column(
                     children: [
                       // =============== Activity Details Section ================
@@ -822,14 +821,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                   ),
                 ),
 
-                // ========================= Divider ===========================
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                ),
-
                 // ======================= Create Button =======================
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
                   child: ValueListenableBuilder(
                     valueListenable: managerActivityState.isDisable,
                     builder: (context, value, child) {

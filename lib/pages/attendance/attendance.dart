@@ -207,6 +207,7 @@ class _AttendancePageState extends State<AttendancePage> {
                       Platform.isIOS
                           ? const CupertinoActivityIndicator(
                               radius: 17.5,
+                              color: Colors.white,
                             )
                           : const CircleLoading(),
                       SizedBox(

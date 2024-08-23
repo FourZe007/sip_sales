@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:io';
 
@@ -61,7 +63,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
       });
       handle(tgl);
       print('Fetch Data');
-      await fetchData(state, tgl);
+      await fetchData(context, state, tgl);
       if (isInit == true) {
         toggleFunction();
       }
@@ -73,17 +75,42 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
   }
 
   Future<void> fetchData(
+    BuildContext context,
     SipSalesState state,
     String date,
   ) async {
-    managerController = StreamController<List<ModelManagerActivities>>();
-    managerController.add(await state.fetchManagerActivities(date));
+    // print('Refresh or Load Data');
+    try {
+      managerController = StreamController<List<ModelManagerActivities>>();
+      managerController.add(await state.fetchManagerActivities(date));
+      // print('Manager Controller length: ${managerController.stream.length}');
+    } catch (e) {
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Peringatan!',
+          e.toString(),
+          () => Navigator.pop(context),
+          'Tutup',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Peringatan!',
+          e.toString(),
+          () => Navigator.pop(context),
+          'Tutup',
+        );
+      }
+    }
   }
 
   @override
   void initState() {
     managerController = StreamController<List<ModelManagerActivities>>();
     fetchData(
+      context,
       Provider.of<SipSalesState>(context, listen: false),
       date,
     );
@@ -419,6 +446,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                   slivers: <Widget>[
                     CupertinoSliverRefreshControl(
                       onRefresh: () => fetchData(
+                        context,
                         managerActivityState,
                         date,
                       ),
@@ -431,6 +459,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
               )
             : RefreshIndicator(
                 onRefresh: () => fetchData(
+                  context,
                   managerActivityState,
                   date,
                 ),
