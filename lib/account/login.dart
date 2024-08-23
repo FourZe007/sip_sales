@@ -310,7 +310,9 @@ class _LoginPageState extends State<LoginPage> {
                                 radius: 17.5,
                                 color: Colors.white,
                               )
-                            : const CircleLoading()
+                            : const CircleLoading(
+                                warna: Colors.white,
+                              )
                         : Text(
                             'SIGN IN',
                             style: (MediaQuery.of(context).size.width < 800)
