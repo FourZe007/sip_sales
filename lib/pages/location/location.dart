@@ -1,16 +1,11 @@
 // ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
-import 'dart:io';
-
-import 'package:app_settings/app_settings.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
-import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import "dart:async";
 import 'package:sip_sales/global/state_management.dart';
@@ -41,7 +36,7 @@ class _LocationPageState extends State<LocationPage> {
     if (permissionStatus == PermissionStatus.denied ||
         permissionStatus == PermissionStatus.deniedForever) {
       permissionStatus = await location.requestPermission();
-      print('Permission Status: $permissionStatus');
+      // print('Permission Status: $permissionStatus');
       if (permissionStatus == PermissionStatus.denied ||
           permissionStatus == PermissionStatus.deniedForever) {
         await prefs.setBool('isLocationGranted', false);
@@ -49,7 +44,7 @@ class _LocationPageState extends State<LocationPage> {
       }
     }
 
-    print('Permission Status: $permissionStatus');
+    // print('Permission Status: $permissionStatus');
 
     await prefs.setBool('isLocationGranted', true);
     return true;
@@ -271,7 +266,7 @@ class _LocationPageState extends State<LocationPage> {
                                   MediaQuery.of(context).size.height * 0.005,
                             ),
                             child: Text(
-                              'Where are you?',
+                              'Dimana kamu berada?',
                               style: GlobalFont.mediumgigafontMBold,
                               textAlign: TextAlign.center,
                             ),
@@ -283,7 +278,7 @@ class _LocationPageState extends State<LocationPage> {
                                   MediaQuery.of(context).size.height * 0.005,
                             ),
                             child: Text(
-                              'Your location need to be turned on in order for this to work.',
+                              'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
                               style: GlobalFont.bigfontM,
                               textAlign: TextAlign.center,
                             ),
@@ -369,7 +364,7 @@ class _LocationPageState extends State<LocationPage> {
                                   MediaQuery.of(context).size.height * 0.005,
                             ),
                             child: Text(
-                              'Where are you?',
+                              'Dimana kamu berada?',
                               style: GlobalFont.petafontRBold,
                               textAlign: TextAlign.center,
                             ),
@@ -381,7 +376,7 @@ class _LocationPageState extends State<LocationPage> {
                                   MediaQuery.of(context).size.height * 0.005,
                             ),
                             child: Text(
-                              'Your location need to be turned on in order for this to work.',
+                              'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
                               style: GlobalFont.gigafontR,
                               textAlign: TextAlign.center,
                             ),

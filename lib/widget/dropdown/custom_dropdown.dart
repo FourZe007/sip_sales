@@ -77,7 +77,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
         onChanged: (newValues) {
           if (value != newValues) {
             setState(() => value = newValues.toString());
-            if (widget.hint == 'Manager Activity Type') {
+            if (widget.hint == 'Tipe Aktivitas Manajer') {
               dropdownState.setTypeListener(value, true);
               for (ModelActivities value in widget.listData) {
                 if (value.activityName == newValues) {

@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:image/image.dart' as images;
 import 'package:flutter/material.dart';
@@ -339,9 +340,9 @@ class SipSalesState with ChangeNotifier {
             context,
             false,
             KotakPesan(
-              'WARNING!',
-              'Location service is disabled',
-              detail2: 'Please enable for more advanced features',
+              'Peringatan!',
+              'Layanan lokasi dinonaktifkan.',
+              detail2: 'Silakan aktifkan untuk fitur yang lebih advanced.',
               function: () => backToLocation(context),
             ),
           );
@@ -402,8 +403,8 @@ class SipSalesState with ChangeNotifier {
             context,
             true,
             KotakPesan(
-              'Oh noo!',
-              'Invalid Location',
+              'Peringatan!',
+              'Lokasi Tidak Valid',
               tinggi: MediaQuery.of(context).size.height * 0.3,
               detail2:
                   'User: (${GlobalVar.userAccountList[0].latitude}, ${GlobalVar.userAccountList[0].longitude}); Current: ($latitude, $longitude)',
@@ -445,8 +446,8 @@ class SipSalesState with ChangeNotifier {
               context,
               false,
               KotakPesan(
-                'YOU DID IT!',
-                'Check In success',
+                'Sukses!',
+                'Check In berhasil.',
                 tinggi: MediaQuery.of(context).size.height * 0.2,
               ),
             );
@@ -485,7 +486,7 @@ class SipSalesState with ChangeNotifier {
               context,
               false,
               KotakPesan(
-                'Oh noo!!',
+                'Peringatan!!',
                 checkInList[0].resultMessage,
                 tinggi: MediaQuery.of(context).size.height * 0.2,
               ),
@@ -498,8 +499,8 @@ class SipSalesState with ChangeNotifier {
           context,
           false,
           KotakPesan(
-            'Oh noo!!',
-            'Please check out first',
+            'Peringatan!',
+            'Tolong check out terlebih dahulu.',
             tinggi: MediaQuery.of(context).size.height * 0.2,
             detail2: attendanceStatus.toString(),
           ),
@@ -516,9 +517,9 @@ class SipSalesState with ChangeNotifier {
         context,
         false,
         KotakPesan(
-          'WARNING!',
-          'Location service is disabled',
-          detail2: 'Please enable for more advanced features',
+          'Peringatan!',
+          'Layanan Lokasi dinonaktifkan.',
+          detail2: 'Silakan aktifkan untuk fitur yang lebih advanced.',
           function: () => backToLocation(context),
         ),
       );
@@ -574,7 +575,7 @@ class SipSalesState with ChangeNotifier {
           true,
           KotakPesan(
             'WARNING!',
-            'Invalid Location',
+            'Lokasi Tidak Valid',
             tinggi: MediaQuery.of(context).size.height * 0.3,
             detail2:
                 'User: (${GlobalVar.userAccountList[0].latitude}, ${GlobalVar.userAccountList[0].longitude}); Current: ($latitude, $longitude)',
@@ -611,11 +612,10 @@ class SipSalesState with ChangeNotifier {
         // print('Longitude, Latitude: $longitude, $latitude');
         // print('Time: $time');
         // print('Coordinate list length: ${coordinateList.length}');
-
-        print('Insert all coordinate to database');
-        print('NIP: ${GlobalVar.nip}');
-        print('Date: ${DateTime.now().toString().split(' ')[0]}');
-        print('List: $coordinateList');
+        // print('Insert all coordinate to database');
+        // print('NIP: ${GlobalVar.nip}');
+        // print('Date: ${DateTime.now().toString().split(' ')[0]}');
+        // print('List: $coordinateList');
         activityTimestampList = await GlobalAPI.fetchActivityTimestamp(
           '1',
           GlobalVar.nip!,
@@ -678,8 +678,8 @@ class SipSalesState with ChangeNotifier {
               context,
               false,
               KotakPesan(
-                'YOU DID IT!',
-                'Check out success',
+                'Sukses!',
+                'Check out berhasil.',
                 tinggi: MediaQuery.of(context).size.height * 0.2,
               ),
             );
@@ -689,7 +689,7 @@ class SipSalesState with ChangeNotifier {
               context,
               false,
               KotakPesan(
-                'FAILED',
+                'Gagal',
                 checkOutList[0].resultMessage,
                 tinggi: MediaQuery.of(context).size.height * 0.2,
               ),
@@ -701,8 +701,8 @@ class SipSalesState with ChangeNotifier {
             context,
             false,
             KotakPesan(
-              'Oh noo!!',
-              'Check Out fail',
+              'Gagal!',
+              'Check Out gagal.',
               tinggi: MediaQuery.of(context).size.height * 0.2,
             ),
           );
@@ -715,8 +715,8 @@ class SipSalesState with ChangeNotifier {
         context,
         false,
         KotakPesan(
-          'Oh noo!!',
-          'Please check in first',
+          'Gagal!',
+          'Tolong check in terlebih dahulu.',
           detail2: attendanceStatus.toString(),
         ),
       );
@@ -811,6 +811,12 @@ class SipSalesState with ChangeNotifier {
     managerActivityTypeList.clear();
     managerActivityTypeList.addAll(await GlobalAPI.fetchManagerActivityTypes());
 
+    print(
+        'Manager Activity Type List length: ${managerActivityTypeList.length}');
+    for (var data in managerActivityTypeList) {
+      print(data.activityName);
+    }
+
     return managerActivityTypeList;
   }
 
@@ -825,7 +831,7 @@ class SipSalesState with ChangeNotifier {
 
     pickedFileList.add(await ImagePicker().pickImage(
       source: ImageSource.gallery,
-      imageQuality: 100,
+      imageQuality: 70,
       maxHeight: 1000,
       maxWidth: 1000,
     ));
@@ -868,6 +874,14 @@ class SipSalesState with ChangeNotifier {
     return false;
   }
 
+  // Format File Size
+  static String getFileSizeString(int bytes, {int decimals = 0}) {
+    if (bytes <= 0) return "0 Bytes";
+    const suffixes = [" Bytes", "KB", "MB", "GB", "TB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + suffixes[i];
+  }
+
   Future<bool> uploadImageFromCamera(BuildContext context) async {
     setIsUploading(true);
     setIsDisable(true);
@@ -877,8 +891,27 @@ class SipSalesState with ChangeNotifier {
     imgList.clear();
     base64ImageList.clear();
 
-    pickedFileList
-        .add(await ImagePicker().pickImage(source: ImageSource.camera));
+    // Note -> Displaying Image Size
+    // pickedFileList.add(await ImagePicker()
+    //     .pickImage(
+    //   source: ImageSource.camera,
+    //   imageQuality: 70,
+    // )
+    //     .then((image) {
+    //   File imageFile = File('');
+    //   if (image != null) {
+    //     imageFile = File(image.path);
+    //     print('Image Size: ${getFileSizeString((imageFile.lengthSync()))}');
+    //   } else {
+    //     print('No image selected.');
+    //   }
+    //   return image;
+    // }));
+
+    pickedFileList.add(await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 70,
+    ));
 
     // Check if image was picked
     if (pickedFileList.isEmpty) {
@@ -993,19 +1026,19 @@ class SipSalesState with ChangeNotifier {
             if (Platform.isIOS) {
               GlobalDialog.showCrossPlatformDialog(
                 context,
-                'Yey!',
-                'Activity inserted succedfully!',
+                'Sukses!',
+                'Aktivitas berhasil dimasukkan.',
                 () => Navigator.pop(context),
-                'Dismiss',
+                'Tutup',
                 isIOS: true,
               );
             } else {
               GlobalDialog.showCrossPlatformDialog(
                 context,
-                'Yey!',
-                'Activity inserted succedfully!',
+                'Sukses!',
+                'Aktivitas berhasil dimasukkan.',
                 () => Navigator.pop(context),
-                'Dismiss',
+                'Tutup',
               );
             }
           } else {
@@ -1015,19 +1048,19 @@ class SipSalesState with ChangeNotifier {
             if (Platform.isIOS) {
               GlobalDialog.showCrossPlatformDialog(
                 context,
-                'Oh no!',
-                'Failed to insert activity.',
+                'Gagal!',
+                'Aktivitas gagal dimasukkan.',
                 () => Navigator.pop(context),
-                'Dismiss',
+                'Tutup',
                 isIOS: true,
               );
             } else {
               GlobalDialog.showCrossPlatformDialog(
                 context,
                 'Oh no!',
-                'Failed to insert activity.',
+                'Aktivitas gagal dimasukkan.',
                 () => Navigator.pop(context),
-                'Dismiss',
+                'Tutup',
               );
             }
           }
@@ -1038,19 +1071,19 @@ class SipSalesState with ChangeNotifier {
           if (Platform.isIOS) {
             GlobalDialog.showCrossPlatformDialog(
               context,
-              'Oh no!',
-              'You have already submitted today\'s activity. Please try again tomorrow.',
+              'Peringatan!',
+              'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
               () => Navigator.pop(context),
-              'Dismiss',
+              'Tutup',
               isIOS: true,
             );
           } else {
             GlobalDialog.showCrossPlatformDialog(
               context,
-              'Oh no!',
-              'You have already submitted today\'s activity. Please try again tomorrow.',
+              'Peringatan!',
+              'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
               () => Navigator.pop(context),
-              'Dismiss',
+              'Tutup',
             );
           }
         }
@@ -1062,25 +1095,25 @@ class SipSalesState with ChangeNotifier {
       if (Platform.isIOS) {
         GlobalDialog.showCrossPlatformDialog(
           context,
-          'Oh no!',
-          'Please check your input and try again.',
+          'Peringatan!',
+          'Silakan periksa input Anda dan coba lagi.',
           () => Navigator.pop(context),
-          'Dismiss',
+          'Tutup',
           isIOS: true,
         );
       } else {
         GlobalDialog.showCrossPlatformDialog(
           context,
-          'Oh no!',
-          'Please check your input and try again.',
+          'Peringatan!',
+          'Silakan periksa input Anda dan coba lagi.',
           () => Navigator.pop(context),
-          'Dismiss',
+          'Tutup',
         );
       }
     }
   }
 
-  void createShopManagerActivity(
+  Future<bool> createShopManagerActivity(
     BuildContext context,
     List<ModelActivities> activities,
     String type,
@@ -1108,7 +1141,7 @@ class SipSalesState with ChangeNotifier {
     if (type != '' && desc != '' && filteredList.isNotEmpty) {
       await location.getLocation().then((coordinate) async {
         newActivitiesList.clear();
-        newActivitiesList = await GlobalAPI.fetchNewManagerActivity(
+        newActivitiesList.addAll(await GlobalAPI.fetchNewManagerActivity(
           eId,
           DateTime.now().toString().split(' ')[0],
           TimeOfDay.now().toString().substring(10, 15),
@@ -1119,74 +1152,87 @@ class SipSalesState with ChangeNotifier {
           aId,
           desc,
           filteredList,
-        );
+        ));
 
+        setIsLoading(false);
         if (newActivitiesList.isNotEmpty) {
-          if (newActivitiesList[0].resultMessage == 'SUKSES') {
-            setIsLoading(false);
-
-            if (Platform.isIOS) {
-              GlobalDialog.showCrossPlatformDialog(
-                context,
-                'Yey!',
-                'Activity inserted succedfully!',
-                () => Navigator.pop(context),
-                'Dismiss',
-                isIOS: true,
-              );
-            } else {
-              GlobalDialog.showCrossPlatformDialog(
-                context,
-                'Yey!',
-                'Activity inserted succedfully!',
-                () => Navigator.pop(context),
-                'Dismiss',
-              );
-            }
-          } else {
-            setIsLoading(false);
-
-            if (Platform.isIOS) {
-              GlobalDialog.showCrossPlatformDialog(
-                context,
-                'Oh no!',
-                'Failed to insert activity.',
-                () => Navigator.pop(context),
-                'Dismiss',
-                isIOS: true,
-              );
-            } else {
-              GlobalDialog.showCrossPlatformDialog(
-                context,
-                'Oh no!',
-                'Failed to insert activity.',
-                () => Navigator.pop(context),
-                'Dismiss',
-              );
-            }
-          }
+          print('New Activities List is not empty');
         } else {
-          setIsLoading(false);
-
-          if (Platform.isIOS) {
-            GlobalDialog.showCrossPlatformDialog(
-              context,
-              'Oh no!',
-              'You have already submitted today\'s activity. Please try again tomorrow.',
-              () => Navigator.pop(context),
-              'Dismiss',
-              isIOS: true,
-            );
-          } else {
-            GlobalDialog.showCrossPlatformDialog(
-              context,
-              'Oh no!',
-              'You have already submitted today\'s activity. Please try again tomorrow.',
-              () => Navigator.pop(context),
-              'Dismiss',
-            );
-          }
+          print('New Activities List: ${newActivitiesList[0].resultMessage}');
         }
+
+        // if (newActivitiesList.isNotEmpty) {
+        //   if (newActivitiesList[0].resultMessage == 'SUKSES') {
+        //     setIsLoading(false);
+
+        //     if (Platform.isIOS) {
+        //       GlobalDialog.showCrossPlatformDialog(
+        //         context,
+        //         'Sukses!',
+        //         'Aktivitas berhasil dibuat.',
+        //         () => Navigator.pop(context),
+        //         'Tutup',
+        //         isIOS: true,
+        //       );
+        //     } else {
+        //       GlobalDialog.showCrossPlatformDialog(
+        //         context,
+        //         'Sukses!',
+        //         'Aktivitas berhasil dibuat.',
+        //         () => Navigator.pop(context),
+        //         'Tutup',
+        //       );
+        //     }
+
+        //     return true;
+        //   } else {
+        //     setIsLoading(false);
+
+        //     if (Platform.isIOS) {
+        //       GlobalDialog.showCrossPlatformDialog(
+        //         context,
+        //         'Gagal!',
+        //         'Aktivitas gagal dibuat.',
+        //         () => Navigator.pop(context),
+        //         'Tutup',
+        //         isIOS: true,
+        //       );
+        //     } else {
+        //       GlobalDialog.showCrossPlatformDialog(
+        //         context,
+        //         'Gagal!',
+        //         'Aktivitas gagal dibuat.',
+        //         () => Navigator.pop(context),
+        //         'Tutup',
+        //       );
+        //     }
+
+        //     return false;
+        //   }
+        // } else {
+        //   setIsLoading(false);
+
+        //   if (Platform.isIOS) {
+        //     GlobalDialog.showCrossPlatformDialog(
+        //       context,
+        //       'Gagal!',
+        //       'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+        //       () => Navigator.pop(context),
+        //       'Tutup',
+        //       isIOS: true,
+        //     );
+        //   } else {
+        //     GlobalDialog.showCrossPlatformDialog(
+        //       context,
+        //       'Gagal!',
+        //       'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+        //       () => Navigator.pop(context),
+        //       'Tutup',
+        //     );
+        //   }
+
+        //   return false;
+        // }
       });
     } else {
       setIsLoading(false);
@@ -1194,22 +1240,26 @@ class SipSalesState with ChangeNotifier {
       if (Platform.isIOS) {
         GlobalDialog.showCrossPlatformDialog(
           context,
-          'Oh no!',
-          'Please check your input and try again.',
+          'Gagal!',
+          'Silakan periksa input Anda dan coba lagi.',
           () => Navigator.pop(context),
-          'Dismiss',
+          'Tutup',
           isIOS: true,
         );
       } else {
         GlobalDialog.showCrossPlatformDialog(
           context,
-          'Oh no!',
-          'Please check your input and try again.',
+          'Gagal!',
+          'Silakan periksa input Anda dan coba lagi.',
           () => Navigator.pop(context),
-          'Dismiss',
+          'Tutup',
         );
       }
+
+      return false;
     }
+
+    return false;
   }
 
   // ============================================================
@@ -1262,19 +1312,26 @@ class SipSalesState with ChangeNotifier {
   List<ModelManagerActivities> get getManagerActivitiesList =>
       managerActivitiesList;
 
-  Stream<List<ModelManagerActivities>> fetchManagerActivities(
+  Future<List<ModelManagerActivities>> fetchManagerActivities(
     String date,
-  ) async* {
+  ) async {
+    if (date == '') {
+      date = DateTime.now().toString().split(' ')[0];
+    }
+    print('Manager Activities Date: $date');
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     eId = prefs.getString('nip')!;
 
     managerActivitiesList.clear();
-    managerActivitiesList = await GlobalAPI.fetchManagerActivity(
+    managerActivitiesList.addAll(await GlobalAPI.fetchManagerActivity(
       eId,
       date,
-    );
+    ));
 
-    yield managerActivitiesList;
+    print('Manager Activities List length: ${managerActivitiesList.length}');
+
+    return managerActivitiesList;
   }
 
   // =============================================================

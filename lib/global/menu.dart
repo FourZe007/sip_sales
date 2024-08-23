@@ -92,17 +92,36 @@ class MenuPageState extends State<MenuPage> {
           ),
           floatingActionButton: Builder(
             builder: (context) {
-              return FloatingActionButton(
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-                backgroundColor: Colors.blue[200],
-                child: const Icon(
-                  Icons.menu_rounded,
-                  size: 30.0,
-                  color: Colors.black,
-                ),
-              );
+              if (menuState.getIsManager == 0) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ManagerNewActivityPage(),
+                      ),
+                    );
+                  },
+                  backgroundColor: Colors.blue[200],
+                  child: const Icon(
+                    Icons.add_rounded,
+                    size: 30.0,
+                    color: Colors.black,
+                  ),
+                );
+              } else {
+                return FloatingActionButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  backgroundColor: Colors.blue[200],
+                  child: const Icon(
+                    Icons.menu_rounded,
+                    size: 30.0,
+                    color: Colors.black,
+                  ),
+                );
+              }
             },
           ),
           drawer: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -511,9 +530,12 @@ class MenuPageState extends State<MenuPage> {
                     ],
                   ),
                 ),
+                // (menuState.getIsManager == 1)
+                //     ? salesWidgetOptions[_selectedIndex]
+                //     : managerWidgetOptions[_selectedIndex],
                 (menuState.getIsManager == 1)
                     ? salesWidgetOptions[_selectedIndex]
-                    : managerWidgetOptions[_selectedIndex],
+                    : const ManagerActivityPage(),
               ],
             ),
           ),

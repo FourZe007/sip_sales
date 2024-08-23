@@ -404,7 +404,7 @@ class ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Office',
+                                  'Kantor',
                                   style: GlobalFont.bigfontR,
                                 ),
                                 Text(
@@ -440,7 +440,7 @@ class ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Office Type',
+                                  'Tipe Kantor',
                                   style: GlobalFont.bigfontR,
                                 ),
                                 Text(
@@ -469,7 +469,7 @@ class ProfilePageState extends State<ProfilePage> {
                           0.0,
                         ),
                         child: Text(
-                          'Settings',
+                          'Pengaturan',
                           style: GlobalFont.mediumgiantfontRBold,
                         ),
                       ),
@@ -537,11 +537,11 @@ class ProfilePageState extends State<ProfilePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Privacy',
+                                      'Kebijakan Privasi',
                                       style: GlobalFont.giantfontR,
                                     ),
                                     Text(
-                                      'Tap to open',
+                                      'Ketuk untuk membuka',
                                       style: GlobalFont.bigfontR,
                                     ),
                                   ],

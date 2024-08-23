@@ -118,7 +118,7 @@ class ImageView extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Return',
+                    'Kembali',
                     style: GlobalFont.mediumgiantfontR,
                   ),
                 ),

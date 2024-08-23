@@ -1,14 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/account/register.dart';
 import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
-import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
@@ -168,6 +165,8 @@ class _LoginPageState extends State<LoginPage> {
               await prefs.setInt('isManager', userLogin[0].code);
               await prefs.setBool('isLocationGranted', false);
               toggleIsLoading();
+
+              // displayProminentDisclosure(state);
 
               if (state.getIsUserAgree == true) {
                 Navigator.pushReplacementNamed(context, '/location');

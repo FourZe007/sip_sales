@@ -26,11 +26,11 @@ class ManagerActivityDetails extends StatelessWidget {
             : MediaQuery.of(context).size.height * 0.075,
         title: (MediaQuery.of(context).size.width < 800)
             ? Text(
-                'Details',
+                'Detail',
                 style: GlobalFont.giantfontRBold,
               )
             : Text(
-                'Details',
+                'Detail',
                 style: GlobalFont.terafontRBold,
               ),
         leading: IconButton(
@@ -57,7 +57,7 @@ class ManagerActivityDetails extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 margin: const EdgeInsets.symmetric(horizontal: 5.0),
                 child: Text(
-                  'Coordinate: (${activityDetailsState.managerActivitiesList[index].lat}, ${activityDetailsState.managerActivitiesList[index].lng})',
+                  'Koordinat: (${activityDetailsState.managerActivitiesList[index].lat}, ${activityDetailsState.managerActivitiesList[index].lng})',
                   style: GlobalFont.bigfontR,
                 ),
               ),
@@ -98,7 +98,8 @@ class ManagerActivityDetails extends StatelessWidget {
                                         .managerActivitiesList[index].pic1,
                                   ),
                                   fit: BoxFit.cover,
-                                  scale: 7.5,
+                                  height: 62.5,
+                                  width: 62.5,
                                 ),
                               ),
                               Text(

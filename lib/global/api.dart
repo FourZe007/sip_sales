@@ -551,7 +551,7 @@ class GlobalAPI {
       final response =
           await http.post(url, body: jsonEncode(mapManagerActivity), headers: {
         'Content-Type': 'application/json',
-      }).timeout(const Duration(seconds: 60));
+      }).timeout(const Duration(minutes: 2));
 
       if (response.statusCode <= 200) {
         var jsonManagerActivity = jsonDecode(response.body);
@@ -561,6 +561,8 @@ class GlobalAPI {
               .map<ModelManagerActivities>(
                   (list) => ModelManagerActivities.fromJson(list))
               .toList();
+
+          print('Activity List: $activityTypesList');
 
           return activityTypesList;
         } else {

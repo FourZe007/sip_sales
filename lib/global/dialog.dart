@@ -46,7 +46,7 @@ class GlobalDialog {
           content: Text(content),
           actions: [
             CupertinoDialogAction(
-              child: const Text('Dismiss'),
+              child: const Text('Tutup'),
               onPressed: () => Navigator.pop(context),
             ),
           ],

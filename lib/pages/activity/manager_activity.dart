@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/activity/mananger_activity_details.dart';
 import 'package:sip_sales/widget/format.dart';
@@ -17,8 +20,11 @@ class ManagerActivityPage extends StatefulWidget {
 }
 
 class _ManagerActivityPageState extends State<ManagerActivityPage> {
-  String date = '';
+  String date = DateTime.now().toString().split(' ')[0];
   bool isDateInit = false;
+
+  StreamController<List<ModelManagerActivities>> managerController =
+      StreamController<List<ModelManagerActivities>>();
 
   void setDate(String value) {
     date = value;
@@ -32,6 +38,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
 
   void setSelectDate(
     BuildContext context,
+    SipSalesState state,
     String tgl,
     bool isInit,
     Function handle,
@@ -53,6 +60,8 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
         tgl = picked.toString().substring(0, 10);
       });
       handle(tgl);
+      print('Fetch Data');
+      await fetchData(state, tgl);
       if (isInit == true) {
         toggleFunction();
       }
@@ -63,143 +72,164 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
     }
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    toggleIsDateInit();
+  Future<void> fetchData(
+    SipSalesState state,
+    String date,
+  ) async {
+    print('Date: $date');
+    managerController = StreamController<List<ModelManagerActivities>>();
+    managerController.add(await state.fetchManagerActivities(date));
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    managerController = StreamController<List<ModelManagerActivities>>();
+    fetchData(
+      Provider.of<SipSalesState>(context, listen: false),
+      date,
+    );
+    toggleIsDateInit();
+
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    managerController.close();
+    super.dispose();
+  }
+
+  Widget activityView(BuildContext context) {
     final managerActivityState = Provider.of<SipSalesState>(context);
 
-    return Positioned(
-      top: MediaQuery.of(context).size.height * 0.12,
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+    return Column(
+      children: [
+        Container(
+          height: MediaQuery.of(context).size.height * 0.05,
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.02,
           ),
-          color: Colors.white,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.025,
-          vertical: MediaQuery.of(context).size.height * 0.02,
-        ),
-        child: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.05,
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.02,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              // Open Filter Button
+              InkWell(
+                // onTap: toggleFilter,
+                onTap: null,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.1,
+                  decoration: BoxDecoration(
+                    // border: Border.all(color: Colors.black, width: 1.5),
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: const Icon(
+                    Icons.filter_alt_rounded,
+                    size: 30.0,
+                    color: Colors.black,
+                  ),
+                ),
               ),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  // Open Filter Button
-                  InkWell(
-                    // onTap: toggleFilter,
-                    onTap: null,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.1,
-                      decoration: BoxDecoration(
-                        // border: Border.all(color: Colors.black, width: 1.5),
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: const Icon(
-                        Icons.filter_alt_rounded,
-                        size: 30.0,
-                        color: Colors.black,
-                      ),
-                    ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.025,
+              ),
+              // Modify Begin Date
+              InkWell(
+                onTap: () => setSelectDate(
+                  context,
+                  managerActivityState,
+                  date,
+                  isDateInit,
+                  setDate,
+                  toggleIsDateInit,
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    // border: Border.all(color: Colors.black, width: 1.5),
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.025,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.02,
                   ),
-                  // Modify Begin Date
-                  InkWell(
-                    onTap: () => setSelectDate(
-                      context,
-                      date,
-                      isDateInit,
-                      setDate,
-                      toggleIsDateInit,
+                  // child: isDateInit == true
+                  //     ? Text(
+                  //         // 'Date',
+                  //         Format.tanggalFormat(
+                  //           DateTime.now().toString().substring(0, 10),
+                  //         ),
+                  //         style: GlobalFont.mediumgiantfontR,
+                  //       )
+                  //     : Text(
+                  //         Format.tanggalFormat(date),
+                  //         style: GlobalFont.mediumgiantfontR,
+                  //       ),
+                  child: Text(
+                    Format.tanggalFormat(date),
+                    style: GlobalFont.mediumgiantfontR,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: MediaQuery.of(context).size.height * 0.725,
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height * 0.02,
+          ),
+          child: StreamBuilder(
+            stream: managerController.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircleLoading(),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.025,
                     ),
-                    child: Container(
+                    Text(
+                      'Loading...',
+                      style: GlobalFont.mediumgiantfontR,
+                    )
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.data!.isEmpty) {
+                return const Center(child: Text('Data tidak tersedia.'));
+              } else {
+                return Column(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.05,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        // border: Border.all(color: Colors.black, width: 1.5),
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(15.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cabang: ',
+                            style: GlobalFont.giantfontR,
+                          ),
+                          Text(
+                            snapshot.data![0].shopName,
+                            style: GlobalFont.giantfontRBold,
+                          ),
+                        ],
                       ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.02,
-                      ),
-                      child: isDateInit == true
-                          ? Text(
-                              'Date',
-                              style: GlobalFont.mediumgiantfontR,
-                            )
-                          : Text(
-                              Format.tanggalFormat(date),
-                              style: GlobalFont.mediumgiantfontR,
-                            ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.725,
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.02,
-              ),
-              child: StreamBuilder(
-                stream: managerActivityState.fetchManagerActivities(date),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CircleLoading(),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.025,
-                        ),
-                        Text(
-                          'Loading...',
-                          style: GlobalFont.mediumgiantfontR,
-                        )
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (snapshot.data!.isEmpty) {
-                    return const Center(child: Text('Data not available'));
-                  } else {
-                    return ListView(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Branch: ',
-                              style: GlobalFont.giantfontR,
-                            ),
-                            Text(
-                              snapshot.data![0].shopName,
-                              style: GlobalFont.giantfontRBold,
-                            ),
-                          ],
-                        ),
-                        for (int i = 0; i < snapshot.data!.length; i++)
-                          Container(
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.675,
+                      child: ListView(
+                        children: snapshot.data!.asMap().entries.map((e) {
+                          final int i = e.key;
+                          final ModelManagerActivities data = e.value;
+
+                          return Container(
                             width: MediaQuery.of(context).size.width,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
@@ -247,7 +277,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                         ),
                                         Text(
                                           Format.tanggalFormat(
-                                            snapshot.data![i].date,
+                                            data.date,
                                           ),
                                           style: GlobalFont.bigfontR,
                                         ),
@@ -258,19 +288,19 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                         if (Platform.isIOS) {
                                           GlobalDialog.showCrossPlatformDialog(
                                             context,
-                                            'Stay Tuned',
-                                            'New features are on the way!',
+                                            'Pantau Terus!',
+                                            'Fitur baru sedang dalam pengembangan.',
                                             () => Navigator.pop(context),
-                                            'Dismiss',
+                                            'Tutup',
                                             isIOS: true,
                                           );
                                         } else {
                                           GlobalDialog.showCrossPlatformDialog(
                                             context,
-                                            'Stay Tuned',
-                                            'New features are on the way!',
+                                            'Pantau Terus!',
+                                            'Fitur baru sedang dalam pengembangan.',
                                             () => Navigator.pop(context),
-                                            'Dismiss',
+                                            'Tutup',
                                           );
                                         }
                                       },
@@ -302,7 +332,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            snapshot.data![i].activityName,
+                                            data.activityName,
                                             style: GlobalFont.giantfontRBold,
                                           ),
                                           SizedBox(
@@ -312,7 +342,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                                 0.0075,
                                           ),
                                           Text(
-                                            'Time: ${snapshot.data![i].time}',
+                                            'Waktu: ${data.time}',
                                             style: GlobalFont.mediumgiantfontR,
                                             overflow: TextOverflow.clip,
                                           ),
@@ -357,15 +387,54 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                 ),
                               ],
                             ),
-                          ),
-                      ],
-                    );
-                  }
-                },
-              ),
-            ),
-          ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
         ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final managerActivityState = Provider.of<SipSalesState>(context);
+
+    return Positioned(
+      top: MediaQuery.of(context).size.height * 0.12,
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+          color: Colors.white,
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.025,
+          vertical: MediaQuery.of(context).size.height * 0.02,
+        ),
+        child: Platform.isIOS
+            ? CupertinoSliverRefreshControl(
+                onRefresh: () => fetchData(
+                  managerActivityState,
+                  date,
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: () => fetchData(
+                  managerActivityState,
+                  date,
+                ),
+                child: activityView(context),
+              ),
       ),
     );
   }
