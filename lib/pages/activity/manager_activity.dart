@@ -284,6 +284,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
+                                  // mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Column(
                                       crossAxisAlignment:

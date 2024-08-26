@@ -173,7 +173,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
       // Note -> below Android 12
       if (androidInfo.version.sdkInt <= 32) {
         // print('Android 12 or below');
-        var storageStatus = await handler.Permission.photos.status;
+        var storageStatus = await handler.Permission.storage.status;
         // print(storageStatus);
         if (storageStatus.isGranted) {
           // print('Camera Permission granted');
@@ -544,7 +544,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                 SizedBox(
                   child: Column(
                     children: [
-                      // =============== Activity Details Section ================
+                      // =============== Activity Details Section ==============
                       Row(
                         children: [
                           Text(
@@ -634,7 +634,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                           ],
                           controller: TextEditingController(
                             text: activityType == 'DAILY REPORT'
-                                ? ''
+                                ? activityDescription
                                 : activityDescription == ''
                                     ? managerActivityState
                                         .managerActivityTypeList[0]

@@ -38,7 +38,14 @@ class MyApp extends StatelessWidget {
       scrollBehavior: MyCustomScrollBehavior(),
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
-      home: const LoginPage(),
+      home: Builder(builder: (context) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: const TextScaler.linear(1.0),
+          ),
+          child: const LoginPage(),
+        );
+      }),
       routes: {
         '/login': (context) => const LoginPage(),
         '/location': (context) => const LocationPage(),

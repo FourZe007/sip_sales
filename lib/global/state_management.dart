@@ -811,10 +811,17 @@ class SipSalesState with ChangeNotifier {
     managerActivityTypeList.clear();
     managerActivityTypeList.addAll(await GlobalAPI.fetchManagerActivityTypes());
 
-    print(
-        'Manager Activity Type List length: ${managerActivityTypeList.length}');
+    // print(
+    //     'Manager Activity Type List length: ${managerActivityTypeList.length}');
+    // for (var data in managerActivityTypeList) {
+    //   print(data.activityName);
+    // }
+
     for (var data in managerActivityTypeList) {
-      print(data.activityName);
+      if (data.activityName == 'DAILY REPORT') {
+        data.activityTemplate = '';
+        break;
+      }
     }
 
     return managerActivityTypeList;
