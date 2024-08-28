@@ -13,6 +13,7 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
+import 'package:sip_sales/widget/text/custom_text.dart';
 import 'package:sip_sales/widget/textfield/customuserinput2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -241,9 +242,10 @@ class _LoginPageState extends State<LoginPage> {
                   margin: EdgeInsets.symmetric(
                     vertical: MediaQuery.of(context).size.height * 0.025,
                   ),
-                  child: Text(
+                  child: CustomText(
                     'LOGIN',
-                    style: GlobalFont.petafontRBold,
+                    fontSize: MediaQuery.of(context).size.width * 0.07,
+                    isBold: true,
                   ),
                 ),
                 CustomUserInput2(
@@ -267,9 +269,10 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    CustomText(
                       loginStatus,
-                      style: GlobalFont.mediumbigfontM,
+                      fontFamily: GlobalFontFamily.fontMontserrat,
+                      fontSize: MediaQuery.of(context).size.width * 0.0325,
                     ),
                     TextButton(
                       onPressed: () {
@@ -280,9 +283,11 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                       },
-                      child: Text(
+                      child: CustomText(
                         'Create Account',
-                        style: GlobalFont.mediumBigfontRTextButtonBlue,
+                        color: Colors.blue,
+                        fontSize: MediaQuery.of(context).size.width * 0.0325,
+                        decor: TextDecoration.underline,
                       ),
                     ),
                   ],
@@ -313,11 +318,13 @@ class _LoginPageState extends State<LoginPage> {
                             : const CircleLoading(
                                 warna: Colors.white,
                               )
-                        : Text(
+                        : CustomText(
                             'SIGN IN',
-                            style: (MediaQuery.of(context).size.width < 800)
-                                ? GlobalFont.mediumgiantfontRBoldWhite
-                                : GlobalFont.mediumgigafontMBoldWhite,
+                            color: Colors.white,
+                            fontSize: (MediaQuery.of(context).size.width < 800)
+                                ? MediaQuery.of(context).size.width * 0.04
+                                : MediaQuery.of(context).size.width * 0.0425,
+                            isBold: true,
                           ),
                   ),
                 ),

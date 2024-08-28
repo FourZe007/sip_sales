@@ -531,7 +531,8 @@ class GlobalAPI {
     }
   }
 
-  static Future<List<ModelManagerActivities>> fetchManagerActivity(
+  // ~:OLD:~
+  static Future<List<ModelManagerActivities>> fetchOldManagerActivity(
     String employeeID,
     String date,
   ) async {
@@ -545,7 +546,7 @@ class GlobalAPI {
       "CurrentDate": date,
     };
 
-    List<ModelManagerActivities> activityTypesList = [];
+    List<ModelManagerActivities> managerActivityList = [];
 
     try {
       final response =
@@ -557,22 +558,111 @@ class GlobalAPI {
         var jsonManagerActivity = jsonDecode(response.body);
         if (jsonManagerActivity['code'] == '100' &&
             jsonManagerActivity['msg'] == 'Sukses') {
-          activityTypesList = (jsonManagerActivity['data'] as List)
+          managerActivityList = (jsonManagerActivity['data'] as List)
               .map<ModelManagerActivities>(
                   (list) => ModelManagerActivities.fromJson(list))
               .toList();
 
-          // print('Activity List: $activityTypesList');
+          // print('Activity List: $managerActivityList');
 
-          return activityTypesList;
+          return managerActivityList;
         } else {
-          return activityTypesList;
+          return managerActivityList;
         }
       } else {}
-      return activityTypesList;
+      return managerActivityList;
     } catch (e) {
       print(e.toString());
-      return activityTypesList;
+      return managerActivityList;
+    }
+  }
+
+  static Future<List<ModelManagerActivities>> fetchManagerActivity(
+    String employeeID,
+    String date,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/EmployeeActivitySMHeader',
+    );
+
+    Map mapManagerActivity = {
+      "EmployeeID": employeeID,
+      "CurrentDate": date,
+    };
+
+    List<ModelManagerActivities> managerActivityList = [];
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapManagerActivity), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(minutes: 2));
+
+      if (response.statusCode <= 200) {
+        var jsonManagerActivity = jsonDecode(response.body);
+        if (jsonManagerActivity['code'] == '100' &&
+            jsonManagerActivity['msg'] == 'Sukses') {
+          managerActivityList = (jsonManagerActivity['data'] as List)
+              .map<ModelManagerActivities>(
+                  (list) => ModelManagerActivities.fromJson(list))
+              .toList();
+
+          return managerActivityList;
+        } else {
+          return managerActivityList;
+        }
+      } else {}
+      return managerActivityList;
+    } catch (e) {
+      print(e.toString());
+      return managerActivityList;
+    }
+  }
+
+  static Future<List<ModelManagerActivityDetails>> fetchManagerActivityDetails(
+    String employeeID,
+    String date,
+    String actId,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/EmployeeActivitySMDetail',
+    );
+
+    Map mapManagerActivityDetails = {
+      "EmployeeID": employeeID,
+      "CurrentDate": date,
+      "ActivityID": actId,
+    };
+
+    List<ModelManagerActivityDetails> managerActivityDetailList = [];
+
+    try {
+      final response = await http
+          .post(url, body: jsonEncode(mapManagerActivityDetails), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(minutes: 2));
+
+      if (response.statusCode <= 200) {
+        var jsonManagerActivityDetails = jsonDecode(response.body);
+        if (jsonManagerActivityDetails['code'] == '100' &&
+            jsonManagerActivityDetails['msg'] == 'Sukses') {
+          managerActivityDetailList =
+              (jsonManagerActivityDetails['data'] as List)
+                  .map<ModelManagerActivityDetails>(
+                      (list) => ModelManagerActivityDetails.fromJson(list))
+                  .toList();
+
+          return managerActivityDetailList;
+        } else {
+          return managerActivityDetailList;
+        }
+      } else {}
+      return managerActivityDetailList;
+    } catch (e) {
+      print(e.toString());
+      return managerActivityDetailList;
     }
   }
 }

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/widget/text/custom_text.dart';
 
 class CustomUserInput2 extends StatefulWidget {
   CustomUserInput2(
@@ -83,14 +84,24 @@ class _CustomUserInput2State extends State<CustomUserInput2>
               ? userInputController
               : TextEditingController(text: widget.input),
           enabled: widget.mode == 0 ? true : false,
-          style: GlobalFont.mediumbigfontM,
+          style: TextStyle(
+            color: Colors.black,
+            fontFamily: GlobalFontFamily.fontMontserrat,
+            fontSize: MediaQuery.of(context).size.width * 0.0315,
+            backgroundColor: Colors.transparent,
+          ),
           decoration: InputDecoration(
             filled: true,
             fillColor: widget.mode == 0 ? Colors.white54 : Colors.grey[400],
             contentPadding: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.02,
             ),
-            hintStyle: GlobalFont.mediumbigfontM,
+            hintStyle: TextStyle(
+              color: Colors.black,
+              fontFamily: GlobalFontFamily.fontMontserrat,
+              fontSize: MediaQuery.of(context).size.width * 0.0315,
+              backgroundColor: Colors.transparent,
+            ),
             hintText: 'Masukkan ${widget.hint}',
             labelText: widget.hint,
             border: const OutlineInputBorder(
@@ -108,13 +119,10 @@ class _CustomUserInput2State extends State<CustomUserInput2>
               children: [
                 // Either the icon or text based on condition
                 (widget.isIcon == false)
-                    ? Text(
+                    ? CustomText(
                         widget.prefixText,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                        align: TextAlign.center,
+                        isBold: true,
                       )
                     : Icon(
                         widget.icon,
@@ -147,7 +155,12 @@ class _CustomUserInput2State extends State<CustomUserInput2>
               ? passInputController
               : TextEditingController(text: widget.input),
           obscureText: hidePassword,
-          style: GlobalFont.mediumbigfontM,
+          style: TextStyle(
+            color: Colors.black,
+            fontFamily: GlobalFontFamily.fontMontserrat,
+            fontSize: MediaQuery.of(context).size.width * 0.0315,
+            backgroundColor: Colors.transparent,
+          ),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white54,
@@ -155,7 +168,12 @@ class _CustomUserInput2State extends State<CustomUserInput2>
               top: MediaQuery.of(context).size.height * 0.02,
             ),
             hintText: 'Masukkan ${widget.hint}',
-            hintStyle: GlobalFont.mediumbigfontM,
+            hintStyle: TextStyle(
+              color: Colors.black,
+              fontFamily: GlobalFontFamily.fontMontserrat,
+              fontSize: MediaQuery.of(context).size.width * 0.0315,
+              backgroundColor: Colors.transparent,
+            ),
             labelText: widget.hint,
             border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(

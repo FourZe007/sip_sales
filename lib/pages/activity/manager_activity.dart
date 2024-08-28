@@ -217,11 +217,27 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                   ],
                 );
               } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                return ListView(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.725,
+                      alignment: Alignment.center,
+                      child: Text('Error: ${snapshot.error}'),
+                    ),
+                  ],
+                );
               } else if (snapshot.data!.isEmpty) {
-                return const Center(child: Text('Data tidak tersedia.'));
+                return ListView(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.725,
+                      alignment: Alignment.center,
+                      child: const Text('Data tidak tersedia.'),
+                    ),
+                  ],
+                );
               } else {
-                return Column(
+                return ListView(
                   children: [
                     Container(
                       height: MediaQuery.of(context).size.height * 0.05,
@@ -236,6 +252,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                           Text(
                             snapshot.data![0].shopName,
                             style: GlobalFont.giantfontRBold,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -244,7 +261,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                       height: MediaQuery.of(context).size.height * 0.675,
                       child: ListView(
                         children: snapshot.data!.asMap().entries.map((e) {
-                          final int i = e.key;
+                          // final int i = e.key;
                           final ModelManagerActivities data = e.value;
 
                           return Container(
@@ -258,9 +275,9 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                   // Adjust shadow color as needed
                                   color: Colors.grey,
                                   // Adjust shadow offset
-                                  offset: Offset(2.0, 6.0),
+                                  offset: Offset(0.0, 7.5),
                                   // Adjust shadow blur radius
-                                  blurRadius: 5.0,
+                                  blurRadius: 7.5,
                                   // Adjust shadow spread radius
                                   spreadRadius: 1.0,
                                 ),
@@ -272,78 +289,110 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                               horizontal:
                                   MediaQuery.of(context).size.width * 0.01,
                             ),
-                            padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.01,
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.035,
+                            padding: EdgeInsets.fromLTRB(
+                              0,
+                              MediaQuery.of(context).size.height * 0.015,
+                              MediaQuery.of(context).size.width * 0.03,
+                              MediaQuery.of(context).size.height * 0.015,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   // mainAxisAlignment: MainAxisAlignment.end,
+                                //   children: [
+                                //     Column(
+                                //       crossAxisAlignment:
+                                //           CrossAxisAlignment.start,
+                                //       children: [
+                                //         Text(
+                                //           'Aktivitas',
+                                //           style: GlobalFont.bigfontRBold,
+                                //         ),
+                                //         Text(
+                                //           Format.tanggalFormat(
+                                //             data.date,
+                                //           ),
+                                //           style: GlobalFont.bigfontR,
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     IconButton(
+                                //       onPressed: () {
+                                //         if (Platform.isIOS) {
+                                //           GlobalDialog.showCrossPlatformDialog(
+                                //             context,
+                                //             'Pantau Terus!',
+                                //             'Fitur baru sedang dalam pengembangan.',
+                                //             () => Navigator.pop(context),
+                                //             'Tutup',
+                                //             isIOS: true,
+                                //           );
+                                //         } else {
+                                //           GlobalDialog.showCrossPlatformDialog(
+                                //             context,
+                                //             'Pantau Terus!',
+                                //             'Fitur baru sedang dalam pengembangan.',
+                                //             () => Navigator.pop(context),
+                                //             'Tutup',
+                                //           );
+                                //         }
+                                //       },
+                                //       icon: const Icon(
+                                //         Icons.more_vert_rounded,
+                                //         size: 30.0,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                // Divider(
+                                //   color: Colors.grey,
+                                //   thickness: 0.5,
+                                //   height:
+                                //       MediaQuery.of(context).size.height * 0.01,
+                                // ),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  // mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Aktivitas',
-                                          style: GlobalFont.bigfontRBold,
-                                        ),
-                                        Text(
-                                          Format.tanggalFormat(
-                                            data.date,
+                                    Builder(builder: (context) {
+                                      if (data.activityId == '00') {
+                                        return const Expanded(
+                                          child: Icon(
+                                            Icons.flare_rounded,
+                                            size: 37.5,
                                           ),
-                                          style: GlobalFont.bigfontR,
-                                        ),
-                                      ],
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        if (Platform.isIOS) {
-                                          GlobalDialog.showCrossPlatformDialog(
-                                            context,
-                                            'Pantau Terus!',
-                                            'Fitur baru sedang dalam pengembangan.',
-                                            () => Navigator.pop(context),
-                                            'Tutup',
-                                            isIOS: true,
-                                          );
-                                        } else {
-                                          GlobalDialog.showCrossPlatformDialog(
-                                            context,
-                                            'Pantau Terus!',
-                                            'Fitur baru sedang dalam pengembangan.',
-                                            () => Navigator.pop(context),
-                                            'Tutup',
-                                          );
-                                        }
-                                      },
-                                      icon: const Icon(
-                                        Icons.more_vert_rounded,
-                                        size: 30.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  color: Colors.grey,
-                                  thickness: 0.5,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.01,
-                                ),
-                                Row(
-                                  children: [
-                                    const Expanded(
-                                      child: Icon(
-                                        Icons.event_note_rounded,
-                                        size: 37.5,
-                                      ),
-                                    ),
+                                        );
+                                      } else if (data.activityId == '01') {
+                                        return const Expanded(
+                                          child: Icon(
+                                            Icons.shopping_bag_rounded,
+                                            size: 37.5,
+                                          ),
+                                        );
+                                      } else if (data.activityId == '02') {
+                                        return const Expanded(
+                                          child: Icon(
+                                            Icons.find_in_page_rounded,
+                                            size: 37.5,
+                                          ),
+                                        );
+                                      } else if (data.activityId == '03') {
+                                        return const Expanded(
+                                          child: Icon(
+                                            Icons.note_rounded,
+                                            size: 37.5,
+                                          ),
+                                        );
+                                      } else {
+                                        return const Expanded(
+                                          child: Icon(
+                                            Icons.event_note_rounded,
+                                            size: 37.5,
+                                          ),
+                                        );
+                                      }
+                                    }),
                                     Expanded(
                                       flex: 3,
                                       child: Column(
@@ -372,19 +421,27 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                 ),
                                 SizedBox(
                                   height: MediaQuery.of(context).size.height *
-                                      0.015,
+                                      0.025,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     InkWell(
-                                      onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ManagerActivityDetails(i),
-                                        ),
-                                      ),
+                                      onTap: () {
+                                        // print('Date: $date');
+                                        // print('ActId: ${data.activityId}');
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ManagerActivityDetails(
+                                              date,
+                                              data.activityId,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                       hoverColor: Colors.transparent,
                                       child: Container(
                                         decoration: BoxDecoration(
@@ -398,7 +455,8 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                         ),
                                         child: Text(
                                           'Lihat Detail',
-                                          style: GlobalFont.mediumgiantfontR,
+                                          style:
+                                              GlobalFont.mediumgiantfontRBold,
                                         ),
                                       ),
                                     ),

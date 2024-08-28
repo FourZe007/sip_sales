@@ -1341,6 +1341,57 @@ class SipSalesState with ChangeNotifier {
     return managerActivitiesList;
   }
 
+  ModelManagerActivityDetails managerActivityDetailsList =
+      ModelManagerActivityDetails(
+    time: '',
+    lat: 0,
+    lng: 0,
+    actId: '',
+    actDesc: '',
+    pic1: '',
+  );
+
+  ModelManagerActivityDetails get getManagerActivityDetailsList =>
+      managerActivityDetailsList;
+
+  Future<ModelManagerActivityDetails> fetchManagerActivityDetails(
+    String date,
+    String actId,
+  ) async {
+    if (date == '') {
+      date = DateTime.now().toString().split(' ')[0];
+    }
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    eId = prefs.getString('nip')!;
+
+    // print('State Management');
+    // print('Employee ID: $eId');
+    // print('Date: $date');
+    // print('Activity ID: $actId');
+
+    managerActivityDetailsList = ModelManagerActivityDetails(
+      time: '',
+      lat: 0,
+      lng: 0,
+      actId: '',
+      actDesc: '',
+      pic1: '',
+    );
+
+    await GlobalAPI.fetchManagerActivityDetails(
+      eId,
+      date,
+      actId,
+    ).then((value) {
+      managerActivityDetailsList = value[0];
+    });
+
+    // print(managerActivityDetailsList.length);
+
+    return managerActivityDetailsList;
+  }
+
   // =============================================================
   // =================== App Rule Agreement ======================
   // =============================================================

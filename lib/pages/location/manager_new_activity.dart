@@ -431,13 +431,41 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                 'Buat Aktivitas',
                 style: GlobalFont.terafontRBold,
               ),
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-            color: Colors.black,
-          ),
+        leading: ValueListenableBuilder(
+          valueListenable: managerActivityState.isDisable,
+          builder: (context, value, child) {
+            return IconButton(
+              onPressed: () {
+                if (value == true) {
+                  if (Platform.isIOS) {
+                    GlobalDialog.showCrossPlatformDialog(
+                      context,
+                      'Peringatan!',
+                      'Silakan periksa inputan Anda kembali.',
+                      () => Navigator.pop(context),
+                      'Tutup',
+                      isIOS: true,
+                    );
+                  } else {
+                    GlobalDialog.showCrossPlatformDialog(
+                      context,
+                      'Peringatan!',
+                      'Silakan periksa kembali inputan Anda.',
+                      () => Navigator.pop(context),
+                      'Tutup',
+                    );
+                  }
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              icon: Icon(
+                Icons.arrow_back_ios,
+                size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                color: Colors.black,
+              ),
+            );
+          },
         ),
       ),
       body: SlidingUpPanel(

@@ -8,6 +8,8 @@ import 'package:sip_sales/global/global.dart';
 class ImageView extends StatelessWidget {
   ImageView(
     this.imageDir, {
+    this.lat = 0.0,
+    this.lng = 0.0,
     this.startTime = '',
     this.endTime = '',
     this.isManager = false,
@@ -15,6 +17,8 @@ class ImageView extends StatelessWidget {
   });
 
   String imageDir;
+  double lat;
+  double lng;
   String startTime;
   String endTime;
   bool isManager;
@@ -67,34 +71,78 @@ class ImageView extends StatelessWidget {
                         builder: (context) {
                           if (isManager) {
                             if (startTime != '') {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[350],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                padding: const EdgeInsets.all(5.0),
-                                margin: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  startTime,
-                                  style: GlobalFont.mediumgiantfontRBold,
-                                ),
+                              return Wrap(
+                                direction: Axis.vertical,
+                                crossAxisAlignment: WrapCrossAlignment.end,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[350],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    padding: const EdgeInsets.all(5.0),
+                                    margin: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      startTime,
+                                      style: GlobalFont.mediumgiantfontRBold,
+                                    ),
+                                  ),
+                                  (lat != 0.0 && lng != 0.0)
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[350],
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          padding: const EdgeInsets.all(5.0),
+                                          margin: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            '($lat, $lng)',
+                                            style:
+                                                GlobalFont.mediumgiantfontRBold,
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                ],
                               );
                             } else {
                               return const SizedBox();
                             }
                           } else {
                             if (startTime != '' && endTime != '') {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[350],
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                padding: const EdgeInsets.all(5.0),
-                                margin: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  '$startTime - $endTime',
-                                  style: GlobalFont.mediumgiantfontRBold,
-                                ),
+                              return Wrap(
+                                direction: Axis.vertical,
+                                crossAxisAlignment: WrapCrossAlignment.end,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[350],
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    padding: const EdgeInsets.all(5.0),
+                                    margin: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      '$startTime - $endTime',
+                                      style: GlobalFont.mediumgiantfontRBold,
+                                    ),
+                                  ),
+                                  (lat != 0.0 && lng != 0.0)
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[350],
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          padding: const EdgeInsets.all(5.0),
+                                          margin: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            '($lat, $lng)',
+                                            style:
+                                                GlobalFont.mediumgiantfontRBold,
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                ],
                               );
                             } else {
                               return const SizedBox();

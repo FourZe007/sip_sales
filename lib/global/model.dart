@@ -388,6 +388,17 @@ class ModelSalesActivities {
 
 // Model for Shop Manager Activities
 class ModelManagerActivities {
+  // "employeeID": "2401/003346",
+  // "eName": "HARKA WICAKSONO",
+  // "branch": "01",
+  // "shop": "01",
+  // "bsName": "GRAHA RSSM",
+  // "currentDate": "2024-08-27",
+  // "currentTime": "08:42:34",
+  // "lat": -7.2660353,
+  // "lng": 112.7413002,
+  // "activityID": "00",
+  // "activityName": "MORNING BRIEFING"
   String employeeId;
   String employeeName;
   String branch;
@@ -399,8 +410,8 @@ class ModelManagerActivities {
   double lng;
   String activityId;
   String activityName;
-  String activityDescription;
-  String pic1;
+  // String activityDescription;
+  // String pic1;
 
   ModelManagerActivities({
     required this.employeeId,
@@ -414,8 +425,8 @@ class ModelManagerActivities {
     required this.lng,
     required this.activityId,
     required this.activityName,
-    required this.activityDescription,
-    required this.pic1,
+    // required this.activityDescription,
+    // required this.pic1,
   });
 
   factory ModelManagerActivities.fromJson(Map<String, dynamic> json) {
@@ -431,7 +442,36 @@ class ModelManagerActivities {
       lng: json['lng'],
       activityId: json['activityID'],
       activityName: json['activityName'],
-      activityDescription: json['activityDescription'],
+      // activityDescription: json['activityDescription'],
+      // pic1: json['pic1'],
+    );
+  }
+}
+
+class ModelManagerActivityDetails {
+  String time;
+  double lat;
+  double lng;
+  String actId;
+  String actDesc;
+  String pic1;
+
+  ModelManagerActivityDetails({
+    required this.time,
+    required this.lat,
+    required this.lng,
+    required this.actId,
+    required this.actDesc,
+    required this.pic1,
+  });
+
+  factory ModelManagerActivityDetails.fromJson(Map<String, dynamic> json) {
+    return ModelManagerActivityDetails(
+      time: json['currentTime'],
+      lat: json['lat'],
+      lng: json['lng'],
+      actId: json['activityID'],
+      actDesc: json['activityDescription'],
       pic1: json['pic1'],
     );
   }

@@ -115,6 +115,10 @@ class SalesActivityDetails extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => ImageView(
                               imageUrl,
+                              lat: activityDetailsState
+                                  .salesActivitiesList[index].lat,
+                              lng: activityDetailsState
+                                  .salesActivitiesList[index].lng,
                               startTime: activityDetailsState
                                   .salesActivitiesList[index].startTime,
                               endTime: activityDetailsState
