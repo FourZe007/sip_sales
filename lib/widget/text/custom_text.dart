@@ -23,19 +23,61 @@ class CustomText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextScaler textScaler = MediaQuery.of(context).textScaler;
-
     return Text(
       text,
       textAlign: align,
       style: TextStyle(
         color: color,
         fontFamily: fontFamily,
-        fontSize: textScaler.scale(fontSize),
+        fontSize: fontSize,
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
         backgroundColor: bgColor,
         decoration: decor,
       ),
     );
+
+    // return LayoutBuilder(
+    //   builder: (context, constraints) {
+    //   double scaledFontSize = fontSize * (constraints.maxWidth / 400);
+    //
+    //   bool isTablet = scaledFontSize >= 24.0;
+    //
+    //   if (isTablet) {
+    //     // Code for tablet
+    //     // ...
+    //   } else {
+    //     // Code for mobile phone
+    //     double deviceWidth = MediaQuery.of(context).size.width;
+    //     bool isSmallDevice = deviceWidth < 375;
+    //     bool isMediumDevice = deviceWidth >= 375 && deviceWidth < 414;
+    //     bool isLargeDevice = deviceWidth >= 414;
+    //
+    //     if (isSmallDevice) {
+    //       // Code for small devices
+    //       // ...
+    //     } else if (isMediumDevice) {
+    //       // Code for medium devices
+    //       // ...
+    //     } else if (isLargeDevice) {
+    //       // Code for large devices
+    //       // ...
+    //     }
+    //     // ...
+    //   }
+    //
+    //   return Text(
+    //     text,
+    //     textAlign: align,
+    //     style: TextStyle(
+    //     color: color,
+    //     fontFamily: fontFamily,
+    //     fontSize: scaledFontSize,
+    //     fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+    //     backgroundColor: bgColor,
+    //     decoration: decor,
+    //     ),
+    //   );
+    //   },
+    // );
   }
 }

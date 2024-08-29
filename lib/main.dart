@@ -34,39 +34,39 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // First approach
-    return MaterialApp(
-      title: 'SIP Sales',
-      scrollBehavior: MyCustomScrollBehavior(),
-      debugShowCheckedModeBanner: false,
-      navigatorKey: navigatorKey,
-      home: const LoginPage(),
-      routes: {
-        '/login': (context) => const LoginPage(),
-        '/location': (context) => const LocationPage(),
-        '/menu': (context) => const MenuPage(),
-        '/profile': (context) => const ProfilePage(),
-      },
-    );
+    // return MaterialApp(
+    //   title: 'SIP Sales',
+    //   scrollBehavior: MyCustomScrollBehavior(),
+    //   debugShowCheckedModeBanner: false,
+    //   navigatorKey: navigatorKey,
+    //   home: const LoginPage(),
+    //   routes: {
+    //     '/login': (context) => const LoginPage(),
+    //     '/location': (context) => const LocationPage(),
+    //     '/menu': (context) => const MenuPage(),
+    //     '/profile': (context) => const ProfilePage(),
+    //   },
+    // );
 
     // Second approach
-    // return MediaQuery(
-    //   data: MediaQuery.of(context).copyWith(
-    //     textScaler: const TextScaler.linear(1.0),
-    //   ),
-    //   child: MaterialApp(
-    //     title: 'SIP Sales',
-    //     scrollBehavior: MyCustomScrollBehavior(),
-    //     debugShowCheckedModeBanner: false,
-    //     navigatorKey: navigatorKey,
-    //     home: const LoginPage(),
-    //     routes: {
-    //       '/login': (context) => const LoginPage(),
-    //       '/location': (context) => const LocationPage(),
-    //       '/menu': (context) => const MenuPage(),
-    //       '/profile': (context) => const ProfilePage(),
-    //     },
-    //   ),
-    // );
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: const TextScaler.linear(1.0),
+      ),
+      child: MaterialApp(
+        title: 'SIP Sales',
+        scrollBehavior: MyCustomScrollBehavior(),
+        debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
+        home: const LoginPage(),
+        routes: {
+          '/login': (context) => const LoginPage(),
+          '/location': (context) => const LocationPage(),
+          '/menu': (context) => const MenuPage(),
+          '/profile': (context) => const ProfilePage(),
+        },
+      ),
+    );
   }
 }
 

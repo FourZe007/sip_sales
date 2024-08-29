@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: CustomText(
                     'LOGIN',
-                    fontSize: MediaQuery.of(context).size.width * 0.07,
+                    fontSize: MediaQuery.of(context).size.width * 0.075,
                     isBold: true,
                   ),
                 ),
@@ -272,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                     CustomText(
                       loginStatus,
                       fontFamily: GlobalFontFamily.fontMontserrat,
-                      fontSize: MediaQuery.of(context).size.width * 0.0325,
+                      fontSize: MediaQuery.of(context).size.width * 0.03,
                     ),
                     TextButton(
                       onPressed: () {
@@ -304,7 +304,6 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () => login(signInState),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 50,
                     alignment: Alignment.center,
                     padding: EdgeInsets.symmetric(
                       vertical: MediaQuery.of(context).size.height * 0.01,
@@ -321,9 +320,7 @@ class _LoginPageState extends State<LoginPage> {
                         : CustomText(
                             'SIGN IN',
                             color: Colors.white,
-                            fontSize: (MediaQuery.of(context).size.width < 800)
-                                ? MediaQuery.of(context).size.width * 0.04
-                                : MediaQuery.of(context).size.width * 0.0425,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
                             isBold: true,
                           ),
                   ),

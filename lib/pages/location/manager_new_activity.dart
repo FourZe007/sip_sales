@@ -432,10 +432,13 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                 style: GlobalFont.terafontRBold,
               ),
         leading: ValueListenableBuilder(
-          valueListenable: managerActivityState.isDisable,
+          valueListenable: managerActivityState.isLoading,
           builder: (context, value, child) {
             return IconButton(
               onPressed: () {
+                managerActivityState.setIsDisable(true);
+                managerActivityState.removeImage(0);
+
                 if (value == true) {
                   if (Platform.isIOS) {
                     GlobalDialog.showCrossPlatformDialog(

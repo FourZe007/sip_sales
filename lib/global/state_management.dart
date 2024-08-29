@@ -964,7 +964,7 @@ class SipSalesState with ChangeNotifier {
 
   void removeImage(int index) async {
     filteredList.clear();
-    notifyListeners();
+    // notifyListeners();
   }
 
   void removeImages() async {
