@@ -177,50 +177,55 @@ class _UserConsentPageState extends State<UserConsentPage> {
             ),
 
             // Return Button
-            ValueListenableBuilder(
-              valueListenable: userPermissionNotifier,
-              builder: (context, value, child) {
-                if (value[0] || value[1] || value[2] || value[3]) {
-                  return InkWell(
-                    onTap: () => Navigator.of(context).pop(true),
-                    child: AnimatedContainer(
-                      duration: const Duration(seconds: 1),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.055,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(40.0),
+            SizedBox(
+              child: ValueListenableBuilder(
+                valueListenable: userPermissionNotifier,
+                builder: (context, value, child) {
+                  if (value[0] || value[1] || value[2] || value[3]) {
+                    return InkWell(
+                      onTap: () => Navigator.of(context).pop(true),
+                      child: AnimatedContainer(
+                        duration: const Duration(seconds: 1),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.055,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(40.0),
+                        ),
+                        margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.025,
+                        ),
+                        child: Text(
+                          'Return',
+                          style: GlobalFont.mediumgiantfontRBoldWhite,
+                        ),
                       ),
-                      child: Text(
-                        'Return',
-                        style: GlobalFont.mediumgiantfontRBoldWhite,
+                    );
+                  } else {
+                    return InkWell(
+                      onTap: () => Navigator.of(context).pop(false),
+                      child: AnimatedContainer(
+                        duration: const Duration(seconds: 1),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.055,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(40.0),
+                        ),
+                        margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.025,
+                        ),
+                        child: Text(
+                          'Return',
+                          style: GlobalFont.mediumgiantfontRBold,
+                        ),
                       ),
-                    ),
-                  );
-                } else {
-                  return InkWell(
-                    onTap: () => Navigator.of(context).pop(false),
-                    child: AnimatedContainer(
-                      duration: const Duration(seconds: 1),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.055,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(40.0),
-                      ),
-                      margin: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      child: Text(
-                        'Return',
-                        style: GlobalFont.mediumgiantfontRBold,
-                      ),
-                    ),
-                  );
-                }
-              },
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),
