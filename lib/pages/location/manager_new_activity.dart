@@ -375,7 +375,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         activityType,
         activityDescription,
       )) {
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       }
     } else {
       await requestPermission(state).then((isGranted) {
@@ -459,7 +459,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                     );
                   }
                 } else {
-                  Navigator.pop(context);
+                  Navigator.pop(context, false);
                 }
               },
               icon: Icon(

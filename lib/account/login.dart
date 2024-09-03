@@ -311,7 +311,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: isLoading
                         ? Platform.isIOS
                             ? const CupertinoActivityIndicator(
-                                radius: 17.5,
+                                radius: 12.5,
                                 color: Colors.white,
                               )
                             : const CircleLoading(

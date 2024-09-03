@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/dialog.dart';
@@ -308,7 +309,7 @@ class ProfilePageState extends State<ProfilePage> {
                   horizontal: MediaQuery.of(context).size.width * 0.03,
                 ),
                 padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height * 0.016,
+                  vertical: MediaQuery.of(context).size.height * 0.01,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -339,18 +340,20 @@ class ProfilePageState extends State<ProfilePage> {
                     // User Data, which contains of name and employee ID
                     Expanded(
                       flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Wrap(
                         children: [
-                          Text(
-                            GlobalVar.userAccountList[0].employeeName,
-                            style: GlobalFont.terafontRBold,
-                            overflow: TextOverflow.ellipsis,
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              GlobalVar.userAccountList[0].employeeName,
+                              style: GlobalFont.terafontRBold,
+                            ),
                           ),
-                          Text(
-                            GlobalVar.userAccountList[0].employeeID,
-                            style: GlobalFont.mediumgiantfontRBold,
+                          Expanded(
+                            child: Text(
+                              GlobalVar.userAccountList[0].employeeID,
+                              style: GlobalFont.mediumgiantfontRBold,
+                            ),
                           ),
                         ],
                       ),
@@ -563,7 +566,7 @@ class ProfilePageState extends State<ProfilePage> {
                       top: MediaQuery.of(context).size.height * 0.01,
                     ),
                     child: Text(
-                      'Version 1.0.3',
+                      'Version 1.0.4',
                       style: GlobalFont.bigfontR,
                     ),
                   ),

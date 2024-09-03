@@ -1336,7 +1336,7 @@ class SipSalesState with ChangeNotifier {
       date,
     ));
 
-    // print('Manager Activities List length: ${managerActivitiesList.length}');å
+    print('Manager Activities List length: ${managerActivitiesList.length}');
 
     return managerActivitiesList;
   }

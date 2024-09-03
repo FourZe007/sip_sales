@@ -2,9 +2,11 @@
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/widget/button/text_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserConsentPage extends StatefulWidget {
@@ -101,198 +103,67 @@ class _UserConsentPageState extends State<UserConsentPage> {
           ),
         ),
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.grey[300],
-        padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.05,
-          vertical: MediaQuery.of(context).size.height * 0.02,
-        ),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.grey[300],
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.05,
+            vertical: MediaQuery.of(context).size.height * 0.02,
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.005,
-                      bottom: MediaQuery.of(context).size.height * 0.0375,
-                    ),
-                    child: Text(
-                      'SIP User Consent',
-                      style: GlobalFont.petafontRBold,
-                    ),
-                  ),
+              // SIP User Consent Title
+              Container(
+                margin: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.005,
+                  bottom: MediaQuery.of(context).size.height * 0.0375,
+                ),
+                child: Text(
+                  'SIP User Consent',
+                  style: GlobalFont.petafontRBold,
+                ),
+              ),
 
+              ListView(
+                shrinkWrap: true,
+                children: [
                   // User Location Permission
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.015,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '1. ',
-                                  style: GlobalFont.mediumgiantfontR,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 6,
-                                child: Text(
-                                  "SIP Sales would like to use device's location service in order to make the main feature, which are activity insertation works.",
-                                  style: GlobalFont.mediumgiantfontR,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Switch(
-                            value: isLocationGranted,
-                            onChanged: toggleLocationSwitch,
-                            activeColor: Colors.blue[800],
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextSwitch(
+                    '1. ',
+                    'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
+                    isLocationGranted,
+                    toggleLocationSwitch,
                   ),
 
                   // User Photo Permission
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.015,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '2. ',
-                                  style: GlobalFont.mediumgiantfontR,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 6,
-                                child: Text(
-                                  "SIP Sales would like to use device's photo or gallery in order to take image directly from your device.",
-                                  style: GlobalFont.mediumgiantfontR,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Switch(
-                            value: isPhotoGranted,
-                            onChanged: togglePhotoSwitch,
-                            activeColor: Colors.blue[800],
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextSwitch(
+                    '2. ',
+                    'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                    isPhotoGranted,
+                    togglePhotoSwitch,
                   ),
 
                   // User Camera Permission
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.015,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '3. ',
-                                  style: GlobalFont.mediumgiantfontR,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 6,
-                                child: Text(
-                                  "SIP Sales would like to use device's camera in order to take photo directly from your device.",
-                                  style: GlobalFont.mediumgiantfontR,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Switch(
-                            value: isCameraGranted,
-                            onChanged: toggleCameraSwitch,
-                            activeColor: Colors.blue[800],
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextSwitch(
+                    '3. ',
+                    'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                    isCameraGranted,
+                    toggleCameraSwitch,
                   ),
 
                   // App Privacy Policy
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.015,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '4. ',
-                                  style: GlobalFont.mediumgiantfontR,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 6,
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "SIP Sales would like to ask User's agreement regarding SIP Privacy Policy.",
-                                      style: GlobalFont.mediumgiantfontR,
-                                    ),
-                                    InkWell(
-                                      onTap: () => launchLink(context),
-                                      child: Text(
-                                        "https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html",
-                                        style: GlobalFont
-                                            .mediumgiantfontRBlueUnderlined,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Switch(
-                            value: isPolicyGranted,
-                            onChanged: togglePolicySwitch,
-                            activeColor: Colors.blue[800],
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextSwitch(
+                    '4. ',
+                    'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
+                    isPolicyGranted,
+                    togglePolicySwitch,
+                    isLinkAvailable: true,
+                    link:
+                        'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                    linkFunction: (dynamic) => launchLink(context),
                   ),
                 ],
               ),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +27,8 @@ class MenuPageState extends State<MenuPage> {
   String displayDate = ''; // date for UI/UX display
   String date = ''; // date for store in database
 
+  bool isInserted = false;
+
   final List<Widget> salesWidgetOptions = <Widget>[
     // const AttendancePage(),
     const AttendanceHistoryPage(),
@@ -36,7 +40,7 @@ class MenuPageState extends State<MenuPage> {
   // Note -> keep this for future use, but temporarily disable it
   final List<Widget> managerWidgetOptions = <Widget>[
     const ManagerNewActivityPage(),
-    const ManagerActivityPage(),
+    ManagerActivityPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -79,7 +83,9 @@ class MenuPageState extends State<MenuPage> {
     return UpgradeAlert(
       showIgnore: false,
       showLater: false,
-      dialogStyle: UpgradeDialogStyle.cupertino,
+      dialogStyle: (Platform.isIOS)
+          ? UpgradeDialogStyle.cupertino
+          : UpgradeDialogStyle.material,
       child: PopScope(
         canPop: false,
         child: Scaffold(
@@ -95,8 +101,8 @@ class MenuPageState extends State<MenuPage> {
             builder: (context) {
               if (menuState.getIsManager == 0) {
                 return FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    isInserted = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const ManagerNewActivityPage(),
@@ -533,7 +539,7 @@ class MenuPageState extends State<MenuPage> {
                 ),
                 (menuState.getIsManager == 1)
                     ? salesWidgetOptions[_selectedIndex]
-                    : const ManagerActivityPage(),
+                    : ManagerActivityPage(isInserted: isInserted),
               ],
             ),
           ),

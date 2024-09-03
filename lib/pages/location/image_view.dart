@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:sip_sales/global/global.dart';
@@ -47,35 +48,35 @@ class ImageView extends StatelessWidget {
               child: PhotoView.customChild(
                 customSize: Size(
                   MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height * 0.5,
+                  MediaQuery.of(context).size.height * 0.55,
                 ),
                 maxScale: PhotoViewComputedScale.covered * 2,
                 minScale: PhotoViewComputedScale.contained,
                 backgroundDecoration: const BoxDecoration(
                   color: Colors.transparent,
                 ),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Image.memory(
-                          base64Decode(imageDir),
-                          fit: BoxFit.cover,
-                          scale: 0.55,
-                        ),
-                      ),
-                      Builder(
-                        builder: (context) {
-                          if (isManager) {
-                            if (startTime != '') {
-                              return Wrap(
-                                direction: Axis.vertical,
-                                crossAxisAlignment: WrapCrossAlignment.end,
-                                children: [
-                                  Container(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.memory(
+                              base64Decode(imageDir),
+                              fit: BoxFit.cover,
+                              scale: 0.55,
+                              height: MediaQuery.of(context).size.height * 0.5,
+                            ),
+                          ),
+                          Builder(
+                            builder: (context) {
+                              if (isManager) {
+                                if (startTime != '') {
+                                  return Container(
                                     decoration: BoxDecoration(
                                       color: Colors.grey[350],
                                       borderRadius: BorderRadius.circular(10.0),
@@ -86,35 +87,13 @@ class ImageView extends StatelessWidget {
                                       startTime,
                                       style: GlobalFont.mediumgiantfontRBold,
                                     ),
-                                  ),
-                                  (lat != 0.0 && lng != 0.0)
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[350],
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          padding: const EdgeInsets.all(5.0),
-                                          margin: const EdgeInsets.all(5.0),
-                                          child: Text(
-                                            '($lat, $lng)',
-                                            style:
-                                                GlobalFont.mediumgiantfontRBold,
-                                          ),
-                                        )
-                                      : const SizedBox(),
-                                ],
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          } else {
-                            if (startTime != '' && endTime != '') {
-                              return Wrap(
-                                direction: Axis.vertical,
-                                crossAxisAlignment: WrapCrossAlignment.end,
-                                children: [
-                                  Container(
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              } else {
+                                if (startTime != '' && endTime != '') {
+                                  return Container(
                                     decoration: BoxDecoration(
                                       color: Colors.grey[350],
                                       borderRadius: BorderRadius.circular(10.0),
@@ -125,33 +104,39 @@ class ImageView extends StatelessWidget {
                                       '$startTime - $endTime',
                                       style: GlobalFont.mediumgiantfontRBold,
                                     ),
-                                  ),
-                                  (lat != 0.0 && lng != 0.0)
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[350],
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          padding: const EdgeInsets.all(5.0),
-                                          margin: const EdgeInsets.all(5.0),
-                                          child: Text(
-                                            '($lat, $lng)',
-                                            style:
-                                                GlobalFont.mediumgiantfontRBold,
-                                          ),
-                                        )
-                                      : const SizedBox(),
-                                ],
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          }
-                        },
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Builder(
+                      builder: (context) {
+                        if (lat != 0.0 && lng != 0.0) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * 0.045,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            padding: const EdgeInsets.all(5.0),
+                            margin: const EdgeInsets.all(5.0),
+                            child: Text(
+                              '($lat, $lng)',
+                              style: GlobalFont.mediumgiantfontRBold,
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),

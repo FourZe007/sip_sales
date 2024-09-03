@@ -86,85 +86,79 @@ class ManagerActivityDetails extends StatelessWidget {
             } else {
               final details = snapshot.data!;
 
-              return Column(children: [
-                // Container(
-                //   width: MediaQuery.of(context).size.width,
-                //   margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                //   child: Text(
-                //     'Koordinat: (${activityDetailsState.managerActivitiesList[index].lat}, ${activityDetailsState.managerActivitiesList[index].lng})',
-                //     style: GlobalFont.bigfontR,
-                //   ),
-                // ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: Text(
-                    details.actDesc,
-                    style: GlobalFont.bigfontR,
+              return ListView(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Text(
+                      details.actDesc,
+                      style: GlobalFont.bigfontR,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                (details.pic1 != '')
-                    ? Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 1.5),
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0,
-                          vertical: 7.5,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Wrap(
-                              spacing: 15.0,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  child: Image.memory(
-                                    base64Decode(
-                                      details.pic1,
-                                    ),
-                                    fit: BoxFit.cover,
-                                    height: 62.5,
-                                    width: 62.5,
-                                  ),
-                                ),
-                                Text(
-                                  'Bukti Aktivitas',
-                                  style: GlobalFont.bigfontR,
-                                ),
-                              ],
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageView(
-                                      details.pic1,
-                                      lat: details.lat,
-                                      lng: details.lng,
-                                      startTime: details.time,
-                                      isManager: true,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  (details.pic1 != '')
+                      ? Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1.5),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0,
+                            vertical: 7.5,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Wrap(
+                                spacing: 15.0,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    child: Image.memory(
+                                      base64Decode(
+                                        details.pic1,
+                                      ),
+                                      fit: BoxFit.cover,
+                                      height: 62.5,
+                                      width: 62.5,
                                     ),
                                   ),
-                                );
-                              },
-                              child: Text(
-                                'Lihat',
-                                style: GlobalFont.mediumgiantfontRBoldBlue,
+                                  Text(
+                                    'Bukti Aktivitas',
+                                    style: GlobalFont.bigfontR,
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : const SizedBox(),
-              ]);
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ImageView(
+                                        details.pic1,
+                                        lat: details.lat,
+                                        lng: details.lng,
+                                        startTime: details.time,
+                                        isManager: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Lihat',
+                                  style: GlobalFont.mediumgiantfontRBoldBlue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : const SizedBox(),
+                ],
+              );
             }
           },
         ),

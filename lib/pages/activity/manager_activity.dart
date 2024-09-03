@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'dart:async';
 import 'dart:io';
@@ -15,7 +15,9 @@ import 'package:sip_sales/widget/format.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 
 class ManagerActivityPage extends StatefulWidget {
-  const ManagerActivityPage({super.key});
+  ManagerActivityPage({this.isInserted = false, super.key});
+
+  bool isInserted;
 
   @override
   State<ManagerActivityPage> createState() => _ManagerActivityPageState();
@@ -79,7 +81,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
     SipSalesState state,
     String date,
   ) async {
-    // print('Refresh or Load Data');
+    print('Refresh or Load Data');
     try {
       managerController = StreamController<List<ModelManagerActivities>>();
       managerController.add(await state.fetchManagerActivities(date));
@@ -498,32 +500,49 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
           horizontal: MediaQuery.of(context).size.width * 0.025,
           vertical: MediaQuery.of(context).size.height * 0.02,
         ),
-        child: Platform.isIOS
-            ? CupertinoScrollbar(
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: <Widget>[
-                    CupertinoSliverRefreshControl(
-                      onRefresh: () => fetchData(
-                        context,
-                        managerActivityState,
-                        date,
-                      ),
+        child: Builder(
+          builder: (context) {
+            Widget contentWidget = activityView(context);
+
+            // Ensure the content is scrollable
+            // if (contentWidget is! ScrollView) {
+            //   contentWidget = SingleChildScrollView(
+            //     physics: const AlwaysScrollableScrollPhysics(),
+            //     child: contentWidget,
+            //   );
+            // }
+
+            if (Platform.isIOS) {
+              return CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: <Widget>[
+                  CupertinoSliverRefreshControl(
+                    onRefresh: () => fetchData(
+                      context,
+                      managerActivityState,
+                      date,
                     ),
-                    SliverToBoxAdapter(
-                      child: activityView(context),
-                    ),
-                  ],
-                ),
-              )
-            : RefreshIndicator(
+                  ),
+                  SliverToBoxAdapter(
+                    child: contentWidget,
+                  ),
+                ],
+              );
+            } else {
+              return RefreshIndicator(
                 onRefresh: () => fetchData(
                   context,
                   managerActivityState,
                   date,
                 ),
-                child: activityView(context),
-              ),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: contentWidget,
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
   }
