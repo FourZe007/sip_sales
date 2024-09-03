@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/widget/button/text_switch.dart';
@@ -103,116 +104,115 @@ class _UserConsentPageState extends State<UserConsentPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          color: Colors.grey[300],
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.05,
-            vertical: MediaQuery.of(context).size.height * 0.02,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // SIP User Consent Title
-              Container(
-                margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.005,
-                  bottom: MediaQuery.of(context).size.height * 0.0375,
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Colors.grey[300],
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+          vertical: MediaQuery.of(context).size.height * 0.02,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ListView(
+              shrinkWrap: true,
+              children: [
+                // SIP User Consent Title
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.005,
+                    bottom: MediaQuery.of(context).size.height * 0.0375,
+                  ),
+                  child: Text(
+                    'SIP User Consent',
+                    style: GlobalFont.petafontRBold,
+                  ),
                 ),
-                child: Text(
-                  'SIP User Consent',
-                  style: GlobalFont.petafontRBold,
+
+                // User Location Permission
+                TextSwitch(
+                  '1. ',
+                  'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
+                  isLocationGranted,
+                  toggleLocationSwitch,
                 ),
-              ),
 
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  // User Location Permission
-                  TextSwitch(
-                    '1. ',
-                    'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
-                    isLocationGranted,
-                    toggleLocationSwitch,
-                  ),
+                // User Photo Permission
+                TextSwitch(
+                  '2. ',
+                  'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                  isPhotoGranted,
+                  togglePhotoSwitch,
+                ),
 
-                  // User Photo Permission
-                  TextSwitch(
-                    '2. ',
-                    'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                    isPhotoGranted,
-                    togglePhotoSwitch,
-                  ),
+                // User Camera Permission
+                TextSwitch(
+                  '3. ',
+                  'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                  isCameraGranted,
+                  toggleCameraSwitch,
+                ),
 
-                  // User Camera Permission
-                  TextSwitch(
-                    '3. ',
-                    'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                    isCameraGranted,
-                    toggleCameraSwitch,
-                  ),
+                // App Privacy Policy
+                TextSwitch(
+                  '4. ',
+                  'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
+                  isPolicyGranted,
+                  togglePolicySwitch,
+                  isLinkAvailable: true,
+                  link: 'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                  linkFunction: (dynamic) => launchLink(context),
+                ),
+              ],
+            ),
 
-                  // App Privacy Policy
-                  TextSwitch(
-                    '4. ',
-                    'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
-                    isPolicyGranted,
-                    togglePolicySwitch,
-                    isLinkAvailable: true,
-                    link:
-                        'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-                    linkFunction: (dynamic) => launchLink(context),
-                  ),
-                ],
-              ),
-
-              // Return Button
-              ValueListenableBuilder(
-                valueListenable: userPermissionNotifier,
-                builder: (context, value, child) {
-                  if (value[0] || value[1] || value[2] || value[3]) {
-                    return InkWell(
-                      onTap: () => Navigator.of(context).pop(true),
-                      child: AnimatedContainer(
-                        duration: const Duration(seconds: 1),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.055,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(40.0),
-                        ),
-                        child: Text(
-                          'Return',
-                          style: GlobalFont.mediumgiantfontRBoldWhite,
-                        ),
+            // Return Button
+            ValueListenableBuilder(
+              valueListenable: userPermissionNotifier,
+              builder: (context, value, child) {
+                if (value[0] || value[1] || value[2] || value[3]) {
+                  return InkWell(
+                    onTap: () => Navigator.of(context).pop(true),
+                    child: AnimatedContainer(
+                      duration: const Duration(seconds: 1),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.055,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(40.0),
                       ),
-                    );
-                  } else {
-                    return InkWell(
-                      onTap: () => Navigator.of(context).pop(false),
-                      child: AnimatedContainer(
-                        duration: const Duration(seconds: 1),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.055,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(40.0),
-                        ),
-                        child: Text(
-                          'Return',
-                          style: GlobalFont.mediumgiantfontRBold,
-                        ),
+                      child: Text(
+                        'Return',
+                        style: GlobalFont.mediumgiantfontRBoldWhite,
                       ),
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
+                    ),
+                  );
+                } else {
+                  return InkWell(
+                    onTap: () => Navigator.of(context).pop(false),
+                    child: AnimatedContainer(
+                      duration: const Duration(seconds: 1),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.055,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(40.0),
+                      ),
+                      child: Text(
+                        'Return',
+                        style: GlobalFont.mediumgiantfontRBold,
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

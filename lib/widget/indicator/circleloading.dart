@@ -6,19 +6,15 @@ class CircleLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 75,
-      height: 30,
-      child: Center(
-        heightFactor: 1,
-        widthFactor: 1,
-        child: SizedBox(
-          height: 30,
-          width: 30,
-          child: CircularProgressIndicator(
-            strokeWidth: 5,
-            color: warna,
-          ),
+    return Center(
+      heightFactor: 1,
+      widthFactor: 1,
+      child: SizedBox(
+        height: 25,
+        width: 25,
+        child: CircularProgressIndicator(
+          strokeWidth: 5,
+          color: warna,
         ),
       ),
     );

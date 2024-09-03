@@ -178,11 +178,13 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       } else {
+        toggleIsLoading();
         setState(() {
           loginStatus = 'Try again.';
         });
       }
     } else {
+      toggleIsLoading();
       setState(() {
         loginStatus = 'Please check your input again.';
       });
