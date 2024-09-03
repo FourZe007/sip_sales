@@ -121,6 +121,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ListView(
               shrinkWrap: true,
