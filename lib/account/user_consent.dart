@@ -106,7 +106,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+        // height: MediaQuery.of(context).size.height,
         color: Colors.grey[300],
         // decoration: BoxDecoration(
         //   color: Colors.grey[300],
@@ -119,113 +119,105 @@ class _UserConsentPageState extends State<UserConsentPage> {
           horizontal: MediaQuery.of(context).size.width * 0.05,
           // vertical: MediaQuery.of(context).size.height * 0.01,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: ListView(
+          shrinkWrap: true,
           children: [
-            ListView(
-              shrinkWrap: true,
-              children: [
-                // SIP User Consent Title
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.005,
-                    bottom: MediaQuery.of(context).size.height * 0.0375,
-                  ),
-                  child: Text(
-                    'SIP User Consent',
-                    style: GlobalFont.petafontRBold,
-                  ),
-                ),
+            // SIP User Consent Title
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.005,
+                bottom: MediaQuery.of(context).size.height * 0.0375,
+              ),
+              child: Text(
+                'SIP User Consent',
+                style: GlobalFont.petafontRBold,
+              ),
+            ),
 
-                // User Location Permission
-                TextSwitch(
-                  '1. ',
-                  'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
-                  isLocationGranted,
-                  toggleLocationSwitch,
-                ),
+            // User Location Permission
+            TextSwitch(
+              '1. ',
+              'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
+              isLocationGranted,
+              toggleLocationSwitch,
+            ),
 
-                // User Photo Permission
-                TextSwitch(
-                  '2. ',
-                  'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                  isPhotoGranted,
-                  togglePhotoSwitch,
-                ),
+            // User Photo Permission
+            TextSwitch(
+              '2. ',
+              'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+              isPhotoGranted,
+              togglePhotoSwitch,
+            ),
 
-                // User Camera Permission
-                TextSwitch(
-                  '3. ',
-                  'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                  isCameraGranted,
-                  toggleCameraSwitch,
-                ),
+            // User Camera Permission
+            TextSwitch(
+              '3. ',
+              'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+              isCameraGranted,
+              toggleCameraSwitch,
+            ),
 
-                // App Privacy Policy
-                TextSwitch(
-                  '4. ',
-                  'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
-                  isPolicyGranted,
-                  togglePolicySwitch,
-                  isLinkAvailable: true,
-                  link: 'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-                  linkFunction: (dynamic) => launchLink(context),
-                ),
-              ],
+            // App Privacy Policy
+            TextSwitch(
+              '4. ',
+              'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
+              isPolicyGranted,
+              togglePolicySwitch,
+              isLinkAvailable: true,
+              link: 'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+              linkFunction: (dynamic) => launchLink(context),
             ),
 
             // Return Button
-            SizedBox(
-              child: ValueListenableBuilder(
-                valueListenable: userPermissionNotifier,
-                builder: (context, value, child) {
-                  if (value[0] || value[1] || value[2] || value[3]) {
-                    return InkWell(
-                      onTap: () => Navigator.of(context).pop(true),
-                      child: AnimatedContainer(
-                        duration: const Duration(seconds: 1),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.055,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(40.0),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.025,
-                        ),
-                        child: Text(
-                          'Return',
-                          style: GlobalFont.mediumgiantfontRBoldWhite,
-                        ),
+            ValueListenableBuilder(
+              valueListenable: userPermissionNotifier,
+              builder: (context, value, child) {
+                if (value[0] || value[1] || value[2] || value[3]) {
+                  return InkWell(
+                    onTap: () => Navigator.of(context).pop(true),
+                    child: AnimatedContainer(
+                      duration: const Duration(seconds: 1),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.055,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(40.0),
                       ),
-                    );
-                  } else {
-                    return InkWell(
-                      onTap: () => Navigator.of(context).pop(false),
-                      child: AnimatedContainer(
-                        duration: const Duration(seconds: 1),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.055,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(40.0),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.025,
-                        ),
-                        child: Text(
-                          'Return',
-                          style: GlobalFont.mediumgiantfontRBold,
-                        ),
+                      margin: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.height * 0.025,
                       ),
-                    );
-                  }
-                },
-              ),
+                      child: Text(
+                        'Return',
+                        style: GlobalFont.mediumgiantfontRBoldWhite,
+                      ),
+                    ),
+                  );
+                } else {
+                  return InkWell(
+                    onTap: () => Navigator.of(context).pop(false),
+                    child: AnimatedContainer(
+                      duration: const Duration(seconds: 1),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.055,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(40.0),
+                      ),
+                      margin: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      child: Text(
+                        'Return',
+                        style: GlobalFont.mediumgiantfontRBold,
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),

@@ -416,6 +416,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     final managerActivityState = Provider.of<SipSalesState>(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.blue,
         centerTitle: true,
@@ -657,7 +658,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                           top: MediaQuery.of(context).size.height * 0.01,
                         ),
                         child: TextField(
-                          maxLines: 10,
+                          maxLines: 8,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
                               RegExp(r'[a-zA-Z0-9./@\s:()%+-?]*'),
