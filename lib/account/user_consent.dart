@@ -108,13 +108,19 @@ class _UserConsentPageState extends State<UserConsentPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         color: Colors.grey[300],
+        // decoration: BoxDecoration(
+        //   color: Colors.grey[300],
+        //   border: Border.all(
+        //     color: Colors.red,
+        //     width: 2,
+        //   ),
+        // ),
         padding: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.05,
-          vertical: MediaQuery.of(context).size.height * 0.02,
+          // vertical: MediaQuery.of(context).size.height * 0.01,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ListView(
               shrinkWrap: true,
@@ -202,6 +208,9 @@ class _UserConsentPageState extends State<UserConsentPage> {
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         borderRadius: BorderRadius.circular(40.0),
+                      ),
+                      margin: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.height * 0.01,
                       ),
                       child: Text(
                         'Return',
