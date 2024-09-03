@@ -342,18 +342,13 @@ class ProfilePageState extends State<ProfilePage> {
                       flex: 3,
                       child: Wrap(
                         children: [
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              GlobalVar.userAccountList[0].employeeName,
-                              style: GlobalFont.terafontRBold,
-                            ),
+                          Text(
+                            GlobalVar.userAccountList[0].employeeName,
+                            style: GlobalFont.terafontRBold,
                           ),
-                          Expanded(
-                            child: Text(
-                              GlobalVar.userAccountList[0].employeeID,
-                              style: GlobalFont.mediumgiantfontRBold,
-                            ),
+                          Text(
+                            GlobalVar.userAccountList[0].employeeID,
+                            style: GlobalFont.mediumgiantfontRBold,
                           ),
                         ],
                       ),

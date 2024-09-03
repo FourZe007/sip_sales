@@ -102,16 +102,6 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final locationState = Provider.of<SipSalesState>(context, listen: false);
 
