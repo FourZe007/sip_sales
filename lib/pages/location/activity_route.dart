@@ -138,195 +138,198 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
     // Provider State Management
     final activityRouteState = Provider.of<SipSalesState>(context);
 
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
+    return Positioned(
+      top: MediaQuery.of(context).size.height * 0.12,
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+          color: Colors.white, // Replace with your body content
         ),
-        color: Colors.white,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.width * 0.05,
-        vertical: MediaQuery.of(context).size.height * 0.05,
-      ),
-      margin: EdgeInsets.only(
-        top: MediaQuery.of(context).size.height * 0.12,
-      ),
-      child: Column(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                // Open Filter Button
-                InkWell(
-                  onTap: null,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.1,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: const Icon(
-                      Icons.filter_alt_rounded,
-                      size: 30.0,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.025,
-                ),
-                // Modify Begin Date
-                InkWell(
-                  onTap: () => setDateFilter(
-                    context,
-                    filterDate,
-                    setDate,
-                  ),
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.02,
-                    ),
-                    child: Text(
-                      Format.tanggalFormat(filterDate),
-                      style: GlobalFont.mediumgiantfontR,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.6425,
-            alignment: Alignment.center,
-            child: FutureBuilder<List<ModelActivityRoute>>(
-              future: activityRouteState.fetchActivityRouteList(filterDate),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Platform.isIOS
-                          ? const CupertinoActivityIndicator(
-                              radius: 17.5,
-                            )
-                          : const CircleLoading(),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.025,
+          vertical: MediaQuery.of(context).size.height * 0.02,
+        ),
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  // Open Filter Button
+                  InkWell(
+                    onTap: null,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.1,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                      Text(
-                        'Loading...',
+                      child: const Icon(
+                        Icons.filter_alt_rounded,
+                        size: 30.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.025,
+                  ),
+                  // Modify Begin Date
+                  InkWell(
+                    onTap: () => setDateFilter(
+                      context,
+                      filterDate,
+                      setDate,
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.02,
+                      ),
+                      child: Text(
+                        Format.tanggalFormat(filterDate),
                         style: GlobalFont.mediumgiantfontR,
                       ),
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('${snapshot.error}'));
-                } else if (snapshot.data!.isEmpty) {
-                  return const Center(child: Text('Tidak ada data'));
-                } else {
-                  return Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      FlutterMap(
-                        options: MapOptions(
-                          initialCenter: LatLng(
-                            snapshot
-                                .data![activityRouteState.getLocationIndex].lat,
-                            snapshot
-                                .data![activityRouteState.getLocationIndex].lng,
-                          ),
-                          initialZoom: 15.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.6425,
+              alignment: Alignment.center,
+              child: FutureBuilder<List<ModelActivityRoute>>(
+                future: activityRouteState.fetchActivityRouteList(filterDate),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Platform.isIOS
+                            ? const CupertinoActivityIndicator(
+                                radius: 17.5,
+                              )
+                            : const CircleLoading(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
                         ),
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            userAgentPackageName: 'com.stsj.sipsales',
+                        Text(
+                          'Loading...',
+                          style: GlobalFont.mediumgiantfontR,
+                        ),
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('${snapshot.error}'));
+                  } else if (snapshot.data!.isEmpty) {
+                    return const Center(child: Text('Tidak ada data'));
+                  } else {
+                    return Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        FlutterMap(
+                          options: MapOptions(
+                            initialCenter: LatLng(
+                              snapshot
+                                  .data![activityRouteState.getLocationIndex]
+                                  .lat,
+                              snapshot
+                                  .data![activityRouteState.getLocationIndex]
+                                  .lng,
+                            ),
+                            initialZoom: 15.0,
                           ),
-                          MarkerLayer(
-                            markers: [
-                              for (int i = 0; i < snapshot.data!.length; i++)
-                                Marker(
-                                  width: 80.0,
-                                  height: 110.0,
-                                  point: LatLng(
-                                    snapshot.data![i].lat,
-                                    snapshot.data![i].lng,
-                                  ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      activityRouteState.setLocationIndex(i);
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName: 'com.stsj.sipsales',
+                            ),
+                            MarkerLayer(
+                              markers: [
+                                for (int i = 0; i < snapshot.data!.length; i++)
+                                  Marker(
+                                    width: 80.0,
+                                    height: 110.0,
+                                    point: LatLng(
+                                      snapshot.data![i].lat,
+                                      snapshot.data![i].lng,
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        activityRouteState.setLocationIndex(i);
 
-                                      activityRouteState.fetchDetailsProcessing(
-                                        activityRouteState.getLocationIndex,
-                                      );
+                                        activityRouteState
+                                            .fetchDetailsProcessing(
+                                          activityRouteState.getLocationIndex,
+                                        );
 
-                                      activityRouteState.resetIsActive();
+                                        activityRouteState.resetIsActive();
 
-                                      navigatePage(
-                                        activityRouteState.getLocationIndex,
-                                        activityRouteState.activityRouteList,
-                                      );
-                                    },
-                                    child: Column(
-                                      children: [
-                                        const Icon(
-                                          Icons.location_on_rounded,
-                                          color: Colors.black,
-                                          size: 50.0,
-                                        ),
-                                        Text(
-                                          snapshot.data![i].startTime
-                                              .substring(0, 5),
-                                          style: GlobalFont.giantfontRBold,
-                                        ),
-                                        Text(
-                                          snapshot.data![i].endTime
-                                              .substring(0, 5),
-                                          style: GlobalFont.giantfontRBold,
-                                        ),
-                                      ],
+                                        navigatePage(
+                                          activityRouteState.getLocationIndex,
+                                          activityRouteState.activityRouteList,
+                                        );
+                                      },
+                                      child: Column(
+                                        children: [
+                                          const Icon(
+                                            Icons.location_on_rounded,
+                                            color: Colors.black,
+                                            size: 50.0,
+                                          ),
+                                          Text(
+                                            snapshot.data![i].startTime
+                                                .substring(0, 5),
+                                            style: GlobalFont.giantfontRBold,
+                                          ),
+                                          Text(
+                                            snapshot.data![i].endTime
+                                                .substring(0, 5),
+                                            style: GlobalFont.giantfontRBold,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 7.5,
-                          vertical: 3.0,
+                              ],
+                            ),
+                          ],
                         ),
-                        child: IconButton(
-                          onPressed: () => openMap(snapshot.data!),
-                          icon: const Icon(
-                            Icons.aspect_ratio_rounded,
-                            size: 40,
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 7.5,
+                            vertical: 3.0,
+                          ),
+                          child: IconButton(
+                            onPressed: () => openMap(snapshot.data!),
+                            icon: const Icon(
+                              Icons.aspect_ratio_rounded,
+                              size: 40,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }
-              },
+                      ],
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

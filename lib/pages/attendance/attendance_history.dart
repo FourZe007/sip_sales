@@ -138,7 +138,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
         top: MediaQuery.of(context).size.height * 0.12,
         child: Container(
           height: MediaQuery.of(context).size.height,
-          // height: double.infinity,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
