@@ -656,9 +656,11 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                       Container(
                         margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.01,
+                          bottom:
+                              MediaQuery.of(context).viewInsets.bottom * 0.65,
                         ),
                         child: TextField(
-                          maxLines: 8,
+                          maxLines: 10,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
                               RegExp(r'[a-zA-Z0-9./@\s:()%+-?]*'),
@@ -675,6 +677,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                           ),
                           enabled: true,
                           style: GlobalFont.mediumgiantfontR,
+                          keyboardType: TextInputType.multiline,
+                          textInputAction: TextInputAction.newline,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.grey[400],

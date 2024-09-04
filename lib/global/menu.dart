@@ -102,11 +102,12 @@ class MenuPageState extends State<MenuPage> {
             floatingActionButton: FloatingActionButton(
               onPressed: () async {
                 isInserted = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ManagerNewActivityPage(),
-                  ),
-                );
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ManagerNewActivityPage(),
+                      ),
+                    ) ??
+                    false;
               },
               backgroundColor: Colors.blue[200],
               child: const Icon(
