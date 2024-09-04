@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:sip_sales/global/global.dart';
 
 class GlobalDialog {
-  static Future<bool> showIOSPermissionGranted(
+  static Future<bool> showIOSDialogOption(
     BuildContext context,
     String title,
     String content, {
     String acceptText = 'Allow',
     String denyText = 'Deny',
-    int actionButtonAmount = 1,
   }) async {
     return await showCupertinoDialog<bool>(
           context: context,
@@ -98,11 +97,13 @@ class GlobalDialog {
     );
   }
 
-  static Future<bool> showAndroidPermissionGranted(
+  static Future<bool> showAndroidDialogOption(
     BuildContext context,
     String title,
-    String content,
-  ) async {
+    String content, {
+    String acceptText = 'Allow',
+    String denyText = 'Deny',
+  }) async {
     return await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
@@ -125,7 +126,7 @@ class GlobalDialog {
                     ),
                   ),
                   child: Text(
-                    'Deny',
+                    denyText,
                     style: GlobalFont.bigfontR,
                   ),
                   onPressed: () => Navigator.pop(context, false),
@@ -135,7 +136,7 @@ class GlobalDialog {
                     backgroundColor: Colors.blue,
                   ),
                   child: Text(
-                    'Allow',
+                    acceptText,
                     style: GlobalFont.bigfontRBold,
                   ),
                   onPressed: () => Navigator.pop(context, true),
@@ -277,6 +278,78 @@ class GlobalDialog {
                   style: GlobalFont.bigfontR,
                 ),
                 onPressed: () => handler(),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  static void showCrossPlatformCustomOption(
+    BuildContext context,
+    String title,
+    String content,
+    String acceptText,
+    Function acceptHandler,
+    String denyText,
+    Function denyHandler, {
+    bool isIOS = false,
+  }) {
+    if (isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(denyText),
+                onPressed: () => denyHandler(),
+              ),
+              CupertinoDialogAction(
+                child: Text(acceptText),
+                onPressed: () => acceptHandler(),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            actionsAlignment: MainAxisAlignment.center,
+            title: Text(
+              title,
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              content,
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                ),
+                child: Text(
+                  denyText,
+                  style: GlobalFont.bigfontR,
+                ),
+                onPressed: () => denyHandler(),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                ),
+                child: Text(
+                  acceptText,
+                  style: GlobalFont.bigfontR,
+                ),
+                onPressed: () => acceptHandler(),
               ),
             ],
           );

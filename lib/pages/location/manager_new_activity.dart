@@ -17,7 +17,6 @@ import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/dropdown/custom_dropdown.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:info_popup/info_popup.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class ManagerNewActivityPage extends StatefulWidget {
@@ -29,8 +28,8 @@ class ManagerNewActivityPage extends StatefulWidget {
 
 class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
   // Panel Controller
-  PanelController panelController = PanelController();
-  bool isOpen = false;
+  // PanelController panelController = PanelController();
+  // bool isOpen = false;
 
   // Profile
   String? name = '';
@@ -65,19 +64,52 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     state.setDescriptionCache(value);
   }
 
-  void onTap() {
-    isOpen = !isOpen;
-    if (isOpen == true) {
-      panelController.open();
+  // void onTap() {
+  //   isOpen = !isOpen;
+  //   if (isOpen == true) {
+  //     panelController.open();
+  //   } else {
+  //     panelController.close();
+  //   }
+  // }
+
+  void imageRemovalProcessing(SipSalesState state) {
+    // print('pressed');
+    if (Platform.isIOS) {
+      GlobalDialog.showCrossPlatformCustomOption(
+        context,
+        'Peringatan!',
+        'Apakah anda ingin menghapus gambar ini?',
+        'Hapus',
+        () {
+          Navigator.pop(context);
+          removeImage(state, 0);
+        },
+        'Batal',
+        () => Navigator.pop(context),
+        isIOS: true,
+      );
     } else {
-      panelController.close();
+      GlobalDialog.showCrossPlatformCustomOption(
+        context,
+        'Peringatan!',
+        'Apakah anda ingin menghapus gambar ini?',
+        'Hapus',
+        () {
+          Navigator.pop(context);
+          removeImage(state, 0);
+        },
+        'Batal',
+        () => Navigator.pop(context),
+      );
     }
   }
 
   void removeImage(SipSalesState state, int index) async {
+    // print('delete');
     state.setIsDisable(true);
     state.removeImage(index);
-    onTap();
+    // onTap();
 
     if (Platform.isIOS) {
       GlobalDialog.showCrossPlatformDialog(
@@ -375,17 +407,21 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         activityType,
         activityDescription,
       )) {
+        print('Activity Created');
         Navigator.pop(context, true);
       }
     } else {
-      await requestPermission(state).then((isGranted) {
+      await requestPermission(state).then((isGranted) async {
         if (isGranted) {
-          state.createShopManagerActivity(
+          if (await state.createShopManagerActivity(
             context,
             list,
             activityType,
             activityDescription,
-          );
+          )) {
+            print('Activity Created');
+            Navigator.pop(context, true);
+          }
         } else {
           if (Platform.isIOS) {
             GlobalDialog.showCrossPlatformDialog(
@@ -408,6 +444,14 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         }
       });
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Provider.of<SipSalesState>(context, listen: false).clearState();
   }
 
   @override
@@ -436,13 +480,13 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
           valueListenable: managerActivityState.isLoading,
           builder: (context, value, child) {
             return IconButton(
-              onPressed: () {
+              onPressed: () async {
                 managerActivityState.setIsDisable(true);
                 managerActivityState.removeImage(0);
 
                 if (value == true) {
                   if (Platform.isIOS) {
-                    GlobalDialog.showCrossPlatformDialog(
+                    await GlobalDialog.showCrossPlatformDialog(
                       context,
                       'Peringatan!',
                       'Silakan periksa inputan Anda kembali.',
@@ -451,7 +495,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                       isIOS: true,
                     );
                   } else {
-                    GlobalDialog.showCrossPlatformDialog(
+                    await GlobalDialog.showCrossPlatformDialog(
                       context,
                       'Peringatan!',
                       'Silakan periksa kembali inputan Anda.',
@@ -472,404 +516,390 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
           },
         ),
       ),
-      body: SlidingUpPanel(
-        renderPanelSheet: false,
-        backdropEnabled: true,
-        minHeight: 0.0,
-        maxHeight: (MediaQuery.of(context).size.width < 800)
-            ? MediaQuery.of(context).size.height * 0.25
-            : MediaQuery.of(context).size.height * 0.225,
-        controller: panelController,
-        panel: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20.0),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.05,
-            vertical: MediaQuery.of(context).size.height * 0.01,
-          ),
-          margin: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.025,
-            vertical: MediaQuery.of(context).size.height * 0.015,
-          ),
+          color: Colors.white,
+        ),
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).size.width * 0.1,
+          left: MediaQuery.of(context).size.height * 0.05,
+          right: MediaQuery.of(context).size.height * 0.05,
+        ),
+        child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.08,
-                alignment: Alignment.center,
-                child: Text(
-                  'Apakah Anda ingin menghapus gambar ini?',
-                  style: GlobalFont.bigfontRBold,
-                ),
-              ),
+              // ========================= Sections ==========================
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.045,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Column(
                   children: [
-                    InkWell(
-                      onTap: onTap,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: MediaQuery.of(context).size.height * 0.04,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(20.0),
+                    // =============== Activity Details Section ==============
+                    Row(
+                      children: [
+                        Text(
+                          'Detail Aktivitas',
+                          style: GlobalFont.giantfontRBold,
                         ),
-                        child: Text(
-                          'Batal',
-                          style: GlobalFont.bigfontR,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.02,
+                        ),
+                        const InfoPopupWidget(
+                          arrowTheme: InfoPopupArrowTheme(
+                            color: Colors.grey,
+                          ),
+                          dismissTriggerBehavior:
+                              PopupDismissTriggerBehavior.onTapArea,
+                          contentTitle:
+                              'Masukkan jenis dan deskripsi aktivitas.',
+                          child: Icon(
+                            Icons.info_outlined,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Tipe',
+                              style: GlobalFont.mediumgiantfontR,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              height: MediaQuery.of(context).size.height * 0.04,
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                // border: Border.all(color: Colors.black, width: 1.5),
+                                color: Colors.grey[400],
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.04,
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.005,
+                              ),
+                              child: CustomDropDown(
+                                listData: managerActivityState
+                                    .fetchManagerActivityTypeList,
+                                inputan: activityType,
+                                hint: 'Tipe Aktivitas Manajer',
+                                handle: setActivityType,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      child: Text(
+                        'Deskripsi',
+                        style: GlobalFont.mediumgiantfontR,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.01,
+                        bottom: MediaQuery.of(context).viewInsets.bottom * 0.65,
+                      ),
+                      child: TextField(
+                        maxLines: 10,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[a-zA-Z0-9./@\s:()%+-?]*'),
+                          ),
+                        ],
+                        controller: TextEditingController(
+                          text: activityType == 'DAILY REPORT'
+                              ? activityDescription
+                              : activityDescription == ''
+                                  ? managerActivityState
+                                      .managerActivityTypeList[0]
+                                      .activityTemplate
+                                  : activityDescription,
+                        ),
+                        enabled: true,
+                        style: GlobalFont.mediumgiantfontR,
+                        keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.newline,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey[400],
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.04,
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.005,
+                          ),
+                          hintStyle: GlobalFont.mediumbigfontM,
+                          hintText: activityType == 'DAILY REPORT'
+                              ? 'Masukkan Report Sore Anda.'
+                              : 'Masukkan deskripsi Anda.',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                        ),
+                        onChanged: (newValues) => setActivityDescription(
+                          newValues,
+                          managerActivityState,
                         ),
                       ),
                     ),
-                    InkWell(
-                      onTap: () => removeImage(managerActivityState, 0),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: MediaQuery.of(context).size.height * 0.04,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2.0,
+
+                    // ========================= Photo Section =========================
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.03,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Foto',
+                                style: GlobalFont.giantfontRBold,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.02,
+                              ),
+                              const InfoPopupWidget(
+                                arrowTheme: InfoPopupArrowTheme(
+                                  color: Colors.grey,
+                                ),
+                                dismissTriggerBehavior:
+                                    PopupDismissTriggerBehavior.onTapArea,
+                                contentTitle:
+                                    'Unggah foto menggunakan kamera atau galeri.',
+                                child: Icon(
+                                  Icons.info_outlined,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: Text(
-                          'Hapus',
-                          style: GlobalFont.bigfontRWhite,
-                        ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.1125,
+                      margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: () => assetHandler(managerActivityState),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              height: MediaQuery.of(context).size.height * 0.1,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[400],
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              margin: EdgeInsets.only(
+                                right: MediaQuery.of(context).size.width * 0.01,
+                              ),
+                              child: const Icon(
+                                Icons.add_a_photo_rounded,
+                                size: 25.0,
+                              ),
+                            ),
+                          ),
+                          ValueListenableBuilder(
+                            valueListenable:
+                                managerActivityState.getIsUploading,
+                            builder: (context, value, child) {
+                              if (value == true) {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Platform.isIOS
+                                        ? const CupertinoActivityIndicator(
+                                            radius: 12.5,
+                                          )
+                                        : const CircleLoading(),
+                                    const SizedBox(height: 7.5),
+                                    Text(
+                                      'Loading...',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Expanded(
+                                  child: SizedBox(
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: managerActivityState
+                                          .filteredList.length,
+                                      itemBuilder: (context, index) {
+                                        final imageData = base64Decode(
+                                          managerActivityState.filteredList[0],
+                                        );
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                imageRemovalProcessing(
+                                                  managerActivityState,
+                                                );
+                                              },
+                                              child: Stack(
+                                                alignment: Alignment.topRight,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25.0),
+                                                    child: Image.memory(
+                                                      imageData,
+                                                      fit: BoxFit.contain,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.215,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.2,
+                                                    ),
+                                                  ),
+                                                  const Icon(
+                                                    Icons.delete_rounded,
+                                                    size: 30.0,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.015,
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-            color: Colors.white,
-          ),
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.width * 0.1,
-            left: MediaQuery.of(context).size.height * 0.05,
-            right: MediaQuery.of(context).size.height * 0.05,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // ========================= Sections ==========================
-                SizedBox(
-                  child: Column(
-                    children: [
-                      // =============== Activity Details Section ==============
-                      Row(
-                        children: [
-                          Text(
-                            'Detail Aktivitas',
-                            style: GlobalFont.giantfontRBold,
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02,
-                          ),
-                          const InfoPopupWidget(
-                            arrowTheme: InfoPopupArrowTheme(
-                              color: Colors.grey,
-                            ),
-                            dismissTriggerBehavior:
-                                PopupDismissTriggerBehavior.onTapArea,
-                            contentTitle:
-                                'Masukkan jenis dan deskripsi aktivitas.',
-                            child: Icon(
-                              Icons.info_outlined,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Tipe',
-                                style: GlobalFont.mediumgiantfontR,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.04,
-                                alignment: Alignment.centerLeft,
-                                decoration: BoxDecoration(
-                                  // border: Border.all(color: Colors.black, width: 1.5),
-                                  color: Colors.grey[400],
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.04,
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.005,
-                                ),
-                                child: CustomDropDown(
-                                  listData: managerActivityState
-                                      .fetchManagerActivityTypeList,
-                                  inputan: activityType,
-                                  hint: 'Tipe Aktivitas Manajer',
-                                  handle: setActivityType,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                        ),
-                        child: Text(
-                          'Deskripsi',
-                          style: GlobalFont.mediumgiantfontR,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                          bottom:
-                              MediaQuery.of(context).viewInsets.bottom * 0.65,
-                        ),
-                        child: TextField(
-                          maxLines: 10,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[a-zA-Z0-9./@\s:()%+-?]*'),
-                            ),
-                          ],
-                          controller: TextEditingController(
-                            text: activityType == 'DAILY REPORT'
-                                ? activityDescription
-                                : activityDescription == ''
-                                    ? managerActivityState
-                                        .managerActivityTypeList[0]
-                                        .activityTemplate
-                                    : activityDescription,
-                          ),
-                          enabled: true,
-                          style: GlobalFont.mediumgiantfontR,
-                          keyboardType: TextInputType.multiline,
-                          textInputAction: TextInputAction.newline,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[400],
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.04,
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.005,
-                            ),
-                            hintStyle: GlobalFont.mediumbigfontM,
-                            hintText: activityType == 'DAILY REPORT'
-                                ? 'Masukkan Report Sore Anda.'
-                                : 'Masukkan deskripsi Anda.',
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                          ),
-                          onChanged: (newValues) => setActivityDescription(
-                            newValues,
-                            managerActivityState,
-                          ),
-                        ),
-                      ),
 
-                      // ========================= Photo Section =========================
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.03,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'Foto',
-                                  style: GlobalFont.giantfontRBold,
-                                ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                ),
-                                const InfoPopupWidget(
-                                  arrowTheme: InfoPopupArrowTheme(
-                                    color: Colors.grey,
-                                  ),
-                                  dismissTriggerBehavior:
-                                      PopupDismissTriggerBehavior.onTapArea,
-                                  contentTitle:
-                                      'Unggah foto menggunakan kamera atau galeri.',
-                                  child: Icon(
-                                    Icons.info_outlined,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.1125,
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                        ),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () => assetHandler(managerActivityState),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.2,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.1,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[400],
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                margin: EdgeInsets.only(
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.01,
-                                ),
-                                child: const Icon(
-                                  Icons.add_a_photo_rounded,
-                                  size: 25.0,
-                                ),
-                              ),
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  managerActivityState.getIsUploading,
-                              builder: (context, value, child) {
-                                if (value == true) {
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Platform.isIOS
-                                          ? const CupertinoActivityIndicator(
-                                              radius: 12.5,
-                                            )
-                                          : const CircleLoading(),
-                                      const SizedBox(height: 7.5),
-                                      Text(
-                                        'Loading...',
-                                        style: GlobalFont.bigfontR,
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return Expanded(
-                                    child: SizedBox(
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: managerActivityState
-                                            .filteredList.length,
-                                        itemBuilder: (context, index) {
-                                          final imageData = base64Decode(
-                                            managerActivityState
-                                                .filteredList[0],
-                                          );
-                                          return Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              InkWell(
-                                                onTap: onTap,
-                                                child: Stack(
-                                                  alignment: Alignment.topRight,
-                                                  children: [
-                                                    ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              25.0),
-                                                      child: Image.memory(
-                                                        imageData,
-                                                        fit: BoxFit.contain,
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.215,
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.2,
-                                                      ),
-                                                    ),
-                                                    const Icon(
-                                                      Icons.delete_rounded,
-                                                      size: 30.0,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.015,
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ),
+              // ======================= Create Button =======================
+              SizedBox(
+                child: ValueListenableBuilder(
+                  valueListenable: managerActivityState.isDisable,
+                  builder: (context, value, child) {
+                    if (value == true) {
+                      return InkWell(
+                        onTap: () {
+                          if (Platform.isIOS) {
+                            GlobalDialog.showCrossPlatformDialog(
+                              context,
+                              'Peringatan!',
+                              'Silakan periksa inputan Anda kembali.',
+                              () => Navigator.pop(context),
+                              'Tutup',
+                              isIOS: true,
+                            );
+                          } else {
+                            GlobalDialog.showCrossPlatformDialog(
+                              context,
+                              'Peringatan!',
+                              'Silakan periksa kembali inputan Anda.',
+                              () => Navigator.pop(context),
+                              'Tutup',
+                            );
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(seconds: 2),
+                          width: MediaQuery.of(context).size.width,
+                          // height: MediaQuery.of(context).size.height * 0.04,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          margin: EdgeInsets.symmetric(
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.025,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.height * 0.01,
+                          ),
+                          child: ValueListenableBuilder(
+                            valueListenable: managerActivityState.isLoading,
+                            builder: (context, value, child) {
+                              if (value == true) {
+                                if (Platform.isIOS) {
+                                  return const CupertinoActivityIndicator(
+                                    radius: 12.5,
+                                    color: Colors.white,
                                   );
                                 }
-                              },
-                            ),
-                          ],
+                                return const CircleLoading(
+                                  warna: Colors.white,
+                                );
+                              } else {
+                                return Text(
+                                  'Buat',
+                                  style: GlobalFont.giantfontRBold,
+                                );
+                              }
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // ======================= Create Button =======================
-                SizedBox(
-                  child: ValueListenableBuilder(
-                    valueListenable: managerActivityState.isDisable,
-                    builder: (context, value, child) {
-                      if (value == true) {
-                        return InkWell(
-                          onTap: () {
+                      );
+                    } else {
+                      return InkWell(
+                        onTap: () {
+                          if (!managerActivityState.isLoading.value) {
+                            createActivity(
+                              managerActivityState,
+                              managerActivityState.fetchManagerActivityTypeList,
+                              activityType,
+                              activityDescription,
+                            );
+                          } else {
                             if (Platform.isIOS) {
                               GlobalDialog.showCrossPlatformDialog(
                                 context,
                                 'Peringatan!',
-                                'Silakan periksa inputan Anda kembali.',
+                                'Mohon tunggu hingga proses selesai.',
                                 () => Navigator.pop(context),
                                 'Tutup',
                                 isIOS: true,
@@ -878,129 +908,56 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                               GlobalDialog.showCrossPlatformDialog(
                                 context,
                                 'Peringatan!',
-                                'Silakan periksa kembali inputan Anda.',
+                                'Mohon tunggu hingga proses selesai.',
                                 () => Navigator.pop(context),
                                 'Tutup',
                               );
                             }
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(seconds: 2),
-                            width: MediaQuery.of(context).size.width,
-                            // height: MediaQuery.of(context).size.height * 0.04,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.025,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.01,
-                            ),
-                            child: ValueListenableBuilder(
-                              valueListenable: managerActivityState.isLoading,
-                              builder: (context, value, child) {
-                                if (value == true) {
-                                  if (Platform.isIOS) {
-                                    return const CupertinoActivityIndicator(
-                                      radius: 12.5,
-                                      color: Colors.white,
-                                    );
-                                  }
-                                  return const CircleLoading(
-                                    warna: Colors.white,
-                                  );
-                                } else {
-                                  return Text(
-                                    'Buat',
-                                    style: GlobalFont.giantfontRBold,
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(seconds: 1),
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          margin: EdgeInsets.symmetric(
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.025,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.height * 0.01,
+                          ),
+                          child: ValueListenableBuilder(
+                            valueListenable: managerActivityState.isLoading,
+                            builder: (context, value, child) {
+                              if (value == true) {
+                                if (Platform.isIOS) {
+                                  return const CupertinoActivityIndicator(
+                                    radius: 12.5,
+                                    color: Colors.white,
                                   );
                                 }
-                              },
-                            ),
-                          ),
-                        );
-                      } else {
-                        return InkWell(
-                          onTap: () {
-                            if (!managerActivityState.isLoading.value) {
-                              createActivity(
-                                managerActivityState,
-                                managerActivityState
-                                    .fetchManagerActivityTypeList,
-                                activityType,
-                                activityDescription,
-                              );
-                            } else {
-                              if (Platform.isIOS) {
-                                GlobalDialog.showCrossPlatformDialog(
-                                  context,
-                                  'Peringatan!',
-                                  'Mohon tunggu hingga proses selesai.',
-                                  () => Navigator.pop(context),
-                                  'Tutup',
-                                  isIOS: true,
+                                return const CircleLoading(
+                                  warna: Colors.white,
                                 );
                               } else {
-                                GlobalDialog.showCrossPlatformDialog(
-                                  context,
-                                  'Peringatan!',
-                                  'Mohon tunggu hingga proses selesai.',
-                                  () => Navigator.pop(context),
-                                  'Tutup',
+                                return Text(
+                                  'Buat',
+                                  style: GlobalFont.giantfontRBoldWhite,
                                 );
                               }
-                            }
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(seconds: 1),
-                            width: MediaQuery.of(context).size.width,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.025,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.01,
-                            ),
-                            child: ValueListenableBuilder(
-                              valueListenable: managerActivityState.isLoading,
-                              builder: (context, value, child) {
-                                if (value == true) {
-                                  if (Platform.isIOS) {
-                                    return const CupertinoActivityIndicator(
-                                      radius: 12.5,
-                                      color: Colors.white,
-                                    );
-                                  }
-                                  return const CircleLoading(
-                                    warna: Colors.white,
-                                  );
-                                } else {
-                                  return Text(
-                                    'Buat',
-                                    style: GlobalFont.giantfontRBoldWhite,
-                                  );
-                                }
-                              },
-                            ),
+                            },
                           ),
-                        );
-                      }
-                    },
-                  ),
+                        ),
+                      );
+                    }
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

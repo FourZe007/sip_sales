@@ -125,7 +125,7 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
   void assetHandler(SipSalesState state) async {
     if (state.fetchFilteredList.isEmpty) {
       if (Platform.isIOS) {
-        await GlobalDialog.showIOSPermissionGranted(
+        await GlobalDialog.showIOSDialogOption(
           context,
           'Camera Permission',
           'This app needs access to your camera. Would you like to allow camera access?',
@@ -149,7 +149,7 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
           },
         );
       } else {
-        await GlobalDialog.showAndroidPermissionGranted(
+        await GlobalDialog.showAndroidDialogOption(
           context,
           'Camera Permission',
           'This app needs access to your camera. Would you like to allow camera access?',
