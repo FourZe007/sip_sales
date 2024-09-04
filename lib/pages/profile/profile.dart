@@ -585,7 +585,7 @@ class ProfilePageState extends State<ProfilePage> {
                       child: isLoading == true
                           ? Platform.isIOS
                               ? const CupertinoActivityIndicator(
-                                  radius: 17.5,
+                                  radius: 12.5,
                                   color: Colors.white,
                                 )
                               : const CircleLoading(warna: Colors.white)

@@ -773,7 +773,7 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                           children: [
                             Platform.isIOS
                                 ? const CupertinoActivityIndicator(
-                                    radius: 17.5,
+                                    radius: 12.5,
                                   )
                                 : const CircleLoading(),
                             const SizedBox(height: 7.5),
@@ -886,7 +886,7 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                           if (value == true) {
                             if (Platform.isIOS) {
                               const CupertinoActivityIndicator(
-                                radius: 17.5,
+                                radius: 12.5,
                                 color: Colors.white,
                               );
                             }
@@ -934,7 +934,7 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                           if (value == true) {
                             if (Platform.isIOS) {
                               const CupertinoActivityIndicator(
-                                radius: 17.5,
+                                radius: 12.5,
                                 color: Colors.white,
                               );
                             }

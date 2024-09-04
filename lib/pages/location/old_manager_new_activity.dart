@@ -700,7 +700,7 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                           children: [
                             Platform.isIOS
                                 ? const CupertinoActivityIndicator(
-                                    radius: 17.5,
+                                    radius: 12.5,
                                   )
                                 : const CircleLoading(),
                             const SizedBox(height: 7.5),
@@ -817,7 +817,7 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                           if (value == true) {
                             if (Platform.isIOS) {
                               const CupertinoActivityIndicator(
-                                radius: 17.5,
+                                radius: 12.5,
                                 color: Colors.white,
                               );
                             }
@@ -885,7 +885,7 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                           if (value == true) {
                             if (Platform.isIOS) {
                               const CupertinoActivityIndicator(
-                                radius: 17.5,
+                                radius: 12.5,
                                 color: Colors.white,
                               );
                             }

@@ -169,7 +169,7 @@ class _SalesActivityPageState extends State<SalesActivityPage> {
                       children: [
                         Platform.isIOS
                             ? const CupertinoActivityIndicator(
-                                radius: 17.5,
+                                radius: 12.5,
                               )
                             : const CircleLoading(),
                         SizedBox(
