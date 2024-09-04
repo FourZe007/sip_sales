@@ -10,7 +10,7 @@ allprojects {
     }
     ext {
         compileSdkVersion   = 34                // or higher / as desired
-        targetSdkVersion    = 33                // or higher / as desired
+        targetSdkVersion    = 34                // or higher / as desired
         minSdkVersion       = 21                // Required minimum
         appCompatVersion    = "1.4.2"           // or higher / as desired
         playServicesLocationVersion = "21.0.1"  // or higher / as desired
