@@ -106,7 +106,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
-        // height: MediaQuery.of(context).size.height,
+        height: MediaQuery.of(context).size.height,
         color: Colors.grey[300],
         // decoration: BoxDecoration(
         //   color: Colors.grey[300],
@@ -119,55 +119,65 @@ class _UserConsentPageState extends State<UserConsentPage> {
           horizontal: MediaQuery.of(context).size.width * 0.05,
           // vertical: MediaQuery.of(context).size.height * 0.01,
         ),
-        child: ListView(
-          shrinkWrap: true,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // SIP User Consent Title
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.005,
-                bottom: MediaQuery.of(context).size.height * 0.0375,
-              ),
-              child: Text(
-                'SIP User Consent',
-                style: GlobalFont.petafontRBold,
-              ),
-            ),
+            Column(
+              children: [
+                // SIP User Consent Title
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.005,
+                    bottom: MediaQuery.of(context).size.height * 0.0375,
+                  ),
+                  child: Text(
+                    'SIP User Consent',
+                    style: GlobalFont.petafontRBold,
+                  ),
+                ),
 
-            // User Location Permission
-            TextSwitch(
-              '1. ',
-              'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
-              isLocationGranted,
-              toggleLocationSwitch,
-            ),
+                ListView(
+                  shrinkWrap: true,
+                  children: [
+                    // User Location Permission
+                    TextSwitch(
+                      '1. ',
+                      'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
+                      isLocationGranted,
+                      toggleLocationSwitch,
+                    ),
 
-            // User Photo Permission
-            TextSwitch(
-              '2. ',
-              'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-              isPhotoGranted,
-              togglePhotoSwitch,
-            ),
+                    // User Photo Permission
+                    TextSwitch(
+                      '2. ',
+                      'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                      isPhotoGranted,
+                      togglePhotoSwitch,
+                    ),
 
-            // User Camera Permission
-            TextSwitch(
-              '3. ',
-              'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-              isCameraGranted,
-              toggleCameraSwitch,
-            ),
+                    // User Camera Permission
+                    TextSwitch(
+                      '3. ',
+                      'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                      isCameraGranted,
+                      toggleCameraSwitch,
+                    ),
 
-            // App Privacy Policy
-            TextSwitch(
-              '4. ',
-              'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
-              isPolicyGranted,
-              togglePolicySwitch,
-              isLinkAvailable: true,
-              link: 'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-              linkFunction: (dynamic) => launchLink(context),
+                    // App Privacy Policy
+                    TextSwitch(
+                      '4. ',
+                      'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
+                      isPolicyGranted,
+                      togglePolicySwitch,
+                      isLinkAvailable: true,
+                      link:
+                          'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                      linkFunction: (dynamic) => launchLink(context),
+                    ),
+                  ],
+                ),
+              ],
             ),
 
             // Return Button
