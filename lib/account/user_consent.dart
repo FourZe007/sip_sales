@@ -129,7 +129,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.005,
-                    bottom: MediaQuery.of(context).size.height * 0.0375,
+                    bottom: MediaQuery.of(context).size.height * 0.025,
                   ),
                   child: Text(
                     'SIP User Consent',
@@ -137,45 +137,48 @@ class _UserConsentPageState extends State<UserConsentPage> {
                   ),
                 ),
 
-                ListView(
-                  shrinkWrap: true,
-                  children: [
-                    // User Location Permission
-                    TextSwitch(
-                      '1. ',
-                      'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
-                      isLocationGranted,
-                      toggleLocationSwitch,
-                    ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      // User Location Permission
+                      TextSwitch(
+                        '1. ',
+                        'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
+                        isLocationGranted,
+                        toggleLocationSwitch,
+                      ),
 
-                    // User Photo Permission
-                    TextSwitch(
-                      '2. ',
-                      'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                      isPhotoGranted,
-                      togglePhotoSwitch,
-                    ),
+                      // User Photo Permission
+                      TextSwitch(
+                        '2. ',
+                        'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                        isPhotoGranted,
+                        togglePhotoSwitch,
+                      ),
 
-                    // User Camera Permission
-                    TextSwitch(
-                      '3. ',
-                      'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                      isCameraGranted,
-                      toggleCameraSwitch,
-                    ),
+                      // User Camera Permission
+                      TextSwitch(
+                        '3. ',
+                        'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                        isCameraGranted,
+                        toggleCameraSwitch,
+                      ),
 
-                    // App Privacy Policy
-                    TextSwitch(
-                      '4. ',
-                      'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
-                      isPolicyGranted,
-                      togglePolicySwitch,
-                      isLinkAvailable: true,
-                      link:
-                          'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-                      linkFunction: (dynamic) => launchLink(context),
-                    ),
-                  ],
+                      // App Privacy Policy
+                      TextSwitch(
+                        '4. ',
+                        'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
+                        isPolicyGranted,
+                        togglePolicySwitch,
+                        isLinkAvailable: true,
+                        link:
+                            'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                        linkFunction: (dynamic) => launchLink(context),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
