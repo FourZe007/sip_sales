@@ -84,7 +84,12 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
     print('Refresh or Load Data');
     try {
       managerController = StreamController<List<ModelManagerActivities>>();
-      managerController.add(await state.fetchManagerActivities(date));
+      List<ModelManagerActivities> activities =
+          await state.fetchManagerActivities(date);
+      setState(() {
+        state.managerActivitiesList = activities;
+      });
+      managerController.add(state.managerActivitiesList);
       // print('Manager Controller length: ${managerController.stream.length}');
     } catch (e) {
       if (Platform.isIOS) {
