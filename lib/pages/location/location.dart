@@ -29,22 +29,28 @@ class _LocationPageState extends State<LocationPage> {
 
   Future<bool> requestPermission(SipSalesState state) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    state.setIsLocationGranted(prefs.getBool('isLocationGranted')!);
 
-    PermissionStatus permissionStatus;
-    permissionStatus = await location.hasPermission();
-    if (permissionStatus == PermissionStatus.denied ||
-        permissionStatus == PermissionStatus.deniedForever) {
-      permissionStatus = await location.requestPermission();
+    try {
+      state.setIsLocationGranted(prefs.getBool('isLocationGranted')!);
+
+      PermissionStatus permissionStatus;
+      permissionStatus = await location.hasPermission();
       if (permissionStatus == PermissionStatus.denied ||
           permissionStatus == PermissionStatus.deniedForever) {
-        await prefs.setBool('isLocationGranted', false);
-        return false;
+        permissionStatus = await location.requestPermission();
+        if (permissionStatus == PermissionStatus.denied ||
+            permissionStatus == PermissionStatus.deniedForever) {
+          await prefs.setBool('isLocationGranted', false);
+          return false;
+        }
       }
-    }
 
-    await prefs.setBool('isLocationGranted', true);
-    return true;
+      await prefs.setBool('isLocationGranted', true);
+      return true;
+    } catch (e) {
+      await prefs.setBool('isLocationGranted', false);
+      return false;
+    }
   }
 
   Future<bool> serviceRequest() async {
