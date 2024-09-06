@@ -29,10 +29,9 @@ class _LocationPageState extends State<LocationPage> {
 
   Future<bool> requestPermission(SipSalesState state) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    state.setIsLocationGranted(prefs.getBool('isLocationGranted') ?? false);
 
     try {
-      state.setIsLocationGranted(prefs.getBool('isLocationGranted')!);
-
       PermissionStatus permissionStatus;
       permissionStatus = await location.hasPermission();
       if (permissionStatus == PermissionStatus.denied ||
@@ -88,13 +87,7 @@ class _LocationPageState extends State<LocationPage> {
         );
       }
 
-      if (prefs.getInt('isManager') == 0) {
-        // Note -> get Activity Insertation dropdown for Manager
-        await state.fetchManagerActivityData();
-      } else {
-        // Note -> get Activity Insertation dropdown for Sales
-        await state.fetchSalesActivityData();
-      }
+      // Note -> Load Manager and Sales Dropdown value moved to splash screen
 
       state.setIsDisable(true);
       state.clearState();

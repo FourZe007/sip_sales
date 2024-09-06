@@ -8,6 +8,7 @@ import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/location/location.dart';
 import 'package:sip_sales/global/menu.dart';
 import 'package:sip_sales/pages/profile/profile.dart';
+import 'package:sip_sales/pages/screen/splash_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -58,7 +59,7 @@ class MyApp extends StatelessWidget {
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
-        home: const LoginPage(),
+        home: const SplashScreen(),
         routes: {
           '/login': (context) => const LoginPage(),
           '/location': (context) => const LocationPage(),

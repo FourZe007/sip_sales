@@ -48,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  // Note -> move this checking function inside Splash Screen
   void loginState() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userState = prefs.getInt('flag');
@@ -209,6 +210,12 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+
+    nip = '';
+    password = '';
+    userState = 0;
+    loginStatus = '';
+    userLogin.clear();
   }
 
   @override
