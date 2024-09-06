@@ -70,53 +70,11 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
+            Image(
+              image: const AssetImage('assets/SIP.png'),
               width: MediaQuery.of(context).size.width * 0.55,
-              height: MediaQuery.of(context).size.height * 0.25,
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.025,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey[350],
-                borderRadius: BorderRadius.circular(25.0),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    spreadRadius: 1.5,
-                    blurRadius: 6,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Image(
-                image: const AssetImage('assets/SIP.png'),
-                width: MediaQuery.of(context).size.width * 0.55,
-                fit: BoxFit.cover,
-              ),
+              fit: BoxFit.cover,
             ),
-            // Container(
-            //   width: MediaQuery.of(context).size.width * 0.55,
-            //   height: MediaQuery.of(context).size.height * 0.25,
-            //   alignment: Alignment.center,
-            //   decoration: BoxDecoration(
-            //     color: Colors.grey[350],
-            //     image: const DecorationImage(
-            //       image: AssetImage('assets/SIP.png'),
-            //       fit: BoxFit.contain,
-            //       scale: 0.5,
-            //     ),
-            //     borderRadius: BorderRadius.circular(25.0),
-            //     boxShadow: const [
-            //       BoxShadow(
-            //         color: Colors.grey,
-            //         spreadRadius: 1.5,
-            //         blurRadius: 6,
-            //         offset: Offset(0, 5),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.05,
             ),
