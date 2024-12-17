@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/dialog.dart';
@@ -33,6 +32,7 @@ class ProfilePageState extends State<ProfilePage> {
       isLoading = true;
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String tempDeviceID = prefs.getString('deviceID') ?? '';
     prefs.clear();
     setState(() {
       isLoading = false;
@@ -92,6 +92,10 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void openSettings() {
+    print('Settings pressed!');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -104,8 +108,8 @@ class ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
         centerTitle: true,
+        backgroundColor: Colors.blue,
         toolbarHeight: (MediaQuery.of(context).size.width < 800)
             ? MediaQuery.of(context).size.height * 0.075
             : MediaQuery.of(context).size.height * 0.075,
@@ -118,13 +122,28 @@ class ProfilePageState extends State<ProfilePage> {
                 'Profile',
                 style: GlobalFont.terafontRBold,
               ),
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-            color: Colors.black,
-          ),
+        leading: Builder(
+          builder: (context) {
+            if (Platform.isIOS) {
+              return IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                  color: Colors.black,
+                ),
+              );
+            } else {
+              return IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                  color: Colors.black,
+                ),
+              );
+            }
+          },
         ),
       ),
       body: SlidingUpPanel(
@@ -285,320 +304,299 @@ class ProfilePageState extends State<ProfilePage> {
             }
           },
         ),
-        body: ListView(
-          children: [
-            UnconstrainedBox(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.15,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(20.0),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(2.0, 4.0),
-                      blurRadius: 5.0,
-                      spreadRadius: 1.0,
-                    ),
-                  ],
-                ),
-                margin: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height * 0.025,
-                  horizontal: MediaQuery.of(context).size.width * 0.03,
-                ),
-                padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height * 0.01,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Circle Icon of Person
-                    Expanded(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30.0),
-                          color: Colors.white,
-                        ),
-                        margin: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.01,
-                          vertical: MediaQuery.of(context).size.height * 0.005,
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          size: MediaQuery.of(context).size.width * 0.1,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    // User Data, which contains of name and employee ID
-                    Expanded(
-                      flex: 3,
-                      child: Wrap(
-                        children: [
-                          Text(
-                            GlobalVar.userAccountList[0].employeeName,
-                            style: GlobalFont.terafontRBold,
-                          ),
-                          Text(
-                            GlobalVar.userAccountList[0].employeeID,
-                            style: GlobalFont.mediumgiantfontRBold,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+        body: SafeArea(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.blue,
             ),
-            SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                color: Colors.white,
+              ),
               child: Column(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.025,
-                          bottom: MediaQuery.of(context).size.height * 0.005,
-                        ),
-                        padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.height * 0.02,
-                          0.0,
-                          MediaQuery.of(context).size.height * 0.005,
-                          0.0,
-                        ),
-                        child: Text(
-                          'Profile',
-                          style: GlobalFont.mediumgiantfontRBold,
-                        ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.075,
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                          bottom: MediaQuery.of(context).size.height * 0.005,
-                        ),
-                        padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.height * 0.02,
-                          0.0,
-                          MediaQuery.of(context).size.height * 0.005,
-                          0.0,
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.work, size: 30.0),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.height * 0.04,
+                      color: Colors.grey[100],
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.height * 0.025,
+                      horizontal: MediaQuery.of(context).size.width * 0.025,
+                    ),
+                    child: Row(
+                      children: [
+                        // Circle Icon of Person
+                        Expanded(
+                          child: CircleAvatar(
+                            radius: 30.0,
+                            backgroundColor: Colors.black,
+                            child: Icon(
+                              Icons.person,
+                              size: 30.0,
+                              color: Colors.white,
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Kantor',
-                                  style: GlobalFont.bigfontR,
-                                ),
-                                Text(
-                                  GlobalVar.userAccountList[0].bsName,
-                                  style: GlobalFont.giantfontR,
-                                ),
-                              ],
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.075,
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                          bottom: MediaQuery.of(context).size.height * 0.005,
+                        // User Data, contains of name and employee ID
+                        Expanded(
+                          flex: 3,
+                          child: Wrap(
+                            children: [
+                              Text(
+                                GlobalVar.userAccountList[0].employeeName,
+                                style: GlobalFont.terafontRBold,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                GlobalVar.userAccountList[0].employeeID,
+                                style: GlobalFont.mediumgiantfontRBold,
+                              ),
+                            ],
+                          ),
                         ),
-                        padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.height * 0.02,
-                          0.0,
-                          MediaQuery.of(context).size.height * 0.005,
-                          0.0,
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.garage, size: 30.0),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.height * 0.04,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Tipe Kantor',
-                                  style: GlobalFont.bigfontR,
-                                ),
-                                Text(
-                                  GlobalVar.userAccountList[0].locationName,
-                                  style: GlobalFont.giantfontR,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                        // ~:Action Button:~
+                        // Container(
+                        //   height: 60,
+                        //   alignment: Alignment.topCenter,
+                        //   child: GestureDetector(
+                        //     onTap: () => openSettings(),
+                        //     child: Icon(
+                        //       Icons.settings,
+                        //       size: 25.0,
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.13,
+                        color: Colors.grey[100],
                         margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.025,
+                          top: MediaQuery.of(context).size.height * 0.015,
                           bottom: MediaQuery.of(context).size.height * 0.005,
                         ),
                         padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.height * 0.02,
-                          0.0,
-                          MediaQuery.of(context).size.height * 0.005,
-                          0.0,
-                        ),
-                        child: Text(
-                          'Pengaturan',
-                          style: GlobalFont.mediumgiantfontRBold,
-                        ),
-                      ),
-                      // Background Location Service Switch Button
-                      // Container(
-                      //   height: MediaQuery.of(context).size.height * 0.05,
-                      //   alignment: Alignment.centerLeft,
-                      //   margin: EdgeInsets.only(
-                      //     top: MediaQuery.of(context).size.height * 0.01,
-                      //     bottom: MediaQuery.of(context).size.height * 0.005,
-                      //   ),
-                      //   padding: EdgeInsets.fromLTRB(
-                      //     MediaQuery.of(context).size.height * 0.02,
-                      //     0.0,
-                      //     MediaQuery.of(context).size.height * 0.005,
-                      //     0.0,
-                      //   ),
-                      //   child: Row(
-                      //     crossAxisAlignment: CrossAxisAlignment.center,
-                      //     children: [
-                      //       const Icon(Icons.location_on, size: 30.0),
-                      //       SizedBox(
-                      //         width: MediaQuery.of(context).size.height * 0.04,
-                      //       ),
-                      //       Text(
-                      //         'Background Location',
-                      //         style: GlobalFont.mediumgiantfontR,
-                      //       ),
-                      //       SizedBox(
-                      //         width: MediaQuery.of(context).size.width * 0.2,
-                      //       ),
-                      //       Switch(
-                      //         value: isLocationEnabled,
-                      //         onChanged: toggleLocationSwitch,
-                      //         activeColor: Colors.blue,
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.075,
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                          bottom: MediaQuery.of(context).size.height * 0.005,
-                        ),
-                        padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.height * 0.02,
-                          0.0,
-                          MediaQuery.of(context).size.height * 0.005,
+                          MediaQuery.of(context).size.width * 0.045,
+                          MediaQuery.of(context).size.height * 0.01,
+                          MediaQuery.of(context).size.width * 0.005,
                           0.0,
                         ),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.lock_rounded, size: 30.0),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.height * 0.04,
+                            Text(
+                              'Lokasi Kerja',
+                              style: GlobalFont.mediumgiantfontRBold,
                             ),
-                            InkWell(
-                              onTap: () => launchLink(context),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.75,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Kebijakan Privasi',
-                                      style: GlobalFont.giantfontR,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.work, size: 30.0),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.height *
+                                        0.04,
+                                  ),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Penempatan',
+                                            style: GlobalFont.bigfontR,
+                                          ),
+                                          Text(
+                                            '${GlobalVar.userAccountList[0].locationName} ${GlobalVar.userAccountList[0].bsName}',
+                                            // 'askjoasjdoaisjdaosjdaosdjoaisjdoiasjdoasijdoaisjdio',
+                                            style: GlobalFont.giantfontR,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    Text(
-                                      'Ketuk untuk membuka',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.05,
-                      right: MediaQuery.of(context).size.width * 0.05,
-                      top: MediaQuery.of(context).size.height * 0.01,
-                    ),
-                    child: Text(
-                      'Version 1.0.5',
-                      style: GlobalFont.bigfontR,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.015,
-                      horizontal: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                    child: ElevatedButton(
-                      onPressed: toggleLogOutPage,
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: Size(
-                          MediaQuery.of(context).size.width * 0.95,
-                          MediaQuery.of(context).size.height * 0.04,
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.125,
+                        color: Colors.grey[100],
+                        margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.015,
+                          bottom: MediaQuery.of(context).size.height * 0.005,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                        padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.height * 0.02,
+                          MediaQuery.of(context).size.height * 0.01,
+                          MediaQuery.of(context).size.height * 0.005,
+                          0.0,
                         ),
-                        backgroundColor: Colors.blue[300],
-                      ),
-                      child: isLoading == true
-                          ? Platform.isIOS
-                              ? const CupertinoActivityIndicator(
-                                  radius: 12.5,
-                                  color: Colors.white,
-                                )
-                              : const CircleLoading(warna: Colors.white)
-                          : Text(
-                              'LOG OUT',
-                              style: GlobalFont.giantfontR,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pengaturan',
+                              style: GlobalFont.mediumgiantfontRBold,
                             ),
-                    ),
+                            // Background Location Service Switch Button
+                            // Container(
+                            //   height: MediaQuery.of(context).size.height * 0.05,
+                            //   alignment: Alignment.centerLeft,
+                            //   margin: EdgeInsets.only(
+                            //     top: MediaQuery.of(context).size.height * 0.01,
+                            //     bottom: MediaQuery.of(context).size.height * 0.005,
+                            //   ),
+                            //   padding: EdgeInsets.fromLTRB(
+                            //     MediaQuery.of(context).size.height * 0.02,
+                            //     0.0,
+                            //     MediaQuery.of(context).size.height * 0.005,
+                            //     0.0,
+                            //   ),
+                            //   child: Row(
+                            //     crossAxisAlignment: CrossAxisAlignment.center,
+                            //     children: [
+                            //       const Icon(Icons.location_on, size: 30.0),
+                            //       SizedBox(
+                            //         width: MediaQuery.of(context).size.height * 0.04,
+                            //       ),
+                            //       Text(
+                            //         'Background Location',
+                            //         style: GlobalFont.mediumgiantfontR,
+                            //       ),
+                            //       SizedBox(
+                            //         width: MediaQuery.of(context).size.width * 0.2,
+                            //       ),
+                            //       Switch(
+                            //         value: isLocationEnabled,
+                            //         onChanged: toggleLocationSwitch,
+                            //         activeColor: Colors.blue,
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.lock_rounded, size: 30.0),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.height *
+                                        0.04,
+                                  ),
+                                  InkWell(
+                                    onTap: () => launchLink(context),
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.75,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Kebijakan Privasi',
+                                            style: GlobalFont.giantfontR,
+                                          ),
+                                          Text(
+                                            'Ketuk untuk membuka',
+                                            style: GlobalFont.bigfontR,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        alignment: Alignment.centerLeft,
+                        margin: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05,
+                          top: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        child: Text(
+                          'Version 1.1.2',
+                          style: GlobalFont.bigfontR,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * 0.015,
+                          horizontal: MediaQuery.of(context).size.width * 0.03,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: toggleLogOutPage,
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(
+                              MediaQuery.of(context).size.width * 0.95,
+                              MediaQuery.of(context).size.height * 0.04,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            backgroundColor: Colors.blue[300],
+                          ),
+                          child: Builder(
+                            builder: (context) {
+                              if (isLoading) {
+                                return Builder(
+                                  builder: (context) {
+                                    if (Platform.isIOS) {
+                                      return const CupertinoActivityIndicator(
+                                        radius: 12.5,
+                                        color: Colors.white,
+                                      );
+                                    } else {
+                                      return const CircleLoading(
+                                        warna: Colors.white,
+                                      );
+                                    }
+                                  },
+                                );
+                              } else {
+                                return Text(
+                                  'SIGN OUT',
+                                  style: GlobalFont.giantfontR,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

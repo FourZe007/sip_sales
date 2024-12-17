@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -17,20 +19,29 @@ class MapPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          alignment: Alignment.center,
-          icon: Container(
-            width: 50,
-            height: 50,
+        leading: InkWell(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30.0),
               color: Colors.black,
+              shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 30.0,
-              color: Colors.white,
+            margin: EdgeInsets.symmetric(horizontal: 5),
+            child: Builder(
+              builder: (context) {
+                if (Platform.isIOS) {
+                  return const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white,
+                  );
+                } else {
+                  return const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  );
+                }
+              },
             ),
           ),
         ),
@@ -55,9 +66,9 @@ class MapPage extends StatelessWidget {
                   longitude,
                 ),
                 child: const Icon(
-                  Icons.location_on_rounded,
+                  Icons.location_pin,
                   color: Colors.black,
-                  size: 50.0,
+                  size: 60.0,
                 ),
               ),
             ],

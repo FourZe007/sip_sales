@@ -1,20 +1,14 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print
-
-import 'dart:async';
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
-import 'package:sip_sales/widget/button/animated_phone_button.dart';
-import 'package:sip_sales/widget/button/animated_tab_button.dart';
-import 'package:sip_sales/widget/date/custom_date_time.dart';
-import 'package:sip_sales/widget/indicator/circleloading.dart';
-import 'package:intl/intl.dart';
+import 'package:sip_sales/pages/attendance/attendance_history.dart';
+import 'package:sip_sales/widget/date/custom_digital_clock.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:sip_sales/widget/format.dart';
+import 'package:sip_sales/widget/status/loading_animation.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -24,203 +18,493 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  // Note -> moved to state management
-  // GPS Location Detector
-  Location location = Location();
-  bool locationPermission = false;
-  bool isLocationEnable = false;
-  double longitude = 0;
-  double latitude = 0;
-
-  // Difference Variables with value 2 coordinates and time
-  List<ModelWithinRadius> differences = [];
-  DateFormat format = DateFormat('HH:mm:ss');
-
-  String displayDate = ''; // date for UI/UX display
-  String date = ''; // date for store in database
-  String time = '';
-  List<ModelResultMessage> checkInList = [];
-  List<ModelResultMessage> checkOutList = [];
-  bool isPressed = false;
-  bool onProgress = false;
-  double radiusInMeters = 10.0;
-  bool isWithinRadius = false;
-
-  bool? attendanceStatus = false;
-
-  void backToLocation() {
-    Navigator.pop(context);
-    Navigator.pushReplacementNamed(context, '/location');
-  }
-
-  Future<bool> requestPermission() async {
-    bool serviceEnabled;
-    PermissionStatus permissionGranted;
-
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return false;
-      }
-    }
-
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied ||
-        permissionGranted == PermissionStatus.deniedForever) {
-      // print('Permission Denied or Permission Denied Forever');
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted ||
-          permissionGranted != PermissionStatus.grantedLimited) {
-        // print('Permission Denied');
-        return false;
-      }
-    }
-
-    return true;
-  }
+  List<ModelAttendanceHistory> historyList = [];
+  String displayDate = '';
 
   void setDisplayDate(String value) {
     displayDate = value;
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
+  void userAbsent({bool isWarning = false, bool isClockIn = false}) {
+    final state = Provider.of<SipSalesState>(context, listen: false);
+    state.clearState();
 
-    super.initState();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoadingAnimationPage(isWarning, isClockIn),
+      ),
+    );
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
+  Stream<List<ModelAttendanceHistory>> getHistory({
+    String startDate = '',
+    String endDate = '',
+  }) async* {
+    historyList.clear();
+    historyList.addAll(await GlobalAPI.fetchAttendanceHistory(
+      GlobalVar.nip!,
+      startDate,
+      endDate,
+    ));
 
-    super.dispose();
+    // History list check
+    if (historyList.isNotEmpty) {
+      print('Fetch succeed');
+      yield historyList.skip(historyList.length - 2).toList();
+    } else {
+      print('Fetch failed');
+      yield historyList;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     // State Management
-    final attendanceState = Provider.of<SipSalesState>(context);
+    final state = Provider.of<SipSalesState>(context);
 
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
           topRight: Radius.circular(20.0),
         ),
         color: Colors.white,
       ),
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.05,
+        vertical: MediaQuery.of(context).size.height * 0.02,
+      ),
       margin: EdgeInsets.only(
         top: MediaQuery.of(context).size.height * 0.12,
       ),
-      child: Column(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
-          ),
-          CustomDateTime(
-            displayDate,
-            setDisplayDate,
-            false,
-            isIpad: (MediaQuery.of(context).size.width < 800) ? false : true,
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.025,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          getHistory();
+        },
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
             children: [
-              (MediaQuery.of(context).size.width < 800)
-                  ? AnimatedPhoneButton(
-                      'Check In',
-                      () => attendanceState.checkIn(context),
-                      disable: attendanceState.fetchAttendanceStatus == true
-                          ? true
-                          : false,
-                      lebar: MediaQuery.of(context).size.width * 0.3,
-                      tinggi: MediaQuery.of(context).size.height * 0.05,
-                    )
-                  : AnimatedTabButton(
-                      'Check In',
-                      () => attendanceState.checkIn(context),
-                      disable: attendanceState.fetchAttendanceStatus == true
-                          ? true
-                          : false,
-                      lebar: MediaQuery.of(context).size.width * 0.3,
-                      tinggi: MediaQuery.of(context).size.height * 0.05,
-                    ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.05,
+              // ~:Date and Time:~
+              CustomDigitalClock(
+                displayDate,
+                setDisplayDate,
+                false,
+                isIpad:
+                    (MediaQuery.of(context).size.width < 800) ? false : true,
               ),
-              (MediaQuery.of(context).size.width < 800)
-                  ? AnimatedPhoneButton(
-                      'Check Out',
-                      () => attendanceState.checkOut(context),
-                      disable: attendanceState.fetchAttendanceStatus == false
-                          ? true
-                          : false,
-                      lebar: MediaQuery.of(context).size.width * 0.3,
-                      tinggi: MediaQuery.of(context).size.height * 0.05,
-                    )
-                  : AnimatedTabButton(
-                      'Check Out',
-                      () => attendanceState.checkOut(context),
-                      disable: attendanceState.fetchAttendanceStatus == false
-                          ? true
-                          : false,
-                      lebar: MediaQuery.of(context).size.width * 0.3,
-                      tinggi: MediaQuery.of(context).size.height * 0.05,
+              // ~:Attendance Frame:~
+              Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [
+                    BoxShadow(
+                      // Adjust shadow color as needed
+                      color: Colors.grey,
+                      // No shadow offset
+                      // Adjust shadow blur radius
+                      blurRadius: 5.0,
+                      // Adjust shadow spread radius
+                      spreadRadius: 1.0,
                     ),
+                  ],
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                  vertical: MediaQuery.of(context).size.height * 0.0225,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // ~:Attendance Title:~
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Absensi',
+                        style: GlobalFont.mediumgigafontRBold,
+                      ),
+                    ),
+                    // ~:Clock In and Out Section:~
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.005,
+                        vertical: MediaQuery.of(context).size.height * 0.005,
+                      ),
+                      child: Row(
+                        children: [
+                          // ~:Clock In Button:~
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => userAbsent(isClockIn: true),
+                              child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      // Adjust shadow color as needed
+                                      color: Colors.grey,
+                                      // No shadow offset
+                                      // Adjust shadow blur radius
+                                      blurRadius: 5.0,
+                                      // Adjust shadow spread radius
+                                      spreadRadius: 1.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'Clock In',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ),
+                            ),
+                          ),
+                          // ~:Devider:~
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.025,
+                          ),
+                          // ~:Clock Out Button:~
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => userAbsent(),
+                              child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      // Adjust shadow color as needed
+                                      color: Colors.grey,
+                                      // No shadow offset
+                                      // Adjust shadow blur radius
+                                      blurRadius: 5.0,
+                                      // Adjust shadow spread radius
+                                      spreadRadius: 1.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'Clock Out',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // ~:Current Location Button:~
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.005,
+                        vertical: MediaQuery.of(context).size.height * 0.005,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => state.openMap(context),
+                              child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      // Adjust shadow color as needed
+                                      color: Colors.grey,
+                                      // No shadow offset
+                                      // Adjust shadow blur radius
+                                      blurRadius: 5.0,
+                                      // Adjust shadow spread radius
+                                      spreadRadius: 1.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'Lokasi Anda',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ~:Attendance List:~
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.03,
+                ),
+                child: Column(
+                  children: [
+                    // ~:Attendance List Header:~
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Daftar Absensi',
+                          style: GlobalFont.giantfontR,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            state.clearState();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const AttendanceHistoryPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Lihat log',
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.65),
+                              fontFamily: GlobalFontFamily.fontRubik,
+                              fontSize: GlobalSize.mediumgiantfont,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // ~:Attendance List Content:~
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: StreamBuilder(
+                        stream: getHistory(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.white,
+                              period: const Duration(milliseconds: 1000),
+                              child: ListView.builder(
+                                itemCount: 2,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.125,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          // Adjust shadow color as needed
+                                          color: Colors.grey,
+                                          // No shadow offset
+                                          // Adjust shadow blur radius
+                                          blurRadius: 5.0,
+                                          // Adjust shadow spread radius
+                                          spreadRadius: 1.0,
+                                        ),
+                                      ],
+                                    ),
+                                    margin: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              0.01,
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.01,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              0.01,
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text('Error: ${snapshot.error}'),
+                            );
+                          } else if (snapshot.data!.isEmpty) {
+                            return const Center(
+                              child: Text('Data not available.'),
+                            );
+                          } else {
+                            return ListView(
+                              shrinkWrap: true,
+                              physics: BouncingScrollPhysics(),
+                              children: snapshot.data!.asMap().entries.map(
+                                (e) {
+                                  final data = e.value;
+
+                                  return Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: (data.checkIn.isEmpty &&
+                                              data.checkOut.isEmpty)
+                                          ? Border.all(
+                                              color: Colors.red,
+                                              width: 2.0,
+                                            )
+                                          : null,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          // Adjust shadow color as needed
+                                          color: Colors.grey,
+                                          // No shadow offset
+                                          // Adjust shadow blur radius
+                                          blurRadius: 5.0,
+                                          // Adjust shadow spread radius
+                                          spreadRadius: 1.0,
+                                        ),
+                                      ],
+                                    ),
+                                    margin: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              0.01,
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.01,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              0.01,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Expanded(
+                                              child: Icon(
+                                                Icons.add_chart_rounded,
+                                                size: 37.5,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${data.locationName} ${data.branchName}',
+                                                    style: GlobalFont
+                                                        .giantfontRBold,
+                                                  ),
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.0075,
+                                                  ),
+                                                  Text(
+                                                    Format.tanggalFormat(
+                                                      data.date,
+                                                    ),
+                                                    style: GlobalFont
+                                                        .mediumgiantfontR,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.01,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          alignment: Alignment.centerLeft,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.025,
+                                          ),
+                                          child: Builder(
+                                            builder: (context) {
+                                              if (data.checkIn.isEmpty &&
+                                                  data.checkOut.isEmpty) {
+                                                return Text(
+                                                  'Clock In: - , Clock Out: -',
+                                                  style: GlobalFont
+                                                      .mediumgiantfontR,
+                                                  overflow: TextOverflow.clip,
+                                                );
+                                              } else if (data
+                                                      .checkIn.isNotEmpty &&
+                                                  data.checkOut.isEmpty) {
+                                                return Text(
+                                                  'Clock In: ${data.checkIn}, Clock Out: -',
+                                                  style: GlobalFont
+                                                      .mediumgiantfontR,
+                                                  overflow: TextOverflow.clip,
+                                                );
+                                              } else if (data.checkIn.isEmpty &&
+                                                  data.checkOut.isNotEmpty) {
+                                                return Text(
+                                                  'Clock In: - , Clock Out: ${data.checkOut}',
+                                                  style: GlobalFont
+                                                      .mediumgiantfontR,
+                                                  overflow: TextOverflow.clip,
+                                                );
+                                              } else {
+                                                return Text(
+                                                  'Clock In: ${data.checkIn}, Clock Out: ${data.checkOut}',
+                                                  style: GlobalFont
+                                                      .mediumgiantfontR,
+                                                  overflow: TextOverflow.clip,
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.015,
-          ),
-          (MediaQuery.of(context).size.width < 800)
-              ? AnimatedPhoneButton(
-                  'Your Location',
-                  () => attendanceState.openMap(context),
-                  isIcon: true,
-                  icon: Icons.location_on_rounded,
-                  lebar: MediaQuery.of(context).size.width * 0.5,
-                  tinggi: MediaQuery.of(context).size.height * 0.05,
-                )
-              : AnimatedTabButton(
-                  'Your Location',
-                  () => attendanceState.openMap(context),
-                  isIcon: true,
-                  icon: Icons.location_on_rounded,
-                  lebar: MediaQuery.of(context).size.width * 0.5,
-                  tinggi: MediaQuery.of(context).size.height * 0.05,
-                ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          isPressed == false
-              ? const SizedBox()
-              : Center(
-                  child: Column(
-                    children: [
-                      Platform.isIOS
-                          ? const CupertinoActivityIndicator(
-                              radius: 12.5,
-                              color: Colors.white,
-                            )
-                          : const CircleLoading(),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      Text(
-                        'Please Wait...',
-                        style: GlobalFont.bigfontR,
-                      ),
-                    ],
-                  ),
-                ),
-        ],
+        ),
       ),
     );
   }

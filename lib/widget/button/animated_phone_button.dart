@@ -9,9 +9,10 @@ class AnimatedPhoneButton extends StatefulWidget {
       this.icon = Icons.no_accounts_rounded,
       this.color = Colors.black,
       this.isLarge = false,
-      this.disable = false,
       this.lebar = 75,
       this.tinggi = 40,
+      this.isDisabled = false,
+      this.isAttendance = true,
       super.key});
 
   final String namaButton;
@@ -20,9 +21,10 @@ class AnimatedPhoneButton extends StatefulWidget {
   final IconData icon;
   final Color color;
   final bool isLarge;
-  final bool disable;
   final double lebar;
   final double tinggi;
+  final bool isDisabled;
+  final bool isAttendance;
 
   @override
   State<AnimatedPhoneButton> createState() => AnimatedPhoneButtonState();
@@ -50,21 +52,21 @@ class AnimatedPhoneButtonState extends State<AnimatedPhoneButton> {
           height: widget.tinggi,
           decoration: BoxDecoration(
             border: Border.all(
-              color: widget.disable == false ? Colors.black : Colors.grey,
+              color: widget.isDisabled || !widget.isAttendance
+                  ? Colors.black
+                  : Colors.grey,
             ),
             boxShadow: const [
               BoxShadow(
                 color: Colors.grey,
-                offset: Offset(
-                  3.0,
-                  3.0,
-                ),
                 blurRadius: 10.0,
                 spreadRadius: 1.0,
               ),
             ],
             borderRadius: BorderRadius.circular(20),
-            color: widget.disable == false ? widget.color : Colors.grey,
+            color: widget.isDisabled || !widget.isAttendance
+                ? widget.color
+                : Colors.grey,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -77,11 +79,22 @@ class AnimatedPhoneButtonState extends State<AnimatedPhoneButton> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.025,
               ),
-              Text(
-                widget.namaButton,
-                style: widget.disable == true
-                    ? GlobalFont.bigfontR
-                    : GlobalFont.bigfontRWhite,
+              Builder(
+                builder: (context) {
+                  if (!widget.isAttendance) {
+                    return Text(
+                      widget.namaButton,
+                      style: GlobalFont.bigfontRWhite,
+                    );
+                  } else {
+                    return Text(
+                      widget.namaButton,
+                      style: !widget.isDisabled
+                          ? GlobalFont.bigfontR
+                          : GlobalFont.bigfontRWhite,
+                    );
+                  }
+                },
               ),
             ],
           ),
@@ -96,28 +109,39 @@ class AnimatedPhoneButtonState extends State<AnimatedPhoneButton> {
           height: widget.tinggi,
           decoration: BoxDecoration(
             border: Border.all(
-              color: widget.disable == false ? Colors.black : Colors.grey,
+              color: widget.isDisabled || !widget.isAttendance
+                  ? Colors.black
+                  : Colors.grey,
             ),
             boxShadow: const [
               BoxShadow(
                 color: Colors.grey,
-                offset: Offset(
-                  3.0,
-                  3.0,
-                ),
                 blurRadius: 10.0,
                 spreadRadius: 1.0,
               ),
             ],
             borderRadius: BorderRadius.circular(20),
-            color: widget.disable == false ? widget.color : Colors.grey,
+            color: widget.isDisabled || !widget.isAttendance
+                ? widget.color
+                : Colors.grey,
           ),
           alignment: Alignment.center,
-          child: Text(
-            widget.namaButton,
-            style: widget.disable == true
-                ? GlobalFont.bigfontR
-                : GlobalFont.bigfontRWhite,
+          child: Builder(
+            builder: (context) {
+              if (!widget.isAttendance) {
+                return Text(
+                  widget.namaButton,
+                  style: GlobalFont.bigfontRWhite,
+                );
+              } else {
+                return Text(
+                  widget.namaButton,
+                  style: !widget.isDisabled
+                      ? GlobalFont.bigfontR
+                      : GlobalFont.bigfontRWhite,
+                );
+              }
+            },
           ),
         ),
       );

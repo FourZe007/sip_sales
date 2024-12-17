@@ -13,14 +13,65 @@ import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
-import 'package:background_location/background_location.dart'
-    as background_location;
 import 'package:sip_sales/pages/location/image_view.dart';
 import 'package:sip_sales/pages/map/map.dart';
-import 'dart:math' as math;
-import 'package:sip_sales/widget/popup/kotak_pesan.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sip_sales/widget/status/failure_animation.dart';
+import 'package:sip_sales/widget/status/success_animation.dart';
+import 'package:sip_sales/widget/status/warning_animation.dart';
+import 'package:uuid/uuid.dart';
 
 class SipSalesState with ChangeNotifier {
+  // =================================================================
+  // ============================ App Flow ===========================
+  // =================================================================
+  final profileShowcaseKey = GlobalKey(debugLabel: 'profile');
+  final dateTimeShowcaseKey = GlobalKey(debugLabel: 'datetime');
+  final absentShowcaseKey = GlobalKey(debugLabel: 'absent');
+  final logShowcaseKey = GlobalKey(debugLabel: 'log');
+  final latestLogShowcaseKey = GlobalKey(debugLabel: 'latestlog');
+
+  bool isShowCaseCompleted = false;
+
+  bool get getIsShowCaseCompleted => isShowCaseCompleted;
+
+  void setIsShowCaseCompleted(bool value) {
+    isShowCaseCompleted = value;
+    notifyListeners();
+  }
+
+  bool isLoadingProgress = false;
+
+  bool get getIsLoadingProgress => isLoadingProgress;
+
+  Future<void> setIsLoadingProgress() async {
+    isLoadingProgress = !isLoadingProgress;
+    notifyListeners();
+    print('isLoadingProgress: $isLoadingProgress');
+  }
+
+  // =================================================================
+  // ===================== Login Configuration =======================
+  // =================================================================
+  FlutterSecureStorage storage = const FlutterSecureStorage();
+
+  String uuid = '';
+
+  String get getUUID => uuid;
+
+  Future<String> generateUuid() async {
+    if (await storage.read(key: 'uuid') == '' ||
+        await storage.read(key: 'uuid') == null) {
+      uuid = Uuid().v4();
+      await storage.write(key: 'uuid', value: uuid);
+    } else {
+      uuid = await storage.read(key: 'uuid') ?? '';
+    }
+    notifyListeners();
+
+    return uuid;
+  }
+
   // ================================================================
   // ======================= Activity Route =========================
   // ================================================================
@@ -159,16 +210,49 @@ class SipSalesState with ChangeNotifier {
   double lngDisplay = 0.0;
   double latDisplay = 0.0;
   String time = '';
-  bool? attendanceStatus = false;
-  bool isWithinRadius = false;
-  bool onProgress = false;
+  // bool attendanceStatus = false;
+  // bool get getAttendanceStatus => attendanceStatus
+  String absentDescription = '';
+  String get getAbsentDescription => absentDescription;
 
-  // Loading
-  bool isPressed = false;
+  bool checkInStatus = true;
+  bool get getCheckInStatus => checkInStatus;
+
+  Future<bool> fetchCheckInStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('checkInStatus') ?? false;
+  }
+
+  void saveCheckInStatus(bool state) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('checkInStatus', state);
+
+    checkInStatus = state;
+    notifyListeners();
+    print('CheckInStatus: $checkInStatus');
+  }
+
+  bool checkOutStatus = false;
+  bool get getCheckOutStatus => checkOutStatus;
+
+  Future<bool> fetchCheckOutStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('checkOutStatus') ?? false;
+  }
+
+  void saveCheckOutStatus(bool state) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('checkOutStatus', state);
+
+    checkOutStatus = state;
+    notifyListeners();
+  }
+
+  bool isWithinRadius = false;
 
   // Checked In
   List<ModelResultMessage> checkInList = [];
-  bool isCheckedIn = false;
+  // bool isCheckedIn = false;
 
   // Checked Out
   List<ModelResultMessage> checkOutList = [];
@@ -176,15 +260,8 @@ class SipSalesState with ChangeNotifier {
 
   List<ModelCoordinate> get fetchCoordinateList => coordinateList;
 
-  bool? get fetchAttendanceStatus => attendanceStatus;
-
   double get fetchLngDisplay => lngDisplay;
   double get fetchLatDisplay => latDisplay;
-
-  void pressTrigger() {
-    isPressed = !isPressed;
-    notifyListeners();
-  }
 
   void setLngDisplay(double value) {
     lngDisplay = value;
@@ -196,21 +273,21 @@ class SipSalesState with ChangeNotifier {
     notifyListeners();
   }
 
-  void setAttendanceStatus(bool state) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('attendanceStatus', state);
-    notifyListeners();
-  }
-
-  void getAttendanceStatus() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    attendanceStatus = prefs.getBool('attendanceStatus');
-    notifyListeners();
-  }
-
-  void setIsCheckedIn(bool state) {
-    isCheckedIn = state;
-  }
+  // void setAttendanceStatus(bool state) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('attendanceStatus', state);
+  //   notifyListeners();
+  // }
+  //
+  // void fetchAttendanceStatus() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   attendanceStatus = prefs.getBool('attendanceStatus') ?? false;
+  //   notifyListeners();
+  // }
+  //
+  // void setIsCheckedIn(bool state) {
+  //   isCheckedIn = state;
+  // }
 
   static Future<void> writeListToCache(
       String key, List<ModelCoordinate> data) async {
@@ -273,254 +350,346 @@ class SipSalesState with ChangeNotifier {
     Navigator.pushReplacementNamed(context, '/location');
   }
 
+  // Note --> Haversine Formula, calculate distance between 2 coordinates
   // Function -> Convert Longitude and Latitude coordinate, from degree to radians
-  double radiansConverter(double degrees) => degrees * math.pi / 180;
-
+  // double radiansConverter(double degrees) => degrees * math.pi / 180;
+  //
   // Function -> Check 2nd coordinate is within 1st coordinate radius
-  bool getIsWithinRadius(double lat1, double lon1, double lat2, double lon2,
-      double radiusInMeters) {
-    // Function -> Convert coordinates to radians
-    double radiansLat1 = radiansConverter(lat1);
-    double radiansLon1 = radiansConverter(lon1);
-    double radiansLat2 = radiansConverter(lat2);
-    double radiansLon2 = radiansConverter(lon2);
+  // bool getIsWithinRadius(double lat1, double lon1, double lat2, double lon2,
+  //     double radiusInMeters) {
+  //   // Function -> Convert coordinates to radians
+  //   double radiansLat1 = radiansConverter(lat1);
+  //   double radiansLon1 = radiansConverter(lon1);
+  //   double radiansLat2 = radiansConverter(lat2);
+  //   double radiansLon2 = radiansConverter(lon2);
+  //
+  //   // Function -> Earth's radius (in meters)
+  //   const double earthRadius = 6371e3;
+  //
+  //   // Function -> Calculate the difference in latitude and longitude
+  //   double dLat = radiansLat2 - radiansLat1;
+  //   double dLon = radiansLon2 - radiansLon1;
+  //
+  //   // Function -> Haversine formula for distance calculation
+  //   double a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+  //       math.cos(radiansLat1) *
+  //           math.cos(radiansLat2) *
+  //           math.sin(dLon / 2) *
+  //           math.sin(dLon / 2);
+  //   double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+  //
+  //   // Function -> Calculate distance in meters
+  //   double distance = earthRadius * c;
+  //
+  //   // Function -> Check if distance is less than or equal to radius
+  //   return distance <= radiusInMeters;
+  // }
 
-    // Function -> Earth's radius (in meters)
-    const double earthRadius = 6371e3;
-
-    // Function -> Calculate the difference in latitude and longitude
-    double dLat = radiansLat2 - radiansLat1;
-    double dLon = radiansLon2 - radiansLon1;
-
-    // Function -> Haversine formula for distance calculation
-    double a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(radiansLat1) *
-            math.cos(radiansLat2) *
-            math.sin(dLon / 2) *
-            math.sin(dLon / 2);
-    double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
-
-    // Function -> Calculate distance in meters
-    double distance = earthRadius * c;
-
-    // Function -> Check if distance is less than or equal to radius
-    return distance <= radiusInMeters;
-  }
-
-  void trackUserLocation(BuildContext context) async {
-    while (isCheckedIn) {
-      if (onProgress) {
-        if (await location.serviceEnabled()) {
-          await Future.delayed(const Duration(seconds: 5)).then(
-            (_) async {
-              // background_location library
-              await background_location.BackgroundLocation.getLocationUpdates(
-                  (location) {
-                setCoordinateList(
-                  location.latitude,
-                  location.longitude,
-                );
-              });
-
-              addCoordinateList(ModelCoordinate(
-                longitude: longitude!,
-                latitude: latitude!,
-                time: time,
-              ));
-            },
-          );
-        } else {
-          setIsCheckedIn(false);
-          // Function -> declare 'attendanceStatus' value to true and user have access to 'Check In' safely
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setBool('attendanceStatus', false);
-          attendanceStatus = prefs.getBool('attendanceStatus')!;
-
-          GlobalFunction.tampilkanDialog(
-            context,
-            false,
-            KotakPesan(
-              'Peringatan!',
-              'Layanan lokasi dinonaktifkan.',
-              detail2: 'Silakan aktifkan untuk fitur yang lebih advanced.',
-              function: () => backToLocation(context),
-            ),
-          );
-        }
-      }
-    }
-  }
+  // Note --> Live-tracking not used for a while
+  // void trackUserLocation(BuildContext context) async {
+  //   while (isCheckedIn) {
+  //     if (onProgress) {
+  //       if (await location.serviceEnabled()) {
+  //         await Future.delayed(const Duration(seconds: 5)).then(
+  //           (_) async {
+  //             // background_location library
+  //             await background_location.BackgroundLocation.getLocationUpdates(
+  //                 (location) {
+  //               setCoordinateList(
+  //                 location.latitude,
+  //                 location.longitude,
+  //               );
+  //             });
+  //
+  //             addCoordinateList(ModelCoordinate(
+  //               longitude: longitude!,
+  //               latitude: latitude!,
+  //               time: time,
+  //             ));
+  //           },
+  //         );
+  //       } else {
+  //         setIsCheckedIn(false);
+  //         // Function -> declare 'attendanceStatus' value to true and user have access to 'Check In' safely
+  //         final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //         prefs.setBool('attendanceStatus', false);
+  //         attendanceStatus = prefs.getBool('attendanceStatus')!;
+  //
+  //         GlobalFunction.tampilkanDialog(
+  //           context,
+  //           false,
+  //           KotakPesan(
+  //             'Peringatan!',
+  //             'Layanan lokasi dinonaktifkan.',
+  //             detail2: 'Silakan aktifkan untuk fitur yang lebih advanced.',
+  //             function: () => backToLocation(context),
+  //           ),
+  //         );
+  //       }
+  //     }
+  //   }
+  // }
 
   // Function -> run 'Check In' button
   void checkIn(BuildContext context) async {
-    getAttendanceStatus();
+    // await setIsLoadingProgress();
+    // fetchAttendanceStatus();
 
     if (await location.serviceEnabled()) {
-      if (attendanceStatus == false) {
-        pressTrigger();
-
+      if (await fetchCheckInStatus()) {
         // Enable -> uncommand if all requirement fulfilled
-        // await location.getLocation().then((coordinate) {
-        //   isWithinRadius = getIsWithinRadius(
-        //     coordinate.latitude!,
-        //     coordinate.longitude!,
-        //     GlobalVar.userAccountList[0].latitude,
-        //     GlobalVar.userAccountList[0].longitude,
-        //     10.0,
-        //   );
-        //
-        //   if (isWithinRadius == true) {
-        //     ScaffoldMessenger.of(context).showSnackBar(
-        //       const SnackBar(
-        //         content: Text('User is within Radius'),
-        //       ),
-        //     );
-        //   } else {
-        //     ScaffoldMessenger.of(context).showSnackBar(
-        //       const SnackBar(
-        //         content: Text('User is out of Radius'),
-        //       ),
-        //     );
-        //   }
-        // });
+        await location.getLocation().then((coordinate) async {
+          print(GlobalVar.userAccountList[0].latitude);
+          print(GlobalVar.userAccountList[0].longitude);
+          print(coordinate.latitude);
+          print(coordinate.longitude);
 
-        // Delete -> remove later, used to bypass variable for trial
-        isWithinRadius = true;
+          await GlobalAPI.fetchIsWithinRadius(
+            GlobalVar.userAccountList[0].latitude,
+            GlobalVar.userAccountList[0].longitude,
+            coordinate.latitude!,
+            coordinate.longitude!,
+          ).then((status) {
+            if (status == 'NOT OK') {
+              isWithinRadius = false;
+            } else {
+              isWithinRadius = true;
+            }
 
-        onProgress = true;
+            print('IsWithinRadius: $isWithinRadius');
+          });
+        });
+
         coordinateList.clear();
 
-        pressTrigger();
+        if (!isWithinRadius) {
+          // await setIsLoadingProgress();
 
-        if (isWithinRadius == false) {
-          setIsCheckedIn(false);
-          // Function -> declare 'attendanceStatus' value to false and user need to try 'Check In' again
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setBool('attendanceStatus', false);
-          attendanceStatus = prefs.getBool('attendanceStatus')!;
+          // if (Platform.isIOS) {
+          //   GlobalDialog.showCrossPlatformDialog(
+          //     context,
+          //     'Peringatan!',
+          //     'Lokasi Tidak Valid',
+          //     () => Navigator.pop(context),
+          //     'Tutup',
+          //     isIOS: true,
+          //   );
+          // } else {
+          //   GlobalDialog.showCrossPlatformDialog(
+          //     context,
+          //     'Peringatan!',
+          //     'Lokasi Tidak Valid',
+          //     () => Navigator.pop(context),
+          //     'Tutup',
+          //   );
+          // }
 
-          GlobalFunction.tampilkanDialog(
+          absentDescription = 'Lokasi Tidak Valid';
+          // ~:Warning Animation:~
+          Navigator.pushReplacement(
             context,
-            true,
-            KotakPesan(
-              'Peringatan!',
-              'Lokasi Tidak Valid',
-              tinggi: MediaQuery.of(context).size.height * 0.3,
-              detail2:
-                  'User: (${GlobalVar.userAccountList[0].latitude}, ${GlobalVar.userAccountList[0].longitude}); Current: ($latitude, $longitude)',
+            MaterialPageRoute(
+              builder: (context) => const WarningAnimationPage(),
             ),
           );
         } else {
           // Temp -> temporary variable for accessing all app feature
-          bool byPass = true;
+          // bool byPass = true;
           // Enable -> uncommand if all requirement fulfilled
-          // checkInList = await GlobalAPI.fetchModifyAttendance(
-          //   '1',
-          //   GlobalVar.nip!,
-          //   GlobalVar.userAccountList[0].branch,
-          //   GlobalVar.userAccountList[0].shop,
-          //   GlobalVar.userAccountList[0].locationID,
-          //   DateTime.now().toString().split(' ')[1],
-          //   '${DateTime.now().hour}.${DateTime.now().minute}.${DateTime.now().second}',
-          //   '',
-          // );
-          //
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text('Check In ${checkInList[0].resultMessage}'),
-          //   ),
-          // );
+          checkInList.clear();
+          checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
+            '1',
+            GlobalVar.nip!,
+            GlobalVar.userAccountList[0].branch,
+            GlobalVar.userAccountList[0].shop,
+            GlobalVar.userAccountList[0].locationID,
+            DateTime.now().toString().split(' ')[0],
+            DateTime.now().toString().split(' ')[1].replaceAll(
+                  RegExp(r':'),
+                  '.',
+                ),
+            '',
+          ));
 
-          // Temp -> uncommand if all requirement fulfilled
-          // if (checkInList[0].resultMessage == 'SUKSES') {
-          if (byPass == true) {
-            // Function -> set isCheckedIn to true whenever the user press the 'Check In' Button
-            setIsCheckedIn(true);
-            // Function -> declare 'attendanceStatus' value to true and user have access to 'Check In' safely
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            prefs.setBool('attendanceStatus', true);
-            attendanceStatus = prefs.getBool('attendanceStatus')!;
+          print('Check In: ${checkInList[0].resultMessage}');
 
-            GlobalFunction.tampilkanDialog(
-              context,
-              false,
-              KotakPesan(
-                'Sukses!',
-                'Check In berhasil.',
-                tinggi: MediaQuery.of(context).size.height * 0.2,
-              ),
-            );
+          // ~:Check In List is not empty:~
+          if (checkInList.isNotEmpty) {
+            print('Check In: ${checkInList[0].resultMessage}');
+            if (checkInList[0].resultMessage == 'SUKSES') {
+              // if (byPass == true) {
+              saveCheckInStatus(false);
+              saveCheckOutStatus(true);
 
-            await background_location.BackgroundLocation.startLocationService();
+              // await setIsLoadingProgress();
 
-            await location.getLocation().then((coordinate) {
-              setCoordinateList(
-                coordinate.latitude,
-                coordinate.longitude,
+              // if (Platform.isIOS) {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Sukses!',
+              //     'Check In berhasil.',
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //     isIOS: true,
+              //   );
+              // } else {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Sukses!',
+              //     'Check In berhasil.',
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //   );
+              // }
+
+              absentDescription = 'Check In berhasil';
+              // ~:Success Animation:~
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SuccessAnimationPage(),
+                ),
               );
-            });
 
-            addCoordinateList(ModelCoordinate(
-              longitude: longitude!,
-              latitude: latitude!,
-              time: time,
-            ));
+              // Note --> Background location disabled
+              // await background_location.BackgroundLocation.startLocationService();
+              //
+              // await location.getLocation().then((coordinate) {
+              //   setCoordinateList(
+              //     coordinate.latitude,
+              //     coordinate.longitude,
+              //   );
+              // });
+              //
+              // addCoordinateList(ModelCoordinate(
+              //   longitude: longitude!,
+              //   latitude: latitude!,
+              //   time: time,
+              // ));
+              //
+              // trackUserLocation(context);
+            } else {
+              // await setIsLoadingProgress();
+              // if (Platform.isIOS) {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Peringatan!!',
+              //     checkInList[0].resultMessage,
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //     isIOS: true,
+              //   );
+              // } else {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Peringatan!!',
+              //     checkInList[0].resultMessage,
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //   );
+              // }
 
-            // Delete -> remove later
-            // print('First Coordinate');
-            // print('Longitude, Latitude: $longitude, $latitude');
-            // print('Time: $time');
-            // print('Coordinate list length: ${coordinateList.length}');
-
-            trackUserLocation(context);
+              absentDescription = checkInList[0].resultMessage;
+              // ~:Warning Animation:~
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WarningAnimationPage(),
+                ),
+              );
+            }
           } else {
-            // Note -> error dari pak Har
-            // Function -> declare 'attendanceStatus' value to false and user need to try 'Check In' again
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            prefs.setBool('attendanceStatus', false);
-            attendanceStatus = prefs.getBool('attendanceStatus')!;
+            print('Check In is empty');
+            // ~:Check In List is empty:~
+            // await setIsLoadingProgress();
+            // if (Platform.isIOS) {
+            //   GlobalDialog.showCrossPlatformDialog(
+            //     context,
+            //     'Gagal!',
+            //     'Check In gagal.',
+            //     () => Navigator.pop(context),
+            //     'Tutup',
+            //     isIOS: true,
+            //   );
+            // } else {
+            //   GlobalDialog.showCrossPlatformDialog(
+            //     context,
+            //     'Gagal!',
+            //     'Check In gagal.',
+            //     () => Navigator.pop(context),
+            //     'Tutup',
+            //   );
+            // }
 
-            GlobalFunction.tampilkanDialog(
+            absentDescription = 'Check In gagal';
+            // ~:Failure Animation:~
+            Navigator.push(
               context,
-              false,
-              KotakPesan(
-                'Peringatan!!',
-                checkInList[0].resultMessage,
-                tinggi: MediaQuery.of(context).size.height * 0.2,
+              MaterialPageRoute(
+                builder: (context) => const FailureAnimationPage(),
               ),
             );
           }
         }
       } else {
-        // Function -> do nothing if User already pressed 'Check In' button
-        GlobalFunction.tampilkanDialog(
+        // ~:Haven't Check Out Yet:~
+        // await setIsLoadingProgress();
+        // if (Platform.isIOS) {
+        //   GlobalDialog.showCrossPlatformDialog(
+        //     context,
+        //     'Peringatan!!',
+        //     'Tolong check out terlebih dahulu.',
+        //     () => Navigator.pop(context),
+        //     'Tutup',
+        //     isIOS: true,
+        //   );
+        // } else {
+        //   GlobalDialog.showCrossPlatformDialog(
+        //     context,
+        //     'Peringatan!!',
+        //     'Tolong check out terlebih dahulu.',
+        //     () => Navigator.pop(context),
+        //     'Tutup',
+        //   );
+        // }
+
+        absentDescription = 'Mohon check out terlebih dahulu.';
+        // ~:Warning Animation:~
+        Navigator.pushReplacement(
           context,
-          false,
-          KotakPesan(
-            'Peringatan!',
-            'Tolong check out terlebih dahulu.',
-            tinggi: MediaQuery.of(context).size.height * 0.2,
-            detail2: attendanceStatus.toString(),
+          MaterialPageRoute(
+            builder: (context) => const WarningAnimationPage(),
           ),
         );
       }
     } else {
-      setIsCheckedIn(false);
-      // Function -> declare 'attendanceStatus' value to true and user have access to 'Check In' safely
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool('attendanceStatus', false);
-      attendanceStatus = prefs.getBool('attendanceStatus')!;
+      // ~:Location Service deactivated:~
+      // await setIsLoadingProgress();
+      // if (Platform.isIOS) {
+      //   GlobalDialog.showCrossPlatformDialog(
+      //     context,
+      //     'Peringatan!!',
+      //     'Layanan Lokasi dinonaktifkan, silakan aktifkan untuk check in.',
+      //     () => Navigator.pop(context),
+      //     'Kembali',
+      //     isIOS: true,
+      //   );
+      // } else {
+      //   GlobalDialog.showCrossPlatformDialog(
+      //     context,
+      //     'Peringatan!!',
+      //     'Layanan Lokasi dinonaktifkan, silakan aktifkan untuk check in.',
+      //     () => Navigator.pop(context),
+      //     'Kembali',
+      //   );
+      // }
 
-      GlobalFunction.tampilkanDialog(
+      absentDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
+      // ~:Warning Animation:~
+      Navigator.pushReplacement(
         context,
-        false,
-        KotakPesan(
-          'Peringatan!',
-          'Layanan Lokasi dinonaktifkan.',
-          detail2: 'Silakan aktifkan untuk fitur yang lebih advanced.',
-          function: () => backToLocation(context),
+        MaterialPageRoute(
+          builder: (context) => const WarningAnimationPage(),
         ),
       );
     }
@@ -528,196 +697,298 @@ class SipSalesState with ChangeNotifier {
 
   // Function -> run 'Check Out' button
   void checkOut(BuildContext context) async {
-    await background_location.BackgroundLocation.stopLocationService();
-    getAttendanceStatus();
+    // await setIsLoadingProgress();
+    // Note --> Background location process disabled
+    // await background_location.BackgroundLocation.stopLocationService();
 
-    if (attendanceStatus == true) {
-      pressTrigger();
+    if (await location.serviceEnabled()) {
+      if (await fetchCheckOutStatus()) {
+        await location.getLocation().then((coordinate) async {
+          await GlobalAPI.fetchIsWithinRadius(
+            GlobalVar.userAccountList[0].latitude,
+            GlobalVar.userAccountList[0].longitude,
+            coordinate.latitude!,
+            coordinate.longitude!,
+          ).then((status) {
+            if (status == 'NOT OK') {
+              isWithinRadius = false;
+            } else {
+              isWithinRadius = true;
+            }
 
-      setIsCheckedIn(false);
-      onProgress = false;
-
-      // await location.getLocation().then((coordinate) {
-      //   isWithinRadius = getIsWithinRadius(
-      //     coordinate.latitude!,
-      //     coordinate.longitude!,
-      //     GlobalVar.userAccountList[0].latitude,
-      //     GlobalVar.userAccountList[0].longitude,
-      //     10.0,
-      //   );
-      //
-      //   if (isWithinRadius == true) {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       const SnackBar(
-      //         content: Text('User is within Radius'),
-      //       ),
-      //     );
-      //   } else {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       const SnackBar(
-      //         content: Text('User is out of Radius'),
-      //       ),
-      //     );
-      //   }
-      // });
-
-      // Delete -> remove later
-      isWithinRadius = true;
-
-      if (isWithinRadius == false) {
-        // Function -> declare 'attendanceStatus' value to true and user need to try 'Check Out' again
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('attendanceStatus', true);
-        attendanceStatus = prefs.getBool('attendanceStatus')!;
-
-        GlobalFunction.tampilkanDialog(
-          context,
-          true,
-          KotakPesan(
-            'WARNING!',
-            'Lokasi Tidak Valid',
-            tinggi: MediaQuery.of(context).size.height * 0.3,
-            detail2:
-                'User: (${GlobalVar.userAccountList[0].latitude}, ${GlobalVar.userAccountList[0].longitude}); Current: ($latitude, $longitude)',
-          ),
-        );
-      } else {
-        // Function -> declare 'attendanceStatus' value to false and user have access to 'Check Out' safely
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('attendanceStatus', false);
-        attendanceStatus = prefs.getBool('attendanceStatus')!;
-
-        coordinateList.clear();
-        coordinateList.addAll(await readListFromCache('cached_coordinates'));
-
-        // Enable -> uncommand if all requirement fulfilled
-        // checkOutList = await GlobalAPI.fetchModifyAttendance(
-        //   '2',
-        //   GlobalVar.nip!,
-        //   GlobalVar.userAccountList[0].branch,
-        //   GlobalVar.userAccountList[0].shop,
-        //   GlobalVar.userAccountList[0].locationID,
-        //   DateTime.now().toString().split(' ')[1],
-        //   '',
-        //   '${DateTime.now().hour}.${DateTime.now().minute}.${DateTime.now().second}',
-        // );
-        //
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Check Out ${checkOutList[0].resultMessage}'),
-        //   ),
-        // );
-
-        // print('Last Coordinate');
-        // print('Longitude, Latitude: $longitude, $latitude');
-        // print('Time: $time');
-        // print('Coordinate list length: ${coordinateList.length}');
-        // print('Insert all coordinate to database');
-        // print('NIP: ${GlobalVar.nip}');
-        // print('Date: ${DateTime.now().toString().split(' ')[0]}');
-        // print('List: $coordinateList');
-        activityTimestampList = await GlobalAPI.fetchActivityTimestamp(
-          '1',
-          GlobalVar.nip!,
-          DateTime.now().toString().split(' ')[0],
-          coordinateList,
-        );
+            print('IsWithinRadius: $isWithinRadius');
+          });
+        });
 
         // Delete -> remove later
-        bool byPass = true;
+        // isWithinRadius = true;
 
-        // Delete -> remove later
-        // ~:NEW:~
-        List<dynamic> latList = [];
-        List<dynamic> lngList = [];
-        List<dynamic> timeList = [];
+        if (!isWithinRadius) {
+          // await setIsLoadingProgress();
+          // if (Platform.isIOS) {
+          //   GlobalDialog.showCrossPlatformDialog(
+          //     context,
+          //     'Peringatan!',
+          //     'Lokasi Tidak Valid',
+          //     () => Navigator.pop(context),
+          //     'Tutup',
+          //     isIOS: true,
+          //   );
+          // } else {
+          //   GlobalDialog.showCrossPlatformDialog(
+          //     context,
+          //     'Peringatan!',
+          //     'Lokasi Tidak Valid',
+          //     () => Navigator.pop(context),
+          //     'Tutup',
+          //   );
+          // }
 
-        latList.addAll(fetchCoordinateList.map((map) {
-          return map.latitude;
-        }));
+          absentDescription = 'Lokasi Tidak Valid.';
+          // ~:Warning Animation:~
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const WarningAnimationPage(),
+            ),
+          );
+        } else {
+          // Note --> Background location support variable
+          // coordinateList.clear();
+          // coordinateList.addAll(await readListFromCache('cached_coordinates'));
 
-        await GlobalAPI.fetchSendMessage(
-          '6281338518880',
-          'Latitude Coordinate: $latList',
-          'realme-tab',
-          'text',
-        );
+          // Enable -> uncommand if all requirement fulfilled
+          checkOutList.clear();
+          checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
+            '2',
+            GlobalVar.nip!,
+            GlobalVar.userAccountList[0].branch,
+            GlobalVar.userAccountList[0].shop,
+            GlobalVar.userAccountList[0].locationID,
+            DateTime.now().toString().split(' ')[0],
+            '',
+            DateTime.now().toString().split(' ')[1].replaceAll(
+                  RegExp(r':'),
+                  '.',
+                ),
+          ));
 
-        lngList.addAll(fetchCoordinateList.map((map) {
-          return map.longitude;
-        }));
+          // Note -> background location process disabled
+          // activityTimestampList.addAll(await GlobalAPI.fetchActivityTimestamp(
+          //   '1',
+          //   GlobalVar.nip!,
+          //   DateTime.now().toString().split(' ')[0],
+          //   coordinateList,
+          // ));
+          //
+          // Delete -> remove later
+          // bool byPass = true;
+          //
+          // Delete -> remove later
+          // Note --> send to my own Whatsapp to verify data
+          // ~:NEW:~
+          // List<dynamic> latList = [];
+          // List<dynamic> lngList = [];
+          // List<dynamic> timeList = [];
+          //
+          // latList.addAll(fetchCoordinateList.map((map) {
+          //   return map.latitude;
+          // }));
+          //
+          // await GlobalAPI.fetchSendMessage(
+          //   '6281338518880',
+          //   'Latitude Coordinate: $latList',
+          //   'realme-tab',
+          //   'text',
+          // );
+          //
+          // lngList.addAll(fetchCoordinateList.map((map) {
+          //   return map.longitude;
+          // }));
+          //
+          // await GlobalAPI.fetchSendMessage(
+          //   '6281338518880',
+          //   'Longitude Coordinate: $lngList',
+          //   'realme-tab',
+          //   'text',
+          // );
+          //
+          // timeList.addAll(fetchCoordinateList.map((map) {
+          //   return map.time;
+          // }));
+          //
+          // await GlobalAPI.fetchSendMessage(
+          //   '6281338518880',
+          //   'Time: $timeList',
+          //   'realme-tab',
+          //   'text',
+          // );
+          //
+          // latList.clear();
+          // lngList.clear();
+          // timeList.clear();
+          // ~:NEW:~
 
-        await GlobalAPI.fetchSendMessage(
-          '6281338518880',
-          'Longitude Coordinate: $lngList',
-          'realme-tab',
-          'text',
-        );
+          // ~:Check Out List is not empty:~
+          if (checkOutList.isNotEmpty) {
+            print('Check Out: ${checkOutList[0].resultMessage}');
+            // ~:Check Out Success:~
+            // if (byPass == true &&
+            // await setIsLoadingProgress();
+            if (checkOutList[0].resultMessage == 'SUKSES') {
+              saveCheckInStatus(true);
+              saveCheckOutStatus(false);
 
-        timeList.addAll(fetchCoordinateList.map((map) {
-          return map.time;
-        }));
+              // if (Platform.isIOS) {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Sukses!',
+              //     'Check out berhasil.',
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //     isIOS: true,
+              //   );
+              // } else {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Sukses!',
+              //     'Check out berhasil.',
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //   );
+              // }
 
-        await GlobalAPI.fetchSendMessage(
-          '6281338518880',
-          'Time: $timeList',
-          'realme-tab',
-          'text',
-        );
+              absentDescription = 'Check Out berhasil.';
+              // ~:Success Animation:~
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SuccessAnimationPage(),
+                ),
+              );
+            } else {
+              // ~:Check Out Failed:~
+              // await setIsLoadingProgress();
+              // if (Platform.isIOS) {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Gagal!',
+              //     checkOutList[0].resultMessage,
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //     isIOS: true,
+              //   );
+              // } else {
+              //   GlobalDialog.showCrossPlatformDialog(
+              //     context,
+              //     'Gagal!',
+              //     checkOutList[0].resultMessage,
+              //     () => Navigator.pop(context),
+              //     'Tutup',
+              //   );
+              // }
 
-        latList.clear();
-        lngList.clear();
-        timeList.clear();
-        // ~:NEW:~
-
-        if (activityTimestampList.isNotEmpty) {
-          // Activity Timestamp is not empty
-          if (byPass == true &&
-              activityTimestampList[0].resultMessage == 'SUKSES') {
-            GlobalFunction.tampilkanDialog(
-              context,
-              false,
-              KotakPesan(
-                'Sukses!',
-                'Check out berhasil.',
-                tinggi: MediaQuery.of(context).size.height * 0.2,
-              ),
-            );
+              absentDescription = checkOutList[0].resultMessage;
+              // ~:Failure Animation:~
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FailureAnimationPage(),
+                ),
+              );
+            }
           } else {
-            // Check Out Failed
-            GlobalFunction.tampilkanDialog(
+            print('Check Out is empty');
+            // ~:Check Out List is empty:~
+            // await setIsLoadingProgress();
+            // if (Platform.isIOS) {
+            //   GlobalDialog.showCrossPlatformDialog(
+            //     context,
+            //     'Gagal!',
+            //     'Check Out gagal.',
+            //     () => Navigator.pop(context),
+            //     'Tutup',
+            //     isIOS: true,
+            //   );
+            // } else {
+            //   GlobalDialog.showCrossPlatformDialog(
+            //     context,
+            //     'Gagal!',
+            //     'Check Out gagal.',
+            //     () => Navigator.pop(context),
+            //     'Tutup',
+            //   );
+            // }
+
+            absentDescription = 'Check Out gagal.';
+            // ~:Failure Animation:~
+            Navigator.push(
               context,
-              false,
-              KotakPesan(
-                'Gagal',
-                checkOutList[0].resultMessage,
-                tinggi: MediaQuery.of(context).size.height * 0.2,
+              MaterialPageRoute(
+                builder: (context) => const FailureAnimationPage(),
               ),
             );
           }
-        } else {
-          // Activity Timestamp is empty
-          GlobalFunction.tampilkanDialog(
-            context,
-            false,
-            KotakPesan(
-              'Gagal!',
-              'Check Out gagal.',
-              tinggi: MediaQuery.of(context).size.height * 0.2,
-            ),
-          );
         }
+      } else {
+        // ~:Haven't Check In Yet:~
+        // await setIsLoadingProgress();
+        // if (Platform.isIOS) {
+        //   GlobalDialog.showCrossPlatformDialog(
+        //     context,
+        //     'Gagal!',
+        //     'Tolong check in terlebih dahulu.',
+        //     () => Navigator.pop(context),
+        //     'Tutup',
+        //     isIOS: true,
+        //   );
+        // } else {
+        //   GlobalDialog.showCrossPlatformDialog(
+        //     context,
+        //     'Gagal!',
+        //     'Tolong check in terlebih dahulu.',
+        //     () => Navigator.pop(context),
+        //     'Tutup',
+        //   );
+        // }
+
+        absentDescription = 'Mohon check in terlebih dahulu.';
+        // ~:Warning Animation:~
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const WarningAnimationPage(),
+          ),
+        );
       }
-      pressTrigger();
     } else {
-      // print('Not Checked In yet');
-      GlobalFunction.tampilkanDialog(
+      // ~:Location Service deactivated:~
+      // await setIsLoadingProgress();
+      // if (Platform.isIOS) {
+      //   GlobalDialog.showCrossPlatformDialog(
+      //     context,
+      //     'Peringatan!!',
+      //     'Layanan Lokasi dinonaktifkan, silakan aktifkan untuk check out.',
+      //     () => Navigator.pop(context),
+      //     'Kembali',
+      //     isIOS: true,
+      //   );
+      // } else {
+      //   GlobalDialog.showCrossPlatformDialog(
+      //     context,
+      //     'Peringatan!!',
+      //     'Layanan Lokasi dinonaktifkan, silakan aktifkan untuk check out.',
+      //     () => Navigator.pop(context),
+      //     'Kembali',
+      //   );
+      // }
+
+      absentDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
+      // ~:Warning Animation:~
+      Navigator.push(
         context,
-        false,
-        KotakPesan(
-          'Gagal!',
-          'Tolong check in terlebih dahulu.',
-          detail2: attendanceStatus.toString(),
+        MaterialPageRoute(
+          builder: (context) => const WarningAnimationPage(),
         ),
       );
     }
@@ -1073,7 +1344,7 @@ class SipSalesState with ChangeNotifier {
             GlobalDialog.showCrossPlatformDialog(
               context,
               'Peringatan!',
-              'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+              newActivitiesList[0].resultMessage,
               () => Navigator.pop(context),
               'Tutup',
               isIOS: true,
@@ -1082,7 +1353,7 @@ class SipSalesState with ChangeNotifier {
             GlobalDialog.showCrossPlatformDialog(
               context,
               'Peringatan!',
-              'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+              newActivitiesList[0].resultMessage,
               () => Navigator.pop(context),
               'Tutup',
             );
@@ -1219,7 +1490,7 @@ class SipSalesState with ChangeNotifier {
               await GlobalDialog.showCrossPlatformDialog(
                 context,
                 'Gagal!',
-                'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+                newActivitiesList[0].resultMessage,
                 () => Navigator.pop(context),
                 'Tutup',
                 isIOS: true,
@@ -1228,7 +1499,7 @@ class SipSalesState with ChangeNotifier {
               await GlobalDialog.showCrossPlatformDialog(
                 context,
                 'Gagal!',
-                'Anda sudah mengirimkan aktivitas hari ini. Silakan coba lagi besok.',
+                newActivitiesList[0].resultMessage,
                 () => Navigator.pop(context),
                 'Tutup',
               );

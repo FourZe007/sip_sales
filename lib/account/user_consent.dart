@@ -138,7 +138,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
                 ),
 
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.675,
                   child: ListView(
                     shrinkWrap: true,
                     children: [

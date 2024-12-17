@@ -6,23 +6,80 @@ import 'package:sip_sales/global/model.dart';
 import 'package:http/http.dart' as http;
 
 class GlobalAPI {
+  static Future<String> fetchIsWithinRadius(
+    double latDealer,
+    double lngDealer,
+    double latUser,
+    double lngUser,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/CheckRadius',
+    );
+
+    Map mapIsWithinRadius = {
+      "LatDealer": latDealer,
+      "LngDealer": lngDealer,
+      "Lat": latUser,
+      "Lng": lngUser,
+    };
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapIsWithinRadius), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      String isWithinRadius = '';
+
+      if (response.statusCode <= 200) {
+        var jsonIsWithinRadius = jsonDecode(response.body);
+        if (jsonIsWithinRadius['Code'] == '100' ||
+            jsonIsWithinRadius['Msg'] == 'Sukses') {
+          if ((jsonIsWithinRadius['Data'] as List).isNotEmpty) {
+            isWithinRadius = (jsonIsWithinRadius['Data'] as List)[0]['Result'];
+
+            return isWithinRadius;
+          } else {
+            return '';
+          }
+        } else {
+          return '';
+        }
+      }
+
+      return 'fail';
+    } catch (e) {
+      print(e.toString());
+      return 'error';
+    }
+  }
+
   static Future<List<ModelUser>> fetchUserAccount(
     String id,
     String pass,
+    String uuid,
   ) async {
-    var url =
-        Uri.https('wsip.yamaha-jatim.co.id:2448', '/api/Login/LoginSalesman');
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/Login/LoginSalesman',
+    );
 
     Map mapUserAccount = {
       "EmployeeID": id,
       "DecryptedPassword": pass,
+      'DeviceID': uuid,
     };
+
+    print(mapUserAccount);
 
     try {
       final response =
           await http.post(url, body: jsonEncode(mapUserAccount), headers: {
         'Content-Type': 'application/json',
       }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
 
       List<ModelUser> list = [];
 
@@ -57,7 +114,9 @@ class GlobalAPI {
     String endDate,
   ) async {
     var url = Uri.https(
-        'wsip.yamaha-jatim.co.id:2448', '/api/SIPSales/AttendanceHistory');
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/AttendanceHistory',
+    );
 
     Map mapAttendanceHistory = {
       "EmployeeID": employeeID,
@@ -102,7 +161,9 @@ class GlobalAPI {
     String checkOut, // time
   ) async {
     var url = Uri.https(
-        'wsip.yamaha-jatim.co.id:2448', '/api/SIPSales/InsertAttendance');
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/InsertAttendance',
+    );
 
     // Check in -> ID, Date and CheckIn
     // Check out -> ID, Date and CheckOut
@@ -118,6 +179,8 @@ class GlobalAPI {
         "CheckOut": checkOut != '' ? checkOut : '', // mandatory for check out
       }
     };
+
+    print(mapModifyAttendance);
 
     try {
       final response =
@@ -210,8 +273,10 @@ class GlobalAPI {
     String date,
     List<ModelCoordinate> coordinateList,
   ) async {
-    var url = Uri.https('wsip.yamaha-jatim.co.id:2448',
-        '/api/SIPSales/InsertEmployeeActivityTimeStamp');
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/InsertEmployeeActivityTimeStamp',
+    );
 
     Map mapActivityTimestamp = {
       "Mode": mode,

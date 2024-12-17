@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:sip_sales/account/register.dart';
 import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
-import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
@@ -110,6 +110,7 @@ class _LoginPageState extends State<LoginPage> {
   // }
 
   void displayProminentDisclosure(SipSalesState state) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     isUserGranted = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -118,9 +119,11 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (isUserGranted) {
+      await prefs.setBool('isUserAgree', true);
       state.setIsUserAgree(true);
       Navigator.pushReplacementNamed(context, '/location');
     } else {
+      await prefs.setBool('isUserAgree', false);
       state.setIsUserAgree(false);
       setState(() {
         loginStatus = 'Login Cancelled.';
@@ -133,12 +136,23 @@ class _LoginPageState extends State<LoginPage> {
     // 932518
     if (nip != '' && password != '') {
       toggleIsLoading();
-      userLogin = await GlobalAPI.fetchUserAccount(nip, password);
+
+      await state.generateUuid().then(
+        (String uuid) async {
+          userLogin.clear();
+          userLogin.addAll(await GlobalAPI.fetchUserAccount(
+            nip,
+            password,
+            uuid,
+          ));
+        },
+      );
+
       if (userLogin.isNotEmpty) {
         if (userLogin[0].flag == 1) {
-          setState(() {
-            loginStatus = 'Login Success.';
-          });
+          // setState(() {
+          //   loginStatus = 'Login Success.';
+          // });
 
           Future.delayed(const Duration(seconds: 2)).then(
             (value) async {
@@ -152,9 +166,12 @@ class _LoginPageState extends State<LoginPage> {
               await prefs.setString('shop', userLogin[0].shop);
               await prefs.setInt('isManager', userLogin[0].code);
               await prefs.setBool('isLocationGranted', false);
+              await prefs.setBool('checkInStatus', true);
+              await prefs.setBool('checkOutStatus', false);
+              await prefs.setBool('isShowCaseCompleted', true);
               toggleIsLoading();
 
-              if (state.getIsUserAgree == true) {
+              if (prefs.getBool('isUserAgree') ?? false) {
                 Navigator.pushReplacementNamed(context, '/location');
               } else {
                 displayProminentDisclosure(state);
@@ -163,38 +180,86 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (userLogin[0].flag == 2) {
           toggleIsLoading();
-          setState(() {
-            loginStatus = userLogin[0].memo;
-          });
+          if (Platform.isIOS) {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Peringatan!',
+              userLogin[0].memo,
+              () => Navigator.pop(context),
+              'Tutup',
+              isIOS: true,
+            );
+          } else {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Peringatan!',
+              userLogin[0].memo,
+              () => Navigator.pop(context),
+              'Tutup',
+            );
+          }
         } else {
           toggleIsLoading();
-          setState(() {
-            loginStatus = 'Wrong username or password.';
-          });
-
-          Future.delayed(const Duration(seconds: 2)).then((value) async {
-            setState(() {
-              loginStatus = '';
-            });
-          });
+          if (Platform.isIOS) {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Peringatan!',
+              'Username atau password salah.',
+              () => Navigator.pop(context),
+              'Tutup',
+              isIOS: true,
+            );
+          } else {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Peringatan!',
+              'Username atau password salah.',
+              () => Navigator.pop(context),
+              'Tutup',
+            );
+          }
         }
       } else {
         toggleIsLoading();
-        setState(() {
-          loginStatus = 'Try again.';
-        });
+        if (Platform.isIOS) {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Peringatan!',
+            'Coba lagi.',
+            () => Navigator.pop(context),
+            'Tutup',
+            isIOS: true,
+          );
+        } else {
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Peringatan!',
+            'Coba lagi.',
+            () => Navigator.pop(context),
+            'Tutup',
+          );
+        }
       }
     } else {
       toggleIsLoading();
-      setState(() {
-        loginStatus = 'Please check your input again.';
-      });
-
-      Future.delayed(const Duration(seconds: 2)).then((value) async {
-        setState(() {
-          loginStatus = '';
-        });
-      });
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Peringatan!',
+          'Mohon periksi input anda kembali.',
+          () => Navigator.pop(context),
+          'Tutup',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Peringatan!',
+          'Mohon periksi input anda kembali.',
+          () => Navigator.pop(context),
+          'Tutup',
+        );
+      }
     }
   }
 
@@ -275,31 +340,29 @@ class _LoginPageState extends State<LoginPage> {
                   icon: Icons.lock,
                   hint: 'Password',
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomText(
-                      loginStatus,
-                      fontFamily: GlobalFontFamily.fontMontserrat,
-                      fontSize: MediaQuery.of(context).size.width * 0.03,
+                // CustomText(
+                //   loginStatus,
+                //   fontFamily: GlobalFontFamily.fontMontserrat,
+                //   fontSize: MediaQuery.of(context).size.width * 0.03,
+                // ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterPage(),
+                        ),
+                      );
+                    },
+                    child: CustomText(
+                      'Create Account',
+                      color: Colors.blue,
+                      fontSize: MediaQuery.of(context).size.width * 0.0325,
+                      decor: TextDecoration.underline,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterPage(),
-                          ),
-                        );
-                      },
-                      child: CustomText(
-                        'Create Account',
-                        color: Colors.blue,
-                        fontSize: MediaQuery.of(context).size.width * 0.0325,
-                        decor: TextDecoration.underline,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -317,21 +380,33 @@ class _LoginPageState extends State<LoginPage> {
                     padding: EdgeInsets.symmetric(
                       vertical: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    child: isLoading
-                        ? Platform.isIOS
-                            ? const CupertinoActivityIndicator(
-                                radius: 12.5,
-                                color: Colors.white,
-                              )
-                            : const CircleLoading(
-                                warna: Colors.white,
-                              )
-                        : CustomText(
+                    child: Builder(
+                      builder: (context) {
+                        if (isLoading) {
+                          return Builder(
+                            builder: (context) {
+                              if (Platform.isIOS) {
+                                return const CupertinoActivityIndicator(
+                                  radius: 12.5,
+                                  color: Colors.white,
+                                );
+                              } else {
+                                return const CircleLoading(
+                                  warna: Colors.white,
+                                );
+                              }
+                            },
+                          );
+                        } else {
+                          return CustomText(
                             'SIGN IN',
                             color: Colors.white,
                             fontSize: MediaQuery.of(context).size.width * 0.04,
                             isBold: true,
-                          ),
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ),
               ],

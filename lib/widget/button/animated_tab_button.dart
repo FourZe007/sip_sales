@@ -1,7 +1,9 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state_management.dart';
 
 class AnimatedTabButton extends StatefulWidget {
   const AnimatedTabButton(this.namaButton, this.handle,
@@ -10,9 +12,10 @@ class AnimatedTabButton extends StatefulWidget {
       this.color = Colors.black,
       this.isCustom = false,
       this.textStyle = const TextStyle(),
-      this.disable = false,
       this.lebar = 75,
       this.tinggi = 40,
+      this.isDisabled = false,
+      this.isAttendance = true,
       super.key});
 
   final String namaButton;
@@ -22,9 +25,10 @@ class AnimatedTabButton extends StatefulWidget {
   final Color color;
   final bool isCustom;
   final TextStyle textStyle;
-  final bool disable;
   final double lebar;
   final double tinggi;
+  final bool isDisabled;
+  final bool isAttendance;
 
   @override
   State<AnimatedTabButton> createState() => AnimatedTabButtonState();
@@ -43,6 +47,8 @@ class AnimatedTabButtonState extends State<AnimatedTabButton> {
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<SipSalesState>(context);
+
     if (widget.isIcon == true) {
       return InkWell(
         onTap: () => widget.handle(),
@@ -52,21 +58,21 @@ class AnimatedTabButtonState extends State<AnimatedTabButton> {
           height: widget.tinggi,
           decoration: BoxDecoration(
             border: Border.all(
-              color: widget.disable == false ? Colors.black : Colors.grey,
+              color: !widget.isDisabled || !widget.isAttendance
+                  ? Colors.black
+                  : Colors.grey,
             ),
             boxShadow: const [
               BoxShadow(
                 color: Colors.grey,
-                offset: Offset(
-                  3.0,
-                  3.0,
-                ),
                 blurRadius: 10.0,
                 spreadRadius: 1.0,
               ),
             ],
             borderRadius: BorderRadius.circular(20),
-            color: widget.color,
+            color: !widget.isDisabled || !widget.isAttendance
+                ? widget.color
+                : Colors.grey,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -79,11 +85,22 @@ class AnimatedTabButtonState extends State<AnimatedTabButton> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.025,
               ),
-              Text(
-                widget.namaButton,
-                style: widget.isCustom == true
-                    ? widget.textStyle
-                    : GlobalFont.gigafontRBoldWhite,
+              Builder(
+                builder: (context) {
+                  if (!widget.isAttendance) {
+                    return Text(
+                      widget.namaButton,
+                      style: GlobalFont.gigafontRBoldWhite,
+                    );
+                  } else {
+                    return Text(
+                      widget.namaButton,
+                      style: widget.isCustom == true
+                          ? widget.textStyle
+                          : GlobalFont.gigafontRBoldWhite,
+                    );
+                  }
+                },
               ),
             ],
           ),
@@ -98,28 +115,39 @@ class AnimatedTabButtonState extends State<AnimatedTabButton> {
           height: widget.tinggi,
           decoration: BoxDecoration(
             border: Border.all(
-              color: widget.disable == false ? Colors.black : Colors.grey,
+              color: !widget.isDisabled || !widget.isAttendance
+                  ? Colors.black
+                  : Colors.grey,
             ),
             boxShadow: const [
               BoxShadow(
                 color: Colors.grey,
-                offset: Offset(
-                  3.0,
-                  3.0,
-                ),
                 blurRadius: 10.0,
                 spreadRadius: 1.0,
               ),
             ],
             borderRadius: BorderRadius.circular(20),
-            color: widget.color,
+            color: !widget.isDisabled || !widget.isAttendance
+                ? widget.color
+                : Colors.grey,
           ),
           alignment: Alignment.center,
-          child: Text(
-            widget.namaButton,
-            style: widget.isCustom == true
-                ? widget.textStyle
-                : GlobalFont.gigafontRBoldWhite,
+          child: Builder(
+            builder: (context) {
+              if (!widget.isAttendance) {
+                return Text(
+                  widget.namaButton,
+                  style: GlobalFont.gigafontRBoldWhite,
+                );
+              } else {
+                return Text(
+                  widget.namaButton,
+                  style: widget.isCustom == true
+                      ? widget.textStyle
+                      : GlobalFont.gigafontRBoldWhite,
+                );
+              }
+            },
           ),
         ),
       );

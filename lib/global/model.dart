@@ -202,7 +202,7 @@ class ModelActivityRoute {
       duration: json['duration'],
       distance: json['distance'],
       isActAvailable: json['adaAktivitas'],
-      detail: json['detail']
+      detail: (json['detail'] as List)
           .map((dynamic data) => ModelActivityRouteDetails.fromJson(data))
           .toList(),
     );

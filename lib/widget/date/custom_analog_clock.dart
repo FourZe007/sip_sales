@@ -3,8 +3,8 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/widget/format.dart';
 import 'package:analog_clock/analog_clock.dart';
 
-class CustomDateTime extends StatefulWidget {
-  const CustomDateTime(this.tgl, this.handle, this.isDisable,
+class CustomAnalogClock extends StatefulWidget {
+  const CustomAnalogClock(this.tgl, this.handle, this.isDisable,
       {this.isIpad = false, super.key});
 
   final String tgl;
@@ -13,10 +13,10 @@ class CustomDateTime extends StatefulWidget {
   final bool isIpad;
 
   @override
-  State<CustomDateTime> createState() => _CustomDateTimeState();
+  State<CustomAnalogClock> createState() => _CustomAnalogClockState();
 }
 
-class _CustomDateTimeState extends State<CustomDateTime> {
+class _CustomAnalogClockState extends State<CustomAnalogClock> {
   String date = '';
   String day = '';
   String month = '';
@@ -29,6 +29,7 @@ class _CustomDateTimeState extends State<CustomDateTime> {
 
     day = Format.dateFormat(date);
     month = Format.monthFormat(date);
+    print('Month: $month');
     year = Format.yearFormat(date);
   }
 
@@ -75,8 +76,8 @@ class _CustomDateTimeState extends State<CustomDateTime> {
               color: Colors.black,
               shape: BoxShape.circle,
             ),
-            width: MediaQuery.of(context).size.width * 0.5,
-            height: MediaQuery.of(context).size.height * 0.25,
+            width: MediaQuery.of(context).size.width * 0.565,
+            height: MediaQuery.of(context).size.height * 0.275,
             isLive: true,
             hourHandColor: Colors.white,
             minuteHandColor: Colors.white,
@@ -103,7 +104,7 @@ class _CustomDateTimeState extends State<CustomDateTime> {
                     : GlobalFont.gigafontRBold,
               ),
               Text(
-                '${_monthOptions[int.parse(month.substring(1)) - 1]} ',
+                '${_monthOptions[int.parse(month) - 1]} ',
                 textAlign: TextAlign.center,
                 style: widget.isIpad == true
                     ? GlobalFont.petafontRBold

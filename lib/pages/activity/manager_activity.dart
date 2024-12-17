@@ -247,7 +247,8 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                 return ListView(
                   children: [
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.05,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.06,
                       alignment: Alignment.center,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,10 +257,11 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                             'Cabang: ',
                             style: GlobalFont.giantfontR,
                           ),
-                          Text(
-                            snapshot.data![0].shopName,
-                            style: GlobalFont.giantfontRBold,
-                            overflow: TextOverflow.ellipsis,
+                          Expanded(
+                            child: Text(
+                              snapshot.data![0].shopName,
+                              style: GlobalFont.giantfontRBold,
+                            ),
                           ),
                         ],
                       ),

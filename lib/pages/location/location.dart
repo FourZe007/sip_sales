@@ -84,6 +84,7 @@ class _LocationPageState extends State<LocationPage> {
         GlobalVar.userAccountList = await GlobalAPI.fetchUserAccount(
           GlobalVar.nip!,
           GlobalVar.password!,
+          state.getUUID,
         );
       }
 
