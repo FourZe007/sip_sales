@@ -34,7 +34,7 @@ class ProfilePageState extends State<ProfilePage> {
       isLoading = true;
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String tempDeviceID = prefs.getString('deviceID') ?? '';
+    // String tempDeviceID = prefs.getString('deviceID') ?? '';
     prefs.clear();
     setState(() {
       isLoading = false;
@@ -96,17 +96,26 @@ class ProfilePageState extends State<ProfilePage> {
 
   void takePhoto(BuildContext context, SipSalesState state) async {
     print('Take Photo pressed!');
-    await state.takeProfilePictureFromCamera(context).then((bool isSuccess) {
+    await state.takeProfilePictureFromCamera(context).then((_) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LoadingAnimationPage(false, isSuccess),
+          builder: (context) => LoadingAnimationPage(false, true),
         ),
       );
     });
   }
 
-  void viewPhoto(BuildContext context, SipSalesState state) {}
+  void viewPhoto(
+    BuildContext context,
+    SipSalesState state,
+  ) {
+    print('High Res Image: ${state.getProfilePicture}');
+    GlobalDialog.previewProfileImage(
+      context,
+      state.getProfilePicture,
+    );
+  }
 
   void openSettings() {
     print('Settings pressed!');
@@ -380,7 +389,7 @@ class ProfilePageState extends State<ProfilePage> {
                                           ),
                                         ),
                                         Positioned(
-                                          top: 45,
+                                          top: 43,
                                           left: 43,
                                           child: CircleAvatar(
                                             radius: 13,

@@ -464,30 +464,25 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                                             ),
                                             Expanded(
                                               flex: 3,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '${data.locationName} ${data.branchName}',
-                                                    style: GlobalFont
-                                                        .giantfontRBold,
-                                                  ),
-                                                  SizedBox(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.0075,
-                                                  ),
-                                                  Text(
-                                                    Format.tanggalFormat(
-                                                      data.date,
+                                              child: SizedBox(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${data.locationName} ${data.branchName}',
+                                                      style: GlobalFont
+                                                          .giantfontRBold,
                                                     ),
-                                                    style: GlobalFont
-                                                        .mediumgiantfontR,
-                                                  ),
-                                                ],
+                                                    Text(
+                                                      Format.tanggalFormat(
+                                                        data.date,
+                                                      ),
+                                                      style: GlobalFont
+                                                          .mediumgiantfontR,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],

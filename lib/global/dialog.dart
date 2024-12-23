@@ -1,8 +1,41 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sip_sales/global/global.dart';
 
 class GlobalDialog {
+  static Future<void> previewProfileImage(
+    BuildContext context,
+    String img,
+  ) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.03,
+          ),
+          child: CircleAvatar(
+            radius: 200,
+            backgroundColor: Colors.white,
+            child: ClipOval(
+              child: SizedBox.fromSize(
+                size: Size.fromRadius(200),
+                child: Image.memory(
+                  base64Decode(
+                    GlobalVar.userAccountList[0].profilePicture,
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   static Future<bool> showIOSDialogOption(
     BuildContext context,
     String title,

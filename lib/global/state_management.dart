@@ -142,7 +142,11 @@ class SipSalesState with ChangeNotifier {
     } else {
       print('Read picked image as bytes');
       // Read image bytes
-      ppBytesList.add(await pickedPpList[0]!.readAsBytes());
+      if (pickedFileList.isNotEmpty) {
+        ppBytesList.add(await pickedPpList[0]!.readAsBytes());
+      } else {
+        return false;
+      }
 
       if (ppBytesList.isNotEmpty) {
         print('Profile picture is not empty');
@@ -177,39 +181,51 @@ class SipSalesState with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String nip = prefs.getString('nip')!;
 
-    uploadProfileState.clear();
-    uploadProfileState.addAll(await GlobalAPI.fetchUploadImage(
-      nip,
-      getBase64PpList[0],
-    ));
+    if (getBase64PpList.isNotEmpty) {
+      uploadProfileState.clear();
+      uploadProfileState.addAll(await GlobalAPI.fetchUploadImage(
+        nip,
+        getBase64PpList[0],
+      ));
 
-    if (uploadProfileState.isNotEmpty) {
-      print('result message: ${uploadProfileState[0].resultMessage}');
-      if (uploadProfileState[0].resultMessage == 'SUKSES') {
-        setIsProfileUploaded(true);
-        displayDescription = 'Profil berhasil diunggah.';
-        returnPage = '/profile';
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SuccessAnimationPage(),
-          ),
-        );
+      if (uploadProfileState.isNotEmpty) {
+        print('result message: ${uploadProfileState[0].resultMessage}');
+        if (uploadProfileState[0].resultMessage == 'SUKSES') {
+          setIsProfileUploaded(true);
+          displayDescription = 'Profil berhasil diunggah.';
+          returnPage = '/profile';
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SuccessAnimationPage(),
+            ),
+          );
+        } else {
+          setIsProfileUploaded(false);
+          displayDescription = 'Profil gagal diunggah.';
+          returnPage = '/profile';
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FailureAnimationPage(),
+            ),
+          );
+        }
       } else {
         setIsProfileUploaded(false);
-        displayDescription = 'Profil gagal diunggah.';
+        displayDescription =
+            'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
         returnPage = '/profile';
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const FailureAnimationPage(),
+            builder: (context) => const WarningAnimationPage(),
           ),
         );
       }
     } else {
       setIsProfileUploaded(false);
-      displayDescription =
-          'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
+      displayDescription = 'Gagal ambil gambar, silakan coba lagi.';
       returnPage = '/profile';
       Navigator.pushReplacement(
         context,

@@ -23,10 +23,14 @@ class _SplashScreenState extends State<SplashScreen> {
     state.saveCheckInStatus(true);
     state.saveCheckOutStatus(false);
 
-    await Future.wait([
-      loadUserData(),
-      initializeAppData(context),
-    ]);
+    try {
+      await Future.wait([
+        loadUserData(state),
+        initializeAppData(context),
+      ]);
+    } catch (e) {
+      print('Error: $e');
+    }
 
     await Future.delayed(const Duration(seconds: 3)).then((_) {
       if (isSignedIn) {
@@ -37,9 +41,18 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  Future<void> loadUserData() async {
+  Future<void> loadUserData(SipSalesState state) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     isSignedIn = (prefs.getInt('flag') ?? 0) == 1 ? true : false;
+
+    if (prefs.getString('highResImage') != null) {
+      if (prefs.getString('highResImage')!.isNotEmpty) {
+        print('highResImage is not empty');
+        state.setProfilePicture(prefs.getString('highResImage')!);
+      } else {
+        print('highResImage is empty');
+      }
+    }
   }
 
   Future<void> initializeAppData(BuildContext context) async {

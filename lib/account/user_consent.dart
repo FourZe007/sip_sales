@@ -97,7 +97,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
           builder: (context) {
             if (Platform.isIOS) {
               return IconButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.pop(context, false),
                 icon: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
@@ -106,7 +106,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
               );
             } else {
               return IconButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.pop(context, false),
                 icon: Icon(
                   Icons.arrow_back_rounded,
                   size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,

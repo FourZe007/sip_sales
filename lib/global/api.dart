@@ -201,11 +201,11 @@ class GlobalAPI {
 
       if (response.statusCode <= 200) {
         var jsonShowMessage = jsonDecode(response.body);
-        if (jsonShowMessage['Code'] == '100' ||
-            jsonShowMessage['Msg'] == 'Sukses') {
-          if ((jsonShowMessage['Data'] as List).isNotEmpty &&
-              (jsonShowMessage['Data'][0]['photo'] as String).isNotEmpty) {
-            return jsonShowMessage['Data'][0]['photo'];
+        if (jsonShowMessage['code'] == '100' ||
+            jsonShowMessage['msg'] == 'Sukses') {
+          if ((jsonShowMessage['data'] as List).isNotEmpty &&
+              (jsonShowMessage['data'][0]['photo'] as String).isNotEmpty) {
+            return jsonShowMessage['data'][0]['photo'];
           } else {
             return 'not available';
           }

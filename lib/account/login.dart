@@ -174,6 +174,34 @@ class _LoginPageState extends State<LoginPage> {
               await prefs.setBool('checkInStatus', true);
               await prefs.setBool('checkOutStatus', false);
               await prefs.setBool('isShowCaseCompleted', true);
+
+              // ~:NEW:~
+              // Load and save HD image to cache memory
+              try {
+                await GlobalAPI.fetchShowImage(userLogin[0].employeeID).then(
+                  (String highResImg) async {
+                    if (highResImg == 'not available') {
+                      state.setProfilePicture(highResImg);
+                      print('High Res Image is not available.');
+                    } else if (highResImg == 'failed') {
+                      state.setProfilePicture(highResImg);
+                      print('High Res Image failed to load.');
+                    } else if (highResImg == 'error') {
+                      state.setProfilePicture(highResImg);
+                      print('An error occured, please try again.');
+                    } else {
+                      state.setProfilePicture(highResImg);
+                      await prefs.setString('highResImage', highResImg);
+                      print('High Res Image successfully loaded.');
+                      print('High Res Image: $highResImg');
+                    }
+                  },
+                );
+              } catch (e) {
+                print('Show HD Image Error: $e');
+              }
+              // ~:NEW:~
+
               toggleIsLoading();
 
               if (prefs.getBool('isUserAgree') ?? false) {
