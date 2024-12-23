@@ -1,4 +1,5 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -10,6 +11,7 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/button/colored_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
+import 'package:sip_sales/widget/status/loading_animation.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -91,6 +93,20 @@ class ProfilePageState extends State<ProfilePage> {
       }
     }
   }
+
+  void takePhoto(BuildContext context, SipSalesState state) async {
+    print('Take Photo pressed!');
+    await state.takeProfilePictureFromCamera(context).then((bool isSuccess) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoadingAnimationPage(false, isSuccess),
+        ),
+      );
+    });
+  }
+
+  void viewPhoto(BuildContext context, SipSalesState state) {}
 
   void openSettings() {
     print('Settings pressed!');
@@ -339,14 +355,69 @@ class ProfilePageState extends State<ProfilePage> {
                       children: [
                         // Circle Icon of Person
                         Expanded(
-                          child: CircleAvatar(
-                            radius: 30.0,
-                            backgroundColor: Colors.black,
-                            child: Icon(
-                              Icons.person,
-                              size: 30.0,
-                              color: Colors.white,
-                            ),
+                          // Icon with edit button
+                          child: Builder(
+                            builder: (context) {
+                              if (GlobalVar
+                                  .userAccountList[0].profilePicture.isEmpty) {
+                                return GestureDetector(
+                                  onTap: () => takePhoto(context, profileState),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Stack(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 35,
+                                          backgroundColor: Colors.black,
+                                          child: ClipOval(
+                                            child: SizedBox.fromSize(
+                                              size: Size.fromRadius(33),
+                                              child: Icon(
+                                                Icons.person,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 45,
+                                          left: 43,
+                                          child: CircleAvatar(
+                                            radius: 13,
+                                            backgroundColor: Colors.grey,
+                                            child: Icon(
+                                              Icons.edit,
+                                              size: 18,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return InkWell(
+                                  onTap: () => viewPhoto(context, profileState),
+                                  child: CircleAvatar(
+                                    radius: 40,
+                                    backgroundColor: Colors.white,
+                                    child: ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(38),
+                                        child: Image.memory(
+                                          base64Decode(
+                                            GlobalVar.userAccountList[0]
+                                                .profilePicture,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                           ),
                         ),
                         // User Data, contains of name and employee ID
@@ -543,7 +614,7 @@ class ProfilePageState extends State<ProfilePage> {
                           top: MediaQuery.of(context).size.height * 0.01,
                         ),
                         child: Text(
-                          'Version 1.1.2',
+                          'Version 1.1.4',
                           style: GlobalFont.bigfontR,
                         ),
                       ),

@@ -692,7 +692,8 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                     ),
                   ),
                   ValueListenableBuilder(
-                    valueListenable: managerActivityState.getIsUploading,
+                    valueListenable:
+                        managerActivityState.getIsUploadingNotifier,
                     builder: (context, value, child) {
                       if (value == true) {
                         return Column(

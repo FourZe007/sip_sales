@@ -32,7 +32,7 @@ class _AttendancePageState extends State<AttendancePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LoadingAnimationPage(isWarning, isClockIn),
+        builder: (context) => LoadingAnimationPage(isClockIn, false),
       ),
     );
   }
@@ -51,7 +51,10 @@ class _AttendancePageState extends State<AttendancePage> {
     // History list check
     if (historyList.isNotEmpty) {
       print('Fetch succeed');
-      yield historyList.skip(historyList.length - 2).toList();
+      yield [
+        historyList[0],
+        historyList[1],
+      ];
     } else {
       print('Fetch failed');
       yield historyList;
@@ -85,7 +88,7 @@ class _AttendancePageState extends State<AttendancePage> {
           getHistory();
         },
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
               // ~:Date and Time:~

@@ -60,11 +60,13 @@ class GlobalAPI {
     String pass,
     String uuid,
   ) async {
+    print('URL');
     var url = Uri.https(
       'wsip.yamaha-jatim.co.id:2448',
       '/api/Login/LoginSalesman',
     );
 
+    print('Map');
     Map mapUserAccount = {
       "EmployeeID": id,
       "DecryptedPassword": pass,
@@ -73,6 +75,7 @@ class GlobalAPI {
 
     print(mapUserAccount);
 
+    print('Try and Catch');
     try {
       final response =
           await http.post(url, body: jsonEncode(mapUserAccount), headers: {
@@ -83,30 +86,140 @@ class GlobalAPI {
 
       List<ModelUser> list = [];
 
+      print('Entering If Else Statement');
       if (response.statusCode <= 200) {
+        print('Status code 200');
         var jsonUserAccount = jsonDecode(response.body);
         if (jsonUserAccount['Code'] == '100' ||
             jsonUserAccount['Msg'] == 'Sukses') {
-          list = (jsonUserAccount['Data'] as List)
+          print('Success');
+          list.addAll((jsonUserAccount['Data'] as List)
               .map<ModelUser>((data) => ModelUser.fromJson(data))
-              .toList();
+              .toList());
 
           return list;
         } else {
-          list = (jsonUserAccount['Data'] as List)
+          print('Failed');
+          list.addAll((jsonUserAccount['Data'] as List)
               .map<ModelUser>((data) => ModelUser.fromJson(data))
-              .toList();
+              .toList());
 
           return list;
         }
       }
 
+      print('Status code 404');
       return list;
     } catch (e) {
-      print(e.toString());
+      print('API Error: ${e.toString()}');
       return [];
     }
   }
+
+  // ~:NEW:~:
+  static Future<List<ModelResultMessage>> fetchUploadImage(
+    String id,
+    String img,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/UploadPhoto',
+    );
+
+    print('img: $img');
+
+    Map mapUploadImage = {
+      "Mode": 1,
+      "EmployeeID": id,
+      'Photo': img,
+    };
+
+    print(mapUploadImage);
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapUploadImage), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
+
+      List<ModelResultMessage> list = [];
+
+      if (response.statusCode <= 200) {
+        print('Status Code 200');
+        var jsonUploadMessage = jsonDecode(response.body);
+        if (jsonUploadMessage['Code'] == '100' ||
+            jsonUploadMessage['Msg'] == 'Sukses') {
+          print('Success');
+          list.addAll((jsonUploadMessage['Data'] as List)
+              .map<ModelResultMessage>(
+                  (data) => ModelResultMessage.fromJson(data))
+              .toList());
+
+          return list;
+        } else {
+          print('Failed');
+          list.addAll((jsonUploadMessage['Data'] as List)
+              .map<ModelResultMessage>(
+                  (data) => ModelResultMessage.fromJson(data))
+              .toList());
+
+          return list;
+        }
+      }
+
+      print('Status Code 404');
+      return list;
+    } catch (e) {
+      print('error: ${e.toString()}');
+      return [];
+    }
+  }
+
+  static Future<String> fetchShowImage(
+    String id,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/ShowEmployeePhotoS',
+    );
+
+    Map mapShowImage = {
+      "EmployeeID": id,
+    };
+
+    print(mapShowImage);
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapShowImage), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
+
+      if (response.statusCode <= 200) {
+        var jsonShowMessage = jsonDecode(response.body);
+        if (jsonShowMessage['Code'] == '100' ||
+            jsonShowMessage['Msg'] == 'Sukses') {
+          if ((jsonShowMessage['Data'] as List).isNotEmpty &&
+              (jsonShowMessage['Data'][0]['photo'] as String).isNotEmpty) {
+            return jsonShowMessage['Data'][0]['photo'];
+          } else {
+            return 'not available';
+          }
+        } else {
+          return 'failed';
+        }
+      }
+      return '';
+    } catch (e) {
+      print(e.toString());
+      return 'error';
+    }
+  }
+  // ~:NEW:~
 
   static Future<List<ModelAttendanceHistory>> fetchAttendanceHistory(
     String employeeID,
@@ -123,6 +236,8 @@ class GlobalAPI {
       "BeginDate": beginDate,
       "EndDate": endDate,
     };
+
+    print(mapAttendanceHistory);
 
     final response =
         await http.post(url, body: jsonEncode(mapAttendanceHistory), headers: {
@@ -398,6 +513,7 @@ class GlobalAPI {
 
   // ~:NEW:~:
   static Future<List<ModelActivities>> fetchManagerActivityTypes() async {
+    print('Manager Activity Type URL');
     var url = Uri.https(
       'wsip.yamaha-jatim.co.id:2448',
       '/api/SIPSales/MEmployeeActivitySM',
@@ -405,27 +521,35 @@ class GlobalAPI {
 
     List<ModelActivities> managerActivityTypesList = [];
 
+    print('Try and Catch');
     try {
+      print('URL');
       final response = await http.post(url, headers: {
         'Content-Type': 'application/json',
       }).timeout(const Duration(seconds: 60));
 
+      print('Entering If Else Statement');
       if (response.statusCode <= 200) {
         var jsonActivitytypes = jsonDecode(response.body);
+        print('Status Code 200');
         if (jsonActivitytypes['code'] == '100' &&
             jsonActivitytypes['msg'] == 'Sukses') {
+          print('Success');
           managerActivityTypesList = (jsonActivitytypes['data'] as List)
               .map<ModelActivities>((list) => ModelActivities.fromJson(list))
               .toList();
 
           return managerActivityTypesList;
         } else {
+          print('Failed');
           return managerActivityTypesList;
         }
       } else {}
+
+      print('Status Code 404');
       return managerActivityTypesList;
     } catch (e) {
-      print(e.toString());
+      print('API Error: ${e.toString()}');
       return managerActivityTypesList;
     }
   }
@@ -524,6 +648,8 @@ class GlobalAPI {
       "Pic1": images.length == 1 ? images[0] : '',
     };
 
+    print(mapNewManagerActivity);
+
     List<ModelResultMessage2> activityTypesList = [];
 
     try {
@@ -531,6 +657,8 @@ class GlobalAPI {
           .post(url, body: jsonEncode(mapNewManagerActivity), headers: {
         'Content-Type': 'application/json',
       }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
 
       if (response.statusCode <= 200) {
         var jsonActivitytypes = jsonDecode(response.body);

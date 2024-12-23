@@ -2,9 +2,7 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/widget/button/text_switch.dart';
@@ -95,29 +93,36 @@ class _UserConsentPageState extends State<UserConsentPage> {
         toolbarHeight: (MediaQuery.of(context).size.width < 800)
             ? MediaQuery.of(context).size.height * 0.075
             : MediaQuery.of(context).size.height * 0.075,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-            color: Colors.black,
-          ),
+        leading: Builder(
+          builder: (context) {
+            if (Platform.isIOS) {
+              return IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                  color: Colors.black,
+                ),
+              );
+            } else {
+              return IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                  color: Colors.black,
+                ),
+              );
+            }
+          },
         ),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         color: Colors.grey[300],
-        // decoration: BoxDecoration(
-        //   color: Colors.grey[300],
-        //   border: Border.all(
-        //     color: Colors.red,
-        //     width: 2,
-        //   ),
-        // ),
         padding: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.05,
-          // vertical: MediaQuery.of(context).size.height * 0.01,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

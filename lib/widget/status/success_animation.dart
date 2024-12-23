@@ -25,7 +25,7 @@ class _SuccessAnimationPageState extends State<SuccessAnimationPage> {
       onPopInvokedWithResult: (canPop, _) {
         // First Approach return to Menu page
         Future.delayed(Duration.zero, () {
-          Navigator.popAndPushNamed(context, '/menu');
+          Navigator.popAndPushNamed(context, state.getReturnPage);
         });
 
         // Second Approach return to Menu page
@@ -69,7 +69,7 @@ class _SuccessAnimationPageState extends State<SuccessAnimationPage> {
                             icon: const Icon(Icons.arrow_back_ios),
                             onPressed: () => Navigator.popAndPushNamed(
                               context,
-                              '/menu',
+                              state.getReturnPage,
                             ),
                           );
                         } else {
@@ -77,7 +77,7 @@ class _SuccessAnimationPageState extends State<SuccessAnimationPage> {
                             icon: const Icon(Icons.arrow_back),
                             onPressed: () => Navigator.popAndPushNamed(
                               context,
-                              '/menu',
+                              state.getReturnPage,
                             ),
                           );
                         }
@@ -114,9 +114,9 @@ class _SuccessAnimationPageState extends State<SuccessAnimationPage> {
                         // ~:Success Description Message:~
                         Builder(
                           builder: (context) {
-                            if (state.getAbsentDescription.isNotEmpty) {
+                            if (state.getdDisplayDescription.isNotEmpty) {
                               return Text(
-                                state.getAbsentDescription,
+                                state.getdDisplayDescription,
                                 textAlign: TextAlign.center,
                                 style: GlobalFont.giantfontR,
                               );

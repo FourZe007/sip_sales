@@ -765,7 +765,7 @@ class _SalesNewActivityPageState extends State<SalesNewActivityPage> {
                   ),
                   // Note -> remove later, if it's not being used
                   ValueListenableBuilder(
-                    valueListenable: salesActivityState.getIsUploading,
+                    valueListenable: salesActivityState.getIsUploadingNotifier,
                     builder: (context, value, child) {
                       if (value == true) {
                         return Column(

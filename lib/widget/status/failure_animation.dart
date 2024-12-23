@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -23,14 +25,14 @@ class _FailureAnimationPageState extends State<FailureAnimationPage> {
       canPop: true,
       onPopInvokedWithResult: (canPop, _) {
         // First Approach return to Menu page
-        // Future.delayed(Duration.zero, () {
-        //   Navigator.popAndPushNamed(context, '/menu');
-        // });
+        Future.delayed(Duration.zero, () {
+          Navigator.popAndPushNamed(context, state.getReturnPage);
+        });
 
         // Second Approach return to Menu page
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          Navigator.popAndPushNamed(context, '/menu');
-        });
+        // SchedulerBinding.instance.addPostFrameCallback((_) {
+        //   Navigator.popAndPushNamed(context, '/menu');
+        // });
       },
       child: Scaffold(
         appBar: AppBar(
@@ -68,7 +70,7 @@ class _FailureAnimationPageState extends State<FailureAnimationPage> {
                             icon: const Icon(Icons.arrow_back_ios),
                             onPressed: () => Navigator.popAndPushNamed(
                               context,
-                              '/menu',
+                              state.getReturnPage,
                             ),
                           );
                         } else {
@@ -76,7 +78,7 @@ class _FailureAnimationPageState extends State<FailureAnimationPage> {
                             icon: const Icon(Icons.arrow_back),
                             onPressed: () => Navigator.popAndPushNamed(
                               context,
-                              '/menu',
+                              state.getReturnPage,
                             ),
                           );
                         }
@@ -111,9 +113,9 @@ class _FailureAnimationPageState extends State<FailureAnimationPage> {
                         // ~:Failure Description Message:~
                         Builder(
                           builder: (context) {
-                            if (state.getAbsentDescription.isNotEmpty) {
+                            if (state.getdDisplayDescription.isNotEmpty) {
                               return Text(
-                                state.getAbsentDescription,
+                                state.getdDisplayDescription,
                                 textAlign: TextAlign.center,
                                 style: GlobalFont.giantfontR,
                               );

@@ -248,7 +248,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.06,
                       alignment: Alignment.center,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,

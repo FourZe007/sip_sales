@@ -139,16 +139,21 @@ class _LoginPageState extends State<LoginPage> {
 
       await state.generateUuid().then(
         (String uuid) async {
-          userLogin.clear();
-          userLogin.addAll(await GlobalAPI.fetchUserAccount(
-            nip,
-            password,
-            uuid,
-          ));
+          try {
+            userLogin.clear();
+            userLogin.addAll(await GlobalAPI.fetchUserAccount(
+              nip,
+              password,
+              uuid,
+            ));
+          } catch (e) {
+            print('Error: $e');
+          }
         },
       );
 
       if (userLogin.isNotEmpty) {
+        print(userLogin[0].employeeName);
         if (userLogin[0].flag == 1) {
           // setState(() {
           //   loginStatus = 'Login Success.';

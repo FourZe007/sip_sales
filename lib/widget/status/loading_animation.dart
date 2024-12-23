@@ -7,10 +7,14 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 
 class LoadingAnimationPage extends StatefulWidget {
-  const LoadingAnimationPage(this.isWarning, this.isClockIn, {super.key});
+  const LoadingAnimationPage(
+    this.isClockIn,
+    this.isProfileUploaded, {
+    super.key,
+  });
 
-  final bool isWarning;
   final bool isClockIn;
+  final bool isProfileUploaded;
 
   @override
   State<LoadingAnimationPage> createState() => _LoadingAnimationPageState();
@@ -19,10 +23,14 @@ class LoadingAnimationPage extends StatefulWidget {
 class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
   Future<void> processing(BuildContext context) async {
     final state = Provider.of<SipSalesState>(context, listen: false);
-    if (widget.isClockIn) {
-      state.checkIn(context);
+    if (widget.isProfileUploaded) {
+      state.uploadProfilePicture(context);
     } else {
-      state.checkOut(context);
+      if (widget.isClockIn) {
+        state.checkIn(context);
+      } else {
+        state.checkOut(context);
+      }
     }
   }
 

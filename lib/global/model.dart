@@ -10,6 +10,7 @@ class ModelUser {
   String locationName;
   double latitude;
   double longitude;
+  String profilePicture;
   int code;
 
   ModelUser({
@@ -24,6 +25,7 @@ class ModelUser {
     required this.locationName,
     required this.latitude,
     required this.longitude,
+    required this.profilePicture,
     required this.code,
   });
 
@@ -40,6 +42,7 @@ class ModelUser {
       locationName: json['LocationName'],
       latitude: json['Lat'],
       longitude: json['Lng'],
+      profilePicture: json['PhotoThumb'],
       code: json['Kode'],
     );
   }
