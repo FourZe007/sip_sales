@@ -176,6 +176,17 @@ class _LoginPageState extends State<LoginPage> {
               await prefs.setBool('isShowCaseCompleted', true);
 
               // ~:NEW:~
+              if (userLogin[0].code == 1 ||
+                  state.getManagerActivityTypeList.isEmpty) {
+                // Note -> get Activity Insertation dropdown for Manager
+                await Provider.of<SipSalesState>(context, listen: false)
+                    .fetchManagerActivityData();
+              } else {
+                // Note -> get Activity Insertation dropdown for Sales
+                await Provider.of<SipSalesState>(context, listen: false)
+                    .fetchSalesActivityData();
+              }
+
               // Load and save HD image to cache memory
               try {
                 await GlobalAPI.fetchShowImage(userLogin[0].employeeID).then(

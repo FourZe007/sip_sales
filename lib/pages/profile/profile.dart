@@ -11,6 +11,7 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/button/colored_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
+import 'package:sip_sales/widget/status/failure_animation.dart';
 import 'package:sip_sales/widget/status/loading_animation.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -96,13 +97,25 @@ class ProfilePageState extends State<ProfilePage> {
 
   void takePhoto(BuildContext context, SipSalesState state) async {
     print('Take Photo pressed!');
-    await state.takeProfilePictureFromCamera(context).then((_) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoadingAnimationPage(false, true),
-        ),
-      );
+    await state.takeProfilePictureFromCamera(context).then((bool isAvailable) {
+      if (isAvailable) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoadingAnimationPage(false, true),
+          ),
+        );
+      } else {
+        state.setIsProfileUploaded(false);
+        state.displayDescription = 'Profil gagal diunggah.';
+        state.returnPage = '/profile';
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const FailureAnimationPage(),
+          ),
+        );
+      }
     });
   }
 

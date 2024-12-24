@@ -102,7 +102,7 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
 
   void assetHandler(SipSalesState state) async {
     if (state.fetchFilteredList.isEmpty) {
-      if (activityType == state.fetchManagerActivityTypeList[2].activityName) {
+      if (activityType == state.getManagerActivityTypeList[2].activityName) {
         uploadImageFromGallery(
           context,
           state,
@@ -567,7 +567,7 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                       ),
                       child: CustomDropDown(
                         listData:
-                            managerActivityState.fetchManagerActivityTypeList,
+                            managerActivityState.getManagerActivityTypeList,
                         inputan: activityType,
                         hint: 'Tipe Aktivitas Manajer',
                         handle: setActivityType,
@@ -841,7 +841,7 @@ class _OldManagerNewActivityPageState extends State<OldManagerNewActivityPage> {
                       if (!managerActivityState.isLoading.value) {
                         createActivity(
                           managerActivityState,
-                          managerActivityState.fetchManagerActivityTypeList,
+                          managerActivityState.getManagerActivityTypeList,
                           activityType,
                           activityDescription,
                         );

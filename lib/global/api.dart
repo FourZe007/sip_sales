@@ -129,12 +129,12 @@ class GlobalAPI {
     print('img: $img');
 
     Map mapUploadImage = {
-      "Mode": 1,
+      "Mode": '1',
       "EmployeeID": id,
       'Photo': img,
     };
 
-    print(mapUploadImage);
+    print('Map upload image: $mapUploadImage');
 
     try {
       final response =

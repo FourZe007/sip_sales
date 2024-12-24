@@ -133,7 +133,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
 
   void assetHandler(SipSalesState state) async {
     if (state.fetchFilteredList.isEmpty) {
-      if (activityType == state.fetchManagerActivityTypeList[2].activityName) {
+      if (activityType == state.getManagerActivityTypeList[2].activityName) {
         uploadImageFromGallery(
           context,
           state,
@@ -604,7 +604,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                                   ),
                                   child: CustomDropDown(
                                     listData: managerActivityState
-                                        .fetchManagerActivityTypeList,
+                                        .getManagerActivityTypeList,
                                     inputan: activityType,
                                     hint: 'Tipe Aktivitas Manajer',
                                     handle: setActivityType,
@@ -642,7 +642,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                                   ? activityDescription
                                   : activityDescription == ''
                                       ? managerActivityState
-                                          .managerActivityTypeList[0]
+                                          .getManagerActivityTypeList[0]
                                           .activityTemplate
                                       : activityDescription,
                             ),
@@ -909,7 +909,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                                 createActivity(
                                   managerActivityState,
                                   managerActivityState
-                                      .fetchManagerActivityTypeList,
+                                      .getManagerActivityTypeList,
                                   activityType,
                                   activityDescription,
                                 );

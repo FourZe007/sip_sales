@@ -21,18 +21,18 @@ class _SuccessAnimationPageState extends State<SuccessAnimationPage> {
     final state = Provider.of<SipSalesState>(context);
 
     return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (canPop, _) {
-        // First Approach return to Menu page
-        Future.delayed(Duration.zero, () {
-          Navigator.popAndPushNamed(context, state.getReturnPage);
-        });
+      // canPop: true,
+      // onPopInvokedWithResult: (canPop, _) {
+      //   // First Approach return to Menu page
+      //   Future.delayed(Duration.zero, () {
+      //     Navigator.popAndPushNamed(context, state.getReturnPage);
+      //   });
 
-        // Second Approach return to Menu page
-        // SchedulerBinding.instance.addPostFrameCallback((_) {
-        //   Navigator.popAndPushNamed(context, '/menu');
-        // });
-      },
+      //   // Second Approach return to Menu page
+      //   // SchedulerBinding.instance.addPostFrameCallback((_) {
+      //   //   Navigator.popAndPushNamed(context, '/menu');
+      //   // });
+      // },
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.green,

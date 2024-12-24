@@ -131,47 +131,49 @@ class SipSalesState with ChangeNotifier {
     ppList = [];
     base64PpList = [];
 
-    pickedPpList.add(await ImagePicker().pickImage(
-      source: ImageSource.camera,
-    ));
+    try {
+      pickedPpList.add(await ImagePicker().pickImage(
+        source: ImageSource.camera,
+      ));
 
-    // Check if image was picked
-    if (pickedPpList.isEmpty) {
-      // do something
-      print('Picked image is empty');
-    } else {
-      print('Read picked image as bytes');
-      // Read image bytes
-      if (pickedFileList.isNotEmpty) {
-        ppBytesList.add(await pickedPpList[0]!.readAsBytes());
+      // Check if image was picked
+      if (pickedPpList.isEmpty) {
+        // do something
+        print('Picked image is empty');
       } else {
-        return false;
-      }
+        print('Read picked image as bytes');
+        // Read image bytes
+        if (pickedPpList.isNotEmpty) {
+          ppBytesList.add(await pickedPpList[0]!.readAsBytes());
+        } else {
+          return false;
+        }
 
-      if (ppBytesList.isNotEmpty) {
-        print('Profile picture is not empty');
-        ppList.addAll(
-            ppBytesList.map((imageByte) => images.decodeImage(imageByte)!));
+        if (ppBytesList.isNotEmpty) {
+          print('Profile picture is not empty');
+          ppList.addAll(
+              ppBytesList.map((imageByte) => images.decodeImage(imageByte)!));
 
-        // Encode image to base64
-        try {
+          // Encode image to base64
           print('Encode image to base64');
           base64PpList.addAll(
               ppList.map((image) => base64Encode(images.encodePng(image))));
-        } catch (e) {
-          print('Error encoding image to base64: $e');
+          print('Base 64 Image: ${base64PpList.length}');
         }
       }
-    }
 
-    notifyListeners();
+      notifyListeners();
 
-    if (base64PpList.isNotEmpty) {
-      print('Image available');
-      return true;
+      if (base64PpList.isNotEmpty) {
+        print('Image available');
+        return true;
+      }
+      print('Image not available');
+      return false;
+    } catch (e) {
+      print('Error taking profile picture: $e');
+      return false;
     }
-    print('Image not available');
-    return false;
   }
 
   List<ModelResultMessage> uploadProfileState = [];
@@ -181,51 +183,40 @@ class SipSalesState with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String nip = prefs.getString('nip')!;
 
-    if (getBase64PpList.isNotEmpty) {
-      uploadProfileState.clear();
-      uploadProfileState.addAll(await GlobalAPI.fetchUploadImage(
-        nip,
-        getBase64PpList[0],
-      ));
+    uploadProfileState.clear();
+    uploadProfileState.addAll(await GlobalAPI.fetchUploadImage(
+      nip,
+      getBase64PpList[0],
+    ));
 
-      if (uploadProfileState.isNotEmpty) {
-        print('result message: ${uploadProfileState[0].resultMessage}');
-        if (uploadProfileState[0].resultMessage == 'SUKSES') {
-          setIsProfileUploaded(true);
-          displayDescription = 'Profil berhasil diunggah.';
-          returnPage = '/profile';
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SuccessAnimationPage(),
-            ),
-          );
-        } else {
-          setIsProfileUploaded(false);
-          displayDescription = 'Profil gagal diunggah.';
-          returnPage = '/profile';
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const FailureAnimationPage(),
-            ),
-          );
-        }
-      } else {
-        setIsProfileUploaded(false);
-        displayDescription =
-            'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
+    if (uploadProfileState.isNotEmpty) {
+      print('result message: ${uploadProfileState[0].resultMessage}');
+      if (uploadProfileState[0].resultMessage == 'SUKSES') {
+        setIsProfileUploaded(true);
+        displayDescription = 'Profil berhasil diunggah.';
         returnPage = '/profile';
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const WarningAnimationPage(),
+            builder: (context) => const SuccessAnimationPage(),
+          ),
+        );
+      } else {
+        setIsProfileUploaded(false);
+        displayDescription = 'Profil gagal diunggah.';
+        returnPage = '/profile';
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const FailureAnimationPage(),
           ),
         );
       }
     } else {
+      print('Profile image is empty');
       setIsProfileUploaded(false);
-      displayDescription = 'Gagal ambil gambar, silakan coba lagi.';
+      displayDescription =
+          'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
       returnPage = '/profile';
       Navigator.pushReplacement(
         context,
@@ -987,7 +978,7 @@ class SipSalesState with ChangeNotifier {
 
   List<ModelActivities> managerActivityTypeList = [];
 
-  List<ModelActivities> get fetchManagerActivityTypeList =>
+  List<ModelActivities> get getManagerActivityTypeList =>
       managerActivityTypeList;
 
   List<XFile?> pickedFileList = [];
@@ -1060,8 +1051,8 @@ class SipSalesState with ChangeNotifier {
     managerActivityTypeList.clear();
     managerActivityTypeList.addAll(await GlobalAPI.fetchManagerActivityTypes());
 
-    // print(
-    //     'Manager Activity Type List length: ${managerActivityTypeList.length}');
+    print(
+        'Manager Activity Type List length: ${managerActivityTypeList.length}');
     // for (var data in managerActivityTypeList) {
     //   print(data.activityName);
     // }
