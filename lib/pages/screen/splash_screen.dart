@@ -45,14 +45,14 @@ class _SplashScreenState extends State<SplashScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     isSignedIn = (prefs.getInt('flag') ?? 0) == 1 ? true : false;
 
-    if (prefs.getString('highResImage') != null) {
-      if (prefs.getString('highResImage')!.isNotEmpty) {
-        print('highResImage is not empty');
-        state.setProfilePicture(prefs.getString('highResImage')!);
-      } else {
-        print('highResImage is empty');
-      }
-    }
+    // if (prefs.getString('highResImage') != null) {
+    //   if (prefs.getString('highResImage')!.isNotEmpty) {
+    //     print('highResImage is not empty');
+    //     state.setProfilePicture(prefs.getString('highResImage')!);
+    //   } else {
+    //     print('highResImage is empty');
+    //   }
+    // }
   }
 
   Future<void> initializeAppData(BuildContext context) async {

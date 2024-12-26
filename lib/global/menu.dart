@@ -5,9 +5,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/activity/manager_activity.dart';
 import 'package:sip_sales/pages/attendance/attendance.dart';
 import 'package:sip_sales/pages/location/manager_new_activity.dart';
@@ -83,6 +85,8 @@ class MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<SipSalesState>(context);
+
     return FutureBuilder(
       future: getIsManager(),
       builder: (context, snapshot) {
@@ -620,15 +624,13 @@ class MenuPageState extends State<MenuPage> {
                                     backgroundColor: Colors.white,
                                     child: Builder(
                                       builder: (context) {
-                                        if (GlobalVar.userAccountList[0]
-                                            .profilePicture.isNotEmpty) {
+                                        if (state.getProfilePicture != '') {
                                           return ClipOval(
                                             child: SizedBox.fromSize(
                                               size: Size.fromRadius(28),
                                               child: Image.memory(
                                                 base64Decode(
-                                                  GlobalVar.userAccountList[0]
-                                                      .profilePicture,
+                                                  state.getProfilePicture,
                                                 ),
                                                 fit: BoxFit.cover,
                                               ),

@@ -81,11 +81,40 @@ class _LocationPageState extends State<LocationPage> {
       state.setIsManager(prefs.getInt('isManager'));
 
       if (GlobalVar.nip != '' && GlobalVar.password != '') {
-        GlobalVar.userAccountList = await GlobalAPI.fetchUserAccount(
+        GlobalVar.userAccountList.clear();
+        GlobalVar.userAccountList.addAll(await GlobalAPI.fetchUserAccount(
           GlobalVar.nip!,
           GlobalVar.password!,
           state.getUUID,
-        );
+        ));
+
+        if (GlobalVar.userAccountList.isNotEmpty &&
+            state.getProfilePicture.isEmpty &&
+            state.getProfilePicturePreview.isEmpty) {
+          state.setProfilePicture(GlobalVar.userAccountList[0].profilePicture);
+          try {
+            await GlobalAPI.fetchShowImage(
+                    GlobalVar.userAccountList[0].employeeID)
+                .then((String highResImg) async {
+              if (highResImg == 'not available' ||
+                  highResImg == 'failed' ||
+                  highResImg == 'error') {
+                state.setProfilePicturePreview('');
+                await prefs.setString('highResImage', '');
+                print('High Res Image is not available.');
+              } else {
+                state.setProfilePicturePreview(highResImg);
+                await prefs.setString('highResImage', highResImg);
+                print('High Res Image successfully loaded.');
+                print('High Res Image: $highResImg');
+              }
+            });
+          } catch (e) {
+            print('Show HD Image Error: $e');
+            state.setProfilePicturePreview('');
+            await prefs.setString('highResImage', '');
+          }
+        }
       }
 
       // Note -> Load Manager and Sales Dropdown value moved to splash screen

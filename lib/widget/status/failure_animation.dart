@@ -68,18 +68,12 @@ class _FailureAnimationPageState extends State<FailureAnimationPage> {
                         if (Platform.isIOS) {
                           return IconButton(
                             icon: const Icon(Icons.arrow_back_ios),
-                            onPressed: () => Navigator.popAndPushNamed(
-                              context,
-                              state.getReturnPage,
-                            ),
+                            onPressed: () => Navigator.pop(context),
                           );
                         } else {
                           return IconButton(
                             icon: const Icon(Icons.arrow_back),
-                            onPressed: () => Navigator.popAndPushNamed(
-                              context,
-                              state.getReturnPage,
-                            ),
+                            onPressed: () => Navigator.pop(context),
                           );
                         }
                       },

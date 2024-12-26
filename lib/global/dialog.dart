@@ -23,9 +23,7 @@ class GlobalDialog {
               child: SizedBox.fromSize(
                 size: Size.fromRadius(200),
                 child: Image.memory(
-                  base64Decode(
-                    GlobalVar.userAccountList[0].profilePicture,
-                  ),
+                  base64Decode(img),
                   fit: BoxFit.cover,
                 ),
               ),

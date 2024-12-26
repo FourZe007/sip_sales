@@ -11,6 +11,7 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/button/colored_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
+import 'package:sip_sales/widget/status/failure_animation.dart';
 import 'package:sip_sales/widget/status/loading_animation.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,17 +30,19 @@ class ProfilePageState extends State<ProfilePage> {
   bool isFake = false;
   bool isLocationEnabled = false;
 
-  void logout(Function resetLocationIndex) async {
+  void logout(SipSalesState state) async {
     setState(() {
       isLoading = true;
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     // String tempDeviceID = prefs.getString('deviceID') ?? '';
     prefs.clear();
+    state.setProfilePicture('');
+    state.setProfilePicturePreview('');
+    state.setLocationIndex(0);
     setState(() {
       isLoading = false;
     });
-    resetLocationIndex(0);
 
     Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);
   }
@@ -96,13 +99,24 @@ class ProfilePageState extends State<ProfilePage> {
 
   void takePhoto(BuildContext context, SipSalesState state) async {
     print('Take Photo pressed!');
-    await state.takeProfilePictureFromCamera(context).then((_) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoadingAnimationPage(false, true),
-        ),
-      );
+    await state.takeProfilePictureFromCamera(context).then((bool isAvailable) {
+      if (isAvailable) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoadingAnimationPage(false, true),
+          ),
+        );
+      } else {
+        state.setIsProfileUploaded(false);
+        state.displayDescription = 'Profil gagal diunggah.';
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const FailureAnimationPage(),
+          ),
+        );
+      }
     });
   }
 
@@ -110,11 +124,15 @@ class ProfilePageState extends State<ProfilePage> {
     BuildContext context,
     SipSalesState state,
   ) {
-    print('High Res Image: ${state.getProfilePicture}');
-    GlobalDialog.previewProfileImage(
-      context,
-      state.getProfilePicture,
-    );
+    try {
+      print('High Res Image: ${state.getProfilePicturePreview}');
+      GlobalDialog.previewProfileImage(
+        context,
+        state.getProfilePicturePreview,
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   void openSettings() {
@@ -239,7 +257,7 @@ class ProfilePageState extends State<ProfilePage> {
                                 'Cancel',
                               ),
                               ColoredButton(
-                                () => logout(profileState.setLocationIndex),
+                                () => logout(profileState),
                                 'LOG OUT',
                                 isCancel: true,
                               ),
@@ -364,11 +382,9 @@ class ProfilePageState extends State<ProfilePage> {
                       children: [
                         // Circle Icon of Person
                         Expanded(
-                          // Icon with edit button
                           child: Builder(
                             builder: (context) {
-                              if (GlobalVar
-                                  .userAccountList[0].profilePicture.isEmpty) {
+                              if (profileState.getProfilePicture == '') {
                                 return GestureDetector(
                                   onTap: () => takePhoto(context, profileState),
                                   child: Align(
@@ -416,8 +432,7 @@ class ProfilePageState extends State<ProfilePage> {
                                         size: Size.fromRadius(38),
                                         child: Image.memory(
                                           base64Decode(
-                                            GlobalVar.userAccountList[0]
-                                                .profilePicture,
+                                            profileState.getProfilePicture,
                                           ),
                                           fit: BoxFit.cover,
                                         ),
@@ -432,18 +447,25 @@ class ProfilePageState extends State<ProfilePage> {
                         // User Data, contains of name and employee ID
                         Expanded(
                           flex: 3,
-                          child: Wrap(
-                            children: [
-                              Text(
-                                GlobalVar.userAccountList[0].employeeName,
-                                style: GlobalFont.terafontRBold,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                GlobalVar.userAccountList[0].employeeID,
-                                style: GlobalFont.mediumgiantfontRBold,
-                              ),
-                            ],
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.025,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  GlobalVar.userAccountList[0].employeeName,
+                                  style: GlobalFont.terafontRBold,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  GlobalVar.userAccountList[0].employeeID,
+                                  style: GlobalFont.mediumgiantfontRBold,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         // ~:Action Button:~
@@ -461,217 +483,248 @@ class ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-                  Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.13,
-                        color: Colors.grey[100],
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.015,
-                          bottom: MediaQuery.of(context).size.height * 0.005,
-                        ),
-                        padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.width * 0.045,
-                          MediaQuery.of(context).size.height * 0.01,
-                          MediaQuery.of(context).size.width * 0.005,
-                          0.0,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Lokasi Kerja',
-                              style: GlobalFont.mediumgiantfontRBold,
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.work, size: 30.0),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.height *
-                                        0.04,
-                                  ),
-                                  Expanded(
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Penempatan',
-                                            style: GlobalFont.bigfontR,
-                                          ),
-                                          Text(
-                                            '${GlobalVar.userAccountList[0].locationName} ${GlobalVar.userAccountList[0].bsName}',
-                                            // 'askjoasjdoaisjdaosjdaosdjoaisjdoiasjdoasijdoaisjdio',
-                                            style: GlobalFont.giantfontR,
-                                          ),
-                                        ],
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.13,
+                          color: Colors.grey[100],
+                          margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.015,
+                            bottom: MediaQuery.of(context).size.height * 0.005,
+                          ),
+                          padding: EdgeInsets.fromLTRB(
+                            MediaQuery.of(context).size.width * 0.045,
+                            MediaQuery.of(context).size.height * 0.01,
+                            MediaQuery.of(context).size.width * 0.005,
+                            0.0,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Lokasi Kerja',
+                                style: GlobalFont.mediumgiantfontRBold,
+                              ),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: const Icon(
+                                          Icons.work,
+                                          size: 30.0,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.125,
-                        color: Colors.grey[100],
-                        margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.015,
-                          bottom: MediaQuery.of(context).size.height * 0.005,
-                        ),
-                        padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.height * 0.02,
-                          MediaQuery.of(context).size.height * 0.01,
-                          MediaQuery.of(context).size.height * 0.005,
-                          0.0,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Pengaturan',
-                              style: GlobalFont.mediumgiantfontRBold,
-                            ),
-                            // Background Location Service Switch Button
-                            // Container(
-                            //   height: MediaQuery.of(context).size.height * 0.05,
-                            //   alignment: Alignment.centerLeft,
-                            //   margin: EdgeInsets.only(
-                            //     top: MediaQuery.of(context).size.height * 0.01,
-                            //     bottom: MediaQuery.of(context).size.height * 0.005,
-                            //   ),
-                            //   padding: EdgeInsets.fromLTRB(
-                            //     MediaQuery.of(context).size.height * 0.02,
-                            //     0.0,
-                            //     MediaQuery.of(context).size.height * 0.005,
-                            //     0.0,
-                            //   ),
-                            //   child: Row(
-                            //     crossAxisAlignment: CrossAxisAlignment.center,
-                            //     children: [
-                            //       const Icon(Icons.location_on, size: 30.0),
-                            //       SizedBox(
-                            //         width: MediaQuery.of(context).size.height * 0.04,
-                            //       ),
-                            //       Text(
-                            //         'Background Location',
-                            //         style: GlobalFont.mediumgiantfontR,
-                            //       ),
-                            //       SizedBox(
-                            //         width: MediaQuery.of(context).size.width * 0.2,
-                            //       ),
-                            //       Switch(
-                            //         value: isLocationEnabled,
-                            //         onChanged: toggleLocationSwitch,
-                            //         activeColor: Colors.blue,
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.lock_rounded, size: 30.0),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.height *
-                                        0.04,
-                                  ),
-                                  InkWell(
-                                    onTap: () => launchLink(context),
-                                    child: SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.75,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Kebijakan Privasi',
-                                            style: GlobalFont.giantfontR,
-                                          ),
-                                          Text(
-                                            'Ketuk untuk membuka',
-                                            style: GlobalFont.bigfontR,
-                                          ),
-                                        ],
+                                    Expanded(
+                                      flex: 5,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.025,
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Penempatan',
+                                              style: GlobalFont.bigfontR,
+                                            ),
+                                            Text(
+                                              '${GlobalVar.userAccountList[0].locationName}, ${GlobalVar.userAccountList[0].bsName}',
+                                              // 'askjoasjdoaisjdaosjdaosdjoaisjdoiasjdoasijdoaisjdio',
+                                              style: GlobalFont.giantfontR,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.05,
-                          right: MediaQuery.of(context).size.width * 0.05,
-                          top: MediaQuery.of(context).size.height * 0.01,
-                        ),
-                        child: Text(
-                          'Version 1.1.4',
-                          style: GlobalFont.bigfontR,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: MediaQuery.of(context).size.height * 0.015,
-                          horizontal: MediaQuery.of(context).size.width * 0.03,
-                        ),
-                        child: ElevatedButton(
-                          onPressed: toggleLogOutPage,
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size(
-                              MediaQuery.of(context).size.width * 0.95,
-                              MediaQuery.of(context).size.height * 0.04,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            backgroundColor: Colors.blue[300],
-                          ),
-                          child: Builder(
-                            builder: (context) {
-                              if (isLoading) {
-                                return Builder(
-                                  builder: (context) {
-                                    if (Platform.isIOS) {
-                                      return const CupertinoActivityIndicator(
-                                        radius: 12.5,
-                                        color: Colors.white,
-                                      );
-                                    } else {
-                                      return const CircleLoading(
-                                        warna: Colors.white,
-                                      );
-                                    }
-                                  },
-                                );
-                              } else {
-                                return Text(
-                                  'SIGN OUT',
-                                  style: GlobalFont.giantfontR,
-                                );
-                              }
-                            },
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.125,
+                          color: Colors.grey[100],
+                          margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.015,
+                            bottom: MediaQuery.of(context).size.height * 0.005,
+                          ),
+                          padding: EdgeInsets.fromLTRB(
+                            MediaQuery.of(context).size.height * 0.02,
+                            MediaQuery.of(context).size.height * 0.01,
+                            MediaQuery.of(context).size.height * 0.005,
+                            0.0,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Pengaturan',
+                                style: GlobalFont.mediumgiantfontRBold,
+                              ),
+                              // Background Location Service Switch Button
+                              // Container(
+                              //   height: MediaQuery.of(context).size.height * 0.05,
+                              //   alignment: Alignment.centerLeft,
+                              //   margin: EdgeInsets.only(
+                              //     top: MediaQuery.of(context).size.height * 0.01,
+                              //     bottom: MediaQuery.of(context).size.height * 0.005,
+                              //   ),
+                              //   padding: EdgeInsets.fromLTRB(
+                              //     MediaQuery.of(context).size.height * 0.02,
+                              //     0.0,
+                              //     MediaQuery.of(context).size.height * 0.005,
+                              //     0.0,
+                              //   ),
+                              //   child: Row(
+                              //     crossAxisAlignment: CrossAxisAlignment.center,
+                              //     children: [
+                              //       const Icon(Icons.location_on, size: 30.0),
+                              //       SizedBox(
+                              //         width: MediaQuery.of(context).size.height * 0.04,
+                              //       ),
+                              //       Text(
+                              //         'Background Location',
+                              //         style: GlobalFont.mediumgiantfontR,
+                              //       ),
+                              //       SizedBox(
+                              //         width: MediaQuery.of(context).size.width * 0.2,
+                              //       ),
+                              //       Switch(
+                              //         value: isLocationEnabled,
+                              //         onChanged: toggleLocationSwitch,
+                              //         activeColor: Colors.blue,
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: const Icon(
+                                          Icons.lock_rounded,
+                                          size: 30.0,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 5,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.025,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () => launchLink(context),
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.75,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Kebijakan Privasi',
+                                                  style: GlobalFont.giantfontR,
+                                                ),
+                                                Text(
+                                                  'Ketuk untuk membuka',
+                                                  style: GlobalFont.bigfontR,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.05,
+                            right: MediaQuery.of(context).size.width * 0.05,
+                            top: MediaQuery.of(context).size.height * 0.01,
+                          ),
+                          child: Text(
+                            'Version 1.1.4',
+                            style: GlobalFont.bigfontR,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.015,
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.03,
+                          ),
+                          child: ElevatedButton(
+                            onPressed: toggleLogOutPage,
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: Size(
+                                MediaQuery.of(context).size.width * 0.95,
+                                MediaQuery.of(context).size.height * 0.04,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              backgroundColor: Colors.blue[300],
+                            ),
+                            child: Builder(
+                              builder: (context) {
+                                if (isLoading) {
+                                  return Builder(
+                                    builder: (context) {
+                                      if (Platform.isIOS) {
+                                        return const CupertinoActivityIndicator(
+                                          radius: 12.5,
+                                          color: Colors.white,
+                                        );
+                                      } else {
+                                        return const CircleLoading(
+                                          warna: Colors.white,
+                                        );
+                                      }
+                                    },
+                                  );
+                                } else {
+                                  return Text(
+                                    'SIGN OUT',
+                                    style: GlobalFont.giantfontR,
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

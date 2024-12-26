@@ -29,8 +29,12 @@ class SipSalesState with ChangeNotifier {
   String displayDescription = '';
   String get getdDisplayDescription => displayDescription;
 
-  String returnPage = '';
-  String get getReturnPage => returnPage;
+  void setDisplayDescription(String value) {
+    displayDescription = value;
+  }
+
+  // String returnPage = '';
+  // String get getReturnPage => returnPage;
 
   final profileShowcaseKey = GlobalKey(debugLabel: 'profile');
   final dateTimeShowcaseKey = GlobalKey(debugLabel: 'datetime');
@@ -65,6 +69,14 @@ class SipSalesState with ChangeNotifier {
 
   void setProfilePicture(String value) {
     profilePicture = value;
+    notifyListeners();
+  }
+
+  String profilePicturePreview = '';
+  String get getProfilePicturePreview => profilePicturePreview;
+
+  void setProfilePicturePreview(String value) {
+    profilePicturePreview = value;
     notifyListeners();
   }
 
@@ -179,7 +191,7 @@ class SipSalesState with ChangeNotifier {
   List<ModelResultMessage> uploadProfileState = [];
   List<ModelResultMessage> get getUploadProfileState => uploadProfileState;
 
-  Future<void> uploadProfilePicture(BuildContext context) async {
+  Future<String> uploadProfilePicture(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String nip = prefs.getString('nip')!;
 
@@ -192,38 +204,73 @@ class SipSalesState with ChangeNotifier {
     if (uploadProfileState.isNotEmpty) {
       print('result message: ${uploadProfileState[0].resultMessage}');
       if (uploadProfileState[0].resultMessage == 'SUKSES') {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await GlobalAPI.fetchUserAccount(
+          prefs.getString('nip')!,
+          prefs.getString('password')!,
+          await generateUuid(),
+        ).then((user) async {
+          setProfilePicture(user[0].profilePicture);
+          try {
+            await GlobalAPI.fetchShowImage(user[0].employeeID).then(
+              (String highResImg) async {
+                if (highResImg == 'not available') {
+                  setProfilePicturePreview(highResImg);
+                  print('High Res Image is not available.');
+                } else if (highResImg == 'failed') {
+                  setProfilePicturePreview(highResImg);
+                  print('High Res Image failed to load.');
+                } else if (highResImg == 'error') {
+                  setProfilePicturePreview(highResImg);
+                  print('An error occured, please try again.');
+                } else {
+                  setProfilePicturePreview(highResImg);
+                  await prefs.setString('highResImage', highResImg);
+                  print('High Res Image successfully loaded.');
+                  print('High Res Image: $highResImg');
+                }
+              },
+            );
+          } catch (e) {
+            print('Show HD Image Error: $e');
+          }
+        });
+
         setIsProfileUploaded(true);
-        displayDescription = 'Profil berhasil diunggah.';
-        returnPage = '/profile';
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SuccessAnimationPage(),
-          ),
-        );
+        displayDescription = 'Foto profil berhasil diunggah.';
+
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const SuccessAnimationPage(),
+        //   ),
+        // );
+        return 'success';
       } else {
         setIsProfileUploaded(false);
-        displayDescription = 'Profil gagal diunggah.';
-        returnPage = '/profile';
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const FailureAnimationPage(),
-          ),
-        );
+        displayDescription = 'Foto profil gagal diunggah.';
+
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const FailureAnimationPage(),
+        //   ),
+        // );
+        return 'failed';
       }
     } else {
       print('Profile image is empty');
       setIsProfileUploaded(false);
       displayDescription =
           'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
-      returnPage = '/profile';
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const WarningAnimationPage(),
-        ),
-      );
+
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => const WarningAnimationPage(),
+      //   ),
+      // );
+      return 'error';
     }
   }
 
@@ -241,7 +288,6 @@ class SipSalesState with ChangeNotifier {
       if (uploadProfileState[0].resultMessage == 'SUKSES') {
         setIsProfileUploaded(true);
         displayDescription = 'Profil berhasil diunggah.';
-        returnPage = '/profile';
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -251,7 +297,6 @@ class SipSalesState with ChangeNotifier {
       } else {
         setIsProfileUploaded(false);
         displayDescription = 'Profil gagal diunggah.';
-        returnPage = '/profile';
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -263,7 +308,6 @@ class SipSalesState with ChangeNotifier {
       setIsProfileUploaded(false);
       displayDescription =
           'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
-      returnPage = '/profile';
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -632,335 +676,351 @@ class SipSalesState with ChangeNotifier {
   // }
 
   // Function -> run 'Check In' button
-  void checkIn(BuildContext context) async {
+  Future<String> checkIn(BuildContext context) async {
     // await setIsLoadingProgress();
     // fetchAttendanceStatus();
 
-    if (await location.serviceEnabled()) {
-      // Enable -> uncommand if all requirement fulfilled
-      await location.getLocation().then((coordinate) async {
-        print(GlobalVar.userAccountList[0].latitude);
-        print(GlobalVar.userAccountList[0].longitude);
-        print(coordinate.latitude);
-        print(coordinate.longitude);
+    final prefs = await SharedPreferences.getInstance();
+    profilePicture = prefs.getString('highResImage') ?? '';
+    if (profilePicture.isNotEmpty) {
+      if (await location.serviceEnabled()) {
+        // Enable -> uncommand if all requirement fulfilled
+        await location.getLocation().then((coordinate) async {
+          print(GlobalVar.userAccountList[0].latitude);
+          print(GlobalVar.userAccountList[0].longitude);
+          print(coordinate.latitude);
+          print(coordinate.longitude);
 
-        await GlobalAPI.fetchIsWithinRadius(
-          GlobalVar.userAccountList[0].latitude,
-          GlobalVar.userAccountList[0].longitude,
-          coordinate.latitude!,
-          coordinate.longitude!,
-        ).then((status) {
-          if (status == 'NOT OK') {
-            isWithinRadius = false;
-          } else {
-            isWithinRadius = true;
-          }
+          await GlobalAPI.fetchIsWithinRadius(
+            GlobalVar.userAccountList[0].latitude,
+            GlobalVar.userAccountList[0].longitude,
+            coordinate.latitude!,
+            coordinate.longitude!,
+          ).then((status) {
+            if (status == 'NOT OK') {
+              isWithinRadius = false;
+            } else {
+              isWithinRadius = true;
+            }
 
-          print('IsWithinRadius: $isWithinRadius');
+            print('IsWithinRadius: $isWithinRadius');
+          });
         });
-      });
 
-      coordinateList.clear();
+        coordinateList.clear();
 
-      if (!isWithinRadius) {
-        displayDescription = 'Lokasi Tidak Valid';
-        returnPage = '/menu';
-        // ~:Warning Animation:~
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const WarningAnimationPage(),
-          ),
-        );
-      } else {
-        checkInList.clear();
-        checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
-          '1',
-          GlobalVar.nip!,
-          GlobalVar.userAccountList[0].branch,
-          GlobalVar.userAccountList[0].shop,
-          GlobalVar.userAccountList[0].locationID,
-          DateTime.now().toString().split(' ')[0],
-          DateTime.now().toString().split(' ')[1].replaceAll(
-                RegExp(r':'),
-                '.',
-              ),
-          '',
-        ));
+        if (!isWithinRadius) {
+          displayDescription = 'Lokasi Tidak Valid';
 
-        print('Check In: ${checkInList[0].resultMessage}');
-
-        // ~:Check In List is not empty:~
-        if (checkInList.isNotEmpty) {
-          print('Check In: ${checkInList[0].resultMessage}');
-          if (checkInList[0].resultMessage == 'SUKSES') {
-            saveCheckInStatus(false);
-            saveCheckOutStatus(true);
-
-            displayDescription = 'Check In berhasil';
-            returnPage = '/menu';
-            // ~:Success Animation:~
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SuccessAnimationPage(),
-              ),
-            );
-
-            // Note --> Background location disabled
-            // await background_location.BackgroundLocation.startLocationService();
-            //
-            // await location.getLocation().then((coordinate) {
-            //   setCoordinateList(
-            //     coordinate.latitude,
-            //     coordinate.longitude,
-            //   );
-            // });
-            //
-            // addCoordinateList(ModelCoordinate(
-            //   longitude: longitude!,
-            //   latitude: latitude!,
-            //   time: time,
-            // ));
-            //
-            // trackUserLocation(context);
-          } else {
-            displayDescription = checkInList[0].resultMessage;
-            returnPage = '/menu';
-            // ~:Warning Animation:~
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const WarningAnimationPage(),
-              ),
-            );
-          }
+          // ~:Warning Animation:~
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const WarningAnimationPage(),
+          //   ),
+          // );
+          return 'warn';
         } else {
-          print('Check In is empty');
+          checkInList.clear();
+          checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
+            '1',
+            GlobalVar.nip!,
+            GlobalVar.userAccountList[0].branch,
+            GlobalVar.userAccountList[0].shop,
+            GlobalVar.userAccountList[0].locationID,
+            DateTime.now().toString().split(' ')[0],
+            DateTime.now().toString().split(' ')[1].replaceAll(
+                  RegExp(r':'),
+                  '.',
+                ),
+            '',
+          ));
 
-          displayDescription = 'Check In gagal';
-          returnPage = '/menu';
-          // ~:Failure Animation:~
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const FailureAnimationPage(),
-            ),
-          );
+          print('Check In: ${checkInList[0].resultMessage}');
+
+          // ~:Check In List is not empty:~
+          if (checkInList.isNotEmpty) {
+            print('Check In: ${checkInList[0].resultMessage}');
+            if (checkInList[0].resultMessage == 'SUKSES') {
+              saveCheckInStatus(false);
+              saveCheckOutStatus(true);
+
+              displayDescription = 'Check In berhasil';
+
+              // ~:Success Animation:~
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const SuccessAnimationPage(),
+              //   ),
+              // );
+              return 'success';
+
+              // Note --> Background location disabled
+              // await background_location.BackgroundLocation.startLocationService();
+              //
+              // await location.getLocation().then((coordinate) {
+              //   setCoordinateList(
+              //     coordinate.latitude,
+              //     coordinate.longitude,
+              //   );
+              // });
+              //
+              // addCoordinateList(ModelCoordinate(
+              //   longitude: longitude!,
+              //   latitude: latitude!,
+              //   time: time,
+              // ));
+              //
+              // trackUserLocation(context);
+            } else {
+              displayDescription = checkInList[0].resultMessage;
+              // ~:Warning Animation:~
+              // Navigator.pushReplacement(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const WarningAnimationPage(),
+              //   ),
+              // );
+              return 'warn';
+            }
+          } else {
+            print('Check In is empty');
+
+            displayDescription = 'Check In gagal';
+            // ~:Failure Animation:~
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const FailureAnimationPage(),
+            //   ),
+            // );
+            return 'failed';
+          }
         }
-      }
 
-      // ~:Remove if code already working:~
-      // if (await fetchCheckInStatus()) {
-      //
-      // } else {
-      //   // ~:Haven't Check Out Yet:~
-      //   displayDescription = 'Mohon check out terlebih dahulu.';
-      //   returnPage = '/menu';
-      //   // ~:Warning Animation:~
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) => const WarningAnimationPage(),
-      //     ),
-      //   );
-      // }
+        // ~:Remove if code already working:~
+        // if (await fetchCheckInStatus()) {
+        //
+        // } else {
+        //   // ~:Haven't Check Out Yet:~
+        //   displayDescription = 'Mohon check out terlebih dahulu.';
+        //   returnPage = '/menu';
+        //   // ~:Warning Animation:~
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => const WarningAnimationPage(),
+        //     ),
+        //   );
+        // }
+      } else {
+        // ~:Location Service deactivated:~
+        displayDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
+        // ~:Warning Animation:~
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const WarningAnimationPage(),
+        //   ),
+        // );
+        return 'warn';
+      }
     } else {
-      // ~:Location Service deactivated:~
-      displayDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
-      returnPage = '/menu';
-      // ~:Warning Animation:~
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const WarningAnimationPage(),
-        ),
-      );
+      displayDescription = 'Mohon upload foto profil terlebih dahulu.';
+      return 'warn';
     }
   }
 
   // Function -> run 'Check Out' button
-  void checkOut(BuildContext context) async {
+  Future<String> checkOut(BuildContext context) async {
     // await setIsLoadingProgress();
     // Note --> Background location process disabled
     // await background_location.BackgroundLocation.stopLocationService();
 
-    if (await location.serviceEnabled()) {
-      await location.getLocation().then((coordinate) async {
-        await GlobalAPI.fetchIsWithinRadius(
-          GlobalVar.userAccountList[0].latitude,
-          GlobalVar.userAccountList[0].longitude,
-          coordinate.latitude!,
-          coordinate.longitude!,
-        ).then((status) {
-          if (status == 'NOT OK') {
-            isWithinRadius = false;
-          } else {
-            isWithinRadius = true;
-          }
+    final prefs = await SharedPreferences.getInstance();
+    profilePicture = prefs.getString('highResImage') ?? '';
+    if (profilePicture.isNotEmpty) {
+      if (await location.serviceEnabled()) {
+        await location.getLocation().then((coordinate) async {
+          await GlobalAPI.fetchIsWithinRadius(
+            GlobalVar.userAccountList[0].latitude,
+            GlobalVar.userAccountList[0].longitude,
+            coordinate.latitude!,
+            coordinate.longitude!,
+          ).then((status) {
+            if (status == 'NOT OK') {
+              isWithinRadius = false;
+            } else {
+              isWithinRadius = true;
+            }
 
-          print('IsWithinRadius: $isWithinRadius');
+            print('IsWithinRadius: $isWithinRadius');
+          });
         });
-      });
 
-      if (!isWithinRadius) {
-        displayDescription = 'Lokasi Tidak Valid.';
-        returnPage = '/menu';
-        // ~:Warning Animation:~
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const WarningAnimationPage(),
-          ),
-        );
-      } else {
-        // Note --> Background location support variable
-        // coordinateList.clear();
-        // coordinateList.addAll(await readListFromCache('cached_coordinates'));
-
-        checkOutList.clear();
-        checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
-          '2',
-          GlobalVar.nip!,
-          GlobalVar.userAccountList[0].branch,
-          GlobalVar.userAccountList[0].shop,
-          GlobalVar.userAccountList[0].locationID,
-          DateTime.now().toString().split(' ')[0],
-          '',
-          DateTime.now().toString().split(' ')[1].replaceAll(
-                RegExp(r':'),
-                '.',
-              ),
-        ));
-
-        // Note -> background location process disabled
-        // activityTimestampList.addAll(await GlobalAPI.fetchActivityTimestamp(
-        //   '1',
-        //   GlobalVar.nip!,
-        //   DateTime.now().toString().split(' ')[0],
-        //   coordinateList,
-        // ));
-        //
-        // Delete -> remove later
-        // bool byPass = true;
-        //
-        // Delete -> remove later
-        // Note --> send to my own Whatsapp to verify data
-        // ~:NEW:~
-        // List<dynamic> latList = [];
-        // List<dynamic> lngList = [];
-        // List<dynamic> timeList = [];
-        //
-        // latList.addAll(fetchCoordinateList.map((map) {
-        //   return map.latitude;
-        // }));
-        //
-        // await GlobalAPI.fetchSendMessage(
-        //   '6281338518880',
-        //   'Latitude Coordinate: $latList',
-        //   'realme-tab',
-        //   'text',
-        // );
-        //
-        // lngList.addAll(fetchCoordinateList.map((map) {
-        //   return map.longitude;
-        // }));
-        //
-        // await GlobalAPI.fetchSendMessage(
-        //   '6281338518880',
-        //   'Longitude Coordinate: $lngList',
-        //   'realme-tab',
-        //   'text',
-        // );
-        //
-        // timeList.addAll(fetchCoordinateList.map((map) {
-        //   return map.time;
-        // }));
-        //
-        // await GlobalAPI.fetchSendMessage(
-        //   '6281338518880',
-        //   'Time: $timeList',
-        //   'realme-tab',
-        //   'text',
-        // );
-        //
-        // latList.clear();
-        // lngList.clear();
-        // timeList.clear();
-        // ~:NEW:~
-
-        // ~:Check Out List is not empty:~
-        if (checkOutList.isNotEmpty) {
-          print('Check Out: ${checkOutList[0].resultMessage}');
-          // ~:Check Out Success:~
-          // if (byPass == true &&
-          // await setIsLoadingProgress();
-          if (checkOutList[0].resultMessage == 'SUKSES') {
-            saveCheckInStatus(true);
-            saveCheckOutStatus(false);
-
-            displayDescription = 'Check Out berhasil.';
-            returnPage = '/menu';
-            // ~:Success Animation:~
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SuccessAnimationPage(),
-              ),
-            );
-          } else {
-            // ~:Check Out Failed:~
-            displayDescription = checkOutList[0].resultMessage;
-            returnPage = '/menu';
-            // ~:Failure Animation:~
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FailureAnimationPage(),
-              ),
-            );
-          }
+        if (!isWithinRadius) {
+          displayDescription = 'Lokasi Tidak Valid.';
+          // ~:Warning Animation:~
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const WarningAnimationPage(),
+          //   ),
+          // );
+          return 'warn';
         } else {
-          print('Check Out is empty');
-          // ~:Check Out List is empty:~
-          displayDescription = 'Check Out gagal.';
-          returnPage = '/menu';
-          // ~:Failure Animation:~
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const FailureAnimationPage(),
-            ),
-          );
-        }
-      }
+          // Note --> Background location support variable
+          // coordinateList.clear();
+          // coordinateList.addAll(await readListFromCache('cached_coordinates'));
 
-      // ~:Remove if code already working:~
-      // if (await fetchCheckOutStatus()) {
-      //
-      // } else {
-      //   // ~:Haven't Check In Yet:~
-      //   displayDescription = 'Mohon check in terlebih dahulu.';
-      //   returnPage = '/menu';
-      //   // ~:Warning Animation:~
-      //   Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) => const WarningAnimationPage(),
-      //     ),
-      //   );
-      // }
+          checkOutList.clear();
+          checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
+            '2',
+            GlobalVar.nip!,
+            GlobalVar.userAccountList[0].branch,
+            GlobalVar.userAccountList[0].shop,
+            GlobalVar.userAccountList[0].locationID,
+            DateTime.now().toString().split(' ')[0],
+            '',
+            DateTime.now().toString().split(' ')[1].replaceAll(
+                  RegExp(r':'),
+                  '.',
+                ),
+          ));
+
+          // Note -> background location process disabled
+          // activityTimestampList.addAll(await GlobalAPI.fetchActivityTimestamp(
+          //   '1',
+          //   GlobalVar.nip!,
+          //   DateTime.now().toString().split(' ')[0],
+          //   coordinateList,
+          // ));
+          //
+          // Delete -> remove later
+          // bool byPass = true;
+          //
+          // Delete -> remove later
+          // Note --> send to my own Whatsapp to verify data
+          // ~:NEW:~
+          // List<dynamic> latList = [];
+          // List<dynamic> lngList = [];
+          // List<dynamic> timeList = [];
+          //
+          // latList.addAll(fetchCoordinateList.map((map) {
+          //   return map.latitude;
+          // }));
+          //
+          // await GlobalAPI.fetchSendMessage(
+          //   '6281338518880',
+          //   'Latitude Coordinate: $latList',
+          //   'realme-tab',
+          //   'text',
+          // );
+          //
+          // lngList.addAll(fetchCoordinateList.map((map) {
+          //   return map.longitude;
+          // }));
+          //
+          // await GlobalAPI.fetchSendMessage(
+          //   '6281338518880',
+          //   'Longitude Coordinate: $lngList',
+          //   'realme-tab',
+          //   'text',
+          // );
+          //
+          // timeList.addAll(fetchCoordinateList.map((map) {
+          //   return map.time;
+          // }));
+          //
+          // await GlobalAPI.fetchSendMessage(
+          //   '6281338518880',
+          //   'Time: $timeList',
+          //   'realme-tab',
+          //   'text',
+          // );
+          //
+          // latList.clear();
+          // lngList.clear();
+          // timeList.clear();
+          // ~:NEW:~
+
+          // ~:Check Out List is not empty:~
+          if (checkOutList.isNotEmpty) {
+            print('Check Out: ${checkOutList[0].resultMessage}');
+            // ~:Check Out Success:~
+            // if (byPass == true &&
+            // await setIsLoadingProgress();
+            if (checkOutList[0].resultMessage == 'SUKSES') {
+              saveCheckInStatus(true);
+              saveCheckOutStatus(false);
+
+              displayDescription = 'Check Out berhasil.';
+              // ~:Success Animation:~
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const SuccessAnimationPage(),
+              //   ),
+              // );
+              return 'success';
+            } else {
+              // ~:Check Out Failed:~
+              displayDescription = checkOutList[0].resultMessage;
+              // ~:Failure Animation:~
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const FailureAnimationPage(),
+              //   ),
+              // );
+              return 'warn';
+            }
+          } else {
+            print('Check Out is empty');
+            // ~:Check Out List is empty:~
+            displayDescription = 'Check Out gagal.';
+            // ~:Failure Animation:~
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const FailureAnimationPage(),
+            //   ),
+            // );
+            return 'failed';
+          }
+        }
+
+        // ~:Remove if code already working:~
+        // if (await fetchCheckOutStatus()) {
+        //
+        // } else {
+        //   // ~:Haven't Check In Yet:~
+        //   displayDescription = 'Mohon check in terlebih dahulu.';W
+        //   returnPage = '/menu';
+        //   // ~:Warning Animation:~
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => const WarningAnimationPage(),
+        //     ),
+        //   );
+        // }
+      } else {
+        // ~:Location Service deactivated:~
+        displayDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
+        // ~:Warning Animation:~
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const WarningAnimationPage(),
+        //   ),
+        // );
+        return 'warn';
+      }
     } else {
-      // ~:Location Service deactivated:~
-      displayDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
-      returnPage = '/menu';
-      // ~:Warning Animation:~
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const WarningAnimationPage(),
-        ),
-      );
+      displayDescription = 'Mohon upload foto profil terlebih dahulu.';
+      return 'warn';
     }
   }
 

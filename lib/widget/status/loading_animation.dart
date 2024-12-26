@@ -5,6 +5,9 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/widget/status/failure_animation.dart';
+import 'package:sip_sales/widget/status/success_animation.dart';
+import 'package:sip_sales/widget/status/warning_animation.dart';
 
 class LoadingAnimationPage extends StatefulWidget {
   const LoadingAnimationPage(
@@ -24,12 +27,81 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
   Future<void> processing(BuildContext context) async {
     final state = Provider.of<SipSalesState>(context, listen: false);
     if (widget.isProfileUploaded) {
-      state.uploadProfilePicture(context);
+      await state.uploadProfilePicture(context).then((status) {
+        if (status == 'success') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SuccessAnimationPage(),
+            ),
+          );
+        } else if (status == 'failed') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FailureAnimationPage(),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const WarningAnimationPage(),
+            ),
+          );
+        }
+      });
     } else {
       if (widget.isClockIn) {
-        state.checkIn(context);
+        await state.checkIn(context).then((status) {
+          if (status == 'success') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SuccessAnimationPage(),
+              ),
+            );
+          } else if (status == 'warn') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WarningAnimationPage(),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FailureAnimationPage(),
+              ),
+            );
+          }
+        });
       } else {
-        state.checkOut(context);
+        await state.checkOut(context).then((status) {
+          if (status == 'success') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SuccessAnimationPage(),
+              ),
+            );
+          } else if (status == 'warn') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WarningAnimationPage(),
+              ),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FailureAnimationPage(),
+              ),
+            );
+          }
+        });
       }
     }
   }
