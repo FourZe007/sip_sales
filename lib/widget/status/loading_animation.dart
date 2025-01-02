@@ -55,7 +55,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
       if (widget.isClockIn) {
         await state.checkIn(context).then((status) {
           if (status == 'success') {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const SuccessAnimationPage(),
@@ -69,7 +69,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
               ),
             );
           } else {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const FailureAnimationPage(),

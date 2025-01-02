@@ -353,10 +353,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                                         return Container(
                                           width:
                                               MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.125,
+                                          height: 140,
                                           alignment: Alignment.center,
                                           decoration: BoxDecoration(
                                             borderRadius:
@@ -414,6 +411,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
 
                                   return Container(
                                     width: MediaQuery.of(context).size.width,
+                                    height: 140,
                                     alignment: Alignment.centerLeft,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -452,46 +450,46 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                                     ),
                                     child: Column(
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Expanded(
-                                              child: Icon(
-                                                Icons.add_chart_rounded,
-                                                size: 37.5,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: SizedBox(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      '${data.locationName} ${data.branchName}',
-                                                      style: GlobalFont
-                                                          .giantfontRBold,
-                                                    ),
-                                                    Text(
-                                                      Format.tanggalFormat(
-                                                        data.date,
-                                                      ),
-                                                      style: GlobalFont
-                                                          .mediumgiantfontR,
-                                                    ),
-                                                  ],
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Expanded(
+                                                child: Icon(
+                                                  Icons.add_chart_rounded,
+                                                  size: 37.5,
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.01,
+                                              Expanded(
+                                                flex: 3,
+                                                child: SizedBox(
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        '${data.locationName} ${data.branchName}',
+                                                        style: GlobalFont
+                                                            .giantfontRBold,
+                                                      ),
+                                                      Text(
+                                                        Format.tanggalFormat(
+                                                          data.date,
+                                                        ),
+                                                        style: GlobalFont
+                                                            .mediumgiantfontR,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                         Container(
                                           width:
@@ -501,7 +499,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                                             horizontal: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.025,
+                                                0.05,
                                           ),
                                           child: Builder(
                                             builder: (context) {

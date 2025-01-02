@@ -12,20 +12,15 @@ class GlobalDialog {
     return showDialog(
       context: context,
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.03,
-          ),
-          child: CircleAvatar(
-            radius: 200,
-            backgroundColor: Colors.white,
-            child: ClipOval(
-              child: SizedBox.fromSize(
-                size: Size.fromRadius(200),
-                child: Image.memory(
-                  base64Decode(img),
-                  fit: BoxFit.cover,
-                ),
+        return CircleAvatar(
+          radius: 200,
+          backgroundColor: Colors.white,
+          child: ClipOval(
+            child: SizedBox.fromSize(
+              size: Size.fromRadius(188),
+              child: Image.memory(
+                base64Decode(img),
+                fit: BoxFit.cover,
               ),
             ),
           ),

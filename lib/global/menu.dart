@@ -624,13 +624,15 @@ class MenuPageState extends State<MenuPage> {
                                     backgroundColor: Colors.white,
                                     child: Builder(
                                       builder: (context) {
-                                        if (state.getProfilePicture != '') {
+                                        if (state.getProfilePicturePreview !=
+                                            '') {
                                           return ClipOval(
                                             child: SizedBox.fromSize(
                                               size: Size.fromRadius(28),
                                               child: Image.memory(
                                                 base64Decode(
-                                                  state.getProfilePicture,
+                                                  state
+                                                      .getProfilePicturePreview,
                                                 ),
                                                 fit: BoxFit.cover,
                                               ),

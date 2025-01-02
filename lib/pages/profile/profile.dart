@@ -108,7 +108,7 @@ class ProfilePageState extends State<ProfilePage> {
           ),
         );
       } else {
-        state.setIsProfileUploaded(false);
+        // state.setIsProfileUploaded(false);
         state.displayDescription = 'Profil gagal diunggah.';
         Navigator.push(
           context,
@@ -149,203 +149,210 @@ class ProfilePageState extends State<ProfilePage> {
     // State Mangement
     final profileState = Provider.of<SipSalesState>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-        toolbarHeight: (MediaQuery.of(context).size.width < 800)
-            ? MediaQuery.of(context).size.height * 0.075
-            : MediaQuery.of(context).size.height * 0.075,
-        title: (MediaQuery.of(context).size.width < 800)
-            ? Text(
-                'Profile',
-                style: GlobalFont.giantfontRBold,
-              )
-            : Text(
-                'Profile',
-                style: GlobalFont.terafontRBold,
+    return SlidingUpPanel(
+      renderPanelSheet: false,
+      backdropEnabled: true,
+      backdropTapClosesPanel: false,
+      minHeight: 0.0,
+      maxHeight: (MediaQuery.of(context).size.width < 800)
+          ? MediaQuery.of(context).size.height * 0.4
+          : MediaQuery.of(context).size.height * 0.35,
+      controller: panelController,
+      panel: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 800) {
+            return Container(
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(25.0),
+                  topLeft: Radius.circular(25.0),
+                ),
               ),
-        leading: Builder(
-          builder: (context) {
-            if (Platform.isIOS) {
-              return IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+              ),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      child: IconButton(
+                        onPressed: toggleLogOutPage,
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          size: 30.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.08,
+                    ),
+                    child: Wrap(
+                      children: [
+                        DefaultTextStyle(
+                          style: GlobalFont.mediumgigafontRBold,
+                          textAlign: TextAlign.center,
+                          child: Text(
+                            'Apakah anda ingin keluar dari akun ini?',
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                        ),
+                        DefaultTextStyle(
+                          style: GlobalFont.bigfontR,
+                          textAlign: TextAlign.center,
+                          child: Text(
+                            'Pastikan anda mengingat username dan password anda.',
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.075,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ColoredButton(
+                              toggleLogOutPage,
+                              'Cancel',
+                            ),
+                            ColoredButton(
+                              () => logout(profileState),
+                              'SIGN OUT',
+                              isCancel: true,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.2,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(25.0),
+                  topLeft: Radius.circular(25.0),
                 ),
-              );
-            } else {
-              return IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: Icon(
-                  Icons.arrow_back_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            }
-          },
-        ),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+              ),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      child: IconButton(
+                        onPressed: toggleLogOutPage,
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          size: 30.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.08,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Apakah anda ingin keluar dari akun ini?',
+                          style: GlobalFont.petafontRBold,
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        Text(
+                          'Pastikan anda mengingat username dan password anda.',
+                          style: GlobalFont.mediumgigafontR,
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ColoredButton(
+                              toggleLogOutPage,
+                              'Cancel',
+                              isIpad: true,
+                            ),
+                            ColoredButton(
+                              logout,
+                              'SIGN OUT',
+                              isCancel: true,
+                              isIpad: true,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        },
       ),
-      body: SlidingUpPanel(
-        renderPanelSheet: false,
-        backdropEnabled: true,
-        minHeight: 0.0,
-        maxHeight: (MediaQuery.of(context).size.width < 800)
-            ? MediaQuery.of(context).size.height * 0.4
-            : MediaQuery.of(context).size.height * 0.35,
-        controller: panelController,
-        panel: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 800) {
-              return Container(
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(25.0),
-                    topLeft: Radius.circular(25.0),
+      body: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.blue,
+          toolbarHeight: (MediaQuery.of(context).size.width < 800)
+              ? MediaQuery.of(context).size.height * 0.075
+              : MediaQuery.of(context).size.height * 0.075,
+          title: (MediaQuery.of(context).size.width < 800)
+              ? Text(
+                  'Profile',
+                  style: GlobalFont.giantfontRBold,
+                )
+              : Text(
+                  'Profile',
+                  style: GlobalFont.terafontRBold,
+                ),
+          leading: Builder(
+            builder: (context) {
+              if (Platform.isIOS) {
+                return IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size:
+                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                    color: Colors.black,
                   ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05,
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        child: IconButton(
-                          onPressed: toggleLogOutPage,
-                          icon: const Icon(
-                            Icons.close_rounded,
-                            size: 30.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.08,
-                      ),
-                      child: Wrap(
-                        children: [
-                          Text(
-                            'Apakah anda ingin keluar dari akun ini?',
-                            style: GlobalFont.mediumgigafontRBold,
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.1,
-                          ),
-                          Text(
-                            'Pastikan anda mengingat username dan password anda.',
-                            style: GlobalFont.bigfontR,
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.075,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ColoredButton(
-                                toggleLogOutPage,
-                                'Cancel',
-                              ),
-                              ColoredButton(
-                                () => logout(profileState),
-                                'LOG OUT',
-                                isCancel: true,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return Container(
-                height: MediaQuery.of(context).size.height * 0.2,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(25.0),
-                    topLeft: Radius.circular(25.0),
+                );
+              } else {
+                return IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(
+                    Icons.arrow_back_rounded,
+                    size:
+                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                    color: Colors.black,
                   ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05,
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        child: IconButton(
-                          onPressed: toggleLogOutPage,
-                          icon: const Icon(
-                            Icons.close_rounded,
-                            size: 30.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.25,
-                      margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.08,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Apakah anda ingin keluar dari akun ini?',
-                            style: GlobalFont.petafontRBold,
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01,
-                          ),
-                          Text(
-                            'Pastikan anda mengingat username dan password anda.',
-                            style: GlobalFont.mediumgigafontR,
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ColoredButton(
-                                toggleLogOutPage,
-                                'Cancel',
-                                isIpad: true,
-                              ),
-                              ColoredButton(
-                                logout,
-                                'LOG OUT',
-                                isCancel: true,
-                                isIpad: true,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            }
-          },
+                );
+              }
+            },
+          ),
         ),
         body: SafeArea(
           child: DecoratedBox(
@@ -384,7 +391,7 @@ class ProfilePageState extends State<ProfilePage> {
                         Expanded(
                           child: Builder(
                             builder: (context) {
-                              if (profileState.getProfilePicture == '') {
+                              if (profileState.getProfilePicturePreview == '') {
                                 return GestureDetector(
                                   onTap: () => takePhoto(context, profileState),
                                   child: Align(
@@ -432,7 +439,8 @@ class ProfilePageState extends State<ProfilePage> {
                                         size: Size.fromRadius(38),
                                         child: Image.memory(
                                           base64Decode(
-                                            profileState.getProfilePicture,
+                                            profileState
+                                                .getProfilePicturePreview,
                                           ),
                                           fit: BoxFit.cover,
                                         ),
@@ -486,9 +494,10 @@ class ProfilePageState extends State<ProfilePage> {
                   Expanded(
                     child: Column(
                       children: [
+                        // ~:Placement Section:~
                         Container(
                           width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.13,
+                          height: 130,
                           color: Colors.grey[100],
                           margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height * 0.015,
@@ -553,9 +562,10 @@ class ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
+                        // ~:Settings Section:~
                         Container(
                           width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.125,
+                          height: 120,
                           color: Colors.grey[100],
                           margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height * 0.015,
@@ -610,6 +620,8 @@ class ProfilePageState extends State<ProfilePage> {
                               //     ],
                               //   ),
                               // ),
+
+                              // Privacy Policy Button
                               Expanded(
                                 child: Row(
                                   children: [
@@ -664,6 +676,7 @@ class ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
+                        // ~:App Version Number:~
                         Container(
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.centerLeft,
@@ -677,6 +690,7 @@ class ProfilePageState extends State<ProfilePage> {
                             style: GlobalFont.bigfontR,
                           ),
                         ),
+                        // ~:Log Out Button:~
                         Padding(
                           padding: EdgeInsets.symmetric(
                             vertical:

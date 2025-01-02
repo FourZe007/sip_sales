@@ -138,7 +138,6 @@ class _OldAttendancePageState extends State<OldAttendancePage> {
                       () => state.checkIn(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
-                      isDisabled: state.getCheckInStatus,
                     );
                   } else {
                     return AnimatedTabButton(
@@ -146,7 +145,6 @@ class _OldAttendancePageState extends State<OldAttendancePage> {
                       () => state.checkIn(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
-                      isDisabled: state.getCheckInStatus,
                     );
                   }
                 },
@@ -164,7 +162,6 @@ class _OldAttendancePageState extends State<OldAttendancePage> {
                       () => state.checkOut(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
-                      isDisabled: state.getCheckOutStatus,
                     );
                   } else {
                     return AnimatedTabButton(
@@ -172,7 +169,6 @@ class _OldAttendancePageState extends State<OldAttendancePage> {
                       () => state.checkOut(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
-                      isDisabled: state.getCheckOutStatus,
                     );
                   }
                 },

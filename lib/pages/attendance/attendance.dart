@@ -25,7 +25,7 @@ class _AttendancePageState extends State<AttendancePage> {
     displayDate = value;
   }
 
-  void userAbsent({bool isWarning = false, bool isClockIn = false}) {
+  void userAbsent({bool isClockIn = false}) {
     final state = Provider.of<SipSalesState>(context, listen: false);
     state.clearState();
 
@@ -309,9 +309,7 @@ class _AttendancePageState extends State<AttendancePage> {
                                   itemBuilder: (context, index) {
                                     return Container(
                                       width: MediaQuery.of(context).size.width,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.15,
+                                      height: 140,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                         borderRadius:
@@ -363,6 +361,7 @@ class _AttendancePageState extends State<AttendancePage> {
 
                                     return Container(
                                       width: MediaQuery.of(context).size.width,
+                                      height: 140,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
@@ -402,58 +401,54 @@ class _AttendancePageState extends State<AttendancePage> {
                                       ),
                                       child: Column(
                                         children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              const Expanded(
-                                                child: Icon(
-                                                  Icons.add_chart_rounded,
-                                                  size: 37.5,
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: SizedBox(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        '${data.locationName} ${data.branchName}',
-                                                        style: GlobalFont
-                                                            .giantfontRBold,
-                                                      ),
-                                                      Text(
-                                                        Format.tanggalFormat(
-                                                          data.date,
-                                                        ),
-                                                        style: GlobalFont
-                                                            .mediumgiantfontR,
-                                                      ),
-                                                    ],
+                                          Expanded(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Expanded(
+                                                  child: Icon(
+                                                    Icons.add_chart_rounded,
+                                                    size: 37.5,
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.01,
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: SizedBox(
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          '${data.locationName} ${data.branchName}',
+                                                          style: GlobalFont
+                                                              .giantfontRBold,
+                                                        ),
+                                                        Text(
+                                                          Format.tanggalFormat(
+                                                            data.date,
+                                                          ),
+                                                          style: GlobalFont
+                                                              .mediumgiantfontR,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                           Container(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
                                             alignment: Alignment.centerLeft,
                                             padding: EdgeInsets.symmetric(
                                               horizontal: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.025,
+                                                  0.05,
                                             ),
                                             child: Builder(
                                               builder: (context) {

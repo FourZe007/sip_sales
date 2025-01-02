@@ -20,9 +20,8 @@ class _SplashScreenState extends State<SplashScreen> {
   bool isSignedIn = false;
 
   Future<void> initializeApp(SipSalesState state) async {
-    state.saveCheckInStatus(true);
-    state.saveCheckOutStatus(false);
-
+    // state.saveCheckInStatus(true);
+    // state.saveCheckOutStatus(false);
     try {
       await Future.wait([
         loadUserData(state),

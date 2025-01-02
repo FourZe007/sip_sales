@@ -123,14 +123,6 @@ class SipSalesState with ChangeNotifier {
   // =================================================================
   // =========================== Profile =============================
   // =================================================================
-  bool isProfileUploaded = false;
-  bool get getIsProfileUploaded => isProfileUploaded;
-
-  void setIsProfileUploaded(bool value) {
-    isProfileUploaded = value;
-    notifyListeners();
-  }
-
   List<XFile?> pickedPpList = [];
   List<Uint8List> ppBytesList = [];
   List<images.Image> ppList = [];
@@ -210,22 +202,21 @@ class SipSalesState with ChangeNotifier {
           prefs.getString('password')!,
           await generateUuid(),
         ).then((user) async {
-          setProfilePicture(user[0].profilePicture);
+          setProfilePicturePreview(user[0].profilePicture);
           try {
             await GlobalAPI.fetchShowImage(user[0].employeeID).then(
               (String highResImg) async {
                 if (highResImg == 'not available') {
-                  setProfilePicturePreview(highResImg);
+                  setProfilePicture(highResImg);
                   print('High Res Image is not available.');
                 } else if (highResImg == 'failed') {
-                  setProfilePicturePreview(highResImg);
+                  setProfilePicture(highResImg);
                   print('High Res Image failed to load.');
                 } else if (highResImg == 'error') {
-                  setProfilePicturePreview(highResImg);
+                  setProfilePicture(highResImg);
                   print('An error occured, please try again.');
                 } else {
-                  setProfilePicturePreview(highResImg);
-                  await prefs.setString('highResImage', highResImg);
+                  setProfilePicture(highResImg);
                   print('High Res Image successfully loaded.');
                   print('High Res Image: $highResImg');
                 }
@@ -236,7 +227,7 @@ class SipSalesState with ChangeNotifier {
           }
         });
 
-        setIsProfileUploaded(true);
+        // setIsProfileUploaded(true);
         displayDescription = 'Foto profil berhasil diunggah.';
 
         // Navigator.pushReplacement(
@@ -247,7 +238,7 @@ class SipSalesState with ChangeNotifier {
         // );
         return 'success';
       } else {
-        setIsProfileUploaded(false);
+        // setIsProfileUploaded(false);
         displayDescription = 'Foto profil gagal diunggah.';
 
         // Navigator.pushReplacement(
@@ -260,7 +251,7 @@ class SipSalesState with ChangeNotifier {
       }
     } else {
       print('Profile image is empty');
-      setIsProfileUploaded(false);
+      // setIsProfileUploaded(false);
       displayDescription =
           'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
 
@@ -286,7 +277,7 @@ class SipSalesState with ChangeNotifier {
 
     if (uploadProfileState.isNotEmpty) {
       if (uploadProfileState[0].resultMessage == 'SUKSES') {
-        setIsProfileUploaded(true);
+        // setIsProfileUploaded(true);
         displayDescription = 'Profil berhasil diunggah.';
         Navigator.pushReplacement(
           context,
@@ -295,7 +286,7 @@ class SipSalesState with ChangeNotifier {
           ),
         );
       } else {
-        setIsProfileUploaded(false);
+        // setIsProfileUploaded(false);
         displayDescription = 'Profil gagal diunggah.';
         Navigator.pushReplacement(
           context,
@@ -305,7 +296,7 @@ class SipSalesState with ChangeNotifier {
         );
       }
     } else {
-      setIsProfileUploaded(false);
+      // setIsProfileUploaded(false);
       displayDescription =
           'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
       Navigator.pushReplacement(
@@ -460,38 +451,39 @@ class SipSalesState with ChangeNotifier {
   // bool attendanceStatus = false;
   // bool get getAttendanceStatus => attendanceStatus
 
-  bool checkInStatus = true;
-  bool get getCheckInStatus => checkInStatus;
-
-  Future<bool> fetchCheckInStatus() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('checkInStatus') ?? false;
-  }
-
-  void saveCheckInStatus(bool state) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('checkInStatus', state);
-
-    checkInStatus = state;
-    notifyListeners();
-    print('CheckInStatus: $checkInStatus');
-  }
-
-  bool checkOutStatus = false;
-  bool get getCheckOutStatus => checkOutStatus;
-
-  Future<bool> fetchCheckOutStatus() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('checkOutStatus') ?? false;
-  }
-
-  void saveCheckOutStatus(bool state) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('checkOutStatus', state);
-
-    checkOutStatus = state;
-    notifyListeners();
-  }
+  // Delete -> remove later, bcs these features already checked in the API
+  // bool checkInStatus = true;
+  // bool get getCheckInStatus => checkInStatus;
+  //
+  // Future<bool> fetchCheckInStatus() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   return prefs.getBool('checkInStatus') ?? false;
+  // }
+  //
+  // void saveCheckInStatus(bool state) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('checkInStatus', state);
+  //
+  //   checkInStatus = state;
+  //   notifyListeners();
+  //   print('CheckInStatus: $checkInStatus');
+  // }
+  //
+  // bool checkOutStatus = false;
+  // bool get getCheckOutStatus => checkOutStatus;
+  //
+  // Future<bool> fetchCheckOutStatus() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   return prefs.getBool('checkOutStatus') ?? false;
+  // }
+  //
+  // void saveCheckOutStatus(bool state) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.setBool('checkOutStatus', state);
+  //
+  //   checkOutStatus = state;
+  //   notifyListeners();
+  // }
 
   bool isWithinRadius = false;
 
@@ -677,50 +669,38 @@ class SipSalesState with ChangeNotifier {
 
   // Function -> run 'Check In' button
   Future<String> checkIn(BuildContext context) async {
-    // await setIsLoadingProgress();
-    // fetchAttendanceStatus();
-
-    final prefs = await SharedPreferences.getInstance();
-    profilePicture = prefs.getString('highResImage') ?? '';
-    if (profilePicture.isNotEmpty) {
+    // ~:Profile Picture is uploaded:~
+    if (profilePicturePreview.isNotEmpty) {
+      // ~:Location Service activated:~
       if (await location.serviceEnabled()) {
-        // Enable -> uncommand if all requirement fulfilled
+        // ~:Check if User within branch radius or not:~
         await location.getLocation().then((coordinate) async {
-          print(GlobalVar.userAccountList[0].latitude);
-          print(GlobalVar.userAccountList[0].longitude);
-          print(coordinate.latitude);
-          print(coordinate.longitude);
-
           await GlobalAPI.fetchIsWithinRadius(
             GlobalVar.userAccountList[0].latitude,
             GlobalVar.userAccountList[0].longitude,
             coordinate.latitude!,
             coordinate.longitude!,
           ).then((status) {
+            // ~:User is not within branch radius:~
             if (status == 'NOT OK') {
               isWithinRadius = false;
-            } else {
+            }
+            // ~:User is within branch radius:~
+            else {
               isWithinRadius = true;
             }
-
-            print('IsWithinRadius: $isWithinRadius');
+            // print('IsWithinRadius: $isWithinRadius');
           });
         });
 
-        coordinateList.clear();
-
+        // ~:User is not within branch radius:~
         if (!isWithinRadius) {
           displayDescription = 'Lokasi Tidak Valid';
-
-          // ~:Warning Animation:~
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const WarningAnimationPage(),
-          //   ),
-          // );
           return 'warn';
-        } else {
+        }
+        // ~:User is within branch radius:~
+        else {
+          // ~:Check In Process via API:~
           checkInList.clear();
           checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
             '1',
@@ -729,104 +709,41 @@ class SipSalesState with ChangeNotifier {
             GlobalVar.userAccountList[0].shop,
             GlobalVar.userAccountList[0].locationID,
             DateTime.now().toString().split(' ')[0],
-            DateTime.now().toString().split(' ')[1].replaceAll(
-                  RegExp(r':'),
-                  '.',
-                ),
+            DateTime.now()
+                .toString()
+                .split(' ')[1]
+                .replaceAll(RegExp(r':'), '.'),
             '',
           ));
 
-          print('Check In: ${checkInList[0].resultMessage}');
-
           // ~:Check In List is not empty:~
           if (checkInList.isNotEmpty) {
-            print('Check In: ${checkInList[0].resultMessage}');
+            // ~:Check In Success:~
             if (checkInList[0].resultMessage == 'SUKSES') {
-              saveCheckInStatus(false);
-              saveCheckOutStatus(true);
-
-              displayDescription = 'Check In berhasil';
-
-              // ~:Success Animation:~
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const SuccessAnimationPage(),
-              //   ),
-              // );
+              displayDescription = 'Clock In berhasil';
               return 'success';
-
-              // Note --> Background location disabled
-              // await background_location.BackgroundLocation.startLocationService();
-              //
-              // await location.getLocation().then((coordinate) {
-              //   setCoordinateList(
-              //     coordinate.latitude,
-              //     coordinate.longitude,
-              //   );
-              // });
-              //
-              // addCoordinateList(ModelCoordinate(
-              //   longitude: longitude!,
-              //   latitude: latitude!,
-              //   time: time,
-              // ));
-              //
-              // trackUserLocation(context);
-            } else {
+            }
+            // ~:Check In Failed:~
+            else {
               displayDescription = checkInList[0].resultMessage;
-              // ~:Warning Animation:~
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const WarningAnimationPage(),
-              //   ),
-              // );
               return 'warn';
             }
-          } else {
-            print('Check In is empty');
-
-            displayDescription = 'Check In gagal';
-            // ~:Failure Animation:~
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const FailureAnimationPage(),
-            //   ),
-            // );
+          }
+          // ~:Check In List is empty:~
+          else {
+            displayDescription = 'Clock In gagal';
             return 'failed';
           }
         }
-
-        // ~:Remove if code already working:~
-        // if (await fetchCheckInStatus()) {
-        //
-        // } else {
-        //   // ~:Haven't Check Out Yet:~
-        //   displayDescription = 'Mohon check out terlebih dahulu.';
-        //   returnPage = '/menu';
-        //   // ~:Warning Animation:~
-        //   Navigator.pushReplacement(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => const WarningAnimationPage(),
-        //     ),
-        //   );
-        // }
-      } else {
-        // ~:Location Service deactivated:~
-        displayDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
-        // ~:Warning Animation:~
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const WarningAnimationPage(),
-        //   ),
-        // );
+      }
+      // ~:Location Service deactivated:~
+      else {
+        displayDescription = 'Mohon aktifkan layanan lokasi.';
         return 'warn';
       }
-    } else {
+    }
+    // ~:Profile Picture is not uploaded yet:~
+    else {
       displayDescription = 'Mohon upload foto profil terlebih dahulu.';
       return 'warn';
     }
@@ -834,14 +751,11 @@ class SipSalesState with ChangeNotifier {
 
   // Function -> run 'Check Out' button
   Future<String> checkOut(BuildContext context) async {
-    // await setIsLoadingProgress();
-    // Note --> Background location process disabled
-    // await background_location.BackgroundLocation.stopLocationService();
-
-    final prefs = await SharedPreferences.getInstance();
-    profilePicture = prefs.getString('highResImage') ?? '';
-    if (profilePicture.isNotEmpty) {
+    // ~:Profile Picture is uploaded:~
+    if (profilePicturePreview.isNotEmpty) {
+      // ~:Location Service activated:~
       if (await location.serviceEnabled()) {
+        // ~:Check if User within branch radius or not:~
         await location.getLocation().then((coordinate) async {
           await GlobalAPI.fetchIsWithinRadius(
             GlobalVar.userAccountList[0].latitude,
@@ -849,31 +763,26 @@ class SipSalesState with ChangeNotifier {
             coordinate.latitude!,
             coordinate.longitude!,
           ).then((status) {
+            // ~:User is not within branch radius:~
             if (status == 'NOT OK') {
               isWithinRadius = false;
-            } else {
+            }
+            // ~:User is within branch radius:~
+            else {
               isWithinRadius = true;
             }
-
-            print('IsWithinRadius: $isWithinRadius');
+            // print('IsWithinRadius: $isWithinRadius');
           });
         });
 
+        // ~:User is not within branch radius:~
         if (!isWithinRadius) {
           displayDescription = 'Lokasi Tidak Valid.';
-          // ~:Warning Animation:~
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const WarningAnimationPage(),
-          //   ),
-          // );
           return 'warn';
-        } else {
-          // Note --> Background location support variable
-          // coordinateList.clear();
-          // coordinateList.addAll(await readListFromCache('cached_coordinates'));
-
+        }
+        // ~:User is within branch radius:~
+        else {
+          // ~:Check Out Process via API:~
           checkOutList.clear();
           checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
             '2',
@@ -883,142 +792,42 @@ class SipSalesState with ChangeNotifier {
             GlobalVar.userAccountList[0].locationID,
             DateTime.now().toString().split(' ')[0],
             '',
-            DateTime.now().toString().split(' ')[1].replaceAll(
-                  RegExp(r':'),
-                  '.',
-                ),
+            DateTime.now()
+                .toString()
+                .split(' ')[1]
+                .replaceAll(RegExp(r':'), '.'),
           ));
-
-          // Note -> background location process disabled
-          // activityTimestampList.addAll(await GlobalAPI.fetchActivityTimestamp(
-          //   '1',
-          //   GlobalVar.nip!,
-          //   DateTime.now().toString().split(' ')[0],
-          //   coordinateList,
-          // ));
-          //
-          // Delete -> remove later
-          // bool byPass = true;
-          //
-          // Delete -> remove later
-          // Note --> send to my own Whatsapp to verify data
-          // ~:NEW:~
-          // List<dynamic> latList = [];
-          // List<dynamic> lngList = [];
-          // List<dynamic> timeList = [];
-          //
-          // latList.addAll(fetchCoordinateList.map((map) {
-          //   return map.latitude;
-          // }));
-          //
-          // await GlobalAPI.fetchSendMessage(
-          //   '6281338518880',
-          //   'Latitude Coordinate: $latList',
-          //   'realme-tab',
-          //   'text',
-          // );
-          //
-          // lngList.addAll(fetchCoordinateList.map((map) {
-          //   return map.longitude;
-          // }));
-          //
-          // await GlobalAPI.fetchSendMessage(
-          //   '6281338518880',
-          //   'Longitude Coordinate: $lngList',
-          //   'realme-tab',
-          //   'text',
-          // );
-          //
-          // timeList.addAll(fetchCoordinateList.map((map) {
-          //   return map.time;
-          // }));
-          //
-          // await GlobalAPI.fetchSendMessage(
-          //   '6281338518880',
-          //   'Time: $timeList',
-          //   'realme-tab',
-          //   'text',
-          // );
-          //
-          // latList.clear();
-          // lngList.clear();
-          // timeList.clear();
-          // ~:NEW:~
 
           // ~:Check Out List is not empty:~
           if (checkOutList.isNotEmpty) {
             print('Check Out: ${checkOutList[0].resultMessage}');
             // ~:Check Out Success:~
-            // if (byPass == true &&
-            // await setIsLoadingProgress();
             if (checkOutList[0].resultMessage == 'SUKSES') {
-              saveCheckInStatus(true);
-              saveCheckOutStatus(false);
-
-              displayDescription = 'Check Out berhasil.';
-              // ~:Success Animation:~
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const SuccessAnimationPage(),
-              //   ),
-              // );
+              displayDescription = 'Clock Out berhasil.';
               return 'success';
-            } else {
-              // ~:Check Out Failed:~
+            }
+            // ~:Check Out Failed:~
+            else {
               displayDescription = checkOutList[0].resultMessage;
-              // ~:Failure Animation:~
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const FailureAnimationPage(),
-              //   ),
-              // );
               return 'warn';
             }
-          } else {
+          }
+          // ~:Check Out List is empty:~
+          else {
             print('Check Out is empty');
-            // ~:Check Out List is empty:~
-            displayDescription = 'Check Out gagal.';
-            // ~:Failure Animation:~
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const FailureAnimationPage(),
-            //   ),
-            // );
+            displayDescription = 'Clock Out gagal.';
             return 'failed';
           }
         }
-
-        // ~:Remove if code already working:~
-        // if (await fetchCheckOutStatus()) {
-        //
-        // } else {
-        //   // ~:Haven't Check In Yet:~
-        //   displayDescription = 'Mohon check in terlebih dahulu.';W
-        //   returnPage = '/menu';
-        //   // ~:Warning Animation:~
-        //   Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => const WarningAnimationPage(),
-        //     ),
-        //   );
-        // }
-      } else {
-        // ~:Location Service deactivated:~
-        displayDescription = 'Layanan Lokasi dinonaktifkan, mohon aktifkan.';
-        // ~:Warning Animation:~
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const WarningAnimationPage(),
-        //   ),
-        // );
+      }
+      // ~:Location Service deactivated:~
+      else {
+        displayDescription = 'Mohon aktifkan layanan lokasi.';
         return 'warn';
       }
-    } else {
+    }
+    // ~:Profile Picture is not uploaded yet:~
+    else {
       displayDescription = 'Mohon upload foto profil terlebih dahulu.';
       return 'warn';
     }
