@@ -134,12 +134,12 @@ class MenuPageState extends State<MenuPage> {
                   child: Stack(
                     children: [
                       Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.025,
-                        ),
                         height: MediaQuery.of(context).size.height * 0.12,
                         width: MediaQuery.of(context).size.width,
                         alignment: Alignment.centerLeft,
+                        margin: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.025,
+                        ),
                         child: Row(
                           children: [
                             Padding(
@@ -624,15 +624,13 @@ class MenuPageState extends State<MenuPage> {
                                     backgroundColor: Colors.white,
                                     child: Builder(
                                       builder: (context) {
-                                        if (state.getProfilePicturePreview !=
-                                            '') {
+                                        if (state.getProfilePicture != '') {
                                           return ClipOval(
                                             child: SizedBox.fromSize(
                                               size: Size.fromRadius(28),
                                               child: Image.memory(
                                                 base64Decode(
-                                                  state
-                                                      .getProfilePicturePreview,
+                                                  state.getProfilePicture,
                                                 ),
                                                 fit: BoxFit.cover,
                                               ),

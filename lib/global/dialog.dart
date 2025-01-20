@@ -17,7 +17,7 @@ class GlobalDialog {
           backgroundColor: Colors.white,
           child: ClipOval(
             child: SizedBox.fromSize(
-              size: Size.fromRadius(188),
+              size: Size.fromRadius(210),
               child: Image.memory(
                 base64Decode(img),
                 fit: BoxFit.cover,

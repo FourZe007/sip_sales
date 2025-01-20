@@ -105,7 +105,12 @@ class ProfilePageState extends State<ProfilePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LoadingAnimationPage(false, true),
+            builder: (context) => LoadingAnimationPage(
+              false,
+              false,
+              true,
+              false,
+            ),
           ),
         );
       } else {
@@ -136,13 +141,15 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void openSettings() {
-    print('Settings pressed!');
-  }
+  void changePassword(SipSalesState state) {
+    state.employeeID = GlobalVar.userAccountList[0].employeeID;
 
-  @override
-  void initState() {
-    super.initState();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangePasswordPage(),
+      ),
+    );
   }
 
   @override
@@ -393,7 +400,8 @@ class ProfilePageState extends State<ProfilePage> {
                         // Profile Picture
                         Builder(
                           builder: (context) {
-                            if (profileState.getProfilePicturePreview == '') {
+                            if (profileState.getProfilePicture == '' &&
+                                profileState.getProfilePicturePreview == '') {
                               return GestureDetector(
                                 onTap: () => takePhoto(context, profileState),
                                 child: Align(
@@ -441,7 +449,7 @@ class ProfilePageState extends State<ProfilePage> {
                                       size: Size.fromRadius(38),
                                       child: Image.memory(
                                         base64Decode(
-                                          profileState.getProfilePicturePreview,
+                                          profileState.getProfilePicture,
                                         ),
                                         fit: BoxFit.cover,
                                       ),
@@ -599,14 +607,7 @@ class ProfilePageState extends State<ProfilePage> {
                         // ~:Change Password Section:~
                         Expanded(
                           child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChangePasswordPage(),
-                                ),
-                              );
-                            },
+                            onTap: () => changePassword(profileState),
                             child: Row(
                               children: [
                                 Expanded(
@@ -667,7 +668,7 @@ class ProfilePageState extends State<ProfilePage> {
                           top: MediaQuery.of(context).size.height * 0.01,
                         ),
                         child: Text(
-                          'Version 1.1.5',
+                          'Version 1.1.4',
                           style: GlobalFont.bigfontR,
                         ),
                       ),

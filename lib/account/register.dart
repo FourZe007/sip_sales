@@ -144,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mode: 0,
               isIcon: true,
               icon: Icons.person,
-              hint: 'Username',
+              label: 'Username',
             ),
           ),
           Container(
@@ -158,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
               isPass: true,
               isIcon: true,
               icon: Icons.lock,
-              hint: 'Password',
+              label: 'Password',
             ),
           ),
           Container(
@@ -172,7 +172,7 @@ class _RegisterPageState extends State<RegisterPage> {
               isPass: true,
               isIcon: true,
               icon: Icons.lock,
-              hint: 'Password Konfirmasi',
+              label: 'Password Konfirmasi',
             ),
           ),
           SizedBox(

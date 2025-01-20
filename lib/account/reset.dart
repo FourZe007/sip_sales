@@ -60,7 +60,7 @@ class _ResetPageState extends State<ResetPage> {
               isPass: true,
               isIcon: true,
               icon: Icons.lock,
-              hint: 'Password',
+              label: 'Password',
             ),
           ),
           Container(
@@ -74,7 +74,7 @@ class _ResetPageState extends State<ResetPage> {
               isPass: true,
               isIcon: true,
               icon: Icons.lock,
-              hint: 'Password Konfirmasi',
+              label: 'Password Konfirmasi',
             ),
           ),
           GestureDetector(

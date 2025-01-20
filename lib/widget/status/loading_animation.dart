@@ -12,12 +12,18 @@ import 'package:sip_sales/widget/status/warning_animation.dart';
 class LoadingAnimationPage extends StatefulWidget {
   const LoadingAnimationPage(
     this.isClockIn,
-    this.isProfileUploaded, {
+    this.isClockOut,
+    this.isProfileUploaded,
+    this.isChangePassword, {
+    this.stateMessage = '',
     super.key,
   });
 
   final bool isClockIn;
+  final bool isClockOut;
   final bool isProfileUploaded;
+  final bool isChangePassword;
+  final String stateMessage;
 
   @override
   State<LoadingAnimationPage> createState() => _LoadingAnimationPageState();
@@ -25,8 +31,11 @@ class LoadingAnimationPage extends StatefulWidget {
 
 class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
   Future<void> processing(BuildContext context) async {
+    print('Loading Animation Process');
     final state = Provider.of<SipSalesState>(context, listen: false);
+    // ~:Profile Picture:~
     if (widget.isProfileUploaded) {
+      print('Upload Profile Picture Process');
       await state.uploadProfilePicture(context).then((status) {
         if (status == 'success') {
           Navigator.pushReplacement(
@@ -52,57 +61,103 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
         }
       });
     } else {
-      if (widget.isClockIn) {
-        await state.checkIn(context).then((status) {
-          if (status == 'success') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SuccessAnimationPage(),
-              ),
-            );
-          } else if (status == 'warn') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const WarningAnimationPage(),
-              ),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FailureAnimationPage(),
-              ),
-            );
-          }
-        });
-      } else {
-        await state.checkOut(context).then((status) {
-          if (status == 'success') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SuccessAnimationPage(),
-              ),
-            );
-          } else if (status == 'warn') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const WarningAnimationPage(),
-              ),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FailureAnimationPage(),
-              ),
-            );
-          }
-        });
-      }
+      print('Skip Profile Picture Upload Process');
+    }
+
+    // ~:User Absent - Clock In:~
+    if (widget.isClockIn) {
+      print('Clock In Process');
+      await state.checkIn(context).then((status) {
+        if (status == 'success') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SuccessAnimationPage(),
+            ),
+          );
+        } else if (status == 'warn') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const WarningAnimationPage(),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FailureAnimationPage(),
+            ),
+          );
+        }
+      });
+    } else {
+      print('Skip Clock In Process');
+    }
+
+    // ~:User Absent - Clock Out:~
+    if (widget.isClockOut) {
+      print('Clock Out Process');
+      await state.checkOut(context).then((status) {
+        if (status == 'success') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SuccessAnimationPage(),
+            ),
+          );
+        } else if (status == 'warn') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const WarningAnimationPage(),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FailureAnimationPage(),
+            ),
+          );
+        }
+      });
+    } else {
+      print('Skip Clock Out Process');
+    }
+
+    // ~:Change Password:~
+    if (widget.isChangePassword) {
+      print('Change Password');
+      await Future.delayed(Duration(seconds: 3)).then((_) {
+        if (widget.stateMessage == 'success') {
+          print('Change succeed');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SuccessAnimationPage(),
+            ),
+          );
+        } else if (widget.stateMessage == 'failed') {
+          print('Change failed');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FailureAnimationPage(),
+            ),
+          );
+        } else {
+          print('Something wrong with Change');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WarningAnimationPage(),
+            ),
+          );
+        }
+      });
+    } else {
+      print('Skip Change Password Process');
     }
   }
 

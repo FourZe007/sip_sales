@@ -227,40 +227,19 @@ class SipSalesState with ChangeNotifier {
           }
         });
 
-        // setIsProfileUploaded(true);
         displayDescription = 'Foto profil berhasil diunggah.';
 
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const SuccessAnimationPage(),
-        //   ),
-        // );
         return 'success';
       } else {
-        // setIsProfileUploaded(false);
         displayDescription = 'Foto profil gagal diunggah.';
 
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const FailureAnimationPage(),
-        //   ),
-        // );
         return 'failed';
       }
     } else {
       print('Profile image is empty');
-      // setIsProfileUploaded(false);
       displayDescription =
           'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
 
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => const WarningAnimationPage(),
-      //   ),
-      // );
       return 'error';
     }
   }
@@ -277,7 +256,6 @@ class SipSalesState with ChangeNotifier {
 
     if (uploadProfileState.isNotEmpty) {
       if (uploadProfileState[0].resultMessage == 'SUKSES') {
-        // setIsProfileUploaded(true);
         displayDescription = 'Profil berhasil diunggah.';
         Navigator.pushReplacement(
           context,
@@ -286,7 +264,6 @@ class SipSalesState with ChangeNotifier {
           ),
         );
       } else {
-        // setIsProfileUploaded(false);
         displayDescription = 'Profil gagal diunggah.';
         Navigator.pushReplacement(
           context,
@@ -296,7 +273,6 @@ class SipSalesState with ChangeNotifier {
         );
       }
     } else {
-      // setIsProfileUploaded(false);
       displayDescription =
           'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
       Navigator.pushReplacement(
@@ -308,6 +284,68 @@ class SipSalesState with ChangeNotifier {
     }
 
     return profilePicture;
+  }
+
+  String currentPassword = '';
+  String get getCurrentPassword => currentPassword;
+
+  void setCurrentPassword(String value) {
+    currentPassword = value;
+  }
+
+  String newPassword = '';
+  String get getNewPassword => newPassword;
+
+  void setNewPassword(String value) {
+    newPassword = value;
+  }
+
+  List<ModelResultMessage2> changePasswordList = [];
+  List<ModelResultMessage2> get getChangePasswordList => changePasswordList;
+
+  Future<Map<String, dynamic>> fetchChangeUserPassword(
+    String currentPass,
+    String newPass,
+  ) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String id = prefs.getString('nip') ?? '';
+
+      changePasswordList.clear();
+      changePasswordList.addAll(
+        await GlobalAPI.fetchChangeUserPassword(id, currentPass, newPass),
+      );
+
+      if (changePasswordList.isNotEmpty) {
+        if (changePasswordList[0].resultMessage == 'SUKSES') {
+          displayDescription = 'Kata sandi berhasil diubah!';
+          return {
+            'status': 'success',
+            'data': changePasswordList,
+          };
+        } else {
+          displayDescription = '${changePasswordList[0].resultMessage}.';
+          return {
+            'status': 'warn',
+            'data': [],
+          };
+        }
+      } else {
+        displayDescription = 'Terjadi kesalahan, mohon coba lagi.';
+        return {
+          'status': 'failed',
+          'data': [],
+        };
+      }
+    } catch (e) {
+      print('Error: ${e.toString()}');
+      displayDescription = e.toString();
+
+      return {
+        'status': 'error',
+        'data': [],
+      };
+    }
   }
 
   // ================================================================
@@ -344,6 +382,13 @@ class SipSalesState with ChangeNotifier {
   // ================================================================
   // ============= Default & Carousel Route Details =================
   // ================================================================
+  String absentType = '';
+  String get getAbsentType => absentType;
+
+  void setAbsentType(String value) {
+    absentType = value;
+  }
+
   List<ModelActivityRouteDetails> activityRouteDetailsList = [];
 
   List<ModelActivityRouteDetails> get fetchActivityRouteDetails =>

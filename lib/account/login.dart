@@ -189,6 +189,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Load and save HD image to cache memory
               try {
+                state.setProfilePicture(userLogin[0].profilePicture);
                 await GlobalAPI.fetchShowImage(userLogin[0].employeeID)
                     .then((String highResImg) async {
                   if (highResImg == 'not available' ||
@@ -370,7 +371,7 @@ class _LoginPageState extends State<LoginPage> {
                   mode: 0,
                   isIcon: true,
                   icon: Icons.person,
-                  hint: 'NIP Karyawan',
+                  label: 'NIP Karyawan',
                   isCapital: true,
                 ),
                 CustomUserInput2(
@@ -380,7 +381,7 @@ class _LoginPageState extends State<LoginPage> {
                   isPass: true,
                   isIcon: true,
                   icon: Icons.lock,
-                  hint: 'Password',
+                  label: 'Password',
                 ),
                 // CustomText(
                 //   loginStatus,

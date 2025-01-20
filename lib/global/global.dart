@@ -371,6 +371,12 @@ class GlobalFont {
     fontSize: GlobalSize.mediumgiantfont,
   );
 
+  static TextStyle mediumgiantfontRRed = TextStyle(
+    color: Colors.red,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumgiantfont,
+  );
+
   static TextStyle mediumgiantfontRGrey = TextStyle(
     color: Colors.black.withOpacity(0.75),
     fontFamily: GlobalFontFamily.fontRubik,
@@ -386,6 +392,13 @@ class GlobalFont {
 
   static TextStyle mediumgiantfontRBold = TextStyle(
     color: Colors.black,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumgiantfont,
+    fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle mediumgiantfontRBoldRed = TextStyle(
+    color: Colors.red,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.mediumgiantfont,
     fontWeight: FontWeight.bold,
@@ -424,6 +437,13 @@ class GlobalFont {
     fontWeight: FontWeight.bold,
   );
 
+  static TextStyle giantfontRBoldRed = TextStyle(
+    color: Colors.red,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.giantfont,
+    fontWeight: FontWeight.bold,
+  );
+
   static TextStyle giantfontRBoldWhite = TextStyle(
     color: Colors.white,
     fontFamily: GlobalFontFamily.fontRubik,
@@ -451,6 +471,13 @@ class GlobalFont {
     fontWeight: FontWeight.bold,
   );
 
+  static TextStyle mediumgigafontRBoldRed = TextStyle(
+    color: Colors.red,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumgigafont1,
+    fontWeight: FontWeight.bold,
+  );
+
   static TextStyle mediumgigafontRBoldWhite = TextStyle(
     color: Colors.white,
     fontFamily: GlobalFontFamily.fontRubik,
@@ -471,6 +498,13 @@ class GlobalFont {
     fontWeight: FontWeight.bold,
   );
 
+  static TextStyle gigafontRBoldRed = TextStyle(
+    color: Colors.red,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.gigafont,
+    fontWeight: FontWeight.bold,
+  );
+
   static TextStyle gigafontRBoldWhite = TextStyle(
     color: Colors.white,
     fontFamily: GlobalFontFamily.fontRubik,
@@ -486,6 +520,13 @@ class GlobalFont {
 
   static TextStyle terafontRBold = TextStyle(
     color: Colors.black,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.terafont,
+    fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle terafontRBoldRed = TextStyle(
+    color: Colors.red,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.terafont,
     fontWeight: FontWeight.bold,

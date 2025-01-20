@@ -51,8 +51,8 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>SIP Sales would like to access your camera to be able to directly access the device camera. You can disable camera access at any time in Settings.</string>
+	<string>SIP Sales would like to uses your camera to take a photo for your employee profile, which is required for clocking in and out. This photo will be used to verify your identity and ensure accurate timekeeping records.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>SIP Sales would like to access your photos to be able to directly access the device photos. You can disable photos access at any time in Settings.</string>
+	<string>SIP Sales would like to access to your photo gallery to allow you to select and upload images for your daily reports. These images will be used to provide visual documentation and support for your sales activities.</string>
 </dict>
 </plist>

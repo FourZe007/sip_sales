@@ -14,12 +14,15 @@ class CustomUserInput2 extends StatefulWidget {
     this.isCapital = false,
     this.isNumber = false,
     this.mode = 1,
-    this.hint = '',
+    this.label = '',
+    this.useHint = true,
     this.isPass = false,
     this.icon = Icons.question_mark_rounded,
     this.isIcon = false,
     this.prefixText = '',
     this.autoFocus = false,
+    this.useValidator = false,
+    this.passDiscriminator = '',
     super.key,
   });
 
@@ -31,11 +34,14 @@ class CustomUserInput2 extends StatefulWidget {
   final Function handle;
   final String input;
   bool isPass;
-  String hint;
+  String label;
+  bool useHint;
   IconData icon;
   bool isIcon;
   String prefixText;
   bool autoFocus;
+  bool useValidator;
+  String passDiscriminator;
 
   @override
   State<CustomUserInput2> createState() => _CustomUserInput2State();
@@ -61,14 +67,14 @@ class _CustomUserInput2State extends State<CustomUserInput2>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (widget.isPass == false) {
+    if (!widget.isPass) {
       return Container(
         margin: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.005,
         ),
         alignment: Alignment.centerLeft,
         width: MediaQuery.of(context).size.width,
-        child: TextField(
+        child: TextFormField(
           maxLines: widget.isExpandable == true ? null : 1,
           autofocus: widget.autoFocus,
           inputFormatters: [
@@ -102,8 +108,8 @@ class _CustomUserInput2State extends State<CustomUserInput2>
               fontSize: MediaQuery.of(context).size.width * 0.0315,
               backgroundColor: Colors.transparent,
             ),
-            hintText: 'Masukkan ${widget.hint}',
-            labelText: widget.hint,
+            hintText: 'Masukkan ${widget.label}',
+            labelText: widget.label,
             border: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.black,
@@ -135,70 +141,173 @@ class _CustomUserInput2State extends State<CustomUserInput2>
         ),
       );
     } else {
-      return Container(
-        margin: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * 0.005,
-        ),
-        alignment: Alignment.centerLeft,
-        width: MediaQuery.of(context).size.width,
-        child: TextField(
-          maxLines: widget.isExpandable == true ? null : 1,
-          autofocus: widget.autoFocus,
-          inputFormatters: [
-            widget.isCapital
-                ? UpperCaseText()
-                : FilteringTextInputFormatter.allow(
-                    RegExp(r'[a-zA-Z0-9./@]*'),
-                  ),
-          ],
-          controller: (widget.isDataAvailable == false)
-              ? passInputController
-              : TextEditingController(text: widget.input),
-          obscureText: hidePassword,
-          style: TextStyle(
-            color: Colors.black,
-            fontFamily: GlobalFontFamily.fontMontserrat,
-            fontSize: MediaQuery.of(context).size.width * 0.0315,
-            backgroundColor: Colors.transparent,
+      if (widget.useValidator) {
+        return Container(
+          height: 80,
+          alignment: Alignment.topLeft,
+          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.005,
           ),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white54,
-            contentPadding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.02,
-            ),
-            hintText: 'Masukkan ${widget.hint}',
-            hintStyle: TextStyle(
+          child: TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              if (value!.length < 6) {
+                return 'Kata sandi harus lebih dari 6 karakter.';
+              } else if (value != widget.passDiscriminator) {
+                return 'Kata sandi berbeda.';
+              }
+              return '';
+            },
+            maxLines: widget.isExpandable == true ? null : 1,
+            autofocus: widget.autoFocus,
+            inputFormatters: [
+              widget.isCapital
+                  ? UpperCaseText()
+                  : FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9./@]*'),
+                    ),
+            ],
+            controller: (widget.isDataAvailable == false)
+                ? passInputController
+                : TextEditingController(text: widget.input),
+            obscureText: hidePassword,
+            style: TextStyle(
               color: Colors.black,
               fontFamily: GlobalFontFamily.fontMontserrat,
               fontSize: MediaQuery.of(context).size.width * 0.0315,
               backgroundColor: Colors.transparent,
             ),
-            labelText: widget.hint,
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10.0),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white54,
+              contentPadding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.02,
               ),
-            ),
-            prefixIcon: Icon(
-              widget.icon,
-              size: 20,
-              color: Colors.black,
-            ),
-            suffixIcon: IconButton(
-              padding: const EdgeInsets.only(bottom: 5.0),
-              icon: Icon(
-                hidePassword ? Icons.visibility_off : Icons.visibility,
-                size: 20,
+              hintText: (widget.useHint) ? 'Masukkan ${widget.label}' : '',
+              labelText: widget.label,
+              hintStyle: TextStyle(
                 color: Colors.black,
+                fontFamily: GlobalFontFamily.fontMontserrat,
+                fontSize: MediaQuery.of(context).size.width * 0.0315,
+                backgroundColor: Colors.transparent,
               ),
-              color: Theme.of(context).primaryColorDark,
-              onPressed: () => showHidePasword(),
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
+              ),
+              prefixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Either the icon or text based on condition
+                  Builder(
+                    builder: (context) {
+                      if (widget.isIcon) {
+                        return Icon(
+                          widget.icon,
+                          color: Colors.black,
+                        );
+                      }
+                      return SizedBox();
+                    },
+                  ),
+                ],
+              ),
+              suffixIcon: IconButton(
+                padding: const EdgeInsets.only(bottom: 5.0),
+                icon: Icon(
+                  hidePassword ? Icons.visibility_off : Icons.visibility,
+                  size: 20,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+                color: Theme.of(context).primaryColorDark,
+                onPressed: () => showHidePasword(),
+              ),
             ),
+            onChanged: (newValues) => widget.handle(newValues),
           ),
-          onChanged: (newValues) => widget.handle(newValues),
-        ),
-      );
+        );
+      } else {
+        return Container(
+          margin: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.005,
+          ),
+          alignment: Alignment.centerLeft,
+          width: MediaQuery.of(context).size.width,
+          child: TextFormField(
+            maxLines: widget.isExpandable == true ? null : 1,
+            autofocus: widget.autoFocus,
+            inputFormatters: [
+              widget.isCapital
+                  ? UpperCaseText()
+                  : FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9./@]*'),
+                    ),
+            ],
+            controller: (widget.isDataAvailable == false)
+                ? passInputController
+                : TextEditingController(text: widget.input),
+            obscureText: hidePassword,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: GlobalFontFamily.fontMontserrat,
+              fontSize: MediaQuery.of(context).size.width * 0.0315,
+              backgroundColor: Colors.transparent,
+            ),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white54,
+              contentPadding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.02,
+              ),
+              hintText: (widget.useHint) ? 'Masukkan ${widget.label}' : '',
+              labelText: widget.label,
+              hintStyle: TextStyle(
+                color: Colors.black,
+                fontFamily: GlobalFontFamily.fontMontserrat,
+                fontSize: MediaQuery.of(context).size.width * 0.0315,
+                backgroundColor: Colors.transparent,
+              ),
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
+              ),
+              prefixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Either the icon or text based on condition
+                  Builder(
+                    builder: (context) {
+                      if (widget.isIcon) {
+                        return Icon(
+                          widget.icon,
+                          color: Colors.black,
+                        );
+                      }
+                      return SizedBox();
+                    },
+                  ),
+                ],
+              ),
+              suffixIcon: IconButton(
+                padding: const EdgeInsets.only(bottom: 5.0),
+                icon: Icon(
+                  hidePassword ? Icons.visibility_off : Icons.visibility,
+                  size: 20,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+                color: Theme.of(context).primaryColorDark,
+                onPressed: () => showHidePasword(),
+              ),
+            ),
+            onChanged: (newValues) => widget.handle(newValues),
+          ),
+        );
+      }
     }
   }
 

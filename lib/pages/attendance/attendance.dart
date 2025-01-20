@@ -7,7 +7,8 @@ import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/attendance/attendance_history.dart';
 import 'package:sip_sales/widget/date/custom_digital_clock.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:sip_sales/widget/format.dart';
+import 'package:sip_sales/widget/dropdown/common_dropdown.dart';
+import 'package:sip_sales/widget/list/absent.dart';
 import 'package:sip_sales/widget/status/loading_animation.dart';
 
 class AttendancePage extends StatefulWidget {
@@ -20,21 +21,37 @@ class AttendancePage extends StatefulWidget {
 class _AttendancePageState extends State<AttendancePage> {
   List<ModelAttendanceHistory> historyList = [];
   String displayDate = '';
+  String absentType = '';
 
   void setDisplayDate(String value) {
     displayDate = value;
+  }
+
+  void setAbsentType(String value) {
+    setState(() {
+      absentType = value;
+    });
   }
 
   void userAbsent({bool isClockIn = false}) {
     final state = Provider.of<SipSalesState>(context, listen: false);
     state.clearState();
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoadingAnimationPage(isClockIn, false),
-      ),
-    );
+    if (isClockIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoadingAnimationPage(true, false, false, false),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoadingAnimationPage(false, true, false, false),
+        ),
+      );
+    }
   }
 
   Stream<List<ModelAttendanceHistory>> getHistory({
@@ -134,16 +151,78 @@ class _AttendancePageState extends State<AttendancePage> {
                           style: GlobalFont.mediumgigafontRBold,
                         ),
                       ),
+                      // ~:Absent Type:~
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(
+                      //     horizontal: MediaQuery.of(context).size.width * 0.005,
+                      //     vertical: MediaQuery.of(context).size.height * 0.005,
+                      //   ),
+                      //   child: CommonDropdown(
+                      //     state.absentType,
+                      //     defaultValue:
+                      //         GlobalVar.userAccountList[0].locationName,
+                      //   ),
+                      //   // child: DropdownButtonFormField<String>(
+                      //   //   decoration: InputDecoration(
+                      //   //     enabledBorder: OutlineInputBorder(
+                      //   //       borderSide: BorderSide.none,
+                      //   //       borderRadius: BorderRadius.circular(25.0),
+                      //   //     ),
+                      //   //     focusedBorder: OutlineInputBorder(
+                      //   //       borderSide: BorderSide.none,
+                      //   //       borderRadius: BorderRadius.circular(25.0),
+                      //   //     ),
+                      //   //     filled: true,
+                      //   //     fillColor: Colors.grey[350],
+                      //   //     contentPadding: EdgeInsets.symmetric(
+                      //   //       horizontal: 25,
+                      //   //       vertical: 10,
+                      //   //     ),
+                      //   //   ),
+                      //   //   value: absentType == ''
+                      //   //       ? GlobalVar.userAccountList[0].locationName
+                      //   //       : absentType,
+                      //   //   hint: Text('Select an option'),
+                      //   //   items: <String>[
+                      //   //     GlobalVar.userAccountList[0].locationName,
+                      //   //     'EVENT',
+                      //   //   ].map((String value) {
+                      //   //     return DropdownMenuItem<String>(
+                      //   //       value: value,
+                      //   //       child: Text(value),
+                      //   //     );
+                      //   //   }).toList(),
+                      //   //   onChanged: (String? newValue) {
+                      //   //     setState(() {
+                      //   //       absentType = newValue!;
+                      //   //     });
+                      //   //   },
+                      //   // ),
+                      // ),
                       // ~:Clock In and Out Section:~
-                      Padding(
+                      Container(
+                        width: MediaQuery.of(context).size.width,
                         padding: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width * 0.005,
                           vertical: MediaQuery.of(context).size.height * 0.005,
                         ),
                         child: Row(
                           children: [
+                            // // ~:Absent Type:~
+                            // Expanded(
+                            //   child: CommonDropdown(
+                            //     state.absentType,
+                            //     defaultValue:
+                            //         GlobalVar.userAccountList[0].locationName,
+                            //   ),
+                            // ),
+                            // // ~:Devider:~
+                            // SizedBox(
+                            //   width: MediaQuery.of(context).size.width * 0.025,
+                            // ),
                             // ~:Clock In Button:~
                             Expanded(
+                              // flex: 2,
                               child: GestureDetector(
                                 onTap: () => userAbsent(isClockIn: true),
                                 child: Container(
@@ -357,140 +436,33 @@ class _AttendancePageState extends State<AttendancePage> {
                                 physics: BouncingScrollPhysics(),
                                 children: snapshot.data!.asMap().entries.map(
                                   (e) {
+                                    final index = e.key;
                                     final data = e.value;
 
-                                    return Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 140,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: (data.checkIn.isEmpty &&
-                                                data.checkOut.isEmpty)
-                                            ? Border.all(
-                                                color: Colors.red,
-                                                width: 2.0,
-                                              )
-                                            : null,
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            // Adjust shadow color as needed
-                                            color: Colors.grey,
-                                            // No shadow offset
-                                            // Adjust shadow blur radius
-                                            blurRadius: 5.0,
-                                            // Adjust shadow spread radius
-                                            spreadRadius: 1.0,
-                                          ),
-                                        ],
-                                      ),
-                                      margin: EdgeInsets.symmetric(
-                                        vertical:
-                                            MediaQuery.of(context).size.height *
-                                                0.01,
-                                        horizontal:
-                                            MediaQuery.of(context).size.width *
-                                                0.01,
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            MediaQuery.of(context).size.height *
-                                                0.01,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const Expanded(
-                                                  child: Icon(
-                                                    Icons.add_chart_rounded,
-                                                    size: 37.5,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: SizedBox(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          '${data.locationName} ${data.branchName}',
-                                                          style: GlobalFont
-                                                              .giantfontRBold,
-                                                        ),
-                                                        Text(
-                                                          Format.tanggalFormat(
-                                                            data.date,
-                                                          ),
-                                                          style: GlobalFont
-                                                              .mediumgiantfontR,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            alignment: Alignment.centerLeft,
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.05,
-                                            ),
-                                            child: Builder(
-                                              builder: (context) {
-                                                if (data.checkIn.isEmpty &&
-                                                    data.checkOut.isEmpty) {
-                                                  return Text(
-                                                    'Clock In: - , Clock Out: -',
-                                                    style: GlobalFont
-                                                        .mediumgiantfontR,
-                                                    overflow: TextOverflow.clip,
-                                                  );
-                                                } else if (data
-                                                        .checkIn.isNotEmpty &&
-                                                    data.checkOut.isEmpty) {
-                                                  return Text(
-                                                    'Clock In: ${data.checkIn}, Clock Out: -',
-                                                    style: GlobalFont
-                                                        .mediumgiantfontR,
-                                                    overflow: TextOverflow.clip,
-                                                  );
-                                                } else if (data
-                                                        .checkIn.isEmpty &&
-                                                    data.checkOut.isNotEmpty) {
-                                                  return Text(
-                                                    'Clock In: - , Clock Out: ${data.checkOut}',
-                                                    style: GlobalFont
-                                                        .mediumgiantfontR,
-                                                    overflow: TextOverflow.clip,
-                                                  );
-                                                } else {
-                                                  return Text(
-                                                    'Clock In: ${data.checkIn}, Clock Out: ${data.checkOut}',
-                                                    style: GlobalFont
-                                                        .mediumgiantfontR,
-                                                    overflow: TextOverflow.clip,
-                                                  );
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                    return Column(
+                                      children: [
+                                        Builder(
+                                          builder: (context) {
+                                            if (index == 0) {
+                                              return Divider(
+                                                color: Colors.black
+                                                    .withOpacity(0.3),
+                                              );
+                                            } else {
+                                              return SizedBox();
+                                            }
+                                          },
+                                        ),
+                                        AbsentList.type1(
+                                          context,
+                                          data.checkIn,
+                                          data.checkOut,
+                                          data.date,
+                                        ),
+                                        Divider(
+                                          color: Colors.black.withOpacity(0.3),
+                                        ),
+                                      ],
                                     );
                                   },
                                 ).toList(),
