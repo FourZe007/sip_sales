@@ -88,6 +88,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     final state = Provider.of<SipSalesState>(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.blue,
