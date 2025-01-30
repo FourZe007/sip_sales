@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as images;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -389,6 +390,32 @@ class SipSalesState with ChangeNotifier {
     absentType = value;
   }
 
+  List<ModelAttendanceHistory> absentHistoryList = [];
+  List<ModelAttendanceHistory> get getAbsentHistoryList => absentHistoryList;
+
+  ModelAttendanceHistory absentHistoryDetail = ModelAttendanceHistory(
+    employeeID: '',
+    employeeName: '',
+    branch: '',
+    shop: '',
+    branchName: '',
+    shopName: '',
+    locationID: '',
+    locationName: '',
+    latitude: 0,
+    longitude: 0,
+    date: '',
+    checkIn: '',
+    checkOut: '',
+    absentLocation: '',
+    userLat: 0,
+    userLng: 0,
+    eventName: '',
+    eventPhoto: '',
+    eventThumbnail: '',
+  );
+  ModelAttendanceHistory get getAbsentHistoryDetail => absentHistoryDetail;
+
   List<ModelActivityRouteDetails> activityRouteDetailsList = [];
 
   List<ModelActivityRouteDetails> get fetchActivityRouteDetails =>
@@ -611,20 +638,28 @@ class SipSalesState with ChangeNotifier {
   }
 
   void openMap(BuildContext context) async {
-    await location.getLocation().then((coordinate) {
-      setLngDisplay(coordinate.longitude!);
-      setLatDisplay(coordinate.latitude!);
-    });
+    print('Open Map function');
+    try {
+      await location.getLocation().then((coordinate) {
+        print('get user coordinate');
+        print('Latitude: ${coordinate.latitude}');
+        print('Longitude: ${coordinate.longitude}');
+        setLngDisplay(coordinate.longitude!);
+        setLatDisplay(coordinate.latitude!);
+      });
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MapPage(
-          fetchLngDisplay,
-          fetchLatDisplay,
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MapPage(
+            fetchLngDisplay,
+            fetchLatDisplay,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   void backToLocation(BuildContext context) {
@@ -716,66 +751,82 @@ class SipSalesState with ChangeNotifier {
   Future<String> checkIn(BuildContext context) async {
     // ~:Profile Picture is uploaded:~
     if (profilePicturePreview.isNotEmpty) {
+      debugPrint('Profile Picture is uploaded');
       // ~:Location Service activated:~
       if (await location.serviceEnabled()) {
+        debugPrint('Location Service is activated');
         // ~:Check if User within branch radius or not:~
-        await location.getLocation().then((coordinate) async {
-          await GlobalAPI.fetchIsWithinRadius(
-            GlobalVar.userAccountList[0].latitude,
-            GlobalVar.userAccountList[0].longitude,
-            coordinate.latitude!,
-            coordinate.longitude!,
-          ).then((status) {
-            // ~:User is not within branch radius:~
-            if (status == 'NOT OK') {
-              isWithinRadius = false;
-            }
-            // ~:User is within branch radius:~
-            else {
-              isWithinRadius = true;
-            }
-            // print('IsWithinRadius: $isWithinRadius');
+        try {
+          await Geolocator.getCurrentPosition().then((coordinate) async {
+            await GlobalAPI.fetchIsWithinRadius(
+              GlobalVar.userAccountList[0].latitude,
+              GlobalVar.userAccountList[0].longitude,
+              coordinate.latitude,
+              coordinate.longitude,
+            ).then((status) {
+              // ~:User is not within branch radius:~
+              if (status == 'NOT OK') {
+                isWithinRadius = false;
+              }
+              // ~:User is within branch radius:~
+              else {
+                isWithinRadius = true;
+              }
+              // print('IsWithinRadius: $isWithinRadius');
+            });
           });
-        });
+        } catch (e) {
+          print('Error: $e');
+        }
 
         // ~:User is not within branch radius:~
         if (!isWithinRadius) {
+          debugPrint('User is not within branch radius');
           displayDescription = 'Lokasi Tidak Valid';
           return 'warn';
         }
         // ~:User is within branch radius:~
         else {
+          debugPrint('User is within branch radius');
           // ~:Check In Process via API:~
           checkInList.clear();
-          checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
-            '1',
-            GlobalVar.nip!,
-            GlobalVar.userAccountList[0].branch,
-            GlobalVar.userAccountList[0].shop,
-            GlobalVar.userAccountList[0].locationID,
-            DateTime.now().toString().split(' ')[0],
-            DateTime.now()
-                .toString()
-                .split(' ')[1]
-                .replaceAll(RegExp(r':'), '.'),
-            '',
-          ));
+          await Geolocator.getCurrentPosition().then((coordinate) async {
+            checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
+              '1',
+              GlobalVar.nip!,
+              GlobalVar.userAccountList[0].branch,
+              GlobalVar.userAccountList[0].shop,
+              GlobalVar.userAccountList[0].locationID,
+              DateTime.now().toString().split(' ')[0],
+              DateTime.now()
+                  .toString()
+                  .split(' ')[1]
+                  .replaceAll(RegExp(r':'), '.'),
+              '',
+              coordinate.latitude,
+              coordinate.longitude,
+            ));
+          });
 
           // ~:Check In List is not empty:~
           if (checkInList.isNotEmpty) {
+            debugPrint('Check In List is not empty');
             // ~:Check In Success:~
             if (checkInList[0].resultMessage == 'SUKSES') {
+              debugPrint('Check In Success');
               displayDescription = 'Clock In berhasil';
               return 'success';
             }
             // ~:Check In Failed:~
             else {
+              debugPrint('Check In Failed');
               displayDescription = checkInList[0].resultMessage;
               return 'warn';
             }
           }
           // ~:Check In List is empty:~
           else {
+            debugPrint('Check In List is empty');
             displayDescription = 'Clock In gagal';
             return 'failed';
           }
@@ -783,12 +834,14 @@ class SipSalesState with ChangeNotifier {
       }
       // ~:Location Service deactivated:~
       else {
+        debugPrint('Location Service is deactivated');
         displayDescription = 'Mohon aktifkan layanan lokasi.';
         return 'warn';
       }
     }
     // ~:Profile Picture is not uploaded yet:~
     else {
+      debugPrint('Profile Picture is not uploaded yet');
       displayDescription = 'Mohon upload foto profil terlebih dahulu.';
       return 'warn';
     }
@@ -801,12 +854,12 @@ class SipSalesState with ChangeNotifier {
       // ~:Location Service activated:~
       if (await location.serviceEnabled()) {
         // ~:Check if User within branch radius or not:~
-        await location.getLocation().then((coordinate) async {
+        await Geolocator.getCurrentPosition().then((coordinate) async {
           await GlobalAPI.fetchIsWithinRadius(
             GlobalVar.userAccountList[0].latitude,
             GlobalVar.userAccountList[0].longitude,
-            coordinate.latitude!,
-            coordinate.longitude!,
+            coordinate.latitude,
+            coordinate.longitude,
           ).then((status) {
             // ~:User is not within branch radius:~
             if (status == 'NOT OK') {
@@ -829,19 +882,23 @@ class SipSalesState with ChangeNotifier {
         else {
           // ~:Check Out Process via API:~
           checkOutList.clear();
-          checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
-            '2',
-            GlobalVar.nip!,
-            GlobalVar.userAccountList[0].branch,
-            GlobalVar.userAccountList[0].shop,
-            GlobalVar.userAccountList[0].locationID,
-            DateTime.now().toString().split(' ')[0],
-            '',
-            DateTime.now()
-                .toString()
-                .split(' ')[1]
-                .replaceAll(RegExp(r':'), '.'),
-          ));
+          await Geolocator.getCurrentPosition().then((coordinate) async {
+            checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
+              '2',
+              GlobalVar.nip!,
+              GlobalVar.userAccountList[0].branch,
+              GlobalVar.userAccountList[0].shop,
+              GlobalVar.userAccountList[0].locationID,
+              DateTime.now().toString().split(' ')[0],
+              '',
+              DateTime.now()
+                  .toString()
+                  .split(' ')[1]
+                  .replaceAll(RegExp(r':'), '.'),
+              coordinate.latitude, // Lat
+              coordinate.longitude, // Lng
+            ));
+          });
 
           // ~:Check Out List is not empty:~
           if (checkOutList.isNotEmpty) {

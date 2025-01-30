@@ -402,7 +402,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: CustomText(
                       'Create Account',
                       color: Colors.blue,
-                      fontSize: MediaQuery.of(context).size.width * 0.0325,
+                      fontSize: 14,
                       decor: TextDecoration.underline,
                     ),
                   ),
@@ -444,7 +444,7 @@ class _LoginPageState extends State<LoginPage> {
                           return CustomText(
                             'SIGN IN',
                             color: Colors.white,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            fontSize: 16,
                             isBold: true,
                           );
                         }

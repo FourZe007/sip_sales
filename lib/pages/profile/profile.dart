@@ -181,65 +181,67 @@ class ProfilePageState extends State<ProfilePage> {
               padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05,
               ),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      child: IconButton(
-                        onPressed: toggleLogOutPage,
-                        icon: const Icon(
-                          Icons.close_rounded,
-                          size: 30.0,
+              child: Material(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        child: IconButton(
+                          onPressed: toggleLogOutPage,
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            size: 30.0,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.08,
-                    ),
-                    child: Wrap(
-                      children: [
-                        DefaultTextStyle(
-                          style: GlobalFont.mediumgigafontRBold,
-                          textAlign: TextAlign.center,
-                          child: Text(
-                            'Apakah anda ingin keluar dari akun ini?',
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                        ),
-                        DefaultTextStyle(
-                          style: GlobalFont.bigfontR,
-                          textAlign: TextAlign.center,
-                          child: Text(
-                            'Pastikan anda mengingat username dan password anda.',
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.075,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ColoredButton(
-                              toggleLogOutPage,
-                              'Cancel',
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.08,
+                      ),
+                      child: Wrap(
+                        children: [
+                          DefaultTextStyle(
+                            style: GlobalFont.mediumgigafontRBold,
+                            textAlign: TextAlign.center,
+                            child: Text(
+                              'Apakah anda ingin keluar dari akun ini?',
                             ),
-                            ColoredButton(
-                              () => logout(profileState),
-                              'SIGN OUT',
-                              isCancel: true,
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.1,
+                          ),
+                          DefaultTextStyle(
+                            style: GlobalFont.bigfontR,
+                            textAlign: TextAlign.center,
+                            child: Text(
+                              'Pastikan anda mengingat username dan password anda.',
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.075,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ColoredButton(
+                                toggleLogOutPage,
+                                'Cancel',
+                              ),
+                              ColoredButton(
+                                () => logout(profileState),
+                                'SIGN OUT',
+                                isCancel: true,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           } else {
@@ -256,65 +258,67 @@ class ProfilePageState extends State<ProfilePage> {
               padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05,
               ),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      child: IconButton(
-                        onPressed: toggleLogOutPage,
-                        icon: const Icon(
-                          Icons.close_rounded,
-                          size: 30.0,
+              child: Material(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        child: IconButton(
+                          onPressed: toggleLogOutPage,
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            size: 30.0,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.25,
-                    margin: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.08,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Apakah anda ingin keluar dari akun ini?',
-                          style: GlobalFont.petafontRBold,
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01,
-                        ),
-                        Text(
-                          'Pastikan anda mengingat username dan password anda.',
-                          style: GlobalFont.mediumgigafontR,
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ColoredButton(
-                              toggleLogOutPage,
-                              'Cancel',
-                              isIpad: true,
-                            ),
-                            ColoredButton(
-                              logout,
-                              'SIGN OUT',
-                              isCancel: true,
-                              isIpad: true,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.08,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Apakah anda ingin keluar dari akun ini?',
+                            style: GlobalFont.petafontRBold,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01,
+                          ),
+                          Text(
+                            'Pastikan anda mengingat username dan password anda.',
+                            style: GlobalFont.mediumgigafontR,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ColoredButton(
+                                toggleLogOutPage,
+                                'Cancel',
+                                isIpad: true,
+                              ),
+                              ColoredButton(
+                                logout,
+                                'SIGN OUT',
+                                isCancel: true,
+                                isIpad: true,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           }
@@ -668,7 +672,7 @@ class ProfilePageState extends State<ProfilePage> {
                           top: MediaQuery.of(context).size.height * 0.01,
                         ),
                         child: Text(
-                          'Version 1.1.4',
+                          'Version 1.1.5',
                           style: GlobalFont.bigfontR,
                         ),
                       ),

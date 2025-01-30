@@ -5,6 +5,7 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/attendance/attendance_history.dart';
+import 'package:sip_sales/pages/attendance/event.dart';
 import 'package:sip_sales/widget/date/custom_digital_clock.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sip_sales/widget/dropdown/common_dropdown.dart';
@@ -19,7 +20,6 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  List<ModelAttendanceHistory> historyList = [];
   String displayDate = '';
   String absentType = '';
 
@@ -38,12 +38,22 @@ class _AttendancePageState extends State<AttendancePage> {
     state.clearState();
 
     if (isClockIn) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoadingAnimationPage(true, false, false, false),
-        ),
-      );
+      if (state.getAbsentType != 'EVENT') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                LoadingAnimationPage(true, false, false, false),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDescPage(),
+          ),
+        );
+      }
     } else {
       Navigator.push(
         context,
@@ -54,28 +64,30 @@ class _AttendancePageState extends State<AttendancePage> {
     }
   }
 
-  Stream<List<ModelAttendanceHistory>> getHistory({
+  Stream<List<ModelAttendanceHistory>> getHistory(
+    SipSalesState state, {
     String startDate = '',
     String endDate = '',
   }) async* {
     print('Refresh');
-    historyList.clear();
-    historyList.addAll(await GlobalAPI.fetchAttendanceHistory(
+    state.absentHistoryList.clear();
+    state.absentHistoryList.addAll(await GlobalAPI.fetchAttendanceHistory(
       GlobalVar.nip!,
       startDate,
       endDate,
     ));
 
     // History list check
-    if (historyList.isNotEmpty) {
+    if (state.absentHistoryList.isNotEmpty) {
       print('Fetch succeed');
       yield [
-        historyList[0],
-        historyList[1],
+        state.absentHistoryList[0],
+        state.absentHistoryList[1],
+        state.absentHistoryList[2],
       ];
     } else {
       print('Fetch failed');
-      yield historyList;
+      yield state.absentHistoryList;
     }
   }
 
@@ -102,7 +114,7 @@ class _AttendancePageState extends State<AttendancePage> {
         top: MediaQuery.of(context).size.height * 0.12,
       ),
       child: RefreshIndicator(
-        onRefresh: () async => getHistory(),
+        onRefresh: () async => getHistory(state),
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: SizedBox(
@@ -208,21 +220,30 @@ class _AttendancePageState extends State<AttendancePage> {
                         ),
                         child: Row(
                           children: [
-                            // // ~:Absent Type:~
-                            // Expanded(
+                            // ~:Absent Type:~
+                            // ~:Alt 1:~
+                            // SizedBox(
+                            //   width: MediaQuery.of(context).size.width * 0.275,
                             //   child: CommonDropdown(
                             //     state.absentType,
                             //     defaultValue:
                             //         GlobalVar.userAccountList[0].locationName,
                             //   ),
                             // ),
-                            // // ~:Devider:~
-                            // SizedBox(
-                            //   width: MediaQuery.of(context).size.width * 0.025,
-                            // ),
+                            // ~:Alt 2:~
+                            Expanded(
+                              child: CommonDropdown(
+                                state.absentType,
+                                defaultValue:
+                                    GlobalVar.userAccountList[0].locationName,
+                              ),
+                            ),
+                            // ~:Devider:~
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.025,
+                            ),
                             // ~:Clock In Button:~
                             Expanded(
-                              // flex: 2,
                               child: GestureDetector(
                                 onTap: () => userAbsent(isClockIn: true),
                                 child: Container(
@@ -251,40 +272,40 @@ class _AttendancePageState extends State<AttendancePage> {
                                 ),
                               ),
                             ),
-                            // ~:Devider:~
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.025,
-                            ),
-                            // ~:Clock Out Button:~
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => userAbsent(),
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        // Adjust shadow color as needed
-                                        color: Colors.grey,
-                                        // No shadow offset
-                                        // Adjust shadow blur radius
-                                        blurRadius: 5.0,
-                                        // Adjust shadow spread radius
-                                        spreadRadius: 1.0,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Text(
-                                    'Clock Out',
-                                    style: GlobalFont.bigfontR,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // // ~:Devider:~
+                            // SizedBox(
+                            //   width: MediaQuery.of(context).size.width * 0.025,
+                            // ),
+                            // // ~:Clock Out Button:~
+                            // Expanded(
+                            //   child: GestureDetector(
+                            //     onTap: () => userAbsent(),
+                            //     child: Container(
+                            //       height:
+                            //           MediaQuery.of(context).size.height * 0.05,
+                            //       alignment: Alignment.center,
+                            //       decoration: BoxDecoration(
+                            //         color: Colors.white,
+                            //         borderRadius: BorderRadius.circular(20),
+                            //         boxShadow: const [
+                            //           BoxShadow(
+                            //             // Adjust shadow color as needed
+                            //             color: Colors.grey,
+                            //             // No shadow offset
+                            //             // Adjust shadow blur radius
+                            //             blurRadius: 5.0,
+                            //             // Adjust shadow spread radius
+                            //             spreadRadius: 1.0,
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       child: Text(
+                            //         'Clock Out',
+                            //         style: GlobalFont.bigfontR,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -294,38 +315,31 @@ class _AttendancePageState extends State<AttendancePage> {
                           horizontal: MediaQuery.of(context).size.width * 0.005,
                           vertical: MediaQuery.of(context).size.height * 0.005,
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => state.openMap(context),
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        // Adjust shadow color as needed
-                                        color: Colors.grey,
-                                        // No shadow offset
-                                        // Adjust shadow blur radius
-                                        blurRadius: 5.0,
-                                        // Adjust shadow spread radius
-                                        spreadRadius: 1.0,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Text(
-                                    'Lokasi Anda',
-                                    style: GlobalFont.bigfontR,
-                                  ),
+                        child: GestureDetector(
+                          onTap: () => state.openMap(context),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  // Adjust shadow color as needed
+                                  color: Colors.grey,
+                                  // No shadow offset
+                                  // Adjust shadow blur radius
+                                  blurRadius: 5.0,
+                                  // Adjust shadow spread radius
+                                  spreadRadius: 1.0,
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                            child: Text(
+                              'Lokasi Anda',
+                              style: GlobalFont.bigfontR,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -372,10 +386,15 @@ class _AttendancePageState extends State<AttendancePage> {
                         ],
                       ),
 
+                      // ~:Devider:~
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.007,
+                      ),
+
                       // ~:Attendance List Content:~
                       Expanded(
                         child: StreamBuilder(
-                          stream: getHistory(),
+                          stream: getHistory(state),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -384,11 +403,13 @@ class _AttendancePageState extends State<AttendancePage> {
                                 highlightColor: Colors.white,
                                 period: const Duration(milliseconds: 1000),
                                 child: ListView.builder(
-                                  itemCount: 2,
+                                  itemCount: 3,
                                   itemBuilder: (context, index) {
                                     return Container(
                                       width: MediaQuery.of(context).size.width,
-                                      height: 140,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.075,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                         borderRadius:
@@ -408,7 +429,7 @@ class _AttendancePageState extends State<AttendancePage> {
                                       margin: EdgeInsets.symmetric(
                                         vertical:
                                             MediaQuery.of(context).size.height *
-                                                0.01,
+                                                0.005,
                                         horizontal:
                                             MediaQuery.of(context).size.width *
                                                 0.01,
@@ -416,6 +437,9 @@ class _AttendancePageState extends State<AttendancePage> {
                                       padding: EdgeInsets.symmetric(
                                         vertical:
                                             MediaQuery.of(context).size.height *
+                                                0.008,
+                                        horizontal:
+                                            MediaQuery.of(context).size.width *
                                                 0.01,
                                       ),
                                     );
@@ -441,9 +465,16 @@ class _AttendancePageState extends State<AttendancePage> {
 
                                     return Column(
                                       children: [
+                                        AbsentList.type4(
+                                          context,
+                                          state,
+                                          data.checkIn,
+                                          data.date,
+                                        ),
                                         Builder(
                                           builder: (context) {
-                                            if (index == 0) {
+                                            if (index !=
+                                                snapshot.data!.length - 1) {
                                               return Divider(
                                                 color: Colors.black
                                                     .withOpacity(0.3),
@@ -452,15 +483,6 @@ class _AttendancePageState extends State<AttendancePage> {
                                               return SizedBox();
                                             }
                                           },
-                                        ),
-                                        AbsentList.type1(
-                                          context,
-                                          data.checkIn,
-                                          data.checkOut,
-                                          data.date,
-                                        ),
-                                        Divider(
-                                          color: Colors.black.withOpacity(0.3),
                                         ),
                                       ],
                                     );

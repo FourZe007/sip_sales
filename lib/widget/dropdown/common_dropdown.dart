@@ -54,6 +54,7 @@ class _CommonDropdownState extends State<CommonDropdown> {
           child: Text(
             value,
             style: GlobalFont.bigfontR,
+            overflow: TextOverflow.ellipsis,
           ),
         );
       }).toList(),

@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/format.dart';
 import 'dart:math' as math;
 
+import 'package:sip_sales/widget/list/absent_details.dart';
+
 class AbsentList {
+  // ~:Clock In & Clock Out:~
   static Widget type1(
     BuildContext context,
     String checkIn,
@@ -183,6 +189,7 @@ class AbsentList {
     );
   }
 
+  // ~:Old Absent List Design:~
   static Widget type2(
     BuildContext context,
     String locationName,
@@ -293,6 +300,215 @@ class AbsentList {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ~:Same Design with Type1, but only show Clock In:~
+  static Widget type3(
+    BuildContext context,
+    String checkIn,
+    String date,
+  ) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.symmetric(
+        vertical: MediaQuery.of(context).size.height * 0.008,
+        horizontal: MediaQuery.of(context).size.width * 0.01,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // ~:Left Side:~
+          Expanded(
+            child: Wrap(
+              spacing: 15,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Builder(
+                  builder: (context) {
+                    if (checkIn.isNotEmpty) {
+                      return Icon(
+                        Icons.exit_to_app,
+                        size: 40,
+                      );
+                    } else {
+                      return Icon(
+                        Icons.exit_to_app,
+                        size: 40,
+                        color: Colors.red,
+                      );
+                    }
+                  },
+                ),
+                Builder(
+                  builder: (context) {
+                    if (checkIn.isNotEmpty) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            checkIn,
+                            style: GlobalFont.mediumgiantfontRBold,
+                          ),
+                          Text(
+                            Format.tanggalFormat(date),
+                            style: GlobalFont.mediumgiantfontR,
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '00:00',
+                            style: GlobalFont.giantfontRBoldRed,
+                          ),
+                          Text(
+                            Format.tanggalFormat(date),
+                            style: GlobalFont.mediumgiantfontRRed,
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // ~:Right Side:~
+          Builder(
+            builder: (context) {
+              if (checkIn.isNotEmpty) {
+                return Text(
+                  'In',
+                  style: GlobalFont.giantfontRBold,
+                );
+              } else {
+                return Text(
+                  'In',
+                  style: GlobalFont.giantfontRBoldRed,
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ~:Same Design with Type3, but with arrow at the right side:~
+  static Widget type4(
+    BuildContext context,
+    SipSalesState state,
+    String checkIn,
+    String date,
+  ) {
+    return InkWell(
+      onTap: () {
+        state.absentHistoryDetail =
+            state.getAbsentHistoryList.where((e) => e.date == date).first;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AbsentDetailsPage(),
+          ),
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.008,
+          horizontal: MediaQuery.of(context).size.width * 0.01,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // ~:Left Side:~
+            Expanded(
+              child: Wrap(
+                spacing: 15,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Builder(
+                    builder: (context) {
+                      if (checkIn.isNotEmpty) {
+                        return Icon(
+                          Icons.exit_to_app,
+                          size: 40,
+                        );
+                      } else {
+                        return Icon(
+                          Icons.exit_to_app,
+                          size: 40,
+                          color: Colors.red,
+                        );
+                      }
+                    },
+                  ),
+                  Builder(
+                    builder: (context) {
+                      if (checkIn.isNotEmpty) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              checkIn,
+                              style: GlobalFont.mediumgiantfontRBold,
+                            ),
+                            Text(
+                              Format.tanggalFormat(date),
+                              style: GlobalFont.mediumgiantfontR,
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '00:00',
+                              style: GlobalFont.giantfontRBoldRed,
+                            ),
+                            Text(
+                              Format.tanggalFormat(date),
+                              style: GlobalFont.mediumgiantfontRRed,
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            // ~:Right Side:~
+            Builder(
+              builder: (context) {
+                if (checkIn.isNotEmpty) {
+                  return Icon(
+                    (Platform.isIOS)
+                        ? Icons.arrow_forward_ios_rounded
+                        : Icons.arrow_right_rounded,
+                    size: (Platform.isIOS) ? 20 : 40,
+                  );
+                } else {
+                  return Icon(
+                    (Platform.isIOS)
+                        ? Icons.arrow_forward_ios_rounded
+                        : Icons.arrow_right_rounded,
+                    size: (Platform.isIOS) ? 20 : 40,
+                    color: Colors.red,
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

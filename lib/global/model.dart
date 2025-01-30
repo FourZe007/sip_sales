@@ -54,6 +54,7 @@ class ModelAttendanceHistory {
   String branch;
   String shop;
   String branchName;
+  String shopName;
   String locationID;
   String locationName;
   double latitude;
@@ -61,6 +62,12 @@ class ModelAttendanceHistory {
   String date;
   String checkIn;
   String checkOut;
+  String absentLocation;
+  double userLat;
+  double userLng;
+  String eventName;
+  String eventPhoto;
+  String eventThumbnail;
 
   ModelAttendanceHistory({
     required this.employeeID,
@@ -68,6 +75,7 @@ class ModelAttendanceHistory {
     required this.branch,
     required this.shop,
     required this.branchName,
+    required this.shopName,
     required this.locationID,
     required this.locationName,
     required this.latitude,
@@ -75,6 +83,12 @@ class ModelAttendanceHistory {
     required this.date,
     required this.checkIn,
     required this.checkOut,
+    required this.absentLocation,
+    required this.userLat,
+    required this.userLng,
+    required this.eventName,
+    required this.eventPhoto,
+    required this.eventThumbnail,
   });
 
   factory ModelAttendanceHistory.fromJson(Map<String, dynamic> json) {
@@ -83,7 +97,8 @@ class ModelAttendanceHistory {
       employeeName: json['EName'],
       branch: json['Branch'],
       shop: json['Shop'],
-      branchName: json['BSName'],
+      branchName: json['BName'],
+      shopName: json['BSName'],
       locationID: json['LocationID'],
       locationName: json['LocationName'],
       latitude: json['Lat'],
@@ -91,6 +106,12 @@ class ModelAttendanceHistory {
       date: json['Date_'],
       checkIn: json['CheckIn'],
       checkOut: json['CheckOut'],
+      absentLocation: json['LokasiAbsen'],
+      userLat: json['CLat'],
+      userLng: json['CLng'],
+      eventName: json['EventName'],
+      eventPhoto: json['EventPhoto'],
+      eventThumbnail: json['EventPhotoThumb'],
     );
   }
 }

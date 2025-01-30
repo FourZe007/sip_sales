@@ -337,6 +337,8 @@ class GlobalAPI {
     String date, // date
     String checkIn, // time
     String checkOut, // time
+    double lat,
+    double lng,
   ) async {
     var url = Uri.https(
       'wsip.yamaha-jatim.co.id:2448',
@@ -355,6 +357,8 @@ class GlobalAPI {
         "Date_": date, // mandatory
         "CheckIn": checkIn != '' ? checkIn : '', // mandatory for check in
         "CheckOut": checkOut != '' ? checkOut : '', // mandatory for check out
+        "Lat": lat, // mandatory
+        "Lng": lng, // mandatory
       }
     };
 

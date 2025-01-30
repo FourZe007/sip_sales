@@ -152,8 +152,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     runSpacing: 20,
                     children: [
                       // ~:Title Section:~
-                      Wrap(
-                        runSpacing: 13,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // ~:Page Title:~
                           Text(
@@ -232,25 +232,28 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
 
                 // ~:Footer - 'Ubah' Button:~
-                ElevatedButton(
-                  onPressed: () => changePassword(
-                    state,
-                    currentPassword,
-                    newPassword,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(
-                      MediaQuery.of(context).size.width * 0.95,
-                      MediaQuery.of(context).size.height * 0.04,
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ElevatedButton(
+                    onPressed: () => changePassword(
+                      state,
+                      currentPassword,
+                      newPassword,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: Size(
+                        MediaQuery.of(context).size.width * 0.95,
+                        MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      backgroundColor: Colors.blue[300],
                     ),
-                    backgroundColor: Colors.blue[300],
-                  ),
-                  child: Text(
-                    'Ubah',
-                    style: GlobalFont.mediumgiantfontR,
+                    child: Text(
+                      'Ubah',
+                      style: GlobalFont.mediumgiantfontR,
+                    ),
                   ),
                 ),
               ],

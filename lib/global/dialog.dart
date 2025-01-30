@@ -13,16 +13,8 @@ class GlobalDialog {
       context: context,
       builder: (context) {
         return CircleAvatar(
-          radius: 200,
-          backgroundColor: Colors.white,
-          child: ClipOval(
-            child: SizedBox.fromSize(
-              size: Size.fromRadius(210),
-              child: Image.memory(
-                base64Decode(img),
-                fit: BoxFit.cover,
-              ),
-            ),
+          foregroundImage: MemoryImage(
+            base64Decode(img),
           ),
         );
       },
