@@ -39,8 +39,8 @@ class _CommonDropdownState extends State<CommonDropdown> {
         filled: true,
         fillColor: Colors.grey[350],
         contentPadding: EdgeInsets.symmetric(
-          horizontal: 25,
-          vertical: 10,
+          horizontal: 15,
+          vertical: 8,
         ),
       ),
       value: widget.value == '' ? widget.defaultValue : widget.value,

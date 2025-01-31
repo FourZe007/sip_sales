@@ -60,6 +60,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 false,
                 false,
                 false,
+                false,
+                false,
                 true,
                 stateMessage: res['status'],
               ),
@@ -70,6 +72,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             context,
             MaterialPageRoute(
               builder: (context) => LoadingAnimationPage(
+                false,
+                false,
                 false,
                 false,
                 false,

@@ -11,16 +11,20 @@ import 'package:sip_sales/widget/status/warning_animation.dart';
 
 class LoadingAnimationPage extends StatefulWidget {
   const LoadingAnimationPage(
+    this.isEventPhotoUploaded,
     this.isClockIn,
     this.isClockOut,
+    this.isEventClockIn,
     this.isProfileUploaded,
     this.isChangePassword, {
     this.stateMessage = '',
     super.key,
   });
 
+  final bool isEventPhotoUploaded;
   final bool isClockIn;
   final bool isClockOut;
+  final bool isEventClockIn;
   final bool isProfileUploaded;
   final bool isChangePassword;
   final String stateMessage;
@@ -33,6 +37,29 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
   Future<void> processing(BuildContext context) async {
     print('Loading Animation Process');
     final state = Provider.of<SipSalesState>(context, listen: false);
+    // ~:Event Photo:~
+    if (widget.isEventPhotoUploaded) {
+      await state.uploadImageFromCamera(context).then((isUploaded) {
+        if (isUploaded) {
+          state.setEventPhoto(state.getFilteredList[0]);
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SuccessAnimationPage(),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FailureAnimationPage(),
+            ),
+          );
+        }
+      });
+    }
+
     // ~:Profile Picture:~
     if (widget.isProfileUploaded) {
       print('Upload Profile Picture Process');
@@ -124,6 +151,39 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
       });
     } else {
       print('Skip Clock Out Process');
+    }
+
+    // ~:Event Clock In:~
+    if (widget.isEventClockIn) {
+      await Future.delayed(Duration(seconds: 3)).then((_) {
+        if (widget.stateMessage == 'success') {
+          print('Event clock in succeed');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SuccessAnimationPage(),
+            ),
+          );
+        } else if (widget.stateMessage == 'failed') {
+          print('Event clock in failed');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FailureAnimationPage(),
+            ),
+          );
+        } else {
+          print('Something wrong with event clock in');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WarningAnimationPage(),
+            ),
+          );
+        }
+      });
+    } else {
+      print('Skip Event Clock In Process');
     }
 
     // ~:Change Password:~

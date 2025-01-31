@@ -21,6 +21,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sip_sales/widget/status/failure_animation.dart';
 import 'package:sip_sales/widget/status/success_animation.dart';
 import 'package:sip_sales/widget/status/warning_animation.dart';
+import 'package:sip_sales/widget/textfield/adjustabledescbox.dart';
 import 'package:uuid/uuid.dart';
 
 class SipSalesState with ChangeNotifier {
@@ -508,6 +509,69 @@ class SipSalesState with ChangeNotifier {
   // ================================================================
   // ========================= Attendances ==========================
   // ================================================================
+  // Event
+  TextEditingController eventTextController = TextEditingController();
+  TextEditingController get getEventTextController => eventTextController;
+
+  String eventPhoto = '';
+  String get getEventPhoto => eventPhoto;
+
+  void setEventPhoto(String value) {
+    eventPhoto = value;
+    notifyListeners();
+  }
+
+  Future<String> eventCheckIn() async {
+    try {
+      Position coordinate = await Geolocator.getCurrentPosition();
+
+      if (getEventPhoto.isEmpty || getEventTextController.text.isEmpty) {
+        displayDescription = 'Mohon periksa input anda lagi.';
+        return 'warn';
+      } else {
+        await GlobalAPI.fetchModifyEventAttendance(
+          '1',
+          GlobalVar.nip!,
+          GlobalVar.userAccountList[0].branch,
+          GlobalVar.userAccountList[0].shop,
+          DateTime.now().toString().split(' ')[0],
+          DateTime.now().toString().split(' ')[1].replaceAll(RegExp(r':'), '.'),
+          coordinate.latitude,
+          coordinate.longitude,
+          getEventTextController.text,
+          getEventPhoto,
+        ).then((res) {
+          // ~:Check In List is not empty:~
+          if (res.isNotEmpty) {
+            print('Check In Event: ${res[0].resultMessage}');
+            // ~:Check Out Success:~
+            if (res[0].resultMessage == 'SUKSES') {
+              displayDescription = 'Clock In Event berhasil.';
+              return 'success';
+            }
+            // ~:Check In Failed:~
+            else {
+              displayDescription = res[0].resultMessage;
+              return 'warn';
+            }
+          }
+          // ~:Check In List is empty:~
+          else {
+            print('Event Check In is empty');
+            displayDescription = 'Clock In gagal.';
+            return 'failed';
+          }
+        });
+      }
+    } catch (e) {
+      displayDescription = '${e.toString()}.';
+      return 'failed';
+    }
+
+    displayDescription = 'Terjadi kesalahan, mohon coba lagi.';
+    return 'failed';
+  }
+
   // Location
   List<ModelCoordinate> coordinateList = [];
   Location location = Location();
@@ -957,6 +1021,7 @@ class SipSalesState with ChangeNotifier {
   List<images.Image> imgList = [];
   List<String> base64ImageList = [];
   List<String> filteredList = [];
+  List<String> get getFilteredList => filteredList;
 
   List<ModelResultMessage2> newActivitiesList = [];
 
@@ -1168,8 +1233,10 @@ class SipSalesState with ChangeNotifier {
 
     if (filteredList.isNotEmpty) {
       setIsDisable(false);
+      displayDescription = 'Foto berhasil diunggah.';
       return true;
     }
+    displayDescription = 'Foto gagal diunggah.';
     return false;
   }
 

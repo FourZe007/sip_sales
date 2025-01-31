@@ -5,6 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:sip_sales/global/global.dart';
 
 class GlobalDialog {
+  static Future<void> previewImage(
+    BuildContext context,
+    String img,
+  ) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Image.memory(
+            base64Decode(img),
+          ),
+        );
+      },
+    );
+  }
+
   static Future<void> previewProfileImage(
     BuildContext context,
     String img,

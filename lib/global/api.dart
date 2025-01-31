@@ -398,6 +398,74 @@ class GlobalAPI {
     }
   }
 
+  static Future<List<ModelResultMessage>> fetchModifyEventAttendance(
+    String mode,
+    String id,
+    String branch,
+    String shop,
+    String date, // date
+    String checkIn, // time
+    double lat,
+    double lng,
+    String eventName,
+    String eventPhoto,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/InsertAttendanceEvent',
+    );
+
+    Map mapModifyAttendance = {
+      "Mode": mode,
+      "Data": {
+        "EmployeeID": id,
+        "Branch": branch,
+        "Shop": shop,
+        "Date_": date,
+        "CheckIn": checkIn,
+        "Lat": lat,
+        "Lng": lng,
+        "EventName": eventName,
+        "EventPhoto": eventPhoto,
+      }
+    };
+
+    print(mapModifyAttendance);
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapModifyAttendance), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      List<ModelResultMessage> list = [];
+
+      if (response.statusCode <= 200) {
+        var jsonUserAccount = jsonDecode(response.body);
+        if (jsonUserAccount['Code'] == '100' ||
+            jsonUserAccount['Msg'] == 'Sukses') {
+          List<ModelResultMessage> list = (jsonUserAccount['Data'] as List)
+              .map<ModelResultMessage>(
+                  (data) => ModelResultMessage.fromJson(data))
+              .toList();
+
+          return list;
+        } else {
+          List<ModelResultMessage> list = (jsonUserAccount['Data'] as List)
+              .map<ModelResultMessage>(
+                  (data) => ModelResultMessage.fromJson(data))
+              .toList();
+
+          return list;
+        }
+      }
+
+      return list;
+    } catch (e) {
+      return throw e;
+    }
+  }
+
   static Future<ModelResultMessage> fetchSendMessage(
     String phoneNumber,
     String message,

@@ -108,6 +108,8 @@ class ProfilePageState extends State<ProfilePage> {
             builder: (context) => LoadingAnimationPage(
               false,
               false,
+              false,
+              false,
               true,
               false,
             ),

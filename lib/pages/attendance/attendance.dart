@@ -43,7 +43,7 @@ class _AttendancePageState extends State<AttendancePage> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                LoadingAnimationPage(true, false, false, false),
+                LoadingAnimationPage(false, true, false, false, false, false),
           ),
         );
       } else {
@@ -58,7 +58,8 @@ class _AttendancePageState extends State<AttendancePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LoadingAnimationPage(false, true, false, false),
+          builder: (context) =>
+              LoadingAnimationPage(false, false, true, false, false, false),
         ),
       );
     }
@@ -232,10 +233,14 @@ class _AttendancePageState extends State<AttendancePage> {
                             // ),
                             // ~:Alt 2:~
                             Expanded(
-                              child: CommonDropdown(
-                                state.absentType,
-                                defaultValue:
-                                    GlobalVar.userAccountList[0].locationName,
+                              child: SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05,
+                                child: CommonDropdown(
+                                  state.absentType,
+                                  defaultValue:
+                                      GlobalVar.userAccountList[0].locationName,
+                                ),
                               ),
                             ),
                             // ~:Devider:~
