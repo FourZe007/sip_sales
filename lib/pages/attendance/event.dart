@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
@@ -22,6 +23,14 @@ class EventDescPage extends StatefulWidget {
 }
 
 class _EventDescPageState extends State<EventDescPage> {
+  bool isLoading = false;
+
+  void setIsLoading(bool value) {
+    setState(() {
+      isLoading = value;
+    });
+  }
+
   void eventPhotoInteraction(
     BuildContext context,
     SipSalesState state,
@@ -56,7 +65,9 @@ class _EventDescPageState extends State<EventDescPage> {
 
   void createEvent(SipSalesState state) async {
     print('Create Event Function');
+    setIsLoading(true);
     await state.eventCheckIn().then((value) {
+      setIsLoading(false);
       if (value == 'sukses') {
         Navigator.pushReplacement(
           context,
@@ -164,7 +175,7 @@ class _EventDescPageState extends State<EventDescPage> {
               MediaQuery.of(context).size.width * 0.075,
               MediaQuery.of(context).size.height * 0.03,
               MediaQuery.of(context).size.width * 0.075,
-              0.0,
+              MediaQuery.of(context).size.height * 0.015,
             ),
             child: Column(
               children: [
@@ -290,9 +301,26 @@ class _EventDescPageState extends State<EventDescPage> {
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
-                  child: Text(
-                    'Buat',
-                    style: GlobalFont.mediumgiantfontR,
+                  child: Builder(
+                    builder: (context) {
+                      if (isLoading) {
+                        if (Platform.isIOS) {
+                          return CupertinoActivityIndicator(
+                            radius: 10,
+                            color: Colors.white,
+                          );
+                        } else {
+                          return const CircularProgressIndicator(
+                            color: Colors.white,
+                          );
+                        }
+                      } else {
+                        return Text(
+                          'Buat',
+                          style: GlobalFont.mediumgiantfontR,
+                        );
+                      }
+                    },
                   ),
                 ),
               ],
