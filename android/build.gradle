@@ -1,29 +1,37 @@
+buildscript {
+    ext.kotlin_version = '1.8.10' // Ensure this matches your Kotlin version
+    repositories {
+        google() // Google's Maven repository
+        mavenCentral() // Maven Central repository
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.3.0' // Use a valid AGP version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
-        // [required] flutter_background_geolocation
-        // maven { url "${project(':flutter_background_geolocation').projectDir}/libs" }
-        maven { url 'https://developer.huawei.com/repo/' }
-        // [required] background_fetch
-        // maven { url "${project(':background_fetch').projectDir}/libs" }
     }
+
     ext {
         compileSdkVersion   = 34                // or higher / as desired
         targetSdkVersion    = 34                // or higher / as desired
         minSdkVersion       = 21                // Required minimum
         appCompatVersion    = "1.4.2"           // or higher / as desired
         playServicesLocationVersion = "21.0.1"  // or higher / as desired
-        kotlin_version = '1.8.10'
+        // kotlin_version = '1.8.10'
     }
 }
 
-rootProject.buildDir = '../build'
+rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
-    project.evaluationDependsOn(':app')
+    project.evaluationDependsOn(":app")
 }
 
 tasks.register("clean", Delete) {

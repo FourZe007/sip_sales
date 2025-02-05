@@ -1,6 +1,5 @@
-package com.stsj.sipsales
+package com.example.sip_sales
 
 import io.flutter.embedding.android.FlutterActivity
 
-class MainActivity: FlutterActivity() {
-}
+class MainActivity: FlutterActivity()

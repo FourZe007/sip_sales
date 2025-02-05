@@ -413,9 +413,8 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                                             if (index !=
                                                 snapshot.data!.length - 1) {
                                               return Divider(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.3,
-                                                ),
+                                                color: Colors.black
+                                                    .withOpacity(0.65),
                                               );
                                             } else {
                                               return SizedBox();
