@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
@@ -18,9 +19,32 @@ class AbsentDetailsPage extends StatefulWidget {
 }
 
 class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
+  Future<String> retrieveHighResImage() async {
+    String img = '';
+    await GlobalAPI.fetchAbsentHighResImage(
+      GlobalVar.nip!,
+      DateTime.now().toString().substring(0, 10),
+    ).then((String res) {
+      if (res == 'not available' || res == 'failed' || res == 'error') {
+        img == '';
+      } else {
+        img = res;
+      }
+    });
+
+    return img;
+  }
+
+  void openEventPhoto() {
+    GlobalDialog.loadAndPreviewImage(
+      context,
+      retrieveHighResImage(),
+    );
+  }
+
   void openMap(SipSalesState state) async {
     Uri url = Uri.parse(
-      'maps.google.com/?q=${state.getAbsentHistoryDetail.userLat},${state.getAbsentHistoryDetail.userLng}',
+      'https://maps.google.com/?q=${state.getAbsentHistoryDetail.userLat},${state.getAbsentHistoryDetail.userLng}',
     );
 
     if (await canLaunchUrl(url)) {
@@ -106,45 +130,61 @@ class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
               runSpacing: MediaQuery.of(context).size.height * 0.025,
               children: [
                 // ~:Photo Section:~
-                Wrap(
-                  runSpacing: MediaQuery.of(context).size.height * 0.01,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Foto',
-                        style: GlobalFont.giantfontRBold,
-                      ),
-                    ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: Image.memory(
-                          base64Decode(
-                            state.getAbsentHistoryDetail.eventThumbnail,
+                Builder(
+                  builder: (context) {
+                    if (state.getAbsentHistoryDetail.eventThumbnail.isEmpty) {
+                      return SizedBox();
+                    } else {
+                      return Wrap(
+                        runSpacing: MediaQuery.of(context).size.height * 0.01,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              'Foto',
+                              style: GlobalFont.giantfontRBold,
+                            ),
                           ),
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    // Container(
-                    //   width: MediaQuery.of(context).size.width,
-                    //   height: MediaQuery.of(context).size.height * 0.25,
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.grey[350],
-                    //     borderRadius: BorderRadius.circular(20.0),
-                    //   ),
-                    //   child: Icon(
-                    //     Icons.photo,
-                    //     size: 40,
-                    //   ),
-                    // ),
-                  ],
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                  ),
+                                  child: Image.memory(
+                                    base64Decode(
+                                      state.getAbsentHistoryDetail
+                                          .eventThumbnail,
+                                    ),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.25,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: MediaQuery.of(context).size.height * 0.195,
+                                left: MediaQuery.of(context).size.width * 0.78,
+                                child: GestureDetector(
+                                  onTap: () => openEventPhoto(),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    child: Icon(
+                                      Icons.fullscreen_rounded,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+                  },
                 ),
 
                 // ~:Map Section:~
@@ -166,8 +206,8 @@ class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
                         child: FlutterMap(
                           options: MapOptions(
                             initialCenter: LatLng(
-                              state.getAbsentHistoryDetail.latitude,
-                              state.getAbsentHistoryDetail.longitude,
+                              state.getAbsentHistoryDetail.userLat,
+                              state.getAbsentHistoryDetail.userLng,
                             ),
                             initialZoom: 15.0,
                           ),
@@ -183,8 +223,8 @@ class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
                                   width: 80.0,
                                   height: 100.0,
                                   point: LatLng(
-                                    state.getAbsentHistoryDetail.latitude,
-                                    state.getAbsentHistoryDetail.longitude,
+                                    state.getAbsentHistoryDetail.userLat,
+                                    state.getAbsentHistoryDetail.userLng,
                                   ),
                                   child: const Icon(
                                     Icons.location_pin,
@@ -195,13 +235,16 @@ class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
                               ],
                             ),
                             Positioned(
-                              top: 190,
-                              left: 340,
+                              top: MediaQuery.of(context).size.height * 0.195,
+                              left: MediaQuery.of(context).size.width * 0.78,
                               child: GestureDetector(
                                 onTap: () => openMap(state),
-                                child: Icon(
-                                  Icons.open_in_new_rounded,
-                                  size: 35,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.open_in_new_rounded,
+                                    size: 30,
+                                  ),
                                 ),
                               ),
                             ),

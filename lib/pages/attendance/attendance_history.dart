@@ -5,10 +5,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
+import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/profile/profile.dart';
 import 'package:sip_sales/widget/format.dart';
 import 'package:sip_sales/widget/list/absent.dart';
@@ -141,10 +143,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ~:Old widget without Scaffold:~
-    // return Positioned(
-    // top: MediaQuery.of(context).size.height * 0.12,
-    // );
+    final state = Provider.of<SipSalesState>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -340,59 +339,48 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.white,
-                                    period: const Duration(milliseconds: 1000),
-                                    child: ListView.builder(
-                                      itemCount: 6,
-                                      itemBuilder: (context, index) {
-                                        return Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: 140,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                // Adjust shadow color as needed
-                                                color: Colors.grey,
-                                                // No shadow offset
-                                                // Adjust shadow blur radius
-                                                blurRadius: 5.0,
-                                                // Adjust shadow spread radius
-                                                spreadRadius: 1.0,
-                                              ),
-                                            ],
-                                          ),
-                                          margin: EdgeInsets.symmetric(
-                                            vertical: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.01,
-                                            horizontal: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.01,
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                            vertical: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.01,
-                                          ),
-                                        );
-                                      },
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.white,
+                              period: const Duration(milliseconds: 1000),
+                              child: ListView.builder(
+                                itemCount: 8,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.083,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          // Adjust shadow color as needed
+                                          color: Colors.grey,
+                                          // No shadow offset
+                                          // Adjust shadow blur radius
+                                          blurRadius: 5.0,
+                                          // Adjust shadow spread radius
+                                          spreadRadius: 1.0,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ),
-                              ],
+                                    margin: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              0.01,
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.01,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              0.01,
+                                    ),
+                                  );
+                                },
+                              ),
                             );
                           } else if (snapshot.hasError) {
                             return Center(
@@ -411,31 +399,34 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                                   final index = e.key;
                                   final data = e.value;
 
-                                  return Column(
-                                    children: [
-                                      Builder(
-                                        builder: (context) {
-                                          if (index == 0) {
-                                            return Divider(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                            );
-                                          } else {
-                                            return SizedBox();
-                                          }
-                                        },
-                                      ),
-                                      AbsentList.type1(
-                                        context,
-                                        data.checkIn,
-                                        data.checkOut,
-                                        data.date,
-                                      ),
-                                      Divider(
-                                        color: Colors.black.withOpacity(0.3),
-                                      ),
-                                    ],
-                                  );
+                                  if (index < snapshot.data!.length - 1) {
+                                    return Column(
+                                      children: [
+                                        AbsentList.type4(
+                                          context,
+                                          state,
+                                          data.checkIn,
+                                          data.date,
+                                        ),
+                                        Builder(
+                                          builder: (context) {
+                                            if (index !=
+                                                snapshot.data!.length - 1) {
+                                              return Divider(
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.3,
+                                                ),
+                                              );
+                                            } else {
+                                              return SizedBox();
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return SizedBox();
+                                  }
                                 },
                               ).toList(),
                             );

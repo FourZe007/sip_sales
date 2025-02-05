@@ -1,10 +1,99 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/widget/indicator/circleloading.dart';
 
 class GlobalDialog {
+  static Future<void> loadAndPreviewImage(
+    BuildContext context,
+    Future func,
+  ) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: FutureBuilder(
+            future: func,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                if (Platform.isIOS) {
+                  return const CupertinoActivityIndicator(
+                    radius: 12.5,
+                    color: Colors.black,
+                  );
+                } else {
+                  return const CircleLoading(
+                    warna: Colors.black,
+                  );
+                }
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              } else if (!snapshot.hasData) {
+                return Text('Foto tidak tersedia');
+              } else {
+                if (snapshot.data == 'not available') {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Foto tidak tersedia.',
+                      style: GlobalFont.mediumgiantfontR,
+                    ),
+                  );
+                } else if (snapshot.data == 'failed') {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Foto gagal dimuat.',
+                      style: GlobalFont.mediumgiantfontR,
+                    ),
+                  );
+                } else if (snapshot.data == 'failed') {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Terjadi kesalahan. Mohon coba lagi.',
+                      style: GlobalFont.mediumgiantfontR,
+                    ),
+                  );
+                } else {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.memory(
+                      base64Decode(snapshot.data),
+                      fit: BoxFit.contain,
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+
   static Future<void> previewImage(
     BuildContext context,
     String img,
@@ -13,8 +102,11 @@ class GlobalDialog {
       context: context,
       builder: (context) {
         return Dialog(
-          child: Image.memory(
-            base64Decode(img),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.memory(
+              base64Decode(img),
+            ),
           ),
         );
       },
@@ -367,7 +459,7 @@ class GlobalDialog {
             actions: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.grey[350],
                 ),
                 child: Text(
                   denyText,

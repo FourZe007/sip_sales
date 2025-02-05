@@ -134,7 +134,7 @@ class _MapPageState extends State<MapPage> {
                   GlobalVar.userAccountList[0].longitude,
                 ),
                 child: const Icon(
-                  Icons.pin_drop,
+                  Icons.location_pin,
                   color: Colors.red,
                   size: 60.0,
                 ),

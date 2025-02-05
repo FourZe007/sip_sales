@@ -282,6 +282,51 @@ class GlobalAPI {
       return 'error';
     }
   }
+
+  static Future<String> fetchAbsentHighResImage(
+    String id,
+    String date,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/ShowAttendanceSEventPhoto',
+    );
+
+    Map mapShowImage = {
+      "EmployeeID": id,
+      "Date": date,
+    };
+
+    print(mapShowImage);
+
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapShowImage), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
+
+      if (response.statusCode <= 200) {
+        var jsonShowMessage = jsonDecode(response.body);
+        if (jsonShowMessage['code'] == '100' ||
+            jsonShowMessage['msg'] == 'Sukses') {
+          if ((jsonShowMessage['data'] as List).isNotEmpty &&
+              (jsonShowMessage['data'][0]['eventPhoto'] as String).isNotEmpty) {
+            return jsonShowMessage['data'][0]['eventPhoto'];
+          } else {
+            return 'not available';
+          }
+        } else {
+          return 'failed';
+        }
+      }
+      return '';
+    } catch (e) {
+      print(e.toString());
+      return 'error';
+    }
+  }
   // ~:NEW:~
 
   static Future<List<ModelAttendanceHistory>> fetchAttendanceHistory(

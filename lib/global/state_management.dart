@@ -16,12 +16,10 @@ import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/pages/location/image_view.dart';
-import 'package:sip_sales/pages/map/map.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sip_sales/widget/status/failure_animation.dart';
 import 'package:sip_sales/widget/status/success_animation.dart';
 import 'package:sip_sales/widget/status/warning_animation.dart';
-import 'package:sip_sales/widget/textfield/adjustabledescbox.dart';
 import 'package:uuid/uuid.dart';
 
 class SipSalesState with ChangeNotifier {
@@ -394,6 +392,11 @@ class SipSalesState with ChangeNotifier {
   List<ModelAttendanceHistory> absentHistoryList = [];
   List<ModelAttendanceHistory> get getAbsentHistoryList => absentHistoryList;
 
+  void setAbsentHistoryList(List<ModelAttendanceHistory> values) {
+    absentHistoryList = values;
+    notifyListeners();
+  }
+
   ModelAttendanceHistory absentHistoryDetail = ModelAttendanceHistory(
     employeeID: '',
     employeeName: '',
@@ -522,14 +525,17 @@ class SipSalesState with ChangeNotifier {
   }
 
   Future<String> eventCheckIn() async {
+    print('Event Check In');
     try {
       Position coordinate = await Geolocator.getCurrentPosition();
 
       if (getEventPhoto.isEmpty || getEventTextController.text.isEmpty) {
         displayDescription = 'Mohon periksa input anda lagi.';
+        print(displayDescription);
         return 'warn';
       } else {
-        await GlobalAPI.fetchModifyEventAttendance(
+        List<ModelResultMessage> res = [];
+        res.addAll(await GlobalAPI.fetchModifyEventAttendance(
           '1',
           GlobalVar.nip!,
           GlobalVar.userAccountList[0].branch,
@@ -540,36 +546,43 @@ class SipSalesState with ChangeNotifier {
           coordinate.longitude,
           getEventTextController.text,
           getEventPhoto,
-        ).then((res) {
-          // ~:Check In List is not empty:~
-          if (res.isNotEmpty) {
-            print('Check In Event: ${res[0].resultMessage}');
-            // ~:Check Out Success:~
-            if (res[0].resultMessage == 'SUKSES') {
-              displayDescription = 'Clock In Event berhasil.';
-              return 'success';
-            }
-            // ~:Check In Failed:~
-            else {
-              displayDescription = res[0].resultMessage;
-              return 'warn';
-            }
+        ));
+
+        // ~:Check In List is not empty:~
+        if (res.isNotEmpty) {
+          print('Check In Event: ${res[0].resultMessage}');
+          // ~:Check Out Success:~
+          if (res[0].resultMessage == 'SUKSES') {
+            absentHistoryList.clear();
+            absentHistoryList.addAll(
+              await GlobalAPI.fetchAttendanceHistory(GlobalVar.nip!, '', ''),
+            );
+            notifyListeners();
+
+            displayDescription = 'Clock In Event berhasil.';
+            print('Success: $displayDescription');
+            return 'success';
           }
-          // ~:Check In List is empty:~
+          // ~:Check In Failed:~
           else {
-            print('Event Check In is empty');
-            displayDescription = 'Clock In gagal.';
-            return 'failed';
+            displayDescription = res[0].resultMessage;
+            print('Warning: $displayDescription');
+            return 'warn';
           }
-        });
+        }
+        // ~:Check In List is empty:~
+        else {
+          print('Event Check In is empty');
+          displayDescription = 'Clock In gagal.';
+          print('Failed: $displayDescription');
+          return 'failed';
+        }
       }
     } catch (e) {
       displayDescription = '${e.toString()}.';
+      print('Failed: $displayDescription');
       return 'failed';
     }
-
-    displayDescription = 'Terjadi kesalahan, mohon coba lagi.';
-    return 'failed';
   }
 
   // Location
@@ -633,8 +646,8 @@ class SipSalesState with ChangeNotifier {
 
   List<ModelCoordinate> get fetchCoordinateList => coordinateList;
 
-  double get fetchLngDisplay => lngDisplay;
-  double get fetchLatDisplay => latDisplay;
+  double get getLngDisplay => lngDisplay;
+  double get getLatDisplay => latDisplay;
 
   void setLngDisplay(double value) {
     lngDisplay = value;
@@ -711,16 +724,6 @@ class SipSalesState with ChangeNotifier {
         setLngDisplay(coordinate.longitude!);
         setLatDisplay(coordinate.latitude!);
       });
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MapPage(
-            fetchLngDisplay,
-            fetchLatDisplay,
-          ),
-        ),
-      );
     } catch (e) {
       print('Error: $e');
     }
@@ -1200,6 +1203,9 @@ class SipSalesState with ChangeNotifier {
     // Check if image was picked
     if (pickedFileList.isEmpty) {
       // do something
+      displayDescription =
+          'Izin kamera ditolak. Silakan aktifkan di pengaturan aplikasi.';
+      return false;
     } else {
       // Read image bytes
       for (var file in pickedFileList) {

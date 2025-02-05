@@ -10,9 +10,10 @@ import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/status/failure_animation.dart';
-import 'package:sip_sales/widget/status/loading_animation.dart';
 import 'package:sip_sales/widget/status/success_animation.dart';
+import 'package:sip_sales/widget/status/warning_animation.dart';
 import 'package:sip_sales/widget/textfield/adjustabledescbox.dart';
 
 class EventDescPage extends StatefulWidget {
@@ -66,36 +67,28 @@ class _EventDescPageState extends State<EventDescPage> {
   void createEvent(SipSalesState state) async {
     print('Create Event Function');
     setIsLoading(true);
-    await state.eventCheckIn().then((value) {
+    await state.eventCheckIn().then((value) async {
       setIsLoading(false);
-      if (value == 'sukses') {
+      print('Check In Result: $value');
+      if (value == 'success') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => LoadingAnimationPage(
-              false,
-              false,
-              false,
-              true,
-              false,
-              false,
-              stateMessage: value,
-            ),
+            builder: (context) => SuccessAnimationPage(),
+          ),
+        );
+      } else if (value == 'warn') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WarningAnimationPage(),
           ),
         );
       } else {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LoadingAnimationPage(
-              false,
-              false,
-              false,
-              true,
-              false,
-              false,
-              stateMessage: value,
-            ),
+            builder: (context) => FailureAnimationPage(),
           ),
         );
       }
@@ -220,13 +213,22 @@ class _EventDescPageState extends State<EventDescPage> {
                               child: GestureDetector(
                                 onTap: () =>
                                     eventPhotoInteraction(context, state),
-                                onLongPress: () {
-                                  if (state.getEventPhoto.isNotEmpty) {
-                                    // Delete image
-                                    print('Delete image');
-                                    state.setEventPhoto('');
-                                  }
-                                },
+                                onLongPress: () =>
+                                    GlobalDialog.showCrossPlatformCustomOption(
+                                  context,
+                                  'Peringatan!',
+                                  'Apakah Anda ingin menghapus gambar ini?',
+                                  'Hapus',
+                                  () {
+                                    if (state.getEventPhoto.isNotEmpty) {
+                                      // Delete image
+                                      print('Delete image');
+                                      state.setEventPhoto('');
+                                    }
+                                  },
+                                  'Tutup',
+                                  () => Navigator.pop(context),
+                                ),
                                 child: Builder(
                                   builder: (context) {
                                     if (state.getEventPhoto.isEmpty) {
@@ -306,12 +308,12 @@ class _EventDescPageState extends State<EventDescPage> {
                       if (isLoading) {
                         if (Platform.isIOS) {
                           return CupertinoActivityIndicator(
-                            radius: 10,
+                            radius: 12.5,
                             color: Colors.white,
                           );
                         } else {
-                          return const CircularProgressIndicator(
-                            color: Colors.white,
+                          return const CircleLoading(
+                            warna: Colors.white,
                           );
                         }
                       } else {
