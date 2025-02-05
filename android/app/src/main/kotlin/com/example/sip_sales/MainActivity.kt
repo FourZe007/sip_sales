@@ -1,4 +1,4 @@
-package com.example.sip_sales
+package com.stsj.sipsales
 
 import io.flutter.embedding.android.FlutterActivity
 
