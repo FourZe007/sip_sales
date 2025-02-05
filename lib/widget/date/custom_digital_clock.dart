@@ -86,6 +86,7 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           DigitalClock(
+            datetime: DateTime.now(),
             textScaleFactor: 1.75,
             isLive: true,
             showSeconds: false,
