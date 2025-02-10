@@ -19,11 +19,12 @@ class AbsentDetailsPage extends StatefulWidget {
 }
 
 class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
-  Future<String> retrieveHighResImage() async {
+  // ~:NEW CHANGES:~
+  Future<String> retrieveHighResImage(SipSalesState state) async {
     String img = '';
     await GlobalAPI.fetchAbsentHighResImage(
       GlobalVar.nip!,
-      DateTime.now().toString().substring(0, 10),
+      state.getAbsentHistoryDetail.date,
     ).then((String res) {
       if (res == 'not available' || res == 'failed' || res == 'error') {
         img == '';
@@ -35,10 +36,10 @@ class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
     return img;
   }
 
-  void openEventPhoto() {
+  void openEventPhoto(SipSalesState state) {
     GlobalDialog.loadAndPreviewImage(
       context,
-      retrieveHighResImage(),
+      retrieveHighResImage(state),
     );
   }
 
@@ -169,7 +170,7 @@ class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
                                 top: MediaQuery.of(context).size.height * 0.195,
                                 left: MediaQuery.of(context).size.width * 0.78,
                                 child: GestureDetector(
-                                  onTap: () => openEventPhoto(),
+                                  onTap: () => openEventPhoto(state),
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     child: Icon(
