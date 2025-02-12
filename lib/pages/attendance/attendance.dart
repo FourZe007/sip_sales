@@ -376,7 +376,7 @@ class _AttendancePageState extends State<AttendancePage> {
                       child: Text(
                         'Lihat log',
                         style: TextStyle(
-                          color: Colors.black.withValues(alpha: 0.65),
+                          color: Colors.black.withOpacity(0.65),
                           fontFamily: GlobalFontFamily.fontRubik,
                           fontSize: GlobalSize.mediumgiantfont,
                         ),
@@ -484,7 +484,7 @@ class _AttendancePageState extends State<AttendancePage> {
                                               if (index != 2) {
                                                 return Divider(
                                                   color: Colors.black
-                                                      .withValues(alpha: 0.65),
+                                                      .withOpacity(0.65),
                                                 );
                                               } else {
                                                 return SizedBox();
