@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +18,6 @@ import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/dropdown/custom_dropdown.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:info_popup/info_popup.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 class ManagerNewActivityPage extends StatefulWidget {
   const ManagerNewActivityPage({super.key});
