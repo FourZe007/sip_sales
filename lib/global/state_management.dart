@@ -9,6 +9,7 @@ import 'package:image/image.dart' as images;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
@@ -26,6 +27,14 @@ class SipSalesState with ChangeNotifier {
   // =================================================================
   // ============================ App Flow ===========================
   // =================================================================
+  bool isAppFlowLoading = false;
+  bool get getIsAppFlowLoading => false;
+
+  void setIsAppFlowLoading() {
+    isAppFlowLoading = !isAppFlowLoading;
+    notifyListeners();
+  }
+
   String displayDescription = '';
   String get getdDisplayDescription => displayDescription;
 
@@ -64,6 +73,14 @@ class SipSalesState with ChangeNotifier {
   // =================================================================
   // ===================== Login Configuration =======================
   // =================================================================
+  List<ModelUser> userAccountList = [];
+  List<ModelUser> get getUserAccountList => userAccountList;
+
+  void setUserAccountList(List<ModelUser> value) {
+    userAccountList = value;
+    notifyListeners();
+  }
+
   String profilePicture = '';
   String get getProfilePicture => profilePicture;
 
@@ -524,7 +541,7 @@ class SipSalesState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> eventCheckIn() async {
+  Future<String> eventCheckIn(SipSalesState state) async {
     print('Event Check In');
     try {
       Position coordinate = await Geolocator.getCurrentPosition();
@@ -538,8 +555,8 @@ class SipSalesState with ChangeNotifier {
         res.addAll(await GlobalAPI.fetchModifyEventAttendance(
           '1',
           GlobalVar.nip!,
-          GlobalVar.userAccountList[0].branch,
-          GlobalVar.userAccountList[0].shop,
+          state.getUserAccountList[0].branch,
+          state.getUserAccountList[0].shop,
           DateTime.now().toString().split(' ')[0],
           DateTime.now().toString().split(' ')[1].replaceAll(RegExp(r':'), '.'),
           coordinate.latitude,
@@ -717,12 +734,12 @@ class SipSalesState with ChangeNotifier {
   void openMap(BuildContext context) async {
     print('Open Map function');
     try {
-      await location.getLocation().then((coordinate) {
+      await Geolocator.getCurrentPosition().then((coordinate) {
         print('get user coordinate');
         print('Latitude: ${coordinate.latitude}');
         print('Longitude: ${coordinate.longitude}');
-        setLngDisplay(coordinate.longitude!);
-        setLatDisplay(coordinate.latitude!);
+        setLngDisplay(coordinate.longitude);
+        setLatDisplay(coordinate.latitude);
       });
     } catch (e) {
       print('Error: $e');
@@ -814,88 +831,181 @@ class SipSalesState with ChangeNotifier {
   //   }
   // }
 
+  Future<bool> checkMockGPS() async {
+    if (Platform.isAndroid) {
+      print('Android device');
+      Position position = await Geolocator.getCurrentPosition();
+
+      if (position.isMocked) {
+        print("Fake GPS detected!");
+        return true;
+        // Show an alert or restrict functionality
+      } else {
+        print("Real GPS location.");
+        return false;
+      }
+    } else {
+      print('iOS device');
+      return false;
+    }
+  }
+
+  Future<bool> checkDeviceIntegrity() async {
+    bool isJailBroken = await JailbreakRootDetection.instance.isJailBroken;
+    // Android only
+    bool isDeveloperMode = false;
+    if (Platform.isAndroid) {
+      isDeveloperMode = await JailbreakRootDetection.instance.isDevMode;
+    }
+
+    if (isJailBroken || isDeveloperMode) {
+      print(
+        "Device integrity compromised: Jailbroken or Developer Mode enabled.",
+      );
+      // Handle compromised device (e.g., restrict functionality or show alert)
+      return true;
+    } else {
+      print("Device integrity is intact.");
+      return false;
+    }
+  }
+
+  Future<bool> checkDeviceModification() async {
+    bool isMocked = await checkMockGPS();
+    bool isCompromised = await checkDeviceIntegrity();
+    print('isMocked: $isMocked, isCompromised: $isCompromised');
+
+    if (isMocked && isCompromised) {
+      displayDescription =
+          'Fake GPS terdeteksi & perangkat ter-jailbreak atau developer mode aktif.';
+      print(
+          'Fake GPS terdeteksi & perangkat ter-jailbreak atau developer mode aktif.');
+      return true;
+    } else if (isMocked) {
+      displayDescription = 'Fake GPS terdeteksi.';
+      print('Fake GPS terdeteksi.');
+      return true;
+    } else if (isCompromised) {
+      displayDescription = 'Perangkat ter-jailbreak atau developer mode aktif.';
+      print('Perangkat ter-jailbreak atau developer mode aktif.');
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // Function -> run 'Check In' button
-  Future<String> checkIn(BuildContext context) async {
+  Future<String> checkIn(
+    BuildContext context,
+    SipSalesState state,
+  ) async {
     // ~:Profile Picture is uploaded:~
     if (profilePicturePreview.isNotEmpty) {
       debugPrint('Profile Picture is uploaded');
       // ~:Location Service activated:~
-      if (await location.serviceEnabled()) {
+      if (await Geolocator.isLocationServiceEnabled()) {
         debugPrint('Location Service is activated');
-        // ~:Check if User within branch radius or not:~
-        try {
-          await Geolocator.getCurrentPosition().then((coordinate) async {
-            await GlobalAPI.fetchIsWithinRadius(
-              GlobalVar.userAccountList[0].latitude,
-              GlobalVar.userAccountList[0].longitude,
-              coordinate.latitude,
-              coordinate.longitude,
-            ).then((status) {
-              // ~:User is not within branch radius:~
-              if (status == 'NOT OK') {
-                isWithinRadius = false;
-              }
-              // ~:User is within branch radius:~
-              else {
-                isWithinRadius = true;
-              }
-              // print('IsWithinRadius: $isWithinRadius');
-            });
-          });
-        } catch (e) {
-          print('Error: $e');
-        }
+        // ~:Mock Location & Device Integrity Detection:~
+        bool isDeviceModified = await checkDeviceModification();
 
-        // ~:User is not within branch radius:~
-        if (!isWithinRadius) {
-          debugPrint('User is not within branch radius');
-          displayDescription = 'Lokasi Tidak Valid';
+        if (isDeviceModified) {
+          await GlobalAPI.fetchInsertViolation(
+            state.getUserAccountList[0].employeeID,
+            'FAKE GPS',
+          ).then((value) {
+            if (value[0].resultMessage == 'SUKSES') {
+              print('Insert Violation succeed');
+            } else {
+              print('Insert Violation failed');
+            }
+          });
+
+          print('Device Modification detected');
           return 'warn';
-        }
-        // ~:User is within branch radius:~
-        else {
-          debugPrint('User is within branch radius');
-          // ~:Check In Process via API:~
-          checkInList.clear();
-          await Geolocator.getCurrentPosition().then((coordinate) async {
-            checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
-              '1',
-              GlobalVar.nip!,
-              GlobalVar.userAccountList[0].branch,
-              GlobalVar.userAccountList[0].shop,
-              GlobalVar.userAccountList[0].locationID,
-              DateTime.now().toString().split(' ')[0],
-              DateTime.now()
-                  .toString()
-                  .split(' ')[1]
-                  .replaceAll(RegExp(r':'), '.'),
-              '',
-              coordinate.latitude,
-              coordinate.longitude,
-            ));
-          });
-
-          // ~:Check In List is not empty:~
-          if (checkInList.isNotEmpty) {
-            debugPrint('Check In List is not empty');
-            // ~:Check In Success:~
-            if (checkInList[0].resultMessage == 'SUKSES') {
-              debugPrint('Check In Success');
-              displayDescription = 'Clock In berhasil';
-              return 'success';
-            }
-            // ~:Check In Failed:~
-            else {
-              debugPrint('Check In Failed');
-              displayDescription = checkInList[0].resultMessage;
-              return 'warn';
-            }
+        } else {
+          print('Device Modification passed');
+          // ~:Check if User within branch radius or not:~
+          try {
+            await Geolocator.getCurrentPosition().then((coordinate) async {
+              await GlobalAPI.fetchIsWithinRadius(
+                state.getUserAccountList[0].latitude,
+                state.getUserAccountList[0].longitude,
+                coordinate.latitude,
+                coordinate.longitude,
+              ).then((status) {
+                // ~:User is not within branch radius:~
+                if (status == 'NOT OK') {
+                  isWithinRadius = false;
+                }
+                // ~:User is within branch radius:~
+                else {
+                  isWithinRadius = true;
+                }
+                // print('IsWithinRadius: $isWithinRadius');
+              });
+            });
+          } catch (e) {
+            print('Error: $e');
           }
-          // ~:Check In List is empty:~
+
+          // ~:User is not within branch radius:~
+          if (!isWithinRadius) {
+            debugPrint('User is not within branch radius');
+            displayDescription = 'Lokasi Tidak Valid';
+            return 'warn';
+          }
+          // ~:User is within branch radius:~
           else {
-            debugPrint('Check In List is empty');
-            displayDescription = 'Clock In gagal';
-            return 'failed';
+            debugPrint('User is within branch radius');
+            // ~:Check In Process via API:~
+            checkInList.clear();
+            await Geolocator.getCurrentPosition().then((coordinate) async {
+              checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
+                '1',
+                GlobalVar.nip!,
+                state.getUserAccountList[0].branch,
+                state.getUserAccountList[0].shop,
+                state.getUserAccountList[0].locationID,
+                DateTime.now().toString().split(' ')[0],
+                DateTime.now()
+                    .toString()
+                    .split(' ')[1]
+                    .replaceAll(RegExp(r':'), '.'),
+                '',
+                coordinate.latitude,
+                coordinate.longitude,
+              ));
+            });
+
+            // ~:Check In List is not empty:~
+            if (checkInList.isNotEmpty) {
+              debugPrint('Check In List is not empty');
+              // ~:Check In Success:~
+              if (checkInList[0].resultMessage == 'SUKSES') {
+                absentHistoryList.clear();
+                absentHistoryList.addAll(
+                  await GlobalAPI.fetchAttendanceHistory(
+                      GlobalVar.nip!, '', ''),
+                );
+                notifyListeners();
+
+                debugPrint('Check In Success');
+                displayDescription = 'Clock In berhasil';
+                return 'success';
+              }
+              // ~:Check In Failed:~
+              else {
+                debugPrint('Check In Failed');
+                displayDescription = checkInList[0].resultMessage;
+                return 'warn';
+              }
+            }
+            // ~:Check In List is empty:~
+            else {
+              debugPrint('Check In List is empty');
+              displayDescription = 'Clock In gagal';
+              return 'failed';
+            }
           }
         }
       }
@@ -915,16 +1025,19 @@ class SipSalesState with ChangeNotifier {
   }
 
   // Function -> run 'Check Out' button
-  Future<String> checkOut(BuildContext context) async {
+  Future<String> checkOut(
+    BuildContext context,
+    SipSalesState state,
+  ) async {
     // ~:Profile Picture is uploaded:~
     if (profilePicturePreview.isNotEmpty) {
       // ~:Location Service activated:~
-      if (await location.serviceEnabled()) {
+      if (await Geolocator.isLocationServiceEnabled()) {
         // ~:Check if User within branch radius or not:~
         await Geolocator.getCurrentPosition().then((coordinate) async {
           await GlobalAPI.fetchIsWithinRadius(
-            GlobalVar.userAccountList[0].latitude,
-            GlobalVar.userAccountList[0].longitude,
+            state.getUserAccountList[0].latitude,
+            state.getUserAccountList[0].longitude,
             coordinate.latitude,
             coordinate.longitude,
           ).then((status) {
@@ -953,9 +1066,9 @@ class SipSalesState with ChangeNotifier {
             checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
               '2',
               GlobalVar.nip!,
-              GlobalVar.userAccountList[0].branch,
-              GlobalVar.userAccountList[0].shop,
-              GlobalVar.userAccountList[0].locationID,
+              state.getUserAccountList[0].branch,
+              state.getUserAccountList[0].shop,
+              state.getUserAccountList[0].locationID,
               DateTime.now().toString().split(' ')[0],
               '',
               DateTime.now()

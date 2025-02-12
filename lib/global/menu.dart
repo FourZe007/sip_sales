@@ -188,19 +188,43 @@ class MenuPageState extends State<MenuPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          GlobalVar.userAccountList.isNotEmpty
-                                              ? GlobalVar.userAccountList[0]
-                                                  .employeeName
-                                              : 'GUEST',
-                                          style: GlobalFont.mediumgigafontRBold,
+                                        Builder(
+                                          builder: (context) {
+                                            if (state.getUserAccountList
+                                                .isNotEmpty) {
+                                              return Text(
+                                                state.getUserAccountList[0]
+                                                    .employeeName,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GlobalFont
+                                                    .mediumgigafontRBold,
+                                              );
+                                            } else {
+                                              return Text(
+                                                'GUEST',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GlobalFont
+                                                    .mediumgigafontRBold,
+                                              );
+                                            }
+                                          },
                                         ),
-                                        Text(
-                                          GlobalVar.userAccountList.isNotEmpty
-                                              ? GlobalVar
-                                                  .userAccountList[0].employeeID
-                                              : 'XXXXX/XXXXXX',
-                                          style: GlobalFont.bigfontR,
+                                        Builder(
+                                          builder: (context) {
+                                            if (state.getUserAccountList
+                                                .isNotEmpty) {
+                                              return Text(
+                                                state.getUserAccountList[0]
+                                                    .employeeID,
+                                                style: GlobalFont.bigfontR,
+                                              );
+                                            } else {
+                                              return Text(
+                                                'XXXXX/XXXXXX',
+                                                style: GlobalFont.bigfontR,
+                                              );
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),
@@ -661,10 +685,10 @@ class MenuPageState extends State<MenuPage> {
                                       children: [
                                         Builder(
                                           builder: (context) {
-                                            if (GlobalVar
-                                                .userAccountList.isNotEmpty) {
+                                            if (state.getUserAccountList
+                                                .isNotEmpty) {
                                               return Text(
-                                                GlobalVar.userAccountList[0]
+                                                state.getUserAccountList[0]
                                                     .employeeName,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: GlobalFont
@@ -682,10 +706,10 @@ class MenuPageState extends State<MenuPage> {
                                         ),
                                         Builder(
                                           builder: (context) {
-                                            if (GlobalVar
-                                                .userAccountList.isNotEmpty) {
+                                            if (state.getUserAccountList
+                                                .isNotEmpty) {
                                               return Text(
-                                                GlobalVar.userAccountList[0]
+                                                state.getUserAccountList[0]
                                                     .employeeID,
                                                 style: GlobalFont.bigfontR,
                                               );

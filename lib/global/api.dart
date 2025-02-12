@@ -117,6 +117,67 @@ class GlobalAPI {
   }
 
   // ~:NEW:~:
+  static Future<List<ModelResultMessage>> fetchInsertViolation(
+    String employeeId,
+    String violation,
+  ) async {
+    print('URL');
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/InsertViolation',
+    );
+
+    print('Map');
+    Map mapChangeUserPassword = {
+      "EmployeeID": employeeId,
+      "Violation": violation,
+    };
+
+    print(mapChangeUserPassword);
+
+    print('Try and Catch');
+    try {
+      final response = await http
+          .post(url, body: jsonEncode(mapChangeUserPassword), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
+
+      List<ModelResultMessage> list = [];
+
+      print('Entering If Else Statement');
+      if (response.statusCode <= 200) {
+        print('Status code 200');
+        var jsonChangeUserPassword = jsonDecode(response.body);
+        if (jsonChangeUserPassword['Code'] == '100' ||
+            jsonChangeUserPassword['Msg'] == 'Sukses') {
+          print('Success');
+          list.addAll((jsonChangeUserPassword['Data'] as List)
+              .map<ModelResultMessage>(
+                  (data) => ModelResultMessage.fromJson(data))
+              .toList());
+
+          return list;
+        } else {
+          print('Failed');
+          list.addAll((jsonChangeUserPassword['Data'] as List)
+              .map<ModelResultMessage>(
+                  (data) => ModelResultMessage.fromJson(data))
+              .toList());
+
+          return list;
+        }
+      }
+
+      print('Status code 404');
+      return list;
+    } catch (e) {
+      print('API Error: ${e.toString()}');
+      return [];
+    }
+  }
+
   static Future<List<ModelResultMessage2>> fetchChangeUserPassword(
     String id,
     String currentPass,

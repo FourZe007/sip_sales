@@ -113,14 +113,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  detect_fake_location:
-    dependency: "direct main"
-    description:
-      name: detect_fake_location
-      sha256: ccafeb4a73d204ee50c31cdc699f2eaa551858225c95df2962d11ab0f4976946
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   device_info_plus:
     dependency: "direct main"
     description:
@@ -504,6 +496,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  jailbreak_root_detection:
+    dependency: "direct main"
+    description:
+      name: jailbreak_root_detection
+      sha256: ee98f5e69b43c758ee1779204b0926a09f0371eebe1462b876fb6a8bd130cbe5
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.5"
   js:
     dependency: transitive
     description:

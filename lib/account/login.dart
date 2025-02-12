@@ -137,20 +137,18 @@ class _LoginPageState extends State<LoginPage> {
     if (nip != '' && password != '') {
       toggleIsLoading();
 
-      await state.generateUuid().then(
-        (String uuid) async {
-          try {
-            userLogin.clear();
-            userLogin.addAll(await GlobalAPI.fetchUserAccount(
-              nip,
-              password,
-              uuid,
-            ));
-          } catch (e) {
-            print('Error: $e');
-          }
-        },
-      );
+      await state.generateUuid().then((String uuid) async {
+        try {
+          userLogin.clear();
+          userLogin.addAll(await GlobalAPI.fetchUserAccount(
+            nip,
+            password,
+            uuid,
+          ));
+        } catch (e) {
+          print('Error: $e');
+        }
+      });
 
       if (userLogin.isNotEmpty) {
         print(userLogin[0].employeeName);

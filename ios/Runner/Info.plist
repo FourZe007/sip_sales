@@ -54,5 +54,14 @@
 	<string>SIP Sales would like to uses your camera to take a photo for your employee profile, which is required for clocking in and out. This photo will be used to verify your identity and ensure accurate timekeeping records.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>SIP Sales would like to access to your photo gallery to allow you to select and upload images for your daily reports. These images will be used to provide visual documentation and support for your sales activities.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>undecimus</string>
+		<string>sileo</string>
+		<string>zbra</string>
+		<string>filza</string>
+		<string>activator</string>
+		<string>cydia</string>
+	</array>
 </dict>
 </plist>

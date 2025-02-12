@@ -67,7 +67,7 @@ class _EventDescPageState extends State<EventDescPage> {
   void createEvent(SipSalesState state) async {
     print('Create Event Function');
     setIsLoading(true);
-    await state.eventCheckIn().then((value) async {
+    await state.eventCheckIn(state).then((value) async {
       setIsLoading(false);
       print('Check In Result: $value');
       if (value == 'success') {

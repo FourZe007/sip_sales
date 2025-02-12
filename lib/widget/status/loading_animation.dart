@@ -94,7 +94,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
     // ~:User Absent - Clock In:~
     if (widget.isClockIn) {
       print('Clock In Process');
-      await state.checkIn(context).then((status) {
+      await state.checkIn(context, state).then((status) {
         if (status == 'success') {
           Navigator.pushReplacement(
             context,
@@ -125,7 +125,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
     // ~:User Absent - Clock Out:~
     if (widget.isClockOut) {
       print('Clock Out Process');
-      await state.checkOut(context).then((status) {
+      await state.checkOut(context, state).then((status) {
         if (status == 'success') {
           Navigator.pushReplacement(
             context,

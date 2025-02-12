@@ -5,7 +5,7 @@ class GlobalVar {
   static bool isLoading = false;
   static bool isDisabled = false;
 
-  static List<ModelUser> userAccountList = [];
+  // static List<ModelUser> userAccountList = [];
   static String? nip = '';
   static String? password = '';
 }

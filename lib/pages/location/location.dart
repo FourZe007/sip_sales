@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,20 +82,21 @@ class _LocationPageState extends State<LocationPage> {
       state.setIsManager(prefs.getInt('isManager'));
 
       if (GlobalVar.nip != '' && GlobalVar.password != '') {
-        GlobalVar.userAccountList.clear();
-        GlobalVar.userAccountList.addAll(await GlobalAPI.fetchUserAccount(
+        await GlobalAPI.fetchUserAccount(
           GlobalVar.nip!,
           GlobalVar.password!,
           state.getUUID,
-        ));
+        ).then((res) {
+          state.setUserAccountList(res);
+        });
 
-        if (GlobalVar.userAccountList.isNotEmpty &&
+        if (state.getUserAccountList.isNotEmpty &&
             state.getProfilePicture.isEmpty &&
             state.getProfilePicturePreview.isEmpty) {
-          state.setProfilePicture(GlobalVar.userAccountList[0].profilePicture);
+          state.setProfilePicture(state.getUserAccountList[0].profilePicture);
           try {
             await GlobalAPI.fetchShowImage(
-                    GlobalVar.userAccountList[0].employeeID)
+                    state.getUserAccountList[0].employeeID)
                 .then((String highResImg) async {
               if (highResImg == 'not available' ||
                   highResImg == 'failed' ||

@@ -5,16 +5,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:sip_sales/global/api.dart';
-import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state_management.dart';
 
 class MapPage extends StatefulWidget {
-  MapPage(this.longitude, this.latitude, {super.key});
-
-  double longitude;
-  double latitude;
+  const MapPage({super.key});
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -46,29 +43,34 @@ class _MapPageState extends State<MapPage> {
     yield '';
   }
 
-  Stream<bool> fetchIsClose() async* {
+  Stream<bool> fetchIsClose(SipSalesState state) async* {
     bool isClose = false;
 
-    await for (Position position in Geolocator.getPositionStream()) {
-      isClose = await GlobalAPI.fetchIsWithinRadius(
-        GlobalVar.userAccountList[0].latitude,
-        GlobalVar.userAccountList[0].longitude,
-        position.latitude,
-        position.longitude,
+    try {
+      await GlobalAPI.fetchIsWithinRadius(
+        state.getUserAccountList[0].latitude,
+        state.getUserAccountList[0].longitude,
+        state.getLatDisplay,
+        state.getLngDisplay,
       ).then((state) {
         if (state == 'NOT OK') {
-          return false;
+          isClose = false;
         } else {
-          return true;
+          isClose = true;
         }
       });
-
-      yield isClose;
+    } catch (e) {
+      print(e.toString());
+      isClose = false;
     }
+
+    yield isClose;
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<SipSalesState>(context);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -103,7 +105,10 @@ class _MapPageState extends State<MapPage> {
       ),
       body: FlutterMap(
         options: MapOptions(
-          initialCenter: LatLng(widget.latitude, widget.longitude),
+          initialCenter: LatLng(
+            state.getLatDisplay,
+            state.getLngDisplay,
+          ),
           initialZoom: 15.0,
         ),
         children: [
@@ -117,8 +122,8 @@ class _MapPageState extends State<MapPage> {
                 width: 80.0,
                 height: 100.0,
                 point: LatLng(
-                  widget.latitude,
-                  widget.longitude,
+                  state.getLatDisplay,
+                  state.getLngDisplay,
                 ),
                 child: const Icon(
                   Icons.location_pin,
@@ -130,8 +135,8 @@ class _MapPageState extends State<MapPage> {
                 width: 80.0,
                 height: 80.0,
                 point: LatLng(
-                  GlobalVar.userAccountList[0].latitude,
-                  GlobalVar.userAccountList[0].longitude,
+                  state.getUserAccountList[0].latitude,
+                  state.getUserAccountList[0].longitude,
                 ),
                 child: const Icon(
                   Icons.location_pin,
@@ -158,9 +163,31 @@ class _MapPageState extends State<MapPage> {
                     : BorderRadius.circular(25),
               ),
               child: StreamBuilder(
-                stream: fetchIsClose(),
+                stream: fetchIsClose(state),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Loading...',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                        ),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${snapshot.error}',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                        ),
+                      ),
+                    );
+                  } else {
                     if (snapshot.data == true) {
                       return Text(
                         'Anda berada dalam radius',
@@ -178,17 +205,6 @@ class _MapPageState extends State<MapPage> {
                         ),
                       );
                     }
-                  } else {
-                    return Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Loading...',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                        ),
-                      ),
-                    );
                   }
                 },
               ),
