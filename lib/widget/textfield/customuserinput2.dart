@@ -220,7 +220,7 @@ class _CustomUserInput2State extends State<CustomUserInput2>
                 icon: Icon(
                   hidePassword ? Icons.visibility_off : Icons.visibility,
                   size: 20,
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.grey,
                 ),
                 color: Theme.of(context).primaryColorDark,
                 onPressed: () => showHidePasword(),
@@ -298,7 +298,7 @@ class _CustomUserInput2State extends State<CustomUserInput2>
                 icon: Icon(
                   hidePassword ? Icons.visibility_off : Icons.visibility,
                   size: 20,
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.grey,
                 ),
                 color: Theme.of(context).primaryColorDark,
                 onPressed: () => showHidePasword(),

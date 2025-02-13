@@ -6,16 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/profile/change_password.dart';
 import 'package:sip_sales/widget/button/colored_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
-import 'package:sip_sales/widget/indicator/shimmer_box.dart';
 import 'package:sip_sales/widget/status/failure_animation.dart';
 import 'package:sip_sales/widget/status/loading_animation.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -155,48 +152,397 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<void> getLatestUserData(SipSalesState state) async {
-    setIsLoading();
+  Future<void> getUserLatestData(SipSalesState state) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // setIsLoading();
     try {
-      await state.generateUuid().then((String uuid) async {
-        final prefs = await SharedPreferences.getInstance();
-
-        await GlobalAPI.fetchUserAccount(
-          prefs.getString('nip') ?? '',
-          prefs.getString('password') ?? '',
-          uuid,
-        ).then((List<ModelUser> res) async {
-          state.setUserAccountList(res);
-
-          await prefs.setInt('flag', res[0].flag);
-          await prefs.setBool('attendanceStatus', false);
-          await prefs.setString('branch', res[0].branch);
-          await prefs.setString('shop', res[0].shop);
-          await prefs.setInt('isManager', res[0].code);
-
-          // Load and save HD image to cache memory
-          state.setProfilePicture(res[0].profilePicture);
-          await GlobalAPI.fetchShowImage(res[0].employeeID)
-              .then((String highResImg) async {
-            if (highResImg == 'not available' ||
-                highResImg == 'failed' ||
-                highResImg == 'error') {
-              state.setProfilePicturePreview('');
-              await prefs.setString('highResImage', '');
-              print('High Res Image is not available.');
-            } else {
-              state.setProfilePicturePreview(highResImg);
-              await prefs.setString('highResImage', highResImg);
-              print('High Res Image successfully loaded.');
-              print('High Res Image: $highResImg');
-            }
-          });
-        });
+      await GlobalAPI.fetchUserAccount(
+        GlobalVar.nip!,
+        GlobalVar.password!,
+        state.getUUID,
+      ).then((res) {
+        state.setUserAccountList(res);
       });
+
+      if (state.getUserAccountList.isNotEmpty &&
+          state.getProfilePicture.isEmpty &&
+          state.getProfilePicturePreview.isEmpty) {
+        state.setProfilePicture(state.getUserAccountList[0].profilePicture);
+        await GlobalAPI.fetchShowImage(state.getUserAccountList[0].employeeID)
+            .then((String highResImg) async {
+          if (highResImg == 'not available' ||
+              highResImg == 'failed' ||
+              highResImg == 'error') {
+            state.setProfilePicturePreview('');
+            await prefs.setString('highResImage', '');
+            print('High Res Image is not available.');
+          } else {
+            state.setProfilePicturePreview(highResImg);
+            await prefs.setString('highResImage', highResImg);
+            print('High Res Image successfully loaded.');
+            print('High Res Image: $highResImg');
+          }
+        });
+      }
     } catch (e) {
-      print(e.toString());
+      print('Fetch User Latest Data failed: ${e.toString()}');
+      state.setProfilePicturePreview('');
+      await prefs.setString('highResImage', '');
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          'Terjadi kesalahan, mohon coba lagi.',
+          style: GlobalFont.bigfontRWhite,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.025,
+          vertical: MediaQuery.of(context).size.height * 0.015,
+        ),
+      ));
     }
-    setIsLoading();
+    // setIsLoading();
+  }
+
+  Widget profileBody(SipSalesState state) {
+    return Column(
+      children: [
+        // ~:Profile Section:~
+        Container(
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            color: Colors.grey[100],
+          ),
+          padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.025,
+            horizontal: MediaQuery.of(context).size.width * 0.05,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile Picture
+              Builder(
+                builder: (context) {
+                  if (state.getProfilePicture == '' &&
+                      state.getProfilePicturePreview == '') {
+                    return GestureDetector(
+                      onTap: () => takePhoto(context, state),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 35,
+                              backgroundColor: Colors.black,
+                              child: ClipOval(
+                                child: SizedBox.fromSize(
+                                  size: Size.fromRadius(33),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 43,
+                              left: 43,
+                              child: CircleAvatar(
+                                radius: 13,
+                                backgroundColor: Colors.grey,
+                                child: Icon(
+                                  Icons.edit,
+                                  size: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return InkWell(
+                      onTap: () => viewPhoto(context, state),
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        child: ClipOval(
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(38),
+                            child: Image.memory(
+                              base64Decode(
+                                state.getProfilePicture,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+
+              // ~:Devider:~
+              SizedBox(width: 15),
+
+              // User Data, contains of name and employee ID
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.025,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        state.getUserAccountList[0].employeeName,
+                        style: GlobalFont.gigafontRBold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        state.getUserAccountList[0].employeeID,
+                        style: GlobalFont.mediumgiantfontRBold,
+                      ),
+                      Text(
+                        '${state.getUserAccountList[0].bsName}, ${state.getUserAccountList[0].locationName}',
+                        style: GlobalFont.mediumgiantfontR,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // ~:Settings Section:~
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 200,
+          color: Colors.grey[100],
+          margin: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height * 0.015,
+            bottom: MediaQuery.of(context).size.height * 0.005,
+          ),
+          padding: EdgeInsets.fromLTRB(
+            MediaQuery.of(context).size.height * 0.02,
+            MediaQuery.of(context).size.height * 0.01,
+            MediaQuery.of(context).size.height * 0.005,
+            0.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Pengaturan',
+                style: GlobalFont.mediumgiantfontRBold,
+              ),
+
+              // Background Location Service Switch Button
+              // Container(
+              //   height: MediaQuery.of(context).size.height * 0.05,
+              //   alignment: Alignment.centerLeft,
+              //   margin: EdgeInsets.only(
+              //     top: MediaQuery.of(context).size.height * 0.01,
+              //     bottom: MediaQuery.of(context).size.height * 0.005,
+              //   ),
+              //   padding: EdgeInsets.fromLTRB(
+              //     MediaQuery.of(context).size.height * 0.02,
+              //     0.0,
+              //     MediaQuery.of(context).size.height * 0.005,
+              //     0.0,
+              //   ),
+              //   child: Row(
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     children: [
+              //       const Icon(Icons.location_on, size: 30.0),
+              //       SizedBox(
+              //         width: MediaQuery.of(context).size.height * 0.04,
+              //       ),
+              //       Text(
+              //         'Background Location',
+              //         style: GlobalFont.mediumgiantfontR,
+              //       ),
+              //       SizedBox(
+              //         width: MediaQuery.of(context).size.width * 0.2,
+              //       ),
+              //       Switch(
+              //         value: isLocationEnabled,
+              //         onChanged: toggleLocationSwitch,
+              //         activeColor: Colors.blue,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+
+              // ~:Privacy Policy Section:~
+              Expanded(
+                child: InkWell(
+                  onTap: () => launchLink(context),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.privacy_tip_rounded,
+                            size: 30.0,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.025,
+                          ),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Privasi Akun',
+                                  style: GlobalFont.giantfontR,
+                                ),
+                                Text(
+                                  'Penggunaan data pribadi',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ~:Change Password Section:~
+              Expanded(
+                child: InkWell(
+                  onTap: () => changePassword(state),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.lock_rounded,
+                            size: 30.0,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.025,
+                          ),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Keamanan Sandi',
+                                  style: GlobalFont.giantfontR,
+                                ),
+                                Text(
+                                  'Ubah kata sandi akun anda',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            // ~:App Version Section:~
+            Container(
+              width: MediaQuery.of(context).size.width,
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05,
+                top: MediaQuery.of(context).size.height * 0.01,
+              ),
+              child: Text(
+                'Version 1.1.7',
+                style: GlobalFont.bigfontR,
+              ),
+            ),
+            // ~:Log Out Button:~
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * 0.015,
+                horizontal: MediaQuery.of(context).size.width * 0.03,
+              ),
+              child: ElevatedButton(
+                onPressed: toggleLogOutPage,
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(
+                    MediaQuery.of(context).size.width * 0.95,
+                    MediaQuery.of(context).size.height * 0.04,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  backgroundColor: Colors.blue[300],
+                ),
+                child: Builder(
+                  builder: (context) {
+                    if (isLoading) {
+                      return Builder(
+                        builder: (context) {
+                          if (Platform.isIOS) {
+                            return const CupertinoActivityIndicator(
+                              radius: 12.5,
+                              color: Colors.white,
+                            );
+                          } else {
+                            return const CircleLoading(
+                              warna: Colors.white,
+                            );
+                          }
+                        },
+                      );
+                    } else {
+                      return Text(
+                        'SIGN OUT',
+                        style: GlobalFont.giantfontR,
+                      );
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   @override
@@ -429,484 +775,139 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
                 color: Colors.white,
               ),
-              child: RefreshIndicator(
-                onRefresh: () => getLatestUserData(profileState),
-                child: Builder(
-                  builder: (context) {
-                    if (isLoading) {
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.white,
-                        period: const Duration(milliseconds: 1000),
-                        child: ListView(
-                          children: [
-                            // ~:Profile Section:~
-                            ShimmerBox(
-                              MediaQuery.of(context).size.width,
-                              MediaQuery.of(context).size.height * 0.15,
-                              topLeftRadius: 20,
-                              topRightRadius: 20,
-                              color: Colors.grey[100]!,
-                              verticalPadding:
-                                  MediaQuery.of(context).size.height * 0.025,
-                              horizontalPadding:
-                                  MediaQuery.of(context).size.width * 0.05,
-                            ),
-
-                            ShimmerBox(
-                              MediaQuery.of(context).size.width,
-                              MediaQuery.of(context).size.height * 0.22,
-                              color: Colors.grey[100]!,
-                              verticalPadding:
-                                  MediaQuery.of(context).size.height * 0.025,
-                              horizontalPadding:
-                                  MediaQuery.of(context).size.width * 0.05,
-                              verticalMargin:
-                                  MediaQuery.of(context).size.height * 0.0125,
-                            ),
-
-                            Column(
-                              children: [
-                                // ~:App Version Section:~
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  alignment: Alignment.centerLeft,
-                                  margin: EdgeInsets.only(
-                                    left: MediaQuery.of(context).size.width *
-                                        0.05,
-                                    right: MediaQuery.of(context).size.width *
-                                        0.05,
-                                    top: MediaQuery.of(context).size.height *
-                                        0.01,
-                                  ),
-                                  child: Text(
-                                    'Version x.x.x',
-                                    style: GlobalFont.bigfontR,
-                                  ),
-                                ),
-
-                                // ~:Log Out Button:~
-                                ShimmerBox(
-                                  MediaQuery.of(context).size.width,
-                                  MediaQuery.of(context).size.height * 0.05,
-                                  topLeftRadius: 20,
-                                  topRightRadius: 20,
-                                  bottomLeftRadius: 20,
-                                  bottomrightRadius: 20,
-                                  color: Colors.grey[100]!,
-                                  verticalMargin:
-                                      MediaQuery.of(context).size.height *
-                                          0.015,
-                                  horizontalMargin:
-                                      MediaQuery.of(context).size.width * 0.03,
-                                ),
-                              ],
-                            ),
-                          ],
+              child: Builder(
+                builder: (context) {
+                  if (Platform.isIOS) {
+                    return CustomScrollView(
+                      slivers: [
+                        CupertinoSliverRefreshControl(
+                          onRefresh: () => getUserLatestData(profileState),
                         ),
-                      );
-                    } else {
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        child: SingleChildScrollView(
-                          physics: AlwaysScrollableScrollPhysics(),
-                          child: Column(
-                            children: [
-                              // ~:Profile Section:~
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                alignment: Alignment.centerLeft,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                  color: Colors.grey[100],
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.025,
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.05,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Profile Picture
-                                    Builder(
-                                      builder: (context) {
-                                        if (profileState.getProfilePicture ==
-                                                '' &&
-                                            profileState
-                                                    .getProfilePicturePreview ==
-                                                '') {
-                                          return GestureDetector(
-                                            onTap: () => takePhoto(
-                                                context, profileState),
-                                            child: Align(
-                                              alignment: Alignment.center,
-                                              child: Stack(
-                                                children: [
-                                                  CircleAvatar(
-                                                    radius: 35,
-                                                    backgroundColor:
-                                                        Colors.black,
-                                                    child: ClipOval(
-                                                      child: SizedBox.fromSize(
-                                                        size:
-                                                            Size.fromRadius(33),
-                                                        child: Icon(
-                                                          Icons.person,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    top: 43,
-                                                    left: 43,
-                                                    child: CircleAvatar(
-                                                      radius: 13,
-                                                      backgroundColor:
-                                                          Colors.grey,
-                                                      child: Icon(
-                                                        Icons.edit,
-                                                        size: 18,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        } else {
-                                          return InkWell(
-                                            onTap: () => viewPhoto(
-                                                context, profileState),
-                                            child: CircleAvatar(
-                                              radius: 40,
-                                              backgroundColor: Colors.white,
-                                              child: ClipOval(
-                                                child: SizedBox.fromSize(
-                                                  size: Size.fromRadius(38),
-                                                  child: Image.memory(
-                                                    base64Decode(
-                                                      profileState
-                                                          .getProfilePicture,
-                                                    ),
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-
-                                    // ~:Devider:~
-                                    SizedBox(width: 15),
-
-                                    // User Data, contains of name and employee ID
-                                    Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.025,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              profileState.getUserAccountList[0]
-                                                  .employeeName,
-                                              style: GlobalFont.gigafontRBold,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Text(
-                                              profileState.getUserAccountList[0]
-                                                  .employeeID,
-                                              style: GlobalFont
-                                                  .mediumgiantfontRBold,
-                                            ),
-                                            Text(
-                                              '${profileState.getUserAccountList[0].bsName}, ${profileState.getUserAccountList[0].locationName}',
-                                              style:
-                                                  GlobalFont.mediumgiantfontR,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // ~:Settings Section:~
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 200,
-                                color: Colors.grey[100],
-                                margin: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height *
-                                      0.015,
-                                  bottom: MediaQuery.of(context).size.height *
-                                      0.005,
-                                ),
-                                padding: EdgeInsets.fromLTRB(
-                                  MediaQuery.of(context).size.height * 0.02,
-                                  MediaQuery.of(context).size.height * 0.01,
-                                  MediaQuery.of(context).size.height * 0.005,
-                                  0.0,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Pengaturan',
-                                      style: GlobalFont.mediumgiantfontRBold,
-                                    ),
-                                    // Background Location Service Switch Button
-                                    // Container(
-                                    //   height: MediaQuery.of(context).size.height * 0.05,
-                                    //   alignment: Alignment.centerLeft,
-                                    //   margin: EdgeInsets.only(
-                                    //     top: MediaQuery.of(context).size.height * 0.01,
-                                    //     bottom: MediaQuery.of(context).size.height * 0.005,
-                                    //   ),
-                                    //   padding: EdgeInsets.fromLTRB(
-                                    //     MediaQuery.of(context).size.height * 0.02,
-                                    //     0.0,
-                                    //     MediaQuery.of(context).size.height * 0.005,
-                                    //     0.0,
-                                    //   ),
-                                    //   child: Row(
-                                    //     crossAxisAlignment: CrossAxisAlignment.center,
-                                    //     children: [
-                                    //       const Icon(Icons.location_on, size: 30.0),
-                                    //       SizedBox(
-                                    //         width: MediaQuery.of(context).size.height * 0.04,
-                                    //       ),
-                                    //       Text(
-                                    //         'Background Location',
-                                    //         style: GlobalFont.mediumgiantfontR,
-                                    //       ),
-                                    //       SizedBox(
-                                    //         width: MediaQuery.of(context).size.width * 0.2,
-                                    //       ),
-                                    //       Switch(
-                                    //         value: isLocationEnabled,
-                                    //         onChanged: toggleLocationSwitch,
-                                    //         activeColor: Colors.blue,
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ),
-
-                                    // ~:Privacy Policy Section:~
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () => launchLink(context),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: const Icon(
-                                                  Icons.privacy_tip_rounded,
-                                                  size: 30.0,
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 5,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.025,
-                                                ),
-                                                child: SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.75,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Privasi Akun',
-                                                        style: GlobalFont
-                                                            .giantfontR,
-                                                      ),
-                                                      Text(
-                                                        'Penggunaan data pribadi',
-                                                        style:
-                                                            GlobalFont.bigfontR,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-
-                                    // ~:Change Password Section:~
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () =>
-                                            changePassword(profileState),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: const Icon(
-                                                  Icons.lock_rounded,
-                                                  size: 30.0,
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 5,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.025,
-                                                ),
-                                                child: SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.75,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Keamanan Sandi',
-                                                        style: GlobalFont
-                                                            .giantfontR,
-                                                      ),
-                                                      Text(
-                                                        'Ubah kata sandi akun anda',
-                                                        style:
-                                                            GlobalFont.bigfontR,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  // ~:App Version Section:~
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    alignment: Alignment.centerLeft,
-                                    margin: EdgeInsets.only(
-                                      left: MediaQuery.of(context).size.width *
-                                          0.05,
-                                      right: MediaQuery.of(context).size.width *
-                                          0.05,
-                                      top: MediaQuery.of(context).size.height *
-                                          0.01,
-                                    ),
-                                    child: Text(
-                                      'Version 1.1.6',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  // ~:Log Out Button:~
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.height *
-                                              0.015,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.03,
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed: toggleLogOutPage,
-                                      style: ElevatedButton.styleFrom(
-                                        fixedSize: Size(
-                                          MediaQuery.of(context).size.width *
-                                              0.95,
-                                          MediaQuery.of(context).size.height *
-                                              0.04,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                        ),
-                                        backgroundColor: Colors.blue[300],
-                                      ),
-                                      child: Builder(
-                                        builder: (context) {
-                                          if (isLoading) {
-                                            return Builder(
-                                              builder: (context) {
-                                                if (Platform.isIOS) {
-                                                  return const CupertinoActivityIndicator(
-                                                    radius: 12.5,
-                                                    color: Colors.white,
-                                                  );
-                                                } else {
-                                                  return const CircleLoading(
-                                                    warna: Colors.white,
-                                                  );
-                                                }
-                                              },
-                                            );
-                                          } else {
-                                            return Text(
-                                              'SIGN OUT',
-                                              style: GlobalFont.giantfontR,
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, _) => profileBody(profileState),
+                            childCount: 1,
                           ),
                         ),
-                      );
-                    }
-                  },
-                ),
+                      ],
+                    );
+                  } else {
+                    return RefreshIndicator(
+                      onRefresh: () => getUserLatestData(profileState),
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: profileBody(profileState),
+                      ),
+                    );
+                  }
+                },
               ),
+              // Refresh Behavior with Shimmer Effect
+              // child: Builder(
+              //   builder: (context) {
+              //     if (isLoading) {
+              //       return Shimmer.fromColors(
+              //         baseColor: Colors.grey[300]!,
+              //         highlightColor: Colors.white,
+              //         period: const Duration(milliseconds: 1000),
+              //         child: ListView(
+              //           children: [
+              //             // ~:Profile Section:~
+              //             ShimmerBox(
+              //               MediaQuery.of(context).size.width,
+              //               MediaQuery.of(context).size.height * 0.15,
+              //               topLeftRadius: 20,
+              //               topRightRadius: 20,
+              //               color: Colors.grey[100]!,
+              //               verticalPadding:
+              //                   MediaQuery.of(context).size.height * 0.025,
+              //               horizontalPadding:
+              //                   MediaQuery.of(context).size.width * 0.05,
+              //             ),
+              //
+              //             ShimmerBox(
+              //               MediaQuery.of(context).size.width,
+              //               MediaQuery.of(context).size.height * 0.22,
+              //               color: Colors.grey[100]!,
+              //               verticalPadding:
+              //                   MediaQuery.of(context).size.height * 0.025,
+              //               horizontalPadding:
+              //                   MediaQuery.of(context).size.width * 0.05,
+              //               verticalMargin:
+              //                   MediaQuery.of(context).size.height * 0.0125,
+              //             ),
+              //
+              //             Column(
+              //               children: [
+              //                 // ~:App Version Section:~
+              //                 Container(
+              //                   width: MediaQuery.of(context).size.width,
+              //                   alignment: Alignment.centerLeft,
+              //                   margin: EdgeInsets.only(
+              //                     left:
+              //                         MediaQuery.of(context).size.width * 0.05,
+              //                     right:
+              //                         MediaQuery.of(context).size.width * 0.05,
+              //                     top:
+              //                         MediaQuery.of(context).size.height * 0.01,
+              //                   ),
+              //                   child: Text(
+              //                     'Version x.x.x',
+              //                     style: GlobalFont.bigfontR,
+              //                   ),
+              //                 ),
+              //
+              //                 // ~:Log Out Button:~
+              //                 ShimmerBox(
+              //                   MediaQuery.of(context).size.width,
+              //                   MediaQuery.of(context).size.height * 0.05,
+              //                   topLeftRadius: 20,
+              //                   topRightRadius: 20,
+              //                   bottomLeftRadius: 20,
+              //                   bottomrightRadius: 20,
+              //                   color: Colors.grey[100]!,
+              //                   verticalMargin:
+              //                       MediaQuery.of(context).size.height * 0.015,
+              //                   horizontalMargin:
+              //                       MediaQuery.of(context).size.width * 0.03,
+              //                 ),
+              //               ],
+              //             ),
+              //           ],
+              //         ),
+              //       );
+              //     } else {
+              //       return Builder(
+              //         builder: (context) {
+              //           if (Platform.isIOS) {
+              //             return CustomScrollView(
+              //               slivers: [
+              //                 CupertinoSliverRefreshControl(
+              //                   onRefresh: () =>
+              //                       getUserLatestData(profileState),
+              //                 ),
+              //                 SliverList(
+              //                   delegate: SliverChildBuilderDelegate(
+              //                     (context, _) => profileBody(profileState),
+              //                     childCount: 1,
+              //                   ),
+              //                 ),
+              //               ],
+              //             );
+              //           } else {
+              //             return RefreshIndicator(
+              //               onRefresh: () => getUserLatestData(profileState),
+              //               child: SingleChildScrollView(
+              //                 physics: AlwaysScrollableScrollPhysics(),
+              //                 child: profileBody(profileState),
+              //               ),
+              //             );
+              //           }
+              //         },
+              //       );
+              //     }
+              //   },
+              // ),
             ),
           ),
         ),

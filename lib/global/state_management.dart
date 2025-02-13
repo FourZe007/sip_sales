@@ -851,23 +851,24 @@ class SipSalesState with ChangeNotifier {
   }
 
   Future<bool> checkDeviceIntegrity() async {
+    // bool isJailBroken = false;
     bool isJailBroken = await JailbreakRootDetection.instance.isJailBroken;
     // Android only
     bool isDeveloperMode = false;
-    if (Platform.isAndroid) {
-      isDeveloperMode = await JailbreakRootDetection.instance.isDevMode;
-    }
+    // if (Platform.isAndroid) {
+    //   isDeveloperMode = await JailbreakRootDetection.instance.isDevMode;
+    // }
 
+    print('isJailbroken: $isJailBroken, isDeveloperMode: $isDeveloperMode');
     if (isJailBroken || isDeveloperMode) {
-      print(
-        "Device integrity compromised: Jailbroken or Developer Mode enabled.",
-      );
+      print("Device integrity compromised: Jailbroken.");
       // Handle compromised device (e.g., restrict functionality or show alert)
       return true;
     } else {
       print("Device integrity is intact.");
       return false;
     }
+    // return false;
   }
 
   Future<bool> checkDeviceModification() async {
@@ -877,17 +878,16 @@ class SipSalesState with ChangeNotifier {
 
     if (isMocked && isCompromised) {
       displayDescription =
-          'Fake GPS terdeteksi & perangkat ter-jailbreak atau developer mode aktif.';
-      print(
-          'Fake GPS terdeteksi & perangkat ter-jailbreak atau developer mode aktif.');
+          'Perangkat anda terdeteksi menggunakan Fake GPS & Jailbreak.';
+      print('Perangkat anda terdeteksi menggunakan Fake GPS & Jailbreak.');
       return true;
     } else if (isMocked) {
-      displayDescription = 'Fake GPS terdeteksi.';
-      print('Fake GPS terdeteksi.');
+      displayDescription = 'Perangkat anda terdeteksi menggunakan Fake GPS.';
+      print('Perangkat anda terdeteksi menggunakan Fake GPS.');
       return true;
     } else if (isCompromised) {
-      displayDescription = 'Perangkat ter-jailbreak atau developer mode aktif.';
-      print('Perangkat ter-jailbreak atau developer mode aktif.');
+      displayDescription = 'Perangkat anda terdeteksi Jailbreak.';
+      print('Perangkat anda terdeteksi Jailbroken.');
       return true;
     } else {
       return false;

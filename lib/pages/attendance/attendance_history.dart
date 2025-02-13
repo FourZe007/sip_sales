@@ -3,10 +3,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
@@ -66,10 +66,12 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     );
   }
 
-  Stream<List<ModelAttendanceHistory>> getHistory({
+  Future<void> getHistory(
+    SipSalesState state, {
     String startDate = '',
     String endDate = '',
-  }) async* {
+  }) async {
+    print('Refresh');
     historyList.clear();
     historyList.addAll(await GlobalAPI.fetchAttendanceHistory(
       GlobalVar.nip!,
@@ -77,18 +79,21 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
       endDate,
     ));
 
+    setState(() {
+      state.absentHistoryList = historyList;
+    });
+
     // History list check
     // if (historyList.isNotEmpty) {
     //   print('Fetch succeed');
     // } else {
     //   print('Fetch failed');
     // }
-
-    yield historyList;
   }
 
   void setSelectDate(
     BuildContext context,
+    SipSalesState state,
     String tgl,
     bool isInit,
     Function handle,
@@ -115,10 +120,10 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
       }
 
       if (isStart == true) {
-        getHistory(startDate: tgl);
+        getHistory(state, startDate: tgl);
         toggleIsBeginInit();
       } else if (isEnd == true) {
-        getHistory(endDate: tgl);
+        getHistory(state, endDate: tgl);
         toggleIsEndInit();
       }
     }
@@ -132,6 +137,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   void initState() {
     toggleIsBeginInit();
     toggleIsEndInit();
+    getHistory(Provider.of<SipSalesState>(context, listen: false));
 
     super.initState();
   }
@@ -139,6 +145,46 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Widget attendanceHistoryBody(SipSalesState state) {
+    return ListView(
+      shrinkWrap: true,
+      // Note: you can use BouncingScrollPhysics() behavior too
+      physics: AlwaysScrollableScrollPhysics(),
+      children: state.getAbsentHistoryList.asMap().entries.map(
+        (e) {
+          final index = e.key;
+          final data = e.value;
+
+          if (index < state.getAbsentHistoryList.length - 1) {
+            return Column(
+              children: [
+                AbsentList.type4(
+                  context,
+                  state,
+                  data.checkIn,
+                  data.date,
+                ),
+                Builder(
+                  builder: (context) {
+                    if (index != state.getAbsentHistoryList.length - 1) {
+                      return Divider(
+                        color: Colors.grey,
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  },
+                ),
+              ],
+            );
+          } else {
+            return SizedBox();
+          }
+        },
+      ).toList(),
+    );
   }
 
   @override
@@ -241,6 +287,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                       InkWell(
                         onTap: () => setSelectDate(
                           context,
+                          state,
                           beginDate,
                           isBeginInit,
                           setBeginDate,
@@ -281,6 +328,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                       InkWell(
                         onTap: () => setSelectDate(
                           context,
+                          state,
                           endDate,
                           isEndInit,
                           setEndDate,
@@ -324,114 +372,39 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                     margin: EdgeInsets.symmetric(
                       vertical: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    child: RefreshIndicator(
-                      onRefresh: () async {
-                        getHistory(
-                          startDate: beginDate,
-                          endDate: endDate,
-                        );
-                      },
-                      child: StreamBuilder(
-                        stream: getHistory(
-                          startDate: beginDate,
-                          endDate: endDate,
-                        ),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.white,
-                              period: const Duration(milliseconds: 1000),
-                              child: ListView.builder(
-                                itemCount: 8,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.083,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          // Adjust shadow color as needed
-                                          color: Colors.grey,
-                                          // No shadow offset
-                                          // Adjust shadow blur radius
-                                          blurRadius: 5.0,
-                                          // Adjust shadow spread radius
-                                          spreadRadius: 1.0,
-                                        ),
-                                      ],
-                                    ),
-                                    margin: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.height *
-                                              0.01,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.01,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.height *
-                                              0.01,
-                                    ),
-                                  );
-                                },
+                    child: Builder(
+                      builder: (context) {
+                        if (Platform.isIOS) {
+                          return CustomScrollView(
+                            slivers: [
+                              CupertinoSliverRefreshControl(
+                                onRefresh: () => getHistory(
+                                  state,
+                                  startDate: beginDate,
+                                  endDate: endDate,
+                                ),
                               ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Center(
-                              child: Text('Error: ${snapshot.error}'),
-                            );
-                          } else if (snapshot.data!.isEmpty) {
-                            return const Center(
-                              child: Text('No data available'),
-                            );
-                          } else {
-                            return ListView(
-                              shrinkWrap: true,
-                              physics: BouncingScrollPhysics(),
-                              children: snapshot.data!.asMap().entries.map(
-                                (e) {
-                                  final index = e.key;
-                                  final data = e.value;
-
-                                  if (index < snapshot.data!.length - 1) {
-                                    return Column(
-                                      children: [
-                                        AbsentList.type4(
-                                          context,
-                                          state,
-                                          data.checkIn,
-                                          data.date,
-                                        ),
-                                        Builder(
-                                          builder: (context) {
-                                            if (index !=
-                                                snapshot.data!.length - 1) {
-                                              return Divider(
-                                                color: Colors.black
-                                                    .withOpacity(0.65),
-                                              );
-                                            } else {
-                                              return SizedBox();
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return SizedBox();
-                                  }
-                                },
-                              ).toList(),
-                            );
-                          }
-                        },
-                      ),
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, _) => attendanceHistoryBody(state),
+                                  childCount: 1,
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              getHistory(
+                                state,
+                                startDate: beginDate,
+                                endDate: endDate,
+                              );
+                            },
+                            child: attendanceHistoryBody(state),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ),

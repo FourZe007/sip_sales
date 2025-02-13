@@ -371,6 +371,12 @@ class GlobalFont {
     fontSize: GlobalSize.mediumgiantfont,
   );
 
+  static TextStyle mediumgiantfontRWhite = TextStyle(
+    color: Colors.white,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumgiantfont,
+  );
+
   static TextStyle mediumgiantfontRRed = TextStyle(
     color: Colors.red,
     fontFamily: GlobalFontFamily.fontRubik,
@@ -378,7 +384,7 @@ class GlobalFont {
   );
 
   static TextStyle mediumgiantfontRGrey = TextStyle(
-    color: Colors.black.withOpacity(0.75),
+    color: Colors.grey,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.mediumgiantfont,
   );
