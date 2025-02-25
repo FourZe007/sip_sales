@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sip_sales/global/model.dart';
 
 class GlobalVar {
   static bool isLoading = false;
@@ -18,8 +17,9 @@ class GlobalFunction {
       barrierDismissible: isDismissible,
       builder: (context) {
         return Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           backgroundColor: Colors.blue.shade50,
           elevation: 16,
           child: widget,
@@ -326,7 +326,15 @@ class GlobalFont {
     fontSize: GlobalSize.mediumbigfont,
   );
 
-  static TextStyle mediumBigfontRTextButtonBlue = TextStyle(
+  static TextStyle mediumBigfontRUnderlinedBoldBlue = TextStyle(
+    color: Colors.blue,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumbigfont,
+    backgroundColor: Colors.transparent,
+    decoration: TextDecoration.underline,
+  );
+
+  static TextStyle mediumBigfontRUnderlinedBlue = TextStyle(
     color: Colors.blue,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.mediumbigfont,
@@ -356,7 +364,15 @@ class GlobalFont {
     backgroundColor: Colors.transparent,
   );
 
-  static TextStyle bigfontRBoldUnderlinedBlue = TextStyle(
+  static TextStyle bigfontRUnderlinedBlue = TextStyle(
+    color: Colors.blue,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.bigfont,
+    backgroundColor: Colors.transparent,
+    decoration: TextDecoration.underline,
+  );
+
+  static TextStyle bigfontRUnderlinedBoldBlue = TextStyle(
     color: Colors.blue,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.bigfont,
@@ -432,6 +448,12 @@ class GlobalFont {
 
   static TextStyle giantfontRWhite = TextStyle(
     color: Colors.white,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.giantfont,
+  );
+
+  static TextStyle giantfontRRed = TextStyle(
+    color: Colors.red,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.giantfont,
   );

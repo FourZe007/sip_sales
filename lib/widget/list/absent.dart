@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/format.dart';
@@ -408,15 +409,40 @@ class AbsentList {
   ) {
     return InkWell(
       onTap: () {
-        state.absentHistoryDetail =
-            state.getAbsentHistoryList.where((e) => e.date == date).first;
+        final now = DateTime.now();
+        final todayDate = DateTime(now.year, now.month, now.day);
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AbsentDetailsPage(),
-          ),
-        );
+        if (checkIn.isNotEmpty) {
+          state.absentHistoryDetail =
+              state.getAbsentHistoryList.where((e) => e.date == date).first;
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AbsentDetailsPage(),
+            ),
+          );
+        } else {
+          if (todayDate.toString().split(' ')[0] == date) {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Peringatan!',
+              'Anda belum absen hari ini. ',
+              () => Navigator.pop(context),
+              'Tutup',
+              isIOS: Platform.isIOS ? true : false,
+            );
+          } else {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Peringatan!',
+              'Anda tidak absen pada ${Format.tanggalFormat(date)}',
+              () => Navigator.pop(context),
+              'Tutup',
+              isIOS: Platform.isIOS ? true : false,
+            );
+          }
+        }
       },
       child: Container(
         width: MediaQuery.of(context).size.width,

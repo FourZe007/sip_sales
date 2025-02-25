@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
@@ -7,8 +10,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/model.dart';
 import "dart:async";
 import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/widget/indicator/circleloading.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -25,7 +30,13 @@ class _LocationPageState extends State<LocationPage> {
   bool? attendanceStatus = false;
   bool locationPermission = false;
 
-  bool isUserGranted = false;
+  bool isLoading = false;
+
+  void setIsLoading() async {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
 
   Future<bool> requestPermission(SipSalesState state) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,12 +77,57 @@ class _LocationPageState extends State<LocationPage> {
     return true;
   }
 
-  void checkPermission(
+  Future<void> getUserAttendanceHistory(
+    SipSalesState state, {
+    String startDate = '',
+    String endDate = '',
+  }) async {
+    try {
+      List<ModelAttendanceHistory> temp = [];
+      temp.clear();
+      temp.addAll(await GlobalAPI.fetchAttendanceHistory(
+        state.getUserAccountList[0].employeeID,
+        startDate,
+        endDate,
+      ));
+
+      print('Absent History list length: ${temp.length}');
+
+      setState(() {
+        state.absentHistoryList = temp;
+      });
+    } catch (e) {
+      print('Fetch Attendance History failed: ${e.toString()}');
+    }
+  }
+
+  Future<void> getSalesDashboard(
+    SipSalesState state,
+  ) async {
+    print('Get Sales Dashboard');
+    try {
+      print('Employee ID: ${state.getUserAccountList[0].employeeID}');
+      print('Branch: ${state.getUserAccountList[0].branch}');
+      print('Shop: ${state.getUserAccountList[0].shop}');
+      await GlobalAPI.fetchSalesDashboard(
+        state.getUserAccountList[0].employeeID,
+        state.getUserAccountList[0].branch,
+        state.getUserAccountList[0].shop,
+      ).then((res) {
+        state.setSalesDashboardList(res);
+      });
+    } catch (e) {
+      print('Error: ${e.toString()}');
+    }
+  }
+
+  void checkLocationPermission(
     BuildContext context,
     SipSalesState state,
   ) async {
     // Note -> this is how to open app settings
     // await AppSettings.openAppSettings();
+    setIsLoading();
 
     if (await serviceRequest()) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -89,42 +145,53 @@ class _LocationPageState extends State<LocationPage> {
           state.setUserAccountList(res);
         });
 
-        if (state.getUserAccountList.isNotEmpty &&
-            state.getProfilePicture.isEmpty &&
-            state.getProfilePicturePreview.isEmpty) {
-          state.setProfilePicture(state.getUserAccountList[0].profilePicture);
-          try {
-            await GlobalAPI.fetchShowImage(
-                    state.getUserAccountList[0].employeeID)
-                .then((String highResImg) async {
-              if (highResImg == 'not available' ||
-                  highResImg == 'failed' ||
-                  highResImg == 'error') {
-                state.setProfilePicturePreview('');
-                await prefs.setString('highResImage', '');
-                print('High Res Image is not available.');
-              } else {
-                state.setProfilePicturePreview(highResImg);
-                await prefs.setString('highResImage', highResImg);
-                print('High Res Image successfully loaded.');
-                print('High Res Image: $highResImg');
-              }
-            });
-          } catch (e) {
-            print('Show HD Image Error: $e');
-            state.setProfilePicturePreview('');
-            await prefs.setString('highResImage', '');
+        // ~:Check is manager or sales:~
+        if (state.getUserAccountList[0].code == 1) {
+          await getUserAttendanceHistory(state);
+          await getSalesDashboard(state);
+
+          // ~:Reset dropdown default value to User's placement:~
+          state.setAbsentType(state.getUserAccountList[0].locationName);
+
+          if (state.getUserAccountList.isNotEmpty &&
+              state.getProfilePicture.isEmpty &&
+              state.getProfilePicturePreview.isEmpty) {
+            state.setProfilePicture(state.getUserAccountList[0].profilePicture);
+            try {
+              await GlobalAPI.fetchShowImage(
+                      state.getUserAccountList[0].employeeID)
+                  .then((String highResImg) async {
+                if (highResImg == 'not available' ||
+                    highResImg == 'failed' ||
+                    highResImg == 'error') {
+                  state.setProfilePicturePreview('');
+                  await prefs.setString('highResImage', '');
+                  print('High Res Image is not available.');
+                } else {
+                  state.setProfilePicturePreview(highResImg);
+                  await prefs.setString('highResImage', highResImg);
+                  print('High Res Image successfully loaded.');
+                  print('High Res Image: $highResImg');
+                }
+              });
+            } catch (e) {
+              print('Show HD Image Error: $e');
+              state.setProfilePicturePreview('');
+              await prefs.setString('highResImage', '');
+            }
           }
         }
       }
 
-      // Note -> Load Manager and Sales Dropdown value moved to splash screen
-
+      // ~:Reset all variables:~
       state.setIsDisable(true);
       state.clearState();
+      setIsLoading();
 
+      // ~:Go to home page:~
       Navigator.pushReplacementNamed(context, '/menu');
     } else {
+      setIsLoading();
       // do nothing
       // let the user press the button until
       // the user enable the location service
@@ -197,7 +264,7 @@ class _LocationPageState extends State<LocationPage> {
                             ),
                           ),
                           InkWell(
-                            onTap: () => checkPermission(
+                            onTap: () => checkLocationPermission(
                               context,
                               locationState,
                             ),
@@ -219,8 +286,6 @@ class _LocationPageState extends State<LocationPage> {
                                   BoxShadow(
                                     // Adjust shadow color as needed
                                     color: Colors.grey,
-                                    // Adjust shadow offset
-                                    offset: Offset(2.0, 4.0),
                                     // Adjust shadow blur radius
                                     blurRadius: 5.0,
                                     // Adjust shadow spread radius
@@ -228,9 +293,28 @@ class _LocationPageState extends State<LocationPage> {
                                   ),
                                 ],
                               ),
-                              child: Text(
-                                'CONTINUE',
-                                style: GlobalFont.mediumbigfontMWhiteBold,
+                              child: Builder(
+                                builder: (context) {
+                                  if (isLoading) {
+                                    if (Platform.isIOS) {
+                                      return const CupertinoActivityIndicator(
+                                        radius: 10.0,
+                                        color: Colors.white,
+                                      );
+                                    } else {
+                                      return const CircleLoading(
+                                        warna: Colors.white,
+                                        customizedHeight: 20.0,
+                                        customizedWidth: 20.0,
+                                      );
+                                    }
+                                  } else {
+                                    return Text(
+                                      'CONTINUE',
+                                      style: GlobalFont.mediumbigfontMWhiteBold,
+                                    );
+                                  }
+                                },
                               ),
                             ),
                           ),
@@ -295,7 +379,7 @@ class _LocationPageState extends State<LocationPage> {
                             ),
                           ),
                           InkWell(
-                            onTap: () => checkPermission(
+                            onTap: () => checkLocationPermission(
                               context,
                               locationState,
                             ),

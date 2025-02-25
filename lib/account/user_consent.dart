@@ -87,12 +87,15 @@ class _UserConsentPageState extends State<UserConsentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.grey[300],
         centerTitle: true,
-        toolbarHeight: (MediaQuery.of(context).size.width < 800)
-            ? MediaQuery.of(context).size.height * 0.075
-            : MediaQuery.of(context).size.height * 0.075,
+        // toolbarHeight: (MediaQuery.of(context).size.width < 800)
+        //     ? MediaQuery.of(context).size.height * 0.075
+        //     : MediaQuery.of(context).size.height * 0.075,
+        elevation: 0.0,
+        scrolledUnderElevation: 0.0,
         leading: Builder(
           builder: (context) {
             if (Platform.isIOS) {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
@@ -11,12 +12,13 @@ import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/attendance/attendance_history.dart';
 import 'package:sip_sales/pages/attendance/event.dart';
 import 'package:sip_sales/pages/map/map.dart';
+import 'package:sip_sales/widget/data/sales_dashboard.dart';
 import 'package:sip_sales/widget/date/custom_digital_clock.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sip_sales/widget/dropdown/common_dropdown.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/list/absent.dart';
 import 'package:sip_sales/widget/status/loading_animation.dart';
+import 'package:sip_sales/widget/status/warning_animation.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -28,7 +30,6 @@ class AttendancePage extends StatefulWidget {
 class _AttendancePageState extends State<AttendancePage> {
   bool isRefresh = false;
   String displayDate = '';
-  String absentType = '';
 
   void setIsRefresh() {
     setState(() {
@@ -40,41 +41,73 @@ class _AttendancePageState extends State<AttendancePage> {
     displayDate = value;
   }
 
-  void setAbsentType(String value) {
-    setState(() {
-      absentType = value;
-    });
+  Future<bool> serviceRequest() async {
+    bool serviceEnabled;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    print('Is location service enabled: $serviceEnabled');
+    if (!serviceEnabled) {
+      final permissionType = await Geolocator.requestPermission();
+      print('Permission Type: $permissionType');
+      if (permissionType == LocationPermission.denied ||
+          permissionType == LocationPermission.deniedForever ||
+          permissionType == LocationPermission.unableToDetermine) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
   }
 
-  void userAbsent({bool isClockIn = false}) {
+  void userAbsent({bool isClockIn = false}) async {
     final state = Provider.of<SipSalesState>(context, listen: false);
     state.clearState();
 
-    if (isClockIn) {
-      if (state.getAbsentType != 'EVENT') {
+    bool isLocationEnabled = await serviceRequest();
+    if (isLocationEnabled) {
+      if (mounted) {
+        if (isClockIn) {
+          if (state.getAbsentType != 'EVENT') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoadingAnimationPage(
+                    false, true, false, false, false, false),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EventDescPage(),
+              ),
+            );
+          }
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  LoadingAnimationPage(false, false, true, false, false, false),
+            ),
+          );
+        }
+      }
+    } else {
+      state.setDisplayDescription(
+        'Akses lokasi diperlukan untuk fitur ini. Silakan aktifkan layanan lokasi dan berikan izin di pengaturan aplikasi Anda.',
+      );
+
+      if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                LoadingAnimationPage(false, true, false, false, false, false),
-          ),
-        );
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EventDescPage(),
+            builder: (context) => WarningAnimationPage(),
           ),
         );
       }
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              LoadingAnimationPage(false, false, true, false, false, false),
-        ),
-      );
     }
   }
 
@@ -155,27 +188,51 @@ class _AttendancePageState extends State<AttendancePage> {
     }
   }
 
+  Future<void> getSalesDashboard(
+    SipSalesState state,
+  ) async {
+    print('Get Sales Dashboard');
+    try {
+      print('Employee ID: ${state.getUserAccountList[0].employeeID}');
+      print('Branch: ${state.getUserAccountList[0].branch}');
+      print('Shop: ${state.getUserAccountList[0].shop}');
+      await GlobalAPI.fetchSalesDashboard(
+        state.getUserAccountList[0].employeeID,
+        state.getUserAccountList[0].branch,
+        state.getUserAccountList[0].shop,
+      ).then((res) {
+        state.setSalesDashboardList(res);
+      });
+    } catch (e) {
+      print('Error: ${e.toString()}');
+    }
+  }
+
   Future<void> refreshPage(SipSalesState state) async {
+    print('Refresh page');
     try {
       await getUserAttendanceHistory(state);
       await getUserLatestData(state);
+      await getSalesDashboard(state);
     } catch (e) {
       print('Refresh Page error: ${e.toString()}');
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text(
-            'Terjadi kesalahan, mohon coba lagi.',
-            style: GlobalFont.bigfontRWhite,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+              'Terjadi kesalahan, mohon coba lagi.',
+              style: GlobalFont.bigfontRWhite,
+            ),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            margin: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.025,
+              vertical: MediaQuery.of(context).size.height * 0.015,
+            ),
           ),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          margin: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.025,
-            vertical: MediaQuery.of(context).size.height * 0.015,
-          ),
-        ));
+        );
       }
     }
   }
@@ -184,11 +241,6 @@ class _AttendancePageState extends State<AttendancePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    getUserAttendanceHistory(
-      Provider.of<SipSalesState>(context, listen: false),
-      isRefresh: true,
-    );
   }
 
   Widget attendanceBody(SipSalesState state) {
@@ -394,48 +446,138 @@ class _AttendancePageState extends State<AttendancePage> {
           ),
         ),
 
+        // ~:Sales Dashboard:~
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.22,
+          margin: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height * 0.015,
+            bottom: MediaQuery.of(context).size.height * 0.01,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ~:Dashboard Title:~
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Text(
+                  'Dashboard',
+                  style: GlobalFont.giantfontR,
+                ),
+              ),
+
+              // ~:Divider:~
+              SizedBox(height: 10),
+
+              // ~:Dashboard Body:~
+              Expanded(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  // height: MediaQuery.of(context).size.height * 0.1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // ~:SPK:~
+                      SalesDashboard(
+                        title: 'SPK',
+                        data1: state.getSalesDashboardList[0].qtyLM.toString(),
+                        data2: state.getSalesDashboardList[0].qtyTM.toString(),
+                        percentage:
+                            state.getSalesDashboardList[0].spk.toString(),
+                        trendIcon: state.getSalesDashboardList[0].qtyLM <=
+                                state.getSalesDashboardList[0].qtyTM
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward,
+                        trendColor: state.getSalesDashboardList[0].qtyLM <=
+                                state.getSalesDashboardList[0].qtyTM
+                            ? Colors.green[700]!
+                            : Colors.red,
+                      ),
+
+                      // ~:Delivery:~
+                      SalesDashboard(
+                        title: 'Pengiriman',
+                        data1:
+                            state.getSalesDashboardList[0].qtySJLM.toString(),
+                        data2:
+                            state.getSalesDashboardList[0].qtySJTM.toString(),
+                        percentage:
+                            state.getSalesDashboardList[0].delivery.toString(),
+                        trendIcon: state.getSalesDashboardList[0].qtySJLM <=
+                                state.getSalesDashboardList[0].qtySJTM
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward,
+                        trendColor: state.getSalesDashboardList[0].qtySJLM <=
+                                state.getSalesDashboardList[0].qtySJTM
+                            ? Colors.green[700]!
+                            : Colors.red,
+                      ),
+
+                      // ~:Prospect:~
+                      SalesDashboard(
+                        title: 'Prospek',
+                        data1: state.getSalesDashboardList[0].qtyLTM.toString(),
+                        data2: state.getSalesDashboardList[0].qtyPTM.toString(),
+                        percentage:
+                            state.getSalesDashboardList[0].prospect.toString(),
+                        trendIcon: state.getSalesDashboardList[0].qtyLTM <=
+                                state.getSalesDashboardList[0].qtyPTM
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward,
+                        trendColor: state.getSalesDashboardList[0].qtyLTM <=
+                                state.getSalesDashboardList[0].qtyPTM
+                            ? Colors.green[700]!
+                            : Colors.red,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
         // ~:Attendance List:~
         Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.365,
+          height: MediaQuery.of(context).size.height * 0.35,
           margin: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height * 0.03,
+            top: MediaQuery.of(context).size.height * 0.015,
+            bottom: MediaQuery.of(context).size.height * 0.01,
           ),
           child: Column(
             children: [
               // ~:Attendance List Header:~
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Daftar Absensi',
-                    style: GlobalFont.giantfontR,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      state.clearState();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AttendanceHistoryPage(),
+              SizedBox(
+                height: 30,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Daftar Absensi',
+                      style: GlobalFont.giantfontR,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        state.clearState();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AttendanceHistoryPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Lihat log',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontFamily: GlobalFontFamily.fontRubik,
+                          fontSize: GlobalSize.mediumgiantfont,
                         ),
-                      );
-                    },
-                    child: Text(
-                      'Lihat log',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontFamily: GlobalFontFamily.fontRubik,
-                        fontSize: GlobalSize.mediumgiantfont,
                       ),
                     ),
-                  ),
-                ],
-              ),
-
-              // ~:Devider:~
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.007,
+                  ],
+                ),
               ),
 
               // ~:Attendance List Content:~
@@ -447,99 +589,98 @@ class _AttendancePageState extends State<AttendancePage> {
                       : Alignment.topCenter,
                   child: Builder(
                     builder: (context) {
-                      if (state.getIsAppFlowLoading || isRefresh) {
-                        return Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.white,
-                          period: const Duration(milliseconds: 1000),
-                          child: ListView.builder(
-                            itemCount: 3,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.083,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      // Adjust shadow color as needed
-                                      color: Colors.grey,
-                                      // No shadow offset
-                                      // Adjust shadow blur radius
-                                      blurRadius: 5.0,
-                                      // Adjust shadow spread radius
-                                      spreadRadius: 1.0,
-                                    ),
-                                  ],
-                                ),
-                                margin: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.005,
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.01,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.008,
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.01,
-                                ),
-                              );
-                            },
-                          ),
+                      if (state.getAbsentHistoryList.isEmpty) {
+                        return Column(
+                          children: [
+                            Text('No data available'),
+                          ],
                         );
                       } else {
-                        if (state.getAbsentHistoryList.isEmpty) {
-                          return SingleChildScrollView(
-                            physics: AlwaysScrollableScrollPhysics(),
-                            child: Column(
-                              children: [
-                                Text('No data available'),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return ListView(
-                            shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            children:
-                                state.getAbsentHistoryList.asMap().entries.map(
-                              (e) {
-                                final index = e.key;
-                                final data = e.value;
+                        return ListView(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          children:
+                              state.getAbsentHistoryList.asMap().entries.map(
+                            (e) {
+                              final index = e.key;
+                              final data = e.value;
 
-                                if (index < 3) {
-                                  return Column(
-                                    children: [
-                                      AbsentList.type4(
-                                        context,
-                                        state,
-                                        data.checkIn,
-                                        data.date,
-                                      ),
-                                      Builder(
-                                        builder: (context) {
-                                          if (index != 2) {
-                                            return Divider(
-                                              color: Colors.grey,
-                                            );
-                                          } else {
-                                            return SizedBox();
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return SizedBox();
-                                }
-                              },
-                            ).toList(),
-                          );
-                        }
+                              if (index < 3) {
+                                return Column(
+                                  children: [
+                                    AbsentList.type4(
+                                      context,
+                                      state,
+                                      data.checkIn,
+                                      data.date,
+                                    ),
+                                    Builder(
+                                      builder: (context) {
+                                        if (index != 2) {
+                                          return Divider(
+                                            color: Colors.grey,
+                                          );
+                                        } else {
+                                          return SizedBox();
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            },
+                          ).toList(),
+                        );
                       }
+                      // Note: attendance listview with shimmer loading animation
+                      // if (state.getIsAppFlowLoading || isRefresh) {
+                      //   return Shimmer.fromColors(
+                      //     baseColor: Colors.grey[300]!,
+                      //     highlightColor: Colors.white,
+                      //     period: const Duration(milliseconds: 1000),
+                      //     child: ListView.builder(
+                      //       itemCount: 3,
+                      //       itemBuilder: (context, index) {
+                      //         return Container(
+                      //           width: MediaQuery.of(context).size.width,
+                      //           height:
+                      //               MediaQuery.of(context).size.height * 0.083,
+                      //           alignment: Alignment.center,
+                      //           decoration: BoxDecoration(
+                      //             borderRadius: BorderRadius.circular(10.0),
+                      //             boxShadow: const [
+                      //               BoxShadow(
+                      //                 // Adjust shadow color as needed
+                      //                 color: Colors.grey,
+                      //                 // No shadow offset
+                      //                 // Adjust shadow blur radius
+                      //                 blurRadius: 5.0,
+                      //                 // Adjust shadow spread radius
+                      //                 spreadRadius: 1.0,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //           margin: EdgeInsets.symmetric(
+                      //             vertical: MediaQuery.of(context).size.height *
+                      //                 0.005,
+                      //             horizontal:
+                      //                 MediaQuery.of(context).size.width * 0.01,
+                      //           ),
+                      //           padding: EdgeInsets.symmetric(
+                      //             vertical: MediaQuery.of(context).size.height *
+                      //                 0.008,
+                      //             horizontal:
+                      //                 MediaQuery.of(context).size.width * 0.01,
+                      //           ),
+                      //         );
+                      //       },
+                      //     ),
+                      //   );
+                      // } else {
+
+                      // }
                     },
                   ),
                 ),

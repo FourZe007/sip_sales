@@ -152,7 +152,38 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void openUserGuideline() async {
+    Uri url = Uri.parse(
+      'https://www.canva.com/design/DAGfnPUa7_Q/nE2tAQYp5NGFOTKE_SrzvQ/edit?utm_content=DAGfnPUa7_Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+    );
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      // Custom Alert Dialog for Android and iOS
+      if (Platform.isIOS) {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oh no!',
+          'Unable to open the link. Please check the URL and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+          isIOS: true,
+        );
+      } else {
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Oops!',
+          'Unable to open the link. Please check the URL and try again.',
+          () => Navigator.pop(context),
+          'Dismiss',
+        );
+      }
+    }
+  }
+
   Future<void> getUserLatestData(SipSalesState state) async {
+    print('Refresh User Data');
     final prefs = await SharedPreferences.getInstance();
 
     // setIsLoading();
@@ -228,74 +259,74 @@ class ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Picture
-              Builder(
-                builder: (context) {
-                  if (state.getProfilePicture == '' &&
-                      state.getProfilePicturePreview == '') {
-                    return GestureDetector(
-                      onTap: () => takePhoto(context, state),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 35,
-                              backgroundColor: Colors.black,
-                              child: ClipOval(
-                                child: SizedBox.fromSize(
-                                  size: Size.fromRadius(33),
-                                  child: Icon(
-                                    Icons.person,
-                                    color: Colors.white,
+              Expanded(
+                child: Builder(
+                  builder: (context) {
+                    if (state.getProfilePicture == '' &&
+                        state.getProfilePicturePreview == '') {
+                      return GestureDetector(
+                        onTap: () => takePhoto(context, state),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 35,
+                                backgroundColor: Colors.black,
+                                child: ClipOval(
+                                  child: SizedBox.fromSize(
+                                    size: Size.fromRadius(33),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              top: 43,
-                              left: 43,
-                              child: CircleAvatar(
-                                radius: 13,
-                                backgroundColor: Colors.grey,
-                                child: Icon(
-                                  Icons.edit,
-                                  size: 18,
-                                  color: Colors.black,
+                              Positioned(
+                                top: 43,
+                                left: 43,
+                                child: CircleAvatar(
+                                  radius: 13,
+                                  backgroundColor: Colors.grey,
+                                  child: Icon(
+                                    Icons.edit,
+                                    size: 18,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  } else {
-                    return InkWell(
-                      onTap: () => viewPhoto(context, state),
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: SizedBox.fromSize(
-                            size: Size.fromRadius(38),
-                            child: Image.memory(
-                              base64Decode(
-                                state.getProfilePicture,
+                      );
+                    } else {
+                      return InkWell(
+                        onTap: () => viewPhoto(context, state),
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Colors.white,
+                          child: ClipOval(
+                            child: SizedBox.fromSize(
+                              size: Size.fromRadius(38),
+                              child: Image.memory(
+                                base64Decode(
+                                  state.getProfilePicture,
+                                ),
+                                fit: BoxFit.cover,
                               ),
-                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }
-                },
+                      );
+                    }
+                  },
+                ),
               ),
-
-              // ~:Devider:~
-              SizedBox(width: 15),
 
               // User Data, contains of name and employee ID
               Expanded(
+                flex: 3,
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.025,
@@ -327,24 +358,27 @@ class ProfilePageState extends State<ProfilePage> {
         // ~:Settings Section:~
         Container(
           width: MediaQuery.of(context).size.width,
-          height: 200,
+          height: MediaQuery.of(context).size.height * 0.33,
           color: Colors.grey[100],
           margin: EdgeInsets.only(
             top: MediaQuery.of(context).size.height * 0.015,
             bottom: MediaQuery.of(context).size.height * 0.005,
           ),
-          padding: EdgeInsets.fromLTRB(
-            MediaQuery.of(context).size.height * 0.02,
-            MediaQuery.of(context).size.height * 0.01,
-            MediaQuery.of(context).size.height * 0.005,
-            0.0,
+          padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.015,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Pengaturan',
-                style: GlobalFont.mediumgiantfontRBold,
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                  vertical: MediaQuery.of(context).size.height * 0.005,
+                ),
+                child: Text(
+                  'Pengaturan',
+                  style: GlobalFont.mediumgiantfontRBold,
+                ),
               ),
 
               // Background Location Service Switch Button
@@ -475,9 +509,57 @@ class ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
+
+              // ~:User Guideline:~
+              Expanded(
+                child: InkWell(
+                  onTap: () => openUserGuideline(),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.menu_book_rounded,
+                            size: 30.0,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.025,
+                          ),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'User Guideline',
+                                  style: GlobalFont.giantfontR,
+                                ),
+                                Text(
+                                  'Cara menggunakan setiap fitur aplikasi',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
+
+        // ~:Footer Section:~
         Column(
           children: [
             // ~:App Version Section:~
@@ -490,10 +572,11 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.1.7',
+                'Version 1.1.8',
                 style: GlobalFont.bigfontR,
               ),
             ),
+
             // ~:Log Out Button:~
             Padding(
               padding: EdgeInsets.symmetric(
@@ -722,9 +805,11 @@ class ProfilePageState extends State<ProfilePage> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.blue,
-          toolbarHeight: (MediaQuery.of(context).size.width < 800)
-              ? MediaQuery.of(context).size.height * 0.075
-              : MediaQuery.of(context).size.height * 0.075,
+          elevation: 0.0,
+          scrolledUnderElevation: 0.0,
+          // toolbarHeight: (MediaQuery.of(context).size.width < 800)
+          //     ? MediaQuery.of(context).size.height * 0.075
+          //     : MediaQuery.of(context).size.height * 0.075,
           title: (MediaQuery.of(context).size.width < 800)
               ? Text(
                   'Profile',
@@ -738,7 +823,8 @@ class ProfilePageState extends State<ProfilePage> {
             builder: (context) {
               if (Platform.isIOS) {
                 return IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.pop(context),
+                  tooltip: 'Kembali',
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     size:
@@ -748,7 +834,8 @@ class ProfilePageState extends State<ProfilePage> {
                 );
               } else {
                 return IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.pop(context),
+                  tooltip: 'Kembali',
                   icon: Icon(
                     Icons.arrow_back_rounded,
                     size:
@@ -785,7 +872,11 @@ class ProfilePageState extends State<ProfilePage> {
                         ),
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
-                            (context, _) => profileBody(profileState),
+                            (context, _) => SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.825,
+                              child: profileBody(profileState),
+                            ),
                             childCount: 1,
                           ),
                         ),
@@ -796,7 +887,10 @@ class ProfilePageState extends State<ProfilePage> {
                       onRefresh: () => getUserLatestData(profileState),
                       child: SingleChildScrollView(
                         physics: AlwaysScrollableScrollPhysics(),
-                        child: profileBody(profileState),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.825,
+                          child: profileBody(profileState),
+                        ),
                       ),
                     );
                   }

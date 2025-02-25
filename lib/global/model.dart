@@ -116,6 +116,53 @@ class ModelAttendanceHistory {
   }
 }
 
+// "qtyLM": 1,
+// "qtyTM": 2,
+// "persenSPK": 100.0000,
+// "qtySJLM": 1,
+// "qtySJTM": 0,
+// "persenSJ": -100.0000,
+// "qtyPLM": 25,
+// "qtyPTM": 38,
+// "persenProspek": 52.0000
+class SalesDashboardModel {
+  int qtyLM;
+  int qtyTM;
+  double spk;
+  int qtySJLM;
+  int qtySJTM;
+  double delivery;
+  int qtyLTM;
+  int qtyPTM;
+  double prospect;
+
+  SalesDashboardModel({
+    required this.qtyLM,
+    required this.qtyTM,
+    required this.spk,
+    required this.qtySJLM,
+    required this.qtySJTM,
+    required this.delivery,
+    required this.qtyLTM,
+    required this.qtyPTM,
+    required this.prospect,
+  });
+
+  factory SalesDashboardModel.fromJson(Map<String, dynamic> json) {
+    return SalesDashboardModel(
+      qtyLM: json['qtyLM'],
+      qtyTM: json['qtyTM'],
+      spk: json['persenSPK'],
+      qtySJLM: json['qtySJLM'],
+      qtySJTM: json['qtySJTM'],
+      delivery: json['persenSJ'],
+      qtyLTM: json['qtyPLM'],
+      qtyPTM: json['qtyPTM'],
+      prospect: json['persenProspek'],
+    );
+  }
+}
+
 class ModelResultMessage {
   String resultMessage;
 

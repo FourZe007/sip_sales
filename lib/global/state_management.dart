@@ -137,6 +137,46 @@ class SipSalesState with ChangeNotifier {
     return uuid;
   }
 
+  TextEditingController unbindReqTextController = TextEditingController();
+  TextEditingController get getUnbindReqTextController =>
+      unbindReqTextController;
+
+  void setUnbindReqTextController(String value) {
+    unbindReqTextController.text = value;
+    notifyListeners();
+  }
+
+  List<ModelResultMessage2> unbindRequestList = [];
+  List<ModelResultMessage2> get getUnbindRequestList => unbindRequestList;
+
+  Future<String> processUnbindRequest(String eId) async {
+    try {
+      unbindRequestList.clear();
+      unbindRequestList.addAll(await GlobalAPI.fetchReqUnbindAcc(
+        eId,
+        getUnbindReqTextController.text,
+      ));
+
+      if (unbindRequestList.isNotEmpty) {
+        print('Unbind Request: ${unbindRequestList[0].resultMessage}');
+        if (unbindRequestList[0].resultMessage.split(':')[0] == 'https') {
+          displayDescription =
+              'Permintaan unbind berhasil dikirim. Mohon tunggu informasi lebih lanjut.';
+          return 'success';
+        } else {
+          displayDescription = 'Permintaan unbind gagal dikirim.';
+          return 'warn';
+        }
+      } else {
+        displayDescription = 'Terjadi kesalahan, mohon coba lagi.';
+        return 'failed';
+      }
+    } catch (e) {
+      displayDescription = e.toString();
+      return 'failed';
+    }
+  }
+
   // =================================================================
   // =========================== Profile =============================
   // =================================================================
@@ -404,6 +444,14 @@ class SipSalesState with ChangeNotifier {
 
   void setAbsentType(String value) {
     absentType = value;
+  }
+
+  List<SalesDashboardModel> salesDashboardList = [];
+  List<SalesDashboardModel> get getSalesDashboardList => salesDashboardList;
+
+  void setSalesDashboardList(List<SalesDashboardModel> list) {
+    salesDashboardList = list;
+    notifyListeners();
   }
 
   List<ModelAttendanceHistory> absentHistoryList = [];

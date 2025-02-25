@@ -66,13 +66,25 @@ class _FailureAnimationPageState extends State<FailureAnimationPage> {
                       builder: (context) {
                         if (Platform.isIOS) {
                           return IconButton(
-                            icon: const Icon(Icons.arrow_back_ios),
                             onPressed: () => Navigator.pop(context),
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.black,
+                              size: (MediaQuery.of(context).size.width < 800)
+                                  ? 20.0
+                                  : 35.0,
+                            ),
                           );
                         } else {
                           return IconButton(
-                            icon: const Icon(Icons.arrow_back),
                             onPressed: () => Navigator.pop(context),
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: Colors.black,
+                              size: (MediaQuery.of(context).size.width < 800)
+                                  ? 20.0
+                                  : 35.0,
+                            ),
                           );
                         }
                       },

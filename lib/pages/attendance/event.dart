@@ -125,6 +125,8 @@ class _EventDescPageState extends State<EventDescPage> {
                 style: GlobalFont.terafontRBold,
               ),
         backgroundColor: Colors.blue,
+        elevation: 0.0,
+        scrolledUnderElevation: 0.0,
         leading: Builder(
           builder: (context) {
             if (Platform.isIOS) {

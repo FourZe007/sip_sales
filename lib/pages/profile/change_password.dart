@@ -96,9 +96,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.blue,
-        toolbarHeight: (MediaQuery.of(context).size.width < 800)
-            ? MediaQuery.of(context).size.height * 0.075
-            : MediaQuery.of(context).size.height * 0.075,
+        // toolbarHeight: (MediaQuery.of(context).size.width < 800)
+        //     ? MediaQuery.of(context).size.height * 0.075
+        //     : MediaQuery.of(context).size.height * 0.075,
         title: (MediaQuery.of(context).size.width < 800)
             ? Text(
                 'Ubah Sandi',
@@ -112,7 +112,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           builder: (context) {
             if (Platform.isIOS) {
               return IconButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.pop(context),
+                tooltip: 'Kembali',
                 icon: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
@@ -121,7 +122,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               );
             } else {
               return IconButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.pop(context),
+                tooltip: 'Kembali',
                 icon: Icon(
                   Icons.arrow_back_rounded,
                   size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,

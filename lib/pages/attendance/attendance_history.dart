@@ -148,10 +148,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   }
 
   Widget attendanceHistoryBody(SipSalesState state) {
-    return ListView(
-      shrinkWrap: true,
-      // Note: you can use BouncingScrollPhysics() behavior too
-      physics: AlwaysScrollableScrollPhysics(),
+    return Column(
       children: state.getAbsentHistoryList.asMap().entries.map(
         (e) {
           final index = e.key;
@@ -401,7 +398,11 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                                 endDate: endDate,
                               );
                             },
-                            child: attendanceHistoryBody(state),
+                            child: SingleChildScrollView(
+                              // Note: you can use BouncingScrollPhysics() behavior too
+                              physics: AlwaysScrollableScrollPhysics(),
+                              child: attendanceHistoryBody(state),
+                            ),
                           );
                         }
                       },

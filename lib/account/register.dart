@@ -105,9 +105,6 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         centerTitle: true,
-        toolbarHeight: (MediaQuery.of(context).size.width < 800)
-            ? MediaQuery.of(context).size.height * 0.075
-            : MediaQuery.of(context).size.height * 0.075,
         title: (MediaQuery.of(context).size.width < 800)
             ? Text(
                 'Create Account',
@@ -117,13 +114,28 @@ class _RegisterPageState extends State<RegisterPage> {
                 'Create Account',
                 style: GlobalFont.terafontRBold,
               ),
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-            color: Colors.black,
-          ),
+        leading: Builder(
+          builder: (context) {
+            if (Platform.isIOS) {
+              return IconButton(
+                onPressed: () => Navigator.pop(context, false),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                  color: Colors.black,
+                ),
+              );
+            } else {
+              return IconButton(
+                onPressed: () => Navigator.pop(context, false),
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                  color: Colors.black,
+                ),
+              );
+            }
+          },
         ),
       ),
       body: Column(
