@@ -11,7 +11,6 @@ import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/text/custom_text.dart';
@@ -30,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   String password = '';
   int? userState = 0;
   String loginStatus = '';
-  List<ModelUser> userLogin = [];
+  // List<ModelUser> userLogin = [];
   bool? isLocationGranted = false;
   bool isLoading = false;
   bool isUserGranted = false;
@@ -138,10 +137,13 @@ class _LoginPageState extends State<LoginPage> {
     if (nip != '' && password != '') {
       toggleIsLoading();
 
+      await state.readAndWriteUserId(id: nip);
+      await state.readAndWriteUserPass(pass: password);
+
       await state.generateUuid().then((String uuid) async {
+        print('UUID: $uuid');
         try {
-          userLogin.clear();
-          userLogin.addAll(await GlobalAPI.fetchUserAccount(
+          state.setUserAccountList(await GlobalAPI.fetchUserAccount(
             nip,
             password,
             uuid,
@@ -151,46 +153,70 @@ class _LoginPageState extends State<LoginPage> {
         }
       });
 
-      if (userLogin.isNotEmpty) {
-        print(userLogin[0].employeeName);
-        if (userLogin[0].flag == 1) {
-          // setState(() {
-          //   loginStatus = 'Login Success.';
-          // });
+      if (state.getUserAccountList.isNotEmpty) {
+        print(state.getUserAccountList[0].employeeName);
+        if (state.getUserAccountList[0].flag == 1) {
+          // Future.delayed(const Duration(seconds: 2)).then(
+          //   (value) async {
+          //     await prefs.setInt('flag', 1);
+          //     await prefs.setString('nip', nip);
+          //     await prefs.setString('password', password);
+          //     await prefs.setBool('attendanceStatus', false);
+          //     await prefs.setString('branch', userLogin[0].branch);
+          //     await prefs.setString('shop', userLogin[0].shop);
+          //     await prefs.setInt('isManager', userLogin[0].code);
+          //     await prefs.setBool('isLocationGranted', false);
+          //     await prefs.setBool('checkInStatus', true);
+          //     await prefs.setBool('checkOutStatus', false);
+          //     await prefs.setBool('isShowCaseCompleted', true);
+          //   },
+          // );
 
-          Future.delayed(const Duration(seconds: 2)).then(
-            (value) async {
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              await prefs.setInt('flag', 1);
-              await prefs.setString('nip', nip);
-              await prefs.setString('password', password);
-              await prefs.setBool('attendanceStatus', false);
-              await prefs.setString('branch', userLogin[0].branch);
-              await prefs.setString('shop', userLogin[0].shop);
-              await prefs.setInt('isManager', userLogin[0].code);
-              await prefs.setBool('isLocationGranted', false);
-              await prefs.setBool('checkInStatus', true);
-              await prefs.setBool('checkOutStatus', false);
-              await prefs.setBool('isShowCaseCompleted', true);
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+          await state
+              .readAndWriteIsUserManager(
+                  state: state.getUserAccountList[0].code == 1 ? true : false)
+              .then((value) {
+            if (value) {
+              print('User is manager');
+            } else {
+              print('User is sales');
+            }
+          });
 
-              // ~:NEW:~
-              if (userLogin[0].code == 1 ||
-                  state.getManagerActivityTypeList.isEmpty) {
-                // Note -> get Activity Insertation dropdown for Manager
-                await Provider.of<SipSalesState>(context, listen: false)
-                    .fetchManagerActivityData();
-              } else {
-                // Note -> get Activity Insertation dropdown for Sales
-                await Provider.of<SipSalesState>(context, listen: false)
-                    .fetchSalesActivityData();
-              }
+          // ~:NEW:~
+          if (await state.readAndWriteIsUserManager() ||
+              state.getManagerActivityTypeList.isEmpty) {
+            print('Manager');
+            // Note -> get Activity Insertation dropdown for Manager
+            await Provider.of<SipSalesState>(context, listen: false)
+                .fetchManagerActivityData();
+          } else {
+            print('Sales');
+            // ~:Sales Old Activity Insertation:~
+            // Note -> get Activity Insertation dropdown for Sales
+            // await Provider.of<SipSalesState>(context, listen: false)
+            //     .fetchSalesActivityData();
 
-              // Load and save HD image to cache memory
+            // ~:Sales New Activity Insertation:~
+            await state.getUserAttendanceHistory();
+            await state.getSalesDashboard();
+
+            // ~:Reset dropdown default value to User's placement:~
+            // state.setAbsentType(state.getUserAccountList[0].locationName);
+
+            if (state.getUserAccountList.isNotEmpty &&
+                state.getProfilePicture.isEmpty &&
+                state.getProfilePicturePreview.isEmpty) {
+              state.setProfilePicture(
+                state.getUserAccountList[0].profilePicture,
+              );
+
               try {
-                state.setProfilePicture(userLogin[0].profilePicture);
-                await GlobalAPI.fetchShowImage(userLogin[0].employeeID)
-                    .then((String highResImg) async {
+                await GlobalAPI.fetchShowImage(
+                  state.getUserAccountList[0].employeeID,
+                ).then((String highResImg) async {
                   if (highResImg == 'not available' ||
                       highResImg == 'failed' ||
                       highResImg == 'error') {
@@ -209,24 +235,49 @@ class _LoginPageState extends State<LoginPage> {
                 state.setProfilePicturePreview('');
                 await prefs.setString('highResImage', '');
               }
-              // ~:NEW:~
+            }
+          }
 
-              toggleIsLoading();
-
-              if (prefs.getBool('isUserAgree') ?? false) {
-                Navigator.pushReplacementNamed(context, '/location');
+          // Load and save HD image to cache memory
+          try {
+            state.setProfilePicture(state.getUserAccountList[0].profilePicture);
+            await GlobalAPI.fetchShowImage(
+              state.getUserAccountList[0].employeeID,
+            ).then((String highResImg) async {
+              if (highResImg == 'not available' ||
+                  highResImg == 'failed' ||
+                  highResImg == 'error') {
+                state.setProfilePicturePreview('');
+                await prefs.setString('highResImage', '');
+                print('High Res Image is not available.');
               } else {
-                displayProminentDisclosure(state);
+                state.setProfilePicturePreview(highResImg);
+                await prefs.setString('highResImage', highResImg);
+                print('High Res Image successfully loaded.');
+                print('High Res Image: $highResImg');
               }
-            },
-          );
-        } else if (userLogin[0].flag == 2) {
+            });
+          } catch (e) {
+            print('Show HD Image Error: $e');
+            state.setProfilePicturePreview('');
+            await prefs.setString('highResImage', '');
+          }
+          // ~:NEW:~
+
+          toggleIsLoading();
+
+          if (prefs.getBool('isUserAgree') ?? false) {
+            Navigator.pushReplacementNamed(context, '/location');
+          } else {
+            displayProminentDisclosure(state);
+          }
+        } else if (state.getUserAccountList[0].flag == 2) {
           toggleIsLoading();
           if (Platform.isIOS) {
             GlobalDialog.showCrossPlatformDialog(
               context,
               'Peringatan!',
-              userLogin[0].memo,
+              state.getUserAccountList[0].memo,
               () => Navigator.pop(context),
               'Tutup',
               isIOS: true,
@@ -235,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
             GlobalDialog.showCrossPlatformDialog(
               context,
               'Peringatan!',
-              userLogin[0].memo,
+              state.getUserAccountList[0].memo,
               () => Navigator.pop(context),
               'Tutup',
             );
@@ -322,7 +373,7 @@ class _LoginPageState extends State<LoginPage> {
     password = '';
     userState = 0;
     loginStatus = '';
-    userLogin.clear();
+    // Provider.of<SipSalesState>(context, listen: false).userAccountList.clear();
   }
 
   @override

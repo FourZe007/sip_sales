@@ -73,12 +73,138 @@ class SipSalesState with ChangeNotifier {
   // =================================================================
   // ===================== Login Configuration =======================
   // =================================================================
+  Future<void> getUserAttendanceHistory({
+    String startDate = '',
+    String endDate = '',
+  }) async {
+    try {
+      List<ModelAttendanceHistory> temp = [];
+      temp.clear();
+      temp.addAll(await GlobalAPI.fetchAttendanceHistory(
+        getUserAccountList[0].employeeID,
+        startDate,
+        endDate,
+      ));
+
+      print('Absent History list length: ${temp.length}');
+
+      absentHistoryList = temp;
+      notifyListeners();
+    } catch (e) {
+      print('Fetch Attendance History failed: ${e.toString()}');
+    }
+  }
+
+  Future<void> getSalesDashboard() async {
+    print('Get Sales Dashboard');
+    try {
+      print('Employee ID: ${getUserAccountList[0].employeeID}');
+      print('Branch: ${getUserAccountList[0].branch}');
+      print('Shop: ${getUserAccountList[0].shop}');
+      await GlobalAPI.fetchSalesDashboard(
+        getUserAccountList[0].employeeID,
+        getUserAccountList[0].branch,
+        getUserAccountList[0].shop,
+      ).then((res) {
+        print('Absent history: ${res.length}');
+        setSalesDashboardList(res);
+      });
+    } catch (e) {
+      print('Error: ${e.toString()}');
+    }
+  }
+
   List<ModelUser> userAccountList = [];
   List<ModelUser> get getUserAccountList => userAccountList;
 
   void setUserAccountList(List<ModelUser> value) {
     userAccountList = value;
     notifyListeners();
+  }
+
+  String employeeId = '';
+  String get getEmployeeId => employeeId;
+
+  void setEmployeeId(String value) {
+    employeeId = value;
+    notifyListeners();
+  }
+
+  Future<String> readAndWriteUserId({String id = ''}) async {
+    try {
+      // Read the existing ID only once
+      String? existingId = await storage.read(key: 'employeeId');
+
+      if (existingId == null || existingId.isEmpty) {
+        // Generate a new ID if none exists
+        employeeId = id;
+        await storage.write(key: 'employeeId', value: id);
+
+        // Log the action for debugging
+        print("Employee Id: $employeeId");
+
+        // Notify listeners as the state changed
+        notifyListeners();
+      } else {
+        // Use the existing ID
+        employeeId = existingId;
+        print("Employee Id: $employeeId");
+      }
+    } catch (e) {
+      // Handle decryption or secure storage errors
+      print("Error reading or writing secure storage: $e");
+      employeeId = id;
+      await storage.write(key: 'employeeId', value: id);
+      print("Input and saved new ID due to error: $employeeId");
+
+      // Notify listeners as the state changed
+      notifyListeners();
+    }
+
+    return employeeId;
+  }
+
+  String password = '';
+  String get getPassword => password;
+
+  void setPassword(String value) {
+    password = value;
+    notifyListeners();
+  }
+
+  Future<String> readAndWriteUserPass({String pass = ''}) async {
+    try {
+      // Read the existing Password only once
+      String? existingPass = await storage.read(key: 'pass');
+
+      if (existingPass == null || existingPass.isEmpty) {
+        // Generate a new Password if none exists
+        password = pass;
+        await storage.write(key: 'pass', value: pass);
+
+        // Log the action for debugging
+        print("Input and saved Password: $password");
+
+        // Notify listeners as the state changed
+        notifyListeners();
+      } else {
+        // Use the existing Password
+        password = existingPass;
+        print("Input and saved Password: $password");
+      }
+    } catch (e) {
+      // Handle decryption or secure storage errors
+      print("Error reading or writing secure storage: $e");
+
+      password = pass;
+      await storage.write(key: 'pass', value: pass);
+      print("Input and saved new Password due to error: $password");
+
+      // Notify listeners as the state changed
+      notifyListeners();
+    }
+
+    return password;
   }
 
   String profilePicture = '';
@@ -102,6 +228,11 @@ class SipSalesState with ChangeNotifier {
   String uuid = '';
 
   String get getUUID => uuid;
+
+  void setUUID(String value) {
+    uuid = value;
+    notifyListeners();
+  }
 
   Future<String> generateUuid() async {
     try {
@@ -241,22 +372,18 @@ class SipSalesState with ChangeNotifier {
   List<ModelResultMessage> get getUploadProfileState => uploadProfileState;
 
   Future<String> uploadProfilePicture(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String nip = prefs.getString('nip')!;
-
     uploadProfileState.clear();
     uploadProfileState.addAll(await GlobalAPI.fetchUploadImage(
-      nip,
+      getUserAccountList[0].employeeID,
       getBase64PpList[0],
     ));
 
     if (uploadProfileState.isNotEmpty) {
       print('result message: ${uploadProfileState[0].resultMessage}');
       if (uploadProfileState[0].resultMessage == 'SUKSES') {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
         await GlobalAPI.fetchUserAccount(
-          prefs.getString('nip')!,
-          prefs.getString('password')!,
+          await readAndWriteUserId(),
+          await readAndWriteUserPass(),
           await generateUuid(),
         ).then((user) async {
           setProfilePicturePreview(user[0].profilePicture);
@@ -408,11 +535,11 @@ class SipSalesState with ChangeNotifier {
   // ================================================================
   // ======================= Activity Route =========================
   // ================================================================
-  String employeeID = '';
+  // String employeeID = '';
   List<ModelActivityRoute> activityRouteList = [];
   int locationIndex = 0;
 
-  String get getEmployeeID => employeeID;
+  // String get getEmployeeID => employeeID;
 
   List<ModelActivityRoute> get getActivityRoute => activityRouteList;
 
@@ -424,14 +551,11 @@ class SipSalesState with ChangeNotifier {
   }
 
   Future<List<ModelActivityRoute>> fetchActivityRouteList(String date) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    employeeID = prefs.getString('nip')!;
-
     activityRouteList.clear();
-    activityRouteList = await GlobalAPI.fetchActivityRoute(
-      employeeID,
+    activityRouteList.addAll(await GlobalAPI.fetchActivityRoute(
+      await readAndWriteUserId(),
       date,
-    );
+    ));
 
     return activityRouteList;
   }
@@ -589,7 +713,7 @@ class SipSalesState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> eventCheckIn(SipSalesState state) async {
+  Future<String> eventCheckIn() async {
     print('Event Check In');
     try {
       Position coordinate = await Geolocator.getCurrentPosition();
@@ -602,9 +726,9 @@ class SipSalesState with ChangeNotifier {
         List<ModelResultMessage> res = [];
         res.addAll(await GlobalAPI.fetchModifyEventAttendance(
           '1',
-          GlobalVar.nip!,
-          state.getUserAccountList[0].branch,
-          state.getUserAccountList[0].shop,
+          await readAndWriteUserId(),
+          getUserAccountList[0].branch,
+          getUserAccountList[0].shop,
           DateTime.now().toString().split(' ')[0],
           DateTime.now().toString().split(' ')[1].replaceAll(RegExp(r':'), '.'),
           coordinate.latitude,
@@ -620,7 +744,11 @@ class SipSalesState with ChangeNotifier {
           if (res[0].resultMessage == 'SUKSES') {
             absentHistoryList.clear();
             absentHistoryList.addAll(
-              await GlobalAPI.fetchAttendanceHistory(GlobalVar.nip!, '', ''),
+              await GlobalAPI.fetchAttendanceHistory(
+                await readAndWriteUserId(),
+                '',
+                '',
+              ),
             );
             notifyListeners();
 
@@ -945,7 +1073,6 @@ class SipSalesState with ChangeNotifier {
   // Function -> run 'Check In' button
   Future<String> checkIn(
     BuildContext context,
-    SipSalesState state,
   ) async {
     // ~:Profile Picture is uploaded:~
     if (profilePicturePreview.isNotEmpty) {
@@ -958,7 +1085,7 @@ class SipSalesState with ChangeNotifier {
 
         if (isDeviceModified) {
           await GlobalAPI.fetchInsertViolation(
-            state.getUserAccountList[0].employeeID,
+            getUserAccountList[0].employeeID,
             'FAKE GPS',
           ).then((value) {
             if (value[0].resultMessage == 'SUKSES') {
@@ -976,8 +1103,8 @@ class SipSalesState with ChangeNotifier {
           try {
             await Geolocator.getCurrentPosition().then((coordinate) async {
               await GlobalAPI.fetchIsWithinRadius(
-                state.getUserAccountList[0].latitude,
-                state.getUserAccountList[0].longitude,
+                getUserAccountList[0].latitude,
+                getUserAccountList[0].longitude,
                 coordinate.latitude,
                 coordinate.longitude,
               ).then((status) {
@@ -1010,10 +1137,10 @@ class SipSalesState with ChangeNotifier {
             await Geolocator.getCurrentPosition().then((coordinate) async {
               checkInList.addAll(await GlobalAPI.fetchModifyAttendance(
                 '1',
-                GlobalVar.nip!,
-                state.getUserAccountList[0].branch,
-                state.getUserAccountList[0].shop,
-                state.getUserAccountList[0].locationID,
+                await readAndWriteUserId(),
+                getUserAccountList[0].branch,
+                getUserAccountList[0].shop,
+                getUserAccountList[0].locationID,
                 DateTime.now().toString().split(' ')[0],
                 DateTime.now()
                     .toString()
@@ -1033,7 +1160,10 @@ class SipSalesState with ChangeNotifier {
                 absentHistoryList.clear();
                 absentHistoryList.addAll(
                   await GlobalAPI.fetchAttendanceHistory(
-                      GlobalVar.nip!, '', ''),
+                    await readAndWriteUserId(),
+                    '',
+                    '',
+                  ),
                 );
                 notifyListeners();
 
@@ -1075,7 +1205,6 @@ class SipSalesState with ChangeNotifier {
   // Function -> run 'Check Out' button
   Future<String> checkOut(
     BuildContext context,
-    SipSalesState state,
   ) async {
     // ~:Profile Picture is uploaded:~
     if (profilePicturePreview.isNotEmpty) {
@@ -1084,8 +1213,8 @@ class SipSalesState with ChangeNotifier {
         // ~:Check if User within branch radius or not:~
         await Geolocator.getCurrentPosition().then((coordinate) async {
           await GlobalAPI.fetchIsWithinRadius(
-            state.getUserAccountList[0].latitude,
-            state.getUserAccountList[0].longitude,
+            getUserAccountList[0].latitude,
+            getUserAccountList[0].longitude,
             coordinate.latitude,
             coordinate.longitude,
           ).then((status) {
@@ -1113,10 +1242,10 @@ class SipSalesState with ChangeNotifier {
           await Geolocator.getCurrentPosition().then((coordinate) async {
             checkOutList.addAll(await GlobalAPI.fetchModifyAttendance(
               '2',
-              GlobalVar.nip!,
-              state.getUserAccountList[0].branch,
-              state.getUserAccountList[0].shop,
-              state.getUserAccountList[0].locationID,
+              await readAndWriteUserId(),
+              getUserAccountList[0].branch,
+              getUserAccountList[0].shop,
+              getUserAccountList[0].locationID,
               DateTime.now().toString().split(' ')[0],
               '',
               DateTime.now()
@@ -1767,12 +1896,47 @@ class SipSalesState with ChangeNotifier {
   // ============================================================
   // ===================== User Permission ======================
   // ============================================================
-  int isManager = 0;
+  bool isManager = false;
 
-  int get getIsManager => isManager;
+  bool get getIsManager => isManager;
 
-  void setIsManager(int? value) {
-    isManager = value!;
+  void setIsManager(bool value) {
+    isManager = value;
+    notifyListeners();
+  }
+
+  Future<bool> readAndWriteIsUserManager({bool state = false}) async {
+    try {
+      // Read the existing ID only once
+      String? existingStatus = await storage.read(key: 'isManager');
+
+      if (existingStatus == null || existingStatus.isEmpty) {
+        // Generate a new ID if none exists
+        isManager = state;
+        await storage.write(key: 'isManager', value: state ? '1' : '0');
+
+        // Log the action for debugging
+        print("Is User Manager status: $employeeId");
+
+        // Notify listeners as the state changed
+        notifyListeners();
+      } else {
+        // Use the existing Password
+        isManager = state;
+        print("Is User Manager status: $isManager");
+      }
+    } catch (e) {
+      // Handle decryption or secure storage errors
+      print("Error reading or writing secure storage: $e");
+      isManager = state;
+      await storage.write(key: 'isManager', value: state ? '1' : '0');
+      print("Is User Manager status due to error: $isManager");
+
+      // Notify listeners as the state changed
+      notifyListeners();
+    }
+
+    return isManager;
   }
 
   bool isLocationGranted = false;

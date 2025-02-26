@@ -135,14 +135,14 @@ class _OldAttendancePageState extends State<OldAttendancePage> {
                   if (MediaQuery.of(context).size.width < 800) {
                     return AnimatedPhoneButton(
                       'Check In',
-                      () => state.checkIn(context, state),
+                      () => state.checkIn(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
                     );
                   } else {
                     return AnimatedTabButton(
                       'Check In',
-                      () => state.checkIn(context, state),
+                      () => state.checkIn(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
                     );
@@ -159,14 +159,14 @@ class _OldAttendancePageState extends State<OldAttendancePage> {
                   if (MediaQuery.of(context).size.width < 800) {
                     return AnimatedPhoneButton(
                       'Check Out',
-                      () => state.checkOut(context, state),
+                      () => state.checkOut(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
                     );
                   } else {
                     return AnimatedTabButton(
                       'Check Out',
-                      () => state.checkOut(context, state),
+                      () => state.checkOut(context),
                       lebar: MediaQuery.of(context).size.width * 0.3,
                       tinggi: MediaQuery.of(context).size.height * 0.05,
                     );

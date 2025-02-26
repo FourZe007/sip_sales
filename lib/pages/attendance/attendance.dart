@@ -128,7 +128,7 @@ class _AttendancePageState extends State<AttendancePage> {
       List<ModelAttendanceHistory> temp = [];
       temp.clear();
       temp.addAll(await GlobalAPI.fetchAttendanceHistory(
-        state.getUserAccountList[0].employeeID,
+        await state.readAndWriteUserId(),
         startDate,
         endDate,
       ));
@@ -154,9 +154,9 @@ class _AttendancePageState extends State<AttendancePage> {
 
     try {
       await GlobalAPI.fetchUserAccount(
-        GlobalVar.nip!,
-        GlobalVar.password!,
-        state.getUUID,
+        await state.readAndWriteUserId(),
+        await state.readAndWriteUserPass(),
+        await state.generateUuid(),
       ).then((res) {
         state.setUserAccountList(res);
       });
@@ -188,32 +188,32 @@ class _AttendancePageState extends State<AttendancePage> {
     }
   }
 
-  Future<void> getSalesDashboard(
-    SipSalesState state,
-  ) async {
-    print('Get Sales Dashboard');
-    try {
-      print('Employee ID: ${state.getUserAccountList[0].employeeID}');
-      print('Branch: ${state.getUserAccountList[0].branch}');
-      print('Shop: ${state.getUserAccountList[0].shop}');
-      await GlobalAPI.fetchSalesDashboard(
-        state.getUserAccountList[0].employeeID,
-        state.getUserAccountList[0].branch,
-        state.getUserAccountList[0].shop,
-      ).then((res) {
-        state.setSalesDashboardList(res);
-      });
-    } catch (e) {
-      print('Error: ${e.toString()}');
-    }
-  }
+  // Future<void> getSalesDashboard(
+  //   SipSalesState state,
+  // ) async {
+  //   print('Get Sales Dashboard');
+  //   try {
+  //     print('Employee ID: ${state.getUserAccountList[0].employeeID}');
+  //     print('Branch: ${state.getUserAccountList[0].branch}');
+  //     print('Shop: ${state.getUserAccountList[0].shop}');
+  //     await GlobalAPI.fetchSalesDashboard(
+  //       state.getUserAccountList[0].employeeID,
+  //       state.getUserAccountList[0].branch,
+  //       state.getUserAccountList[0].shop,
+  //     ).then((res) {
+  //       state.setSalesDashboardList(res);
+  //     });
+  //   } catch (e) {
+  //     print('Error: ${e.toString()}');
+  //   }
+  // }
 
   Future<void> refreshPage(SipSalesState state) async {
     print('Refresh page');
     try {
-      await getUserAttendanceHistory(state);
       await getUserLatestData(state);
-      await getSalesDashboard(state);
+      await getUserAttendanceHistory(state);
+      await state.getSalesDashboard();
     } catch (e) {
       print('Refresh Page error: ${e.toString()}');
 
@@ -303,7 +303,7 @@ class _AttendancePageState extends State<AttendancePage> {
                       child: SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                         child: CommonDropdown(
-                          state.absentType,
+                          state.getUserAccountList[0].locationName,
                           defaultValue:
                               state.getUserAccountList[0].locationName,
                         ),

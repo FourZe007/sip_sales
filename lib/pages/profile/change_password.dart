@@ -170,14 +170,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           // ~:Page Subtitle:~
                           Builder(
                             builder: (context) {
-                              if (state.getEmployeeID.isEmpty) {
+                              if (state.getEmployeeId.isEmpty) {
                                 return Text(
                                   'Buat kata sandi baru untuk akun anda.',
                                   style: GlobalFont.bigfontR,
                                 );
                               } else {
                                 return Text(
-                                  'Buat kata sandi baru untuk akun dengan ID ${state.getEmployeeID}',
+                                  'Buat kata sandi baru untuk akun dengan ID ${state.getEmployeeId}',
                                   style: GlobalFont.bigfontR,
                                 );
                               }

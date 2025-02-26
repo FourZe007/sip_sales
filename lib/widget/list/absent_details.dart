@@ -23,7 +23,7 @@ class _AbsentDetailsPageState extends State<AbsentDetailsPage> {
   Future<String> retrieveHighResImage(SipSalesState state) async {
     String img = '';
     await GlobalAPI.fetchAbsentHighResImage(
-      GlobalVar.nip!,
+      await state.readAndWriteUserId(),
       state.getAbsentHistoryDetail.date,
     ).then((String res) {
       if (res == 'not available' || res == 'failed' || res == 'error') {

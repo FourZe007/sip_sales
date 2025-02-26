@@ -74,7 +74,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     print('Refresh');
     historyList.clear();
     historyList.addAll(await GlobalAPI.fetchAttendanceHistory(
-      GlobalVar.nip!,
+      await state.readAndWriteUserId(),
       startDate,
       endDate,
     ));

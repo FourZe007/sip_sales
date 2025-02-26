@@ -142,7 +142,7 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   void changePassword(SipSalesState state) {
-    state.employeeID = state.getUserAccountList[0].employeeID;
+    state.setEmployeeId(state.getUserAccountList[0].employeeID);
 
     Navigator.push(
       context,
@@ -189,9 +189,9 @@ class ProfilePageState extends State<ProfilePage> {
     // setIsLoading();
     try {
       await GlobalAPI.fetchUserAccount(
-        GlobalVar.nip!,
-        GlobalVar.password!,
-        state.getUUID,
+        await state.readAndWriteUserId(),
+        await state.readAndWriteUserPass(),
+        await state.generateUuid(),
       ).then((res) {
         state.setUserAccountList(res);
       });

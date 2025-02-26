@@ -27,7 +27,6 @@ class _LocationPageState extends State<LocationPage> {
   double? longitude = 0;
   double? latitude = 0;
   Location location = Location();
-  bool? attendanceStatus = false;
   bool locationPermission = false;
 
   bool isLoading = false;
@@ -77,49 +76,50 @@ class _LocationPageState extends State<LocationPage> {
     return true;
   }
 
-  Future<void> getUserAttendanceHistory(
-    SipSalesState state, {
-    String startDate = '',
-    String endDate = '',
-  }) async {
-    try {
-      List<ModelAttendanceHistory> temp = [];
-      temp.clear();
-      temp.addAll(await GlobalAPI.fetchAttendanceHistory(
-        state.getUserAccountList[0].employeeID,
-        startDate,
-        endDate,
-      ));
+  // Future<void> getUserAttendanceHistory(
+  //   SipSalesState state, {
+  //   String startDate = '',
+  //   String endDate = '',
+  // }) async {
+  //   try {
+  //     List<ModelAttendanceHistory> temp = [];
+  //     temp.clear();
+  //     temp.addAll(await GlobalAPI.fetchAttendanceHistory(
+  //       state.getUserAccountList[0].employeeID,
+  //       startDate,
+  //       endDate,
+  //     ));
 
-      print('Absent History list length: ${temp.length}');
+  //     print('Absent History list length: ${temp.length}');
 
-      setState(() {
-        state.absentHistoryList = temp;
-      });
-    } catch (e) {
-      print('Fetch Attendance History failed: ${e.toString()}');
-    }
-  }
+  //     setState(() {
+  //       state.absentHistoryList = temp;
+  //     });
+  //   } catch (e) {
+  //     print('Fetch Attendance History failed: ${e.toString()}');
+  //   }
+  // }
 
-  Future<void> getSalesDashboard(
-    SipSalesState state,
-  ) async {
-    print('Get Sales Dashboard');
-    try {
-      print('Employee ID: ${state.getUserAccountList[0].employeeID}');
-      print('Branch: ${state.getUserAccountList[0].branch}');
-      print('Shop: ${state.getUserAccountList[0].shop}');
-      await GlobalAPI.fetchSalesDashboard(
-        state.getUserAccountList[0].employeeID,
-        state.getUserAccountList[0].branch,
-        state.getUserAccountList[0].shop,
-      ).then((res) {
-        state.setSalesDashboardList(res);
-      });
-    } catch (e) {
-      print('Error: ${e.toString()}');
-    }
-  }
+  // Future<void> getSalesDashboard(
+  //   SipSalesState state,
+  // ) async {
+  //   print('Get Sales Dashboard');
+  //   try {
+  //     print('Employee ID: ${state.getUserAccountList[0].employeeID}');
+  //     print('Branch: ${state.getUserAccountList[0].branch}');
+  //     print('Shop: ${state.getUserAccountList[0].shop}');
+  //     await GlobalAPI.fetchSalesDashboard(
+  //       state.getUserAccountList[0].employeeID,
+  //       state.getUserAccountList[0].branch,
+  //       state.getUserAccountList[0].shop,
+  //     ).then((res) {
+  //       print('Absent history: ${res.length}');
+  //       state.setSalesDashboardList(res);
+  //     });
+  //   } catch (e) {
+  //     print('Error: ${e.toString()}');
+  //   }
+  // }
 
   void checkLocationPermission(
     BuildContext context,
@@ -131,56 +131,26 @@ class _LocationPageState extends State<LocationPage> {
 
     if (await serviceRequest()) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      GlobalVar.nip = prefs.getString('nip');
-      GlobalVar.password = prefs.getString('password');
-      attendanceStatus = prefs.getBool('attendanceStatus');
-      state.setIsManager(prefs.getInt('isManager'));
+      // await state.generateUuid();
 
-      if (GlobalVar.nip != '' && GlobalVar.password != '') {
-        await GlobalAPI.fetchUserAccount(
-          GlobalVar.nip!,
-          GlobalVar.password!,
-          state.getUUID,
-        ).then((res) {
-          state.setUserAccountList(res);
-        });
+      await GlobalAPI.fetchUserAccount(
+        await state.readAndWriteUserId(),
+        await state.readAndWriteUserPass(),
+        await state.generateUuid(),
+      ).then((res) {
+        state.setUserAccountList(res);
+      });
 
-        // ~:Check is manager or sales:~
-        if (state.getUserAccountList[0].code == 1) {
-          await getUserAttendanceHistory(state);
-          await getSalesDashboard(state);
+      // ~:Check is manager or sales:~
+      // if (!await state.readAndWriteIsUserManager()) {
+      // }
 
-          // ~:Reset dropdown default value to User's placement:~
-          state.setAbsentType(state.getUserAccountList[0].locationName);
+      if (prefs.getBool('isLoggedIn') ?? false) {
+        // ~:Get user attendance history:~
+        await state.getUserAttendanceHistory();
 
-          if (state.getUserAccountList.isNotEmpty &&
-              state.getProfilePicture.isEmpty &&
-              state.getProfilePicturePreview.isEmpty) {
-            state.setProfilePicture(state.getUserAccountList[0].profilePicture);
-            try {
-              await GlobalAPI.fetchShowImage(
-                      state.getUserAccountList[0].employeeID)
-                  .then((String highResImg) async {
-                if (highResImg == 'not available' ||
-                    highResImg == 'failed' ||
-                    highResImg == 'error') {
-                  state.setProfilePicturePreview('');
-                  await prefs.setString('highResImage', '');
-                  print('High Res Image is not available.');
-                } else {
-                  state.setProfilePicturePreview(highResImg);
-                  await prefs.setString('highResImage', highResImg);
-                  print('High Res Image successfully loaded.');
-                  print('High Res Image: $highResImg');
-                }
-              });
-            } catch (e) {
-              print('Show HD Image Error: $e');
-              state.setProfilePicturePreview('');
-              await prefs.setString('highResImage', '');
-            }
-          }
-        }
+        // ~:Get sales dashboard:~
+        await state.getSalesDashboard();
       }
 
       // ~:Reset all variables:~

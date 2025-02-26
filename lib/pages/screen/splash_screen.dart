@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 
@@ -23,26 +24,44 @@ class _SplashScreenState extends State<SplashScreen> {
     // state.saveCheckInStatus(true);
     // state.saveCheckOutStatus(false);
     try {
-      await Future.wait([
-        loadUserData(state),
-        initializeAppData(context),
-      ]);
-    } catch (e) {
-      print('Error: $e');
-    }
+      await loadUserData(state);
+      await initializeAppData(context, state);
 
-    await Future.delayed(const Duration(seconds: 3)).then((_) {
       if (isSignedIn) {
         Navigator.pushReplacementNamed(context, '/location');
       } else {
         Navigator.pushReplacementNamed(context, '/login');
       }
-    });
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    // await Future.delayed(const Duration(seconds: 3)).then((_) {
+    //   if (isSignedIn) {
+    //     Navigator.pushReplacementNamed(context, '/location');
+    //   } else {
+    //     Navigator.pushReplacementNamed(context, '/login');
+    //   }
+    // });
   }
 
   Future<void> loadUserData(SipSalesState state) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    isSignedIn = (prefs.getInt('flag') ?? 0) == 1 ? true : false;
+    isSignedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isSignedIn) {
+      await GlobalAPI.fetchUserAccount(
+        await state.readAndWriteUserId(),
+        await state.readAndWriteUserPass(),
+        await state.generateUuid(),
+      ).then((value) {
+        state.setUserAccountList(value);
+      });
+
+      print('User info: ${state.getUserAccountList.length}');
+    } else {
+      print('User signed out');
+    }
 
     // if (prefs.getString('highResImage') != null) {
     //   if (prefs.getString('highResImage')!.isNotEmpty) {
@@ -54,16 +73,64 @@ class _SplashScreenState extends State<SplashScreen> {
     // }
   }
 
-  Future<void> initializeAppData(BuildContext context) async {
+  Future<void> initializeAppData(
+    BuildContext context,
+    SipSalesState state,
+  ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if ((prefs.getInt('isManager') ?? 0) == 0) {
+    if (await state.readAndWriteIsUserManager()) {
+      print('Manager');
       // Note -> get Activity Insertation dropdown for Manager
       await Provider.of<SipSalesState>(context, listen: false)
           .fetchManagerActivityData();
     } else {
+      print('Sales');
+      // ~:Sales Old Activity Insertation:~
       // Note -> get Activity Insertation dropdown for Sales
-      await Provider.of<SipSalesState>(context, listen: false)
-          .fetchSalesActivityData();
+      // await Provider.of<SipSalesState>(context, listen: false)
+      //     .fetchSalesActivityData();
+
+      // ~:Sales New Activity Insertation:~
+      await state.getUserAttendanceHistory();
+      await state.getSalesDashboard();
+
+      // ~:Reset dropdown default value to User's placement:~
+      // state.setAbsentType(state.getUserAccountList[0].locationName);
+
+      print('User Account List: ${state.getUserAccountList.length}');
+      print('Profile Picture: ${state.getProfilePicture}');
+      print('Profile Picture Preview: ${state.getProfilePicturePreview}');
+
+      if (state.getUserAccountList.isNotEmpty &&
+          state.getProfilePicture.isEmpty &&
+          state.getProfilePicturePreview.isEmpty) {
+        print('Retrieve profile picture');
+        state.setProfilePicture(state.getUserAccountList[0].profilePicture);
+        try {
+          await GlobalAPI.fetchShowImage(state.getUserAccountList[0].employeeID)
+              .then((String highResImg) async {
+            print('High Res Image state: $highResImg');
+            if (highResImg == 'not available' ||
+                highResImg == 'failed' ||
+                highResImg == 'error') {
+              state.setProfilePicturePreview('');
+              await prefs.setString('highResImage', '');
+              print('High Res Image is not available.');
+            } else {
+              state.setProfilePicturePreview(highResImg);
+              await prefs.setString('highResImage', highResImg);
+              print('High Res Image successfully loaded.');
+              print('High Res Image: $highResImg');
+            }
+          });
+        } catch (e) {
+          print('Show HD Image Error: $e');
+          state.setProfilePicturePreview('');
+          await prefs.setString('highResImage', '');
+        }
+      } else {
+        print('Skip profile picture retrieval');
+      }
     }
   }
 
