@@ -8,9 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/model.dart';
 import "dart:async";
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
@@ -133,13 +131,13 @@ class _LocationPageState extends State<LocationPage> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       // await state.generateUuid();
 
-      await GlobalAPI.fetchUserAccount(
-        await state.readAndWriteUserId(),
-        await state.readAndWriteUserPass(),
-        await state.generateUuid(),
-      ).then((res) {
-        state.setUserAccountList(res);
-      });
+      // await GlobalAPI.fetchUserAccount(
+      //   await state.readAndWriteUserId(),
+      //   await state.readAndWriteUserPass(),
+      //   await state.generateUuid(),
+      // ).then((res) {
+      //   state.setUserAccountList(res);
+      // });
 
       // ~:Check is manager or sales:~
       // if (!await state.readAndWriteIsUserManager()) {

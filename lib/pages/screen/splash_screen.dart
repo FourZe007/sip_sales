@@ -54,8 +54,16 @@ class _SplashScreenState extends State<SplashScreen> {
         await state.readAndWriteUserId(),
         await state.readAndWriteUserPass(),
         await state.generateUuid(),
-      ).then((value) {
-        state.setUserAccountList(value);
+      ).then((res) {
+        if (res[0].flag == 2 &&
+            res[0].memo ==
+                'Login by new device, please contact admin to unbind the old device') {
+          isSignedIn = false;
+          prefs.setBool('isLoggedIn', false);
+          print('User signed out');
+        } else {
+          state.setUserAccountList(res);
+        }
       });
 
       print('User info: ${state.getUserAccountList.length}');

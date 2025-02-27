@@ -143,13 +143,15 @@ class _LoginPageState extends State<LoginPage> {
       await state.generateUuid().then((String uuid) async {
         print('UUID: $uuid');
         try {
-          state.setUserAccountList(await GlobalAPI.fetchUserAccount(
+          await GlobalAPI.fetchUserAccount(
             nip,
             password,
             uuid,
-          ));
+          ).then((res) {
+            state.setUserAccountList(res);
+          });
         } catch (e) {
-          print('Error: $e');
+          print('Error fetchUserAccount: $e');
         }
       });
 
