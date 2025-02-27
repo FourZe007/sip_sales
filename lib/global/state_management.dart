@@ -1189,9 +1189,18 @@ class SipSalesState with ChangeNotifier {
       }
       // ~:Location Service deactivated:~
       else {
-        debugPrint('Location Service is deactivated');
-        displayDescription = 'Mohon aktifkan layanan lokasi.';
-        return 'warn';
+        final permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever ||
+            permission == LocationPermission.unableToDetermine) {
+          debugPrint('Location Permission is denied or unable to determine');
+          displayDescription = 'Mohon ubah layanan izin lokasi.';
+          return 'warn';
+        } else {
+          debugPrint('Location Service is deactivated');
+          displayDescription = 'Mohon aktifkan layanan lokasi.';
+          return 'warn';
+        }
       }
     }
     // ~:Profile Picture is not uploaded yet:~

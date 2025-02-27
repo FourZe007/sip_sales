@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
@@ -18,7 +17,6 @@ import 'package:sip_sales/widget/dropdown/common_dropdown.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/list/absent.dart';
 import 'package:sip_sales/widget/status/loading_animation.dart';
-import 'package:sip_sales/widget/status/warning_animation.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -41,74 +39,56 @@ class _AttendancePageState extends State<AttendancePage> {
     displayDate = value;
   }
 
-  Future<bool> serviceRequest() async {
-    bool serviceEnabled;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    print('Is location service enabled: $serviceEnabled');
-    if (!serviceEnabled) {
-      final permissionType = await Geolocator.requestPermission();
-      print('Permission Type: $permissionType');
-      if (permissionType == LocationPermission.denied ||
-          permissionType == LocationPermission.deniedForever ||
-          permissionType == LocationPermission.unableToDetermine) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
-  }
-
   void userAbsent({bool isClockIn = false}) async {
     final state = Provider.of<SipSalesState>(context, listen: false);
     state.clearState();
 
-    bool isLocationEnabled = await serviceRequest();
-    if (isLocationEnabled) {
-      if (mounted) {
-        if (isClockIn) {
-          if (state.getAbsentType != 'EVENT') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoadingAnimationPage(
-                    false, true, false, false, false, false),
-              ),
-            );
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EventDescPage(),
-              ),
-            );
-          }
-        } else {
+    if (mounted) {
+      if (isClockIn) {
+        if (state.getAbsentType != 'EVENT') {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  LoadingAnimationPage(false, false, true, false, false, false),
+                  LoadingAnimationPage(false, true, false, false, false, false),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventDescPage(),
             ),
           );
         }
-      }
-    } else {
-      state.setDisplayDescription(
-        'Akses lokasi diperlukan untuk fitur ini. Silakan aktifkan layanan lokasi dan berikan izin di pengaturan aplikasi Anda.',
-      );
-
-      if (mounted) {
+      } else {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => WarningAnimationPage(),
+            builder: (context) =>
+                LoadingAnimationPage(false, false, true, false, false, false),
           ),
         );
       }
     }
+    // if (await serviceRequest()) {
+    //   print('Location service granted');
+    //
+    // } else {
+    //   print('Location service denied');
+    //   state.setDisplayDescription(
+    //     'Akses lokasi diperlukan untuk fitur ini. Silakan aktifkan layanan lokasi dan berikan izin di pengaturan aplikasi Anda.',
+    //   );
+    //
+    //   if (mounted) {
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => WarningAnimationPage(),
+    //       ),
+    //     );
+    //   }
+    // }
   }
 
   Future<void> getUserAttendanceHistory(
