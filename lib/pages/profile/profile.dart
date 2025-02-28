@@ -97,33 +97,37 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   void takePhoto(BuildContext context, SipSalesState state) async {
-    print('Take Photo pressed!');
-    await state.takeProfilePictureFromCamera(context).then((bool isAvailable) {
-      if (isAvailable) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoadingAnimationPage(
-              false,
-              false,
-              false,
-              false,
-              true,
-              false,
+    if (!(await state.readAndWriteIsUserManager())) {
+      print('Take Photo pressed!');
+      await state
+          .takeProfilePictureFromCamera(context)
+          .then((bool isAvailable) {
+        if (isAvailable) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoadingAnimationPage(
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+              ),
             ),
-          ),
-        );
-      } else {
-        // state.setIsProfileUploaded(false);
-        state.displayDescription = 'Profil gagal diunggah.';
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const FailureAnimationPage(),
-          ),
-        );
-      }
-    });
+          );
+        } else {
+          // state.setIsProfileUploaded(false);
+          state.displayDescription = 'Profil gagal diunggah.';
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FailureAnimationPage(),
+            ),
+          );
+        }
+      });
+    }
   }
 
   void viewPhoto(
@@ -283,18 +287,26 @@ class ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                top: 43,
-                                left: 43,
-                                child: CircleAvatar(
-                                  radius: 13,
-                                  backgroundColor: Colors.grey,
-                                  child: Icon(
-                                    Icons.edit,
-                                    size: 18,
-                                    color: Colors.black,
-                                  ),
-                                ),
+                              Builder(
+                                builder: (context) {
+                                  if (state.getUserAccountList[0].code == 0) {
+                                    return SizedBox();
+                                  } else {
+                                    return Positioned(
+                                      top: 43,
+                                      left: 43,
+                                      child: CircleAvatar(
+                                        radius: 13,
+                                        backgroundColor: Colors.grey,
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 18,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ],
                           ),
@@ -358,7 +370,9 @@ class ProfilePageState extends State<ProfilePage> {
         // ~:Settings Section:~
         Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.33,
+          height: (state.getUserAccountList[0].code == 0)
+              ? MediaQuery.of(context).size.height * 0.225
+              : MediaQuery.of(context).size.height * 0.33,
           color: Colors.grey[100],
           margin: EdgeInsets.only(
             top: MediaQuery.of(context).size.height * 0.015,
@@ -511,50 +525,56 @@ class ProfilePageState extends State<ProfilePage> {
               ),
 
               // ~:User Guideline:~
-              Expanded(
-                child: InkWell(
-                  onTap: () => openUserGuideline(),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.menu_book_rounded,
-                            size: 30.0,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.025,
-                          ),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'User Guideline',
-                                  style: GlobalFont.giantfontR,
-                                ),
-                                Text(
-                                  'Cara menggunakan setiap fitur aplikasi',
-                                  style: GlobalFont.bigfontR,
-                                ),
-                              ],
+              Builder(builder: (context) {
+                if (state.getUserAccountList[0].code == 1) {
+                  return Expanded(
+                    child: InkWell(
+                      onTap: () => openUserGuideline(),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: const Icon(
+                                Icons.menu_book_rounded,
+                                size: 30.0,
+                              ),
                             ),
                           ),
-                        ),
+                          Expanded(
+                            flex: 5,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.025,
+                              ),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'User Guideline',
+                                      style: GlobalFont.giantfontR,
+                                    ),
+                                    Text(
+                                      'Cara menggunakan setiap fitur aplikasi',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
+                  );
+                } else {
+                  return SizedBox();
+                }
+              }),
             ],
           ),
         ),
@@ -572,7 +592,7 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.1.8',
+                'Version 9',
                 style: GlobalFont.bigfontR,
               ),
             ),

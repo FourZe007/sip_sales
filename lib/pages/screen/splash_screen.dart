@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacementNamed(context, '/login');
       }
     } catch (e) {
-      print('Error: $e');
+      print('App Initialization Error: $e');
     }
 
     // await Future.delayed(const Duration(seconds: 3)).then((_) {
@@ -67,6 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
 
       print('User info: ${state.getUserAccountList.length}');
+      print('Load Employee Id: ${state.getUserAccountList[0].employeeID}');
     } else {
       print('User signed out');
     }
@@ -87,12 +88,19 @@ class _SplashScreenState extends State<SplashScreen> {
   ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (await state.readAndWriteIsUserManager()) {
-      print('Manager');
+      print("It's Manager");
       // Note -> get Activity Insertation dropdown for Manager
-      await Provider.of<SipSalesState>(context, listen: false)
-          .fetchManagerActivityData();
+      await state.fetchManagerActivityData().then((value) {
+        print('Manager Activity fetch process finished');
+      });
+      await state.fetchManagerActivities().then((res) {
+        state.setManagerActivities(res);
+        print(
+          'Manager activities list length: ${state.getManagerActivitiesList.length}',
+        );
+      });
     } else {
-      print('Sales');
+      print("It's Sales");
       // ~:Sales Old Activity Insertation:~
       // Note -> get Activity Insertation dropdown for Sales
       // await Provider.of<SipSalesState>(context, listen: false)

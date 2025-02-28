@@ -878,7 +878,7 @@ class GlobalAPI {
 
   // ~:NEW:~:
   static Future<List<ModelActivities>> fetchManagerActivityTypes() async {
-    print('Manager Activity Type URL');
+    // print('Manager Activity Type URL');
     var url = Uri.https(
       'wsip.yamaha-jatim.co.id:2448',
       '/api/SIPSales/MEmployeeActivitySM',

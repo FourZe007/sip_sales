@@ -7,19 +7,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state_management.dart';
 import 'package:sip_sales/pages/location/image_view.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 
-class ManagerActivityDetails extends StatelessWidget {
+class ManagerActivityDetails extends StatefulWidget {
   ManagerActivityDetails(this.date, this.actId, {super.key});
 
   String date;
   String actId;
 
   @override
+  State<ManagerActivityDetails> createState() => _ManagerActivityDetailsState();
+}
+
+class _ManagerActivityDetailsState extends State<ManagerActivityDetails> {
+  @override
   Widget build(BuildContext context) {
-    final activityDetailsState = Provider.of<SipSalesState>(context);
+    final state = Provider.of<SipSalesState>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -66,22 +72,28 @@ class ManagerActivityDetails extends StatelessWidget {
               vertical: MediaQuery.of(context).size.height * 0.025,
             ),
             child: FutureBuilder(
-              future: activityDetailsState.fetchManagerActivityDetails(
-                date,
-                actId,
+              future: state.fetchManagerActivityDetails(
+                widget.date,
+                widget.actId,
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Platform.isIOS
-                          ? const CupertinoActivityIndicator(
+                      Builder(
+                        builder: (context) {
+                          if (Platform.isIOS) {
+                            return const CupertinoActivityIndicator(
                               color: Colors.black,
-                            )
-                          : const CircleLoading(
+                            );
+                          } else {
+                            return const CircleLoading(
                               warna: Colors.black,
-                            ),
+                            );
+                          }
+                        },
+                      ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
@@ -93,10 +105,10 @@ class ManagerActivityDetails extends StatelessWidget {
                   );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('${snapshot.error}'));
-                } else if (snapshot.data == null) {
+                } else if (!snapshot.hasData) {
                   return const Center(child: Text('Tidak ada data'));
                 } else {
-                  final details = snapshot.data!;
+                  final ModelManagerActivityDetails details = snapshot.data!;
 
                   return ListView(
                     children: [
@@ -111,8 +123,10 @@ class ManagerActivityDetails extends StatelessWidget {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      (details.pic1 != '')
-                          ? Container(
+                      Builder(
+                        builder: (context) {
+                          if (details.pic1.isNotEmpty) {
+                            return Container(
                               decoration: BoxDecoration(
                                 border:
                                     Border.all(color: Colors.grey, width: 1.5),
@@ -172,8 +186,12 @@ class ManagerActivityDetails extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                            )
-                          : const SizedBox(),
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
                     ],
                   );
                 }

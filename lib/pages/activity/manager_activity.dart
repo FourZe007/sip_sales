@@ -26,9 +26,16 @@ class ManagerActivityPage extends StatefulWidget {
 class _ManagerActivityPageState extends State<ManagerActivityPage> {
   String date = DateTime.now().toString().split(' ')[0];
   bool isDateInit = false;
+  bool isLoading = false;
 
-  StreamController<List<ModelManagerActivities>> managerController =
-      StreamController<List<ModelManagerActivities>>();
+  // StreamController<List<ModelManagerActivities>> managerController =
+  //     StreamController<List<ModelManagerActivities>>();
+
+  void setIsLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
 
   void setDate(String value) {
     date = value;
@@ -65,7 +72,11 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
       });
       handle(tgl);
       print('Fetch Data');
-      await fetchData(context, state, tgl);
+
+      setIsLoading();
+      await refreshPage(context, state, tgl);
+      setIsLoading();
+
       if (isInit == true) {
         toggleFunction();
       }
@@ -76,22 +87,21 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
     }
   }
 
-  Future<void> fetchData(
+  Future<void> refreshPage(
     BuildContext context,
     SipSalesState state,
     String date,
   ) async {
     print('Refresh or Load Data');
+    print('Date: $date');
     try {
-      managerController = StreamController<List<ModelManagerActivities>>();
-      List<ModelManagerActivities> activities =
-          await state.fetchManagerActivities(date);
-      setState(() {
-        state.managerActivitiesList = activities;
+      await state.fetchManagerActivities(date: date).then((res) {
+        state.setManagerActivities(res);
       });
-      managerController.add(state.managerActivitiesList);
-      // print('Manager Controller length: ${managerController.stream.length}');
+      print(
+          'Manager activities length: ${state.getManagerActivitiesList.length}');
     } catch (e) {
+      print(e.toString());
       if (Platform.isIOS) {
         GlobalDialog.showCrossPlatformDialog(
           context,
@@ -115,12 +125,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
 
   @override
   void initState() {
-    managerController = StreamController<List<ModelManagerActivities>>();
-    fetchData(
-      context,
-      Provider.of<SipSalesState>(context, listen: false),
-      date,
-    );
     toggleIsDateInit();
 
     // TODO: implement initState
@@ -129,241 +133,85 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
 
   @override
   void dispose() {
-    managerController.close();
     super.dispose();
   }
 
-  Widget activityView(BuildContext context) {
-    final managerActivityState = Provider.of<SipSalesState>(context);
-
-    return Column(
-      children: [
-        Container(
-          height: MediaQuery.of(context).size.height * 0.05,
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.02,
-          ),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              // Open Filter Button
-              InkWell(
-                // onTap: toggleFilter,
-                onTap: null,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.1,
-                  decoration: BoxDecoration(
-                    // border: Border.all(color: Colors.black, width: 1.5),
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: const Icon(
-                    Icons.filter_alt_rounded,
-                    size: 30.0,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.025,
-              ),
-              // Modify Begin Date
-              InkWell(
-                onTap: () => setSelectDate(
-                  context,
-                  managerActivityState,
-                  date,
-                  isDateInit,
-                  setDate,
-                  toggleIsDateInit,
-                ),
-                child: Container(
+  Widget activityView(BuildContext context, SipSalesState state) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      alignment: Alignment.center,
+      margin: EdgeInsets.only(
+        top: MediaQuery.of(context).size.height * 0.02,
+      ),
+      child: Builder(
+        builder: (context) {
+          if (state.getManagerActivitiesList.isEmpty) {
+            return Text('Data tidak ditemukan.');
+          } else {
+            return ListView(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    // border: Border.all(color: Colors.black, width: 1.5),
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.02,
-                  ),
-                  child: Text(
-                    Format.tanggalFormat(date),
-                    style: GlobalFont.mediumgiantfontR,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Cabang: ',
+                        style: GlobalFont.giantfontR,
+                      ),
+                      Expanded(
+                        child: Text(
+                          state.getManagerActivitiesList[0].shopName,
+                          style: GlobalFont.giantfontRBold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height * 0.725,
-          alignment: Alignment.center,
-          margin: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height * 0.02,
-          ),
-          child: StreamBuilder(
-            stream: managerController.stream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Platform.isIOS
-                        ? const CupertinoActivityIndicator(
-                            radius: 12.5,
-                          )
-                        : const CircleLoading(),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    Text(
-                      'Loading...',
-                      style: GlobalFont.mediumgiantfontR,
-                    )
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return ListView(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.725,
-                      alignment: Alignment.center,
-                      child: Text('Error: ${snapshot.error}'),
-                    ),
-                  ],
-                );
-              } else if (snapshot.data!.isEmpty) {
-                return ListView(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.725,
-                      alignment: Alignment.center,
-                      child: const Text('Data tidak tersedia.'),
-                    ),
-                  ],
-                );
-              } else {
-                return ListView(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.center,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Cabang: ',
-                            style: GlobalFont.giantfontR,
-                          ),
-                          Expanded(
-                            child: Text(
-                              snapshot.data![0].shopName,
-                              style: GlobalFont.giantfontRBold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.675,
-                      child: ListView(
-                        children: snapshot.data!.asMap().entries.map((e) {
-                          // final int i = e.key;
-                          final ModelManagerActivities data = e.value;
+                Column(
+                  children:
+                      state.getManagerActivitiesList.asMap().entries.map((e) {
+                    final int i = e.key;
+                    final ModelManagerActivities data = e.value;
 
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0),
-                              boxShadow: const [
-                                BoxShadow(
-                                  // Adjust shadow color as needed
-                                  color: Colors.grey,
-                                  // Adjust shadow offset
-                                  offset: Offset(0.0, 7.5),
-                                  // Adjust shadow blur radius
-                                  blurRadius: 7.5,
-                                  // Adjust shadow spread radius
-                                  spreadRadius: 1.0,
-                                ),
-                              ],
-                            ),
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.01,
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.01,
-                            ),
-                            padding: EdgeInsets.fromLTRB(
-                              0,
-                              MediaQuery.of(context).size.height * 0.015,
-                              MediaQuery.of(context).size.width * 0.03,
-                              MediaQuery.of(context).size.height * 0.015,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceBetween,
-                                //   // mainAxisAlignment: MainAxisAlignment.end,
-                                //   children: [
-                                //     Column(
-                                //       crossAxisAlignment:
-                                //           CrossAxisAlignment.start,
-                                //       children: [
-                                //         Text(
-                                //           'Aktivitas',
-                                //           style: GlobalFont.bigfontRBold,
-                                //         ),
-                                //         Text(
-                                //           Format.tanggalFormat(
-                                //             data.date,
-                                //           ),
-                                //           style: GlobalFont.bigfontR,
-                                //         ),
-                                //       ],
-                                //     ),
-                                //     IconButton(
-                                //       onPressed: () {
-                                //         if (Platform.isIOS) {
-                                //           GlobalDialog.showCrossPlatformDialog(
-                                //             context,
-                                //             'Pantau Terus!',
-                                //             'Fitur baru sedang dalam pengembangan.',
-                                //             () => Navigator.pop(context),
-                                //             'Tutup',
-                                //             isIOS: true,
-                                //           );
-                                //         } else {
-                                //           GlobalDialog.showCrossPlatformDialog(
-                                //             context,
-                                //             'Pantau Terus!',
-                                //             'Fitur baru sedang dalam pengembangan.',
-                                //             () => Navigator.pop(context),
-                                //             'Tutup',
-                                //           );
-                                //         }
-                                //       },
-                                //       icon: const Icon(
-                                //         Icons.more_vert_rounded,
-                                //         size: 30.0,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                // Divider(
-                                //   color: Colors.grey,
-                                //   thickness: 0.5,
-                                //   height:
-                                //       MediaQuery.of(context).size.height * 0.01,
-                                // ),
-                                Row(
-                                  children: [
-                                    Builder(builder: (context) {
+                    return Column(
+                      children: [
+                        // ~:Card:~
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                // Adjust shadow color as needed
+                                color: Colors.grey,
+                                // Adjust shadow blur radius
+                                blurRadius: 7.5,
+                                // Adjust shadow spread radius
+                                spreadRadius: 1.0,
+                              ),
+                            ],
+                          ),
+                          margin: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.01125,
+                          ),
+                          padding: EdgeInsets.fromLTRB(
+                            0,
+                            MediaQuery.of(context).size.height * 0.015,
+                            MediaQuery.of(context).size.width * 0.03,
+                            MediaQuery.of(context).size.height * 0.015,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Builder(
+                                    builder: (context) {
                                       if (data.activityId == '00') {
                                         return const Expanded(
                                           child: Icon(
@@ -400,101 +248,110 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                           ),
                                         );
                                       }
-                                    }),
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            data.activityName,
-                                            style: GlobalFont.giantfontRBold,
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.0075,
-                                          ),
-                                          Text(
-                                            'Waktu: ${data.time}',
-                                            style: GlobalFont.mediumgiantfontR,
-                                            overflow: TextOverflow.clip,
-                                          ),
-                                        ],
+                                    },
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data.activityName,
+                                          style: GlobalFont.giantfontRBold,
+                                        ),
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.0075,
+                                        ),
+                                        Text(
+                                          'Waktu: ${data.time}',
+                                          style: GlobalFont.mediumgiantfontR,
+                                          overflow: TextOverflow.clip,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.025,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  InkWell(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ManagerActivityDetails(
+                                          date,
+                                          data.activityId,
+                                        ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.025,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        // print('Date: $date');
-                                        // print('ActId: ${data.activityId}');
+                                    hoverColor: Colors.transparent,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.5,
+                                        vertical: 5.0,
+                                      ),
+                                      child: Text(
+                                        'Lihat Detail',
+                                        style: GlobalFont.mediumgiantfontRBold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
 
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ManagerActivityDetails(
-                                              date,
-                                              data.activityId,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      hoverColor: Colors.transparent,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.5,
-                                          vertical: 5.0,
-                                        ),
-                                        child: Text(
-                                          'Lihat Detail',
-                                          style:
-                                              GlobalFont.mediumgiantfontRBold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
-        ),
-      ],
+                        // ~:Divider:~
+                        Builder(
+                          builder: (context) {
+                            if (i ==
+                                state.getManagerActivitiesList.length - 1) {
+                              return SizedBox();
+                            } else {
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.015,
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final managerActivityState = Provider.of<SipSalesState>(context);
+    final state = Provider.of<SipSalesState>(context);
 
     return Positioned(
       top: MediaQuery.of(context).size.height * 0.12,
       child: Container(
-        height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20.0),
@@ -506,48 +363,109 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
           horizontal: MediaQuery.of(context).size.width * 0.025,
           vertical: MediaQuery.of(context).size.height * 0.02,
         ),
-        child: Builder(
-          builder: (context) {
-            Widget contentWidget = activityView(context);
-
-            // Ensure the content is scrollable
-            // if (contentWidget is! ScrollView) {
-            //   contentWidget = SingleChildScrollView(
-            //     physics: const AlwaysScrollableScrollPhysics(),
-            //     child: contentWidget,
-            //   );
-            // }
-
-            if (Platform.isIOS) {
-              return CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: <Widget>[
-                  CupertinoSliverRefreshControl(
-                    onRefresh: () => fetchData(
-                      context,
-                      managerActivityState,
-                      date,
+        child: Column(
+          children: [
+            // ~:Filter Section:~
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.05,
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.02,
+              ),
+              child: Wrap(
+                direction: Axis.vertical,
+                runSpacing: MediaQuery.of(context).size.width * 0.025,
+                crossAxisAlignment: WrapCrossAlignment.start,
+                children: [
+                  // Open Filter Button
+                  InkWell(
+                    // onTap: toggleFilter,
+                    onTap: null,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.1,
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        // border: Border.all(color: Colors.black, width: 1.5),
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: const Icon(
+                        Icons.filter_alt_rounded,
+                        size: 30.0,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: contentWidget,
+
+                  // Modify Begin Date
+                  InkWell(
+                    onTap: () => setSelectDate(
+                      context,
+                      state,
+                      date,
+                      isDateInit,
+                      setDate,
+                      toggleIsDateInit,
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        // border: Border.all(color: Colors.black, width: 1.5),
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.02,
+                      ),
+                      child: Text(
+                        Format.tanggalFormat(date),
+                        style: GlobalFont.mediumgiantfontR,
+                      ),
+                    ),
                   ),
                 ],
-              );
-            } else {
-              return RefreshIndicator(
-                onRefresh: () => fetchData(
-                  context,
-                  managerActivityState,
-                  date,
-                ),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: contentWidget,
-                ),
-              );
-            }
-          },
+              ),
+            ),
+
+            // ~:Body:~
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  if (Platform.isIOS) {
+                    return CustomScrollView(
+                      slivers: [
+                        CupertinoSliverRefreshControl(
+                          onRefresh: () => refreshPage(
+                            context,
+                            state,
+                            date,
+                          ),
+                        ),
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, _) => activityView(context, state),
+                            childCount: 1,
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return RefreshIndicator(
+                      onRefresh: () => refreshPage(
+                        context,
+                        state,
+                        date,
+                      ),
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: activityView(context, state),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

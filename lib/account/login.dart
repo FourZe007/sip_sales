@@ -16,6 +16,7 @@ import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/text/custom_text.dart';
 import 'package:sip_sales/widget/textfield/customuserinput2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upgrader/upgrader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -137,8 +138,8 @@ class _LoginPageState extends State<LoginPage> {
     if (nip != '' && password != '') {
       toggleIsLoading();
 
-      await state.readAndWriteUserId(id: nip);
-      await state.readAndWriteUserPass(pass: password);
+      await state.readAndWriteUserId(id: nip, isLogin: true);
+      await state.readAndWriteUserPass(pass: password, isLogin: true);
 
       await state.generateUuid().then((String uuid) async {
         print('UUID: $uuid');
@@ -158,27 +159,12 @@ class _LoginPageState extends State<LoginPage> {
       if (state.getUserAccountList.isNotEmpty) {
         print(state.getUserAccountList[0].employeeName);
         if (state.getUserAccountList[0].flag == 1) {
-          // Future.delayed(const Duration(seconds: 2)).then(
-          //   (value) async {
-          //     await prefs.setInt('flag', 1);
-          //     await prefs.setString('nip', nip);
-          //     await prefs.setString('password', password);
-          //     await prefs.setBool('attendanceStatus', false);
-          //     await prefs.setString('branch', userLogin[0].branch);
-          //     await prefs.setString('shop', userLogin[0].shop);
-          //     await prefs.setInt('isManager', userLogin[0].code);
-          //     await prefs.setBool('isLocationGranted', false);
-          //     await prefs.setBool('checkInStatus', true);
-          //     await prefs.setBool('checkOutStatus', false);
-          //     await prefs.setBool('isShowCaseCompleted', true);
-          //   },
-          // );
-
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setBool('isLoggedIn', true);
           await state
               .readAndWriteIsUserManager(
-                  state: state.getUserAccountList[0].code == 1 ? true : false)
+                  state: state.getUserAccountList[0].code == 0 ? true : false,
+                  isLogin: true)
               .then((value) {
             if (value) {
               print('User is manager');
@@ -192,8 +178,10 @@ class _LoginPageState extends State<LoginPage> {
               state.getManagerActivityTypeList.isEmpty) {
             print('Manager');
             // Note -> get Activity Insertation dropdown for Manager
-            await Provider.of<SipSalesState>(context, listen: false)
-                .fetchManagerActivityData();
+            await state.fetchManagerActivityData();
+            await state.fetchManagerActivities().then((res) {
+              state.setManagerActivities(res);
+            });
           } else {
             print('Sales');
             // ~:Sales Old Activity Insertation:~
@@ -382,197 +370,207 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final state = Provider.of<SipSalesState>(context);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          backgroundColor: Colors.grey[300],
-          toolbarHeight: 0.0,
-          elevation: 0.0,
-          scrolledUnderElevation: 0.0,
-          automaticallyImplyLeading: false,
+    return UpgradeAlert(
+      showIgnore: false,
+      showLater: false,
+      dialogStyle: (Platform.isIOS)
+          ? UpgradeDialogStyle.cupertino
+          : UpgradeDialogStyle.material,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.1,
-              vertical: MediaQuery.of(context).size.height * 0.015,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image(
-                          image: const AssetImage('assets/SIP.png'),
-                          width: MediaQuery.of(context).size.width * 0.55,
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                            vertical:
-                                MediaQuery.of(context).size.height * 0.025,
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            backgroundColor: Colors.grey[300],
+            toolbarHeight: 0.0,
+            elevation: 0.0,
+            scrolledUnderElevation: 0.0,
+            automaticallyImplyLeading: false,
+          ),
+          body: SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.1,
+                vertical: MediaQuery.of(context).size.height * 0.015,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image(
+                            image: const AssetImage('assets/SIP.png'),
+                            width: MediaQuery.of(context).size.width * 0.55,
                           ),
-                          child: CustomText(
-                            'LOGIN',
-                            fontSize: MediaQuery.of(context).size.width * 0.075,
-                            isBold: true,
-                          ),
-                        ),
-                        Wrap(
-                          runSpacing: MediaQuery.of(context).size.height * 0.02,
-                          children: [
-                            Column(
-                              children: [
-                                CustomUserInput2(
-                                  setNIP,
-                                  nip,
-                                  mode: 0,
-                                  isIcon: true,
-                                  icon: Icons.person,
-                                  label: 'NIP Karyawan',
-                                  isCapital: true,
-                                  autoFocus: true,
-                                ),
-                                CustomUserInput2(
-                                  setPassword,
-                                  password,
-                                  mode: 0,
-                                  isPass: true,
-                                  isIcon: true,
-                                  icon: Icons.lock,
-                                  label: 'Password',
-                                ),
-                              ],
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical:
+                                  MediaQuery.of(context).size.height * 0.025,
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                shadowColor: Colors.black,
-                                elevation: 7.5,
+                            child: CustomText(
+                              'LOGIN',
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.075,
+                              isBold: true,
+                            ),
+                          ),
+                          Wrap(
+                            runSpacing:
+                                MediaQuery.of(context).size.height * 0.02,
+                            children: [
+                              Column(
+                                children: [
+                                  CustomUserInput2(
+                                    setNIP,
+                                    nip,
+                                    mode: 0,
+                                    isIcon: true,
+                                    icon: Icons.person,
+                                    label: 'NIP Karyawan',
+                                    isCapital: true,
+                                    autoFocus: true,
+                                  ),
+                                  CustomUserInput2(
+                                    setPassword,
+                                    password,
+                                    mode: 0,
+                                    isPass: true,
+                                    isIcon: true,
+                                    icon: Icons.lock,
+                                    label: 'Password',
+                                  ),
+                                ],
                               ),
-                              onPressed: () => login(state),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(
-                                  vertical:
-                                      MediaQuery.of(context).size.height * 0.01,
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                  ),
+                                  shadowColor: Colors.black,
+                                  elevation: 7.5,
                                 ),
-                                child: Builder(
-                                  builder: (context) {
-                                    if (isLoading) {
-                                      if (Platform.isIOS) {
-                                        return const CupertinoActivityIndicator(
-                                          radius: 12.5,
-                                          color: Colors.white,
-                                        );
+                                onPressed: () => login(state),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical:
+                                        MediaQuery.of(context).size.height *
+                                            0.01,
+                                  ),
+                                  child: Builder(
+                                    builder: (context) {
+                                      if (isLoading) {
+                                        if (Platform.isIOS) {
+                                          return const CupertinoActivityIndicator(
+                                            radius: 12.5,
+                                            color: Colors.white,
+                                          );
+                                        } else {
+                                          return const CircleLoading(
+                                            warna: Colors.white,
+                                          );
+                                        }
                                       } else {
-                                        return const CircleLoading(
-                                          warna: Colors.white,
+                                        return CustomText(
+                                          'SIGN IN',
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          isBold: true,
                                         );
                                       }
-                                    } else {
-                                      return CustomText(
-                                        'SIGN IN',
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        isBold: true,
-                                      );
-                                    }
-                                  },
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          // Align(
+                          //   alignment: Alignment.centerRight,
+                          //   child: TextButton(
+                          //     onPressed: () {
+                          //       Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //           builder: (context) => const RegisterPage(),
+                          //         ),
+                          //       );
+                          //     },
+                          //     child: CustomText(
+                          //       'Create Account',
+                          //       color: Colors.blue,
+                          //       fontSize: 14,
+                          //       decor: TextDecoration.underline,
+                          //     ),
+                          //   ),
+                          // ),
+                          // Align(
+                          //   alignment: Alignment.centerRight,
+                          //   child: TextButton(
+                          //     onPressed: () => Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => const RequestUnbindPage(),
+                          //       ),
+                          //     ),
+                          //     child: CustomText(
+                          //       'Request Unbind',
+                          //       color: Colors.blue,
+                          //       fontSize: 14,
+                          //       decor: TextDecoration.underline,
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      children: [
+                        Text(
+                          'Akun terkunci?',
+                          style: GlobalFont.bigfontRBold,
                         ),
-                        // Align(
-                        //   alignment: Alignment.centerRight,
-                        //   child: TextButton(
-                        //     onPressed: () {
-                        //       Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //           builder: (context) => const RegisterPage(),
-                        //         ),
-                        //       );
-                        //     },
-                        //     child: CustomText(
-                        //       'Create Account',
-                        //       color: Colors.blue,
-                        //       fontSize: 14,
-                        //       decor: TextDecoration.underline,
-                        //     ),
-                        //   ),
-                        // ),
-                        // Align(
-                        //   alignment: Alignment.centerRight,
-                        //   child: TextButton(
-                        //     onPressed: () => Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => const RequestUnbindPage(),
-                        //       ),
-                        //     ),
-                        //     child: CustomText(
-                        //       'Request Unbind',
-                        //       color: Colors.blue,
-                        //       fontSize: 14,
-                        //       decor: TextDecoration.underline,
-                        //     ),
-                        //   ),
-                        // ),
+                        TextButton(
+                          onPressed: () {
+                            state.setUnbindReqTextController('');
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RequestUnbindPage(),
+                              ),
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: Text(
+                            'Request Unbind',
+                            style: GlobalFont.bigfontRUnderlinedBlue,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    children: [
-                      Text(
-                        'Akun terkunci?',
-                        style: GlobalFont.bigfontRBold,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          state.setUnbindReqTextController('');
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RequestUnbindPage(),
-                            ),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          'Request Unbind',
-                          style: GlobalFont.bigfontRUnderlinedBlue,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

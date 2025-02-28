@@ -324,6 +324,7 @@ class _AttendancePageState extends State<AttendancePage> {
                         ),
                       ),
                     ),
+                    // ~:Clock Out Button:~
                     // // ~:Devider:~
                     // SizedBox(
                     //   width: MediaQuery.of(context).size.width * 0.025,

@@ -14,7 +14,6 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
-import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/pages/location/image_view.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -130,12 +129,15 @@ class SipSalesState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> readAndWriteUserId({String id = ''}) async {
+  Future<String> readAndWriteUserId({
+    String id = '',
+    bool isLogin = false,
+  }) async {
     try {
       // Read the existing ID only once
       String? existingId = await storage.read(key: 'employeeId');
 
-      if (existingId == null || existingId.isEmpty) {
+      if (existingId == null || existingId.isEmpty || isLogin) {
         // Generate a new ID if none exists
         employeeId = id;
         await storage.write(key: 'employeeId', value: id);
@@ -172,12 +174,15 @@ class SipSalesState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> readAndWriteUserPass({String pass = ''}) async {
+  Future<String> readAndWriteUserPass({
+    String pass = '',
+    bool isLogin = false,
+  }) async {
     try {
       // Read the existing Password only once
       String? existingPass = await storage.read(key: 'pass');
 
-      if (existingPass == null || existingPass.isEmpty) {
+      if (existingPass == null || existingPass.isEmpty || isLogin) {
         // Generate a new Password if none exists
         password = pass;
         await storage.write(key: 'pass', value: pass);
@@ -1314,9 +1319,13 @@ class SipSalesState with ChangeNotifier {
   List<ModelActivities> get fetchsalesActivityTypeList => salesActivityTypeList;
 
   List<ModelActivities> managerActivityTypeList = [];
-
   List<ModelActivities> get getManagerActivityTypeList =>
       managerActivityTypeList;
+
+  void setManagerActivityTypeList(List<ModelActivities> list) {
+    managerActivityTypeList = list;
+    notifyListeners();
+  }
 
   List<XFile?> pickedFileList = [];
   List<Uint8List> imageBytesList = [];
@@ -1386,11 +1395,11 @@ class SipSalesState with ChangeNotifier {
   }
 
   Future<List<ModelActivities>> fetchManagerActivityData() async {
-    managerActivityTypeList.clear();
-    managerActivityTypeList.addAll(await GlobalAPI.fetchManagerActivityTypes());
+    setManagerActivityTypeList(await GlobalAPI.fetchManagerActivityTypes());
 
     print(
-        'Manager Activity Type List length: ${managerActivityTypeList.length}');
+      'Manager Activity Type List length: ${managerActivityTypeList.length}',
+    );
     // for (var data in managerActivityTypeList) {
     //   print(data.activityName);
     // }
@@ -1714,14 +1723,6 @@ class SipSalesState with ChangeNotifier {
       }
     }
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    eId = prefs.getString('nip')!;
-    branchId = prefs.getString('branch')!;
-    shopId = prefs.getString('shop')!;
-
-    print('Employee ID: $eId');
-    print('Branch ID: $branchId');
-    print('Shop ID: $shopId');
     if (filteredList.isNotEmpty) {
       print('Image List is not empty');
     } else {
@@ -1734,24 +1735,24 @@ class SipSalesState with ChangeNotifier {
       try {
         await location.getLocation().then(
           (coordinate) async {
-            print('Employee Id: $eId');
-            print('Date: ${DateTime.now().toString().split(' ')[0]}');
-            print('Time: ${DateFormat('HH:mm').format(DateTime.now())}');
-            print('branch: $branchId');
-            print('shop: $shopId');
-            print('Current lat: ${coordinate.latitude}');
-            print('Current lng: ${coordinate.longitude}');
-            print('Activity Id: $aId');
-            print('Desc: $desc');
-            print('${filteredList.length}');
+            // print('Employee Id: $eId');
+            // print('Date: ${DateTime.now().toString().split(' ')[0]}');
+            // print('Time: ${DateFormat('HH:mm').format(DateTime.now())}');
+            // print('branch: $branchId');
+            // print('shop: $shopId');
+            // print('Current lat: ${coordinate.latitude}');
+            // print('Current lng: ${coordinate.longitude}');
+            // print('Activity Id: $aId');
+            // print('Desc: $desc');
+            // print('${filteredList.length}');
             newActivitiesList.clear();
             try {
               newActivitiesList.addAll(await GlobalAPI.fetchNewManagerActivity(
-                eId,
+                getUserAccountList[0].employeeID,
                 DateTime.now().toString().split(' ')[0],
                 DateFormat('HH:mm').format(DateTime.now()),
-                branchId,
-                shopId,
+                getUserAccountList[0].branch,
+                getUserAccountList[0].shop,
                 coordinate.latitude!,
                 coordinate.longitude!,
                 aId,
@@ -1914,31 +1915,36 @@ class SipSalesState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> readAndWriteIsUserManager({bool state = false}) async {
+  Future<bool> readAndWriteIsUserManager({
+    bool state = false,
+    bool isLogin = false,
+  }) async {
+    print('Is user manager state: $state');
     try {
       // Read the existing ID only once
       String? existingStatus = await storage.read(key: 'isManager');
+      print('Existing Status: $existingStatus');
 
-      if (existingStatus == null || existingStatus.isEmpty) {
+      if (existingStatus == null || existingStatus.isEmpty || isLogin) {
         // Generate a new ID if none exists
         isManager = state;
-        await storage.write(key: 'isManager', value: state ? '1' : '0');
+        await storage.write(key: 'isManager', value: state ? '0' : '1');
 
         // Log the action for debugging
-        print("Is User Manager status: $employeeId");
+        print("Is User Manager status: $isManager");
 
         // Notify listeners as the state changed
         notifyListeners();
       } else {
         // Use the existing Password
-        isManager = state;
+        isManager = existingStatus == '0' ? true : false;
         print("Is User Manager status: $isManager");
       }
     } catch (e) {
       // Handle decryption or secure storage errors
       print("Error reading or writing secure storage: $e");
-      isManager = state;
-      await storage.write(key: 'isManager', value: state ? '1' : '0');
+      isManager = await storage.read(key: 'isManager') == '0' ? true : false;
+      await storage.write(key: 'isManager', value: state ? '0' : '1');
       print("Is User Manager status due to error: $isManager");
 
       // Notify listeners as the state changed
@@ -1983,33 +1989,37 @@ class SipSalesState with ChangeNotifier {
   // =================== Manager Activities =====================
   // =============================================================
   List<ModelManagerActivities> managerActivitiesList = [];
-
   List<ModelManagerActivities> get getManagerActivitiesList =>
       managerActivitiesList;
 
-  Future<List<ModelManagerActivities>> fetchManagerActivities(
-    String date,
-  ) async {
+  void setManagerActivities(List<ModelManagerActivities> value) {
+    managerActivitiesList = value;
+    notifyListeners();
+  }
+
+  Future<List<ModelManagerActivities>> fetchManagerActivities({
+    String date = '',
+  }) async {
     if (date == '') {
       date = DateTime.now().toString().split(' ')[0];
     }
     // print('Manager Activities Date: $date');
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    eId = prefs.getString('nip')!;
-
-    managerActivitiesList.clear();
-    managerActivitiesList.addAll(await GlobalAPI.fetchManagerActivity(
-      eId,
+    List<ModelManagerActivities> temp = [];
+    await GlobalAPI.fetchManagerActivity(
+      await readAndWriteUserId(),
       date,
-    ));
+    ).then((res) {
+      temp = res;
+      notifyListeners();
+    });
 
-    print('Manager Activities List length: ${managerActivitiesList.length}');
+    print('Manager Activities List length: ${temp.length}');
 
-    return managerActivitiesList;
+    return temp;
   }
 
-  ModelManagerActivityDetails managerActivityDetailsList =
+  ModelManagerActivityDetails managerActivityDetails =
       ModelManagerActivityDetails(
     time: '',
     lat: 0,
@@ -2019,8 +2029,8 @@ class SipSalesState with ChangeNotifier {
     pic1: '',
   );
 
-  ModelManagerActivityDetails get getManagerActivityDetailsList =>
-      managerActivityDetailsList;
+  ModelManagerActivityDetails get getManagerActivityDetails =>
+      managerActivityDetails;
 
   Future<ModelManagerActivityDetails> fetchManagerActivityDetails(
     String date,
@@ -2030,15 +2040,12 @@ class SipSalesState with ChangeNotifier {
       date = DateTime.now().toString().split(' ')[0];
     }
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    eId = prefs.getString('nip')!;
-
     // print('State Management');
     // print('Employee ID: $eId');
     // print('Date: $date');
     // print('Activity ID: $actId');
 
-    managerActivityDetailsList = ModelManagerActivityDetails(
+    managerActivityDetails = ModelManagerActivityDetails(
       time: '',
       lat: 0,
       lng: 0,
@@ -2048,16 +2055,16 @@ class SipSalesState with ChangeNotifier {
     );
 
     await GlobalAPI.fetchManagerActivityDetails(
-      eId,
+      getUserAccountList[0].employeeID,
       date,
       actId,
     ).then((value) {
-      managerActivityDetailsList = value[0];
+      managerActivityDetails = value[0];
     });
 
-    // print(managerActivityDetailsList.length);
+    print(managerActivityDetails.pic1);
 
-    return managerActivityDetailsList;
+    return managerActivityDetails;
   }
 
   // =============================================================
