@@ -79,9 +79,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
       endDate,
     ));
 
-    setState(() {
-      state.absentHistoryList = historyList;
-    });
+    state.setAbsentHistoryList(historyList);
 
     // History list check
     // if (historyList.isNotEmpty) {
