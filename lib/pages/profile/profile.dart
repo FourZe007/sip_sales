@@ -592,7 +592,7 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 9',
+                'Version 1.1.9',
                 style: GlobalFont.bigfontR,
               ),
             ),
