@@ -54,8 +54,11 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
       setIsLoading();
       // ~:API communication:~
       await state.processUnbindRequest(eId).then((res) async {
+        setIsLoading();
         if (res == 'success') {
+          state.setIsAccLocked(false);
           if (context.mounted) {
+            // ~:Navigate to animation page:~
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -64,7 +67,9 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
             );
           }
         } else if (res == 'warn') {
+          state.setIsAccLocked(true);
           if (context.mounted) {
+            // ~:Navigate to animation page:~
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -73,7 +78,9 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
             );
           }
         } else {
+          state.setIsAccLocked(true);
           if (context.mounted) {
+            // ~:Navigate to animation page:~
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -83,9 +90,6 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
           }
         }
       });
-      setIsLoading();
-
-      // ~:Navigate to animation page:~
     }
   }
 

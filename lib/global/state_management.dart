@@ -113,6 +113,14 @@ class SipSalesState with ChangeNotifier {
     }
   }
 
+  bool isAccLocked = false;
+  bool get getIsAccLocked => isAccLocked;
+
+  void setIsAccLocked(bool value) {
+    isAccLocked = value;
+    notifyListeners();
+  }
+
   List<ModelUser> userAccountList = [];
   List<ModelUser> get getUserAccountList => userAccountList;
 

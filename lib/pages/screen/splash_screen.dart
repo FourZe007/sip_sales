@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
@@ -34,6 +35,11 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     } catch (e) {
       print('App Initialization Error: $e');
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.clear();
+      FlutterSecureStorage().deleteAll();
+      Navigator.pushReplacementNamed(context, '/login');
     }
 
     // await Future.delayed(const Duration(seconds: 3)).then((_) {

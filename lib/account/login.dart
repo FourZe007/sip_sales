@@ -263,86 +263,76 @@ class _LoginPageState extends State<LoginPage> {
           }
         } else if (state.getUserAccountList[0].flag == 2) {
           toggleIsLoading();
-          if (Platform.isIOS) {
-            GlobalDialog.showCrossPlatformDialog(
-              context,
-              'Peringatan!',
-              state.getUserAccountList[0].memo,
-              () => Navigator.pop(context),
-              'Tutup',
-              isIOS: true,
-            );
+          // Login by new device, please contact admin to unbind the old device
+          if (state.getUserAccountList[0].memo ==
+              'Login by new device, please contact admin to unbind the old device') {
+            state.setIsAccLocked(true);
           } else {
-            GlobalDialog.showCrossPlatformDialog(
-              context,
-              'Peringatan!',
-              state.getUserAccountList[0].memo,
-              () => Navigator.pop(context),
-              'Tutup',
-            );
+            state.setIsAccLocked(false);
           }
+
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Peringatan!',
+            state.getUserAccountList[0].memo,
+            () => Navigator.pop(context),
+            'Tutup',
+            isIOS: Platform.isIOS ? true : false,
+          );
         } else {
           toggleIsLoading();
-          if (Platform.isIOS) {
-            GlobalDialog.showCrossPlatformDialog(
-              context,
-              'Peringatan!',
-              'Username atau password salah.',
-              () => Navigator.pop(context),
-              'Tutup',
-              isIOS: true,
-            );
-          } else {
-            GlobalDialog.showCrossPlatformDialog(
-              context,
-              'Peringatan!',
-              'Username atau password salah.',
-              () => Navigator.pop(context),
-              'Tutup',
-            );
-          }
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Peringatan!',
+            'Username atau password salah.',
+            () => Navigator.pop(context),
+            'Tutup',
+            isIOS: Platform.isIOS ? true : false,
+          );
         }
       } else {
         toggleIsLoading();
-        if (Platform.isIOS) {
-          GlobalDialog.showCrossPlatformDialog(
-            context,
-            'Peringatan!',
-            'Coba lagi.',
-            () => Navigator.pop(context),
-            'Tutup',
-            isIOS: true,
-          );
-        } else {
-          GlobalDialog.showCrossPlatformDialog(
-            context,
-            'Peringatan!',
-            'Coba lagi.',
-            () => Navigator.pop(context),
-            'Tutup',
-          );
-        }
+        GlobalDialog.showCrossPlatformDialog(
+          context,
+          'Peringatan!',
+          'Coba lagi.',
+          () => Navigator.pop(context),
+          'Tutup',
+          isIOS: Platform.isIOS ? true : false,
+        );
       }
     } else {
       toggleIsLoading();
-      if (Platform.isIOS) {
-        GlobalDialog.showCrossPlatformDialog(
-          context,
-          'Peringatan!',
-          'Mohon periksi input anda kembali.',
-          () => Navigator.pop(context),
-          'Tutup',
-          isIOS: true,
-        );
-      } else {
-        GlobalDialog.showCrossPlatformDialog(
-          context,
-          'Peringatan!',
-          'Mohon periksi input anda kembali.',
-          () => Navigator.pop(context),
-          'Tutup',
-        );
-      }
+      GlobalDialog.showCrossPlatformDialog(
+        context,
+        'Peringatan!',
+        'Mohon periksi input anda kembali.',
+        () => Navigator.pop(context),
+        'Tutup',
+        isIOS: Platform.isIOS ? true : false,
+      );
+    }
+  }
+
+  void reqUnbind(SipSalesState state) {
+    if (state.getIsAccLocked) {
+      state.setUnbindReqTextController('');
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RequestUnbindPage(),
+        ),
+      );
+    } else {
+      GlobalDialog.showCrossPlatformDialog(
+        context,
+        'Peringatan!',
+        'Akun anda tidak terkunci. Silahkan coba login kembali.',
+        () => Navigator.pop(context),
+        'Tutup',
+        isIOS: Platform.isIOS ? true : false,
+      );
     }
   }
 
@@ -548,16 +538,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: GlobalFont.bigfontRBold,
                         ),
                         TextButton(
-                          onPressed: () {
-                            state.setUnbindReqTextController('');
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RequestUnbindPage(),
-                              ),
-                            );
-                          },
+                          onPressed: () => reqUnbind(state),
                           style: TextButton.styleFrom(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
