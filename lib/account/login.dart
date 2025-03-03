@@ -153,6 +153,7 @@ class _LoginPageState extends State<LoginPage> {
           });
         } catch (e) {
           print('Error fetchUserAccount: $e');
+          state.setUserAccountList([]);
         }
       });
 
