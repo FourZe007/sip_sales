@@ -352,9 +352,13 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
           ),
           color: Colors.white,
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.025,
-          vertical: MediaQuery.of(context).size.height * 0.02,
+        padding: EdgeInsets.fromLTRB(
+          MediaQuery.of(context).size.width * 0.025,
+          MediaQuery.of(context).size.height * 0.02,
+          MediaQuery.of(context).size.width * 0.025,
+          (Platform.isIOS)
+              ? MediaQuery.of(context).size.height * 0.02
+              : MediaQuery.of(context).size.height * 0.05,
         ),
         child: Column(
           children: [
