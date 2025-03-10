@@ -304,6 +304,7 @@ class SipSalesState with ChangeNotifier {
       if (unbindRequestList.isNotEmpty) {
         print('Unbind Request: ${unbindRequestList[0].resultMessage}');
         if (unbindRequestList[0].resultMessage.split(':')[0] == 'https') {
+          // if (unbindRequestList[0].resultMessage == 'SUKSES') {
           displayDescription =
               'Permintaan unbind berhasil dikirim. Mohon tunggu informasi lebih lanjut.';
           return 'success';
