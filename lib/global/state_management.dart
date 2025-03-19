@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as images;
 import 'package:flutter/material.dart';
@@ -135,6 +136,62 @@ class SipSalesState with ChangeNotifier {
   void setEmployeeId(String value) {
     employeeId = value;
     notifyListeners();
+  }
+
+  String deviceConfiguration = '';
+  String get getDeviceConfiguration => deviceConfiguration;
+
+  void setDeviceConfiguration(String value) {
+    deviceConfiguration = value;
+    notifyListeners();
+  }
+
+  Future<String> readAndWriteDeviceConfig() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    try {
+      // Read the existing ID only once
+      String? deviceConfig = await storage.read(key: 'deviceConfig');
+
+      if (deviceConfig == null || deviceConfig.isEmpty) {
+        if (Platform.isAndroid) {
+          // For Android devices
+          final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+          // Generate a new ID if none exists
+          deviceConfiguration =
+              '${androidInfo.model}, Android ${androidInfo.version.release}';
+          await storage.write(key: 'deviceConfig', value: deviceConfiguration);
+
+          // Log the action for debugging
+          print("Device Configuration: $deviceConfiguration");
+        } else if (Platform.isIOS) {
+          // For iOS devices
+          final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+
+          // Generate a new ID if none exists
+          deviceConfiguration =
+              '${iosInfo.model}, iOS ${iosInfo.systemVersion}';
+          await storage.write(key: 'deviceConfig', value: deviceConfiguration);
+
+          // Log the action for debugging
+          print("Device Configuration: $deviceConfiguration");
+        }
+
+        // Notify listeners as the state changed
+        notifyListeners();
+      } else {
+        // Use the existing ID
+        deviceConfiguration = deviceConfig;
+        print("Device Configuration: $deviceConfiguration");
+      }
+    } catch (e) {
+      print('Error retrieving device info: $e');
+      deviceConfiguration = 'error';
+      notifyListeners();
+    }
+
+    return deviceConfiguration;
   }
 
   Future<String> readAndWriteUserId({
@@ -322,6 +379,64 @@ class SipSalesState with ChangeNotifier {
     }
   }
 
+  List<ModelResultMessage2> employeeIdRequestList = [];
+  List<ModelResultMessage2> get getEmployeeIdRequest => employeeIdRequestList;
+
+  Future<String> employeeIdRequestProcess(String phoneNumber) async {
+    try {
+      employeeIdRequestList.clear();
+      employeeIdRequestList.addAll(
+        await GlobalAPI.fetchReqEmployeeId(phoneNumber),
+      );
+
+      if (employeeIdRequestList.isNotEmpty) {
+        print('Unbind Request: ${employeeIdRequestList[0].resultMessage}');
+        if (employeeIdRequestList[0].resultMessage == 'https: ') {
+          displayDescription =
+              'Permintaan NIP berhasil dikirim. Mohon cek Whatsapp secara berkala.';
+          return 'success';
+        } else {
+          displayDescription = 'Permintaan unbind gagal dikirim.';
+          return 'warn';
+        }
+      } else {
+        displayDescription = 'Terjadi kesalahan, mohon coba lagi.';
+        return 'failed';
+      }
+    } catch (e) {
+      displayDescription = e.toString();
+      return 'error';
+    }
+  }
+
+  List<ModelResultMessage2> passwordResetList = [];
+  List<ModelResultMessage2> get getPasswordReset => passwordResetList;
+
+  Future<String> passwordResetProcess(String id) async {
+    try {
+      passwordResetList.clear();
+      passwordResetList.addAll(await GlobalAPI.fetchResetPassword(id));
+
+      if (passwordResetList.isNotEmpty) {
+        print('Unbind Request: ${passwordResetList[0].resultMessage}');
+        if (passwordResetList[0].resultMessage == 'https: ') {
+          displayDescription =
+              'Permintaan reset berhasil dikirim. Mohon cek Whatsapp secara berkala untuk mendapatkan link reset.';
+          return 'success';
+        } else {
+          displayDescription = 'Permintaan unbind gagal dikirim.';
+          return 'warn';
+        }
+      } else {
+        displayDescription = 'Terjadi kesalahan, mohon coba lagi.';
+        return 'failed';
+      }
+    } catch (e) {
+      displayDescription = e.toString();
+      return 'error';
+    }
+  }
+
   // =================================================================
   // =========================== Profile =============================
   // =================================================================
@@ -399,6 +514,7 @@ class SipSalesState with ChangeNotifier {
           await readAndWriteUserId(),
           await readAndWriteUserPass(),
           await generateUuid(),
+          await readAndWriteDeviceConfig(),
         ).then((user) async {
           setProfilePicturePreview(user[0].profilePicture);
           try {

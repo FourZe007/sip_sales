@@ -10,25 +10,18 @@ import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/status/failure_animation.dart';
 import 'package:sip_sales/widget/status/success_animation.dart';
 import 'package:sip_sales/widget/status/warning_animation.dart';
-import 'package:sip_sales/widget/textfield/adjustabledescbox.dart';
 import 'package:sip_sales/widget/textfield/customuserinput2.dart';
 
-class RequestUnbindPage extends StatefulWidget {
-  const RequestUnbindPage({super.key});
+class PasswordResetPage extends StatefulWidget {
+  const PasswordResetPage({super.key});
 
   @override
-  State<RequestUnbindPage> createState() => _RequestUnbindPageState();
+  State<PasswordResetPage> createState() => _PasswordResetPageState();
 }
 
-class _RequestUnbindPageState extends State<RequestUnbindPage> {
-  String eId = '';
+class _PasswordResetPageState extends State<PasswordResetPage> {
   bool isLoading = false;
-
-  void setEmployeeId(String value) {
-    setState(() {
-      eId = value;
-    });
-  }
+  String id = '';
 
   void setIsLoading() {
     setState(() {
@@ -36,60 +29,90 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
     });
   }
 
-  Future<void> createUnbindRequest(
-    BuildContext context,
+  void setId(String value) {
+    setState(() {
+      id = value;
+    });
+  }
+
+  Future<void> createPasswordReset(
     SipSalesState state,
-    String eId,
+    String id,
   ) async {
-    if (state.getUnbindReqTextController.text.isEmpty && eId.isEmpty) {
+    if (id.isEmpty) {
       GlobalDialog.showCrossPlatformDialog(
         context,
         'Peringatan!',
-        'Mohon periksa kembali input anda.',
+        'NIP anda kosong, pastikan NIP terisi.',
         () => Navigator.pop(context),
         'Tutup',
         isIOS: Platform.isIOS ? true : false,
       );
     } else {
-      setIsLoading();
-      // ~:API communication:~
-      await state.processUnbindRequest(eId).then((res) async {
+      try {
         setIsLoading();
-        if (res == 'success') {
-          state.setIsAccLocked(false);
-          if (context.mounted) {
-            // ~:Navigate to animation page:~
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SuccessAnimationPage(),
-              ),
-            );
+        // ~:API communication:~
+        await state.passwordResetProcess(id).then((res) {
+          setIsLoading();
+          if (res == 'success') {
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SuccessAnimationPage(),
+                ),
+              );
+            }
+          } else if (res == 'warn') {
+            if (mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WarningAnimationPage(),
+                ),
+              );
+            }
+          } else if (res == 'failed') {
+            if (mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FailureAnimationPage(),
+                ),
+              );
+            }
+          } else if (res == 'error') {
+            if (mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FailureAnimationPage(),
+                ),
+              );
+            }
+          } else {
+            if (mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WarningAnimationPage(),
+                ),
+              );
+            }
           }
-        } else if (res == 'warn') {
-          state.setIsAccLocked(true);
-          if (context.mounted) {
-            // ~:Navigate to animation page:~
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WarningAnimationPage(),
-              ),
-            );
-          }
-        } else {
-          state.setIsAccLocked(true);
-          if (context.mounted) {
-            // ~:Navigate to animation page:~
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FailureAnimationPage(),
-              ),
-            );
-          }
+        });
+      } catch (e) {
+        print('Error: $e');
+        state.setDisplayDescription(e.toString());
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FailureAnimationPage(),
+            ),
+          );
         }
-      });
+      }
     }
   }
 
@@ -106,42 +129,27 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
         scrolledUnderElevation: 0.0,
         title: (MediaQuery.of(context).size.width < 800)
             ? Text(
-                'Unbind Request',
+                'Password Reset',
                 style: GlobalFont.giantfontRBold,
               )
             : Text(
-                'Unbind Request',
+                'Password Reset',
                 style: GlobalFont.terafontRBold,
               ),
-        leading: Builder(
-          builder: (context) {
-            if (Platform.isIOS) {
-              return IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            } else {
-              return IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.arrow_back_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            }
-          },
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            (Platform.isIOS)
+                ? Icons.arrow_back_ios_new_rounded
+                : Icons.arrow_back_rounded,
+            size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+            color: Colors.black,
+          ),
         ),
       ),
       body: SafeArea(
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
+          decoration: BoxDecoration(color: Colors.blue),
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -170,37 +178,34 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Detail Request',
+                            'Detail Pengajuan',
                             style: GlobalFont.giantfontRBold,
                           ),
                           Text(
-                            'Masukkan informasi terkait request unbind dengan lengkap.',
+                            'Masukkan informasi lengkap terkait reset password.',
                             style: GlobalFont.bigfontR,
                           ),
                         ],
                       ),
 
-                      // ~:Page Content:~
                       Wrap(
-                        runSpacing: 15,
+                        runSpacing: 10,
                         children: [
-                          // ~:Employee ID:~
+                          // ~:Page Content:~
                           CustomUserInput2(
-                            setEmployeeId,
-                            eId,
+                            setId,
+                            id,
                             mode: 0,
                             isIcon: true,
-                            icon: Icons.person,
-                            label: 'NIP Karyawan',
+                            icon: Icons.phone_rounded,
+                            label: 'NIP karyawan',
                             isCapital: true,
-                            // autoFocus: true,
                           ),
 
-                          // ~:Reason why user need to unbind their acc:~
-                          AdjustableDescBox(
-                            state.unbindReqTextController,
-                            isPrefixUsed: true,
-                            prefixIcon: Icons.description_rounded,
+                          // ~:Additional Note:~
+                          Text(
+                            'Note: pastikan NIP yang diinputkan sesuai dengan NIP yang terdaftar di SIP.',
+                            style: GlobalFont.bigfontRGrey,
                           ),
                         ],
                       ),
@@ -211,7 +216,7 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
                 // ~:Footer:~
                 // Submit Button
                 ElevatedButton(
-                  onPressed: () => createUnbindRequest(context, state, eId),
+                  onPressed: () => createPasswordReset(state, id),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     fixedSize: Size(
@@ -237,7 +242,7 @@ class _RequestUnbindPageState extends State<RequestUnbindPage> {
                         }
                       } else {
                         return Text(
-                          'Buat',
+                          'Kirim',
                           style: GlobalFont.mediumgiantfontR,
                         );
                       }

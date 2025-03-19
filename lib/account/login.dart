@@ -6,17 +6,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:sip_sales/account/unbind.dart';
+import 'package:sip_sales/account/id_request.dart';
+import 'package:sip_sales/account/password_reset.dart';
+import 'package:sip_sales/account/unbind_request.dart';
 import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/widget/button/wStatic_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/text/custom_text.dart';
 import 'package:sip_sales/widget/textfield/customuserinput2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -140,6 +145,9 @@ class _LoginPageState extends State<LoginPage> {
 
       await state.readAndWriteUserId(id: nip, isLogin: true);
       await state.readAndWriteUserPass(pass: password, isLogin: true);
+      await state.readAndWriteDeviceConfig();
+
+      print('Device Configuration: ${state.getDeviceConfiguration}');
 
       await state.generateUuid().then((String uuid) async {
         print('UUID: $uuid');
@@ -148,6 +156,7 @@ class _LoginPageState extends State<LoginPage> {
             nip,
             password,
             uuid,
+            state.getDeviceConfiguration,
           ).then((res) {
             state.setUserAccountList(res);
           });
@@ -315,24 +324,90 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void reqUnbind(SipSalesState state) {
-    if (state.getIsAccLocked) {
-      state.setUnbindReqTextController('');
+  void loginUtilization(
+    SipSalesState state,
+    // 0 -> request unbind, 1 -> request NIP, 2 -> reset password
+    String option,
+  ) {
+    try {
+      switch (option) {
+        case '0':
+          if (state.getIsAccLocked) {
+            state.setUnbindReqTextController('');
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RequestUnbindPage(),
-        ),
-      );
-    } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UnbindRequestPage(),
+              ),
+            );
+          } else {
+            GlobalDialog.showCrossPlatformDialog(
+              context,
+              'Peringatan!',
+              'Akun anda tidak terkunci. Silahkan coba login kembali.',
+              () => Navigator.pop(context),
+              'Tutup',
+              isIOS: Platform.isIOS ? true : false,
+            );
+          }
+          break;
+        case '1':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => IdRequestPage(),
+            ),
+          );
+          break;
+        case '2':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PasswordResetPage(),
+            ),
+          );
+          break;
+        default:
+          GlobalDialog.showCrossPlatformDialog(
+            context,
+            'Peringatan!',
+            'Halaman tujuan tidak ditemukan. Mohon coba lagi.',
+            () => Navigator.pop(context),
+            'Tutup',
+            isIOS: Platform.isIOS ? true : false,
+          );
+          break;
+      }
+    } catch (e) {
+      print('Login Utilization Error: $e');
       GlobalDialog.showCrossPlatformDialog(
         context,
         'Peringatan!',
-        'Akun anda tidak terkunci. Silahkan coba login kembali.',
+        'Terjadi kesalahan. Mohon coba lagi.',
         () => Navigator.pop(context),
         'Tutup',
         isIOS: Platform.isIOS ? true : false,
+      );
+    }
+  }
+
+  void openUserGuideline() async {
+    Uri url = Uri.parse(
+      'https://www.canva.com/design/DAGfnPUa7_Q/nE2tAQYp5NGFOTKE_SrzvQ/edit?utm_content=DAGfnPUa7_Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+    );
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      // Custom Alert Dialog for Android and iOS
+      GlobalDialog.showCrossPlatformDialog(
+        context,
+        'Oh no!',
+        'Unable to open the link. Please check the URL and try again.',
+        () => Navigator.pop(context),
+        'Dismiss',
+        isIOS: (Platform.isIOS) ? true : false,
       );
     }
   }
@@ -372,8 +447,7 @@ class _LoginPageState extends State<LoginPage> {
           statusBarColor: Colors.transparent,
         ),
         child: Scaffold(
-          extendBodyBehindAppBar: true,
-          resizeToAvoidBottomInset: true,
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             backgroundColor: Colors.grey[300],
             toolbarHeight: 0.0,
@@ -381,178 +455,207 @@ class _LoginPageState extends State<LoginPage> {
             scrolledUnderElevation: 0.0,
             automaticallyImplyLeading: false,
           ),
-          body: SingleChildScrollView(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.1,
-                vertical: MediaQuery.of(context).size.height * 0.015,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image(
-                            image: const AssetImage('assets/SIP.png'),
-                            width: MediaQuery.of(context).size.width * 0.55,
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            alignment: Alignment.center,
+            color: Colors.grey[300],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // ~:Header & Body:~
+                Expanded(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.1,
+                      vertical: MediaQuery.of(context).size.height * 0.015,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image(
+                          image: const AssetImage('assets/SIP.png'),
+                          width: MediaQuery.of(context).size.width * 0.55,
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.025,
                           ),
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.025,
-                            ),
-                            child: CustomText(
-                              'LOGIN',
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.075,
-                              isBold: true,
-                            ),
+                          child: CustomText(
+                            'LOGIN',
+                            fontSize: MediaQuery.of(context).size.width * 0.075,
+                            isBold: true,
                           ),
-                          Wrap(
-                            runSpacing:
-                                MediaQuery.of(context).size.height * 0.02,
-                            children: [
-                              Column(
-                                children: [
-                                  CustomUserInput2(
-                                    setNIP,
-                                    nip,
-                                    mode: 0,
-                                    isIcon: true,
-                                    icon: Icons.person,
-                                    label: 'NIP Karyawan',
-                                    isCapital: true,
-                                    autoFocus: true,
-                                  ),
-                                  CustomUserInput2(
-                                    setPassword,
-                                    password,
-                                    mode: 0,
-                                    isPass: true,
-                                    isIcon: true,
-                                    icon: Icons.lock,
-                                    label: 'Password',
-                                  ),
-                                ],
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  shadowColor: Colors.black,
-                                  elevation: 7.5,
+                        ),
+                        Wrap(
+                          runSpacing: MediaQuery.of(context).size.height * 0.02,
+                          children: [
+                            Column(
+                              children: [
+                                CustomUserInput2(
+                                  setNIP,
+                                  nip,
+                                  mode: 0,
+                                  isIcon: true,
+                                  icon: Icons.person,
+                                  label: 'NIP Karyawan',
+                                  isCapital: true,
                                 ),
-                                onPressed: () => login(state),
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        MediaQuery.of(context).size.height *
-                                            0.01,
-                                  ),
-                                  child: Builder(
-                                    builder: (context) {
-                                      if (isLoading) {
-                                        if (Platform.isIOS) {
-                                          return const CupertinoActivityIndicator(
-                                            radius: 12.5,
-                                            color: Colors.white,
-                                          );
-                                        } else {
-                                          return const CircleLoading(
-                                            warna: Colors.white,
-                                          );
-                                        }
-                                      } else {
-                                        return CustomText(
-                                          'SIGN IN',
+                                CustomUserInput2(
+                                  setPassword,
+                                  password,
+                                  mode: 0,
+                                  isPass: true,
+                                  isIcon: true,
+                                  icon: Icons.lock,
+                                  label: 'Password',
+                                ),
+                              ],
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                shadowColor: Colors.black,
+                                elevation: 7.5,
+                              ),
+                              onPressed: () => login(state),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.symmetric(
+                                  vertical:
+                                      MediaQuery.of(context).size.height * 0.01,
+                                ),
+                                child: Builder(
+                                  builder: (context) {
+                                    if (isLoading) {
+                                      if (Platform.isIOS) {
+                                        return const CupertinoActivityIndicator(
+                                          radius: 12.5,
                                           color: Colors.white,
-                                          fontSize: 16,
-                                          isBold: true,
+                                        );
+                                      } else {
+                                        return const CircleLoading(
+                                          warna: Colors.white,
                                         );
                                       }
-                                    },
-                                  ),
+                                    } else {
+                                      return CustomText(
+                                        'SIGN IN',
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        isBold: true,
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
-                            ],
-                          ),
-                          // Align(
-                          //   alignment: Alignment.centerRight,
-                          //   child: TextButton(
-                          //     onPressed: () {
-                          //       Navigator.push(
-                          //         context,
-                          //         MaterialPageRoute(
-                          //           builder: (context) => const RegisterPage(),
-                          //         ),
-                          //       );
-                          //     },
-                          //     child: CustomText(
-                          //       'Create Account',
-                          //       color: Colors.blue,
-                          //       fontSize: 14,
-                          //       decor: TextDecoration.underline,
-                          //     ),
-                          //   ),
-                          // ),
-                          // Align(
-                          //   alignment: Alignment.centerRight,
-                          //   child: TextButton(
-                          //     onPressed: () => Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => const RequestUnbindPage(),
-                          //       ),
-                          //     ),
-                          //     child: CustomText(
-                          //       'Request Unbind',
-                          //       color: Colors.blue,
-                          //       fontSize: 14,
-                          //       decor: TextDecoration.underline,
-                          //     ),
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        Text(
-                          'Akun terkunci?',
-                          style: GlobalFont.bigfontRBold,
+                            ),
+                          ],
                         ),
-                        TextButton(
-                          onPressed: () => reqUnbind(state),
-                          style: TextButton.styleFrom(
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: Text(
-                            'Request Unbind',
-                            style: GlobalFont.bigfontRUnderlinedBlue,
-                          ),
-                        ),
+                        // Align(
+                        //   alignment: Alignment.centerRight,
+                        //   child: TextButton(
+                        //     onPressed: () {
+                        //       Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //           builder: (context) => const RegisterPage(),
+                        //         ),
+                        //       );
+                        //     },
+                        //     child: CustomText(
+                        //       'Create Account',
+                        //       color: Colors.blue,
+                        //       fontSize: 14,
+                        //       decor: TextDecoration.underline,
+                        //     ),
+                        //   ),
+                        // ),
+                        // Align(
+                        //   alignment: Alignment.centerRight,
+                        //   child: TextButton(
+                        //     onPressed: () => Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => const RequestUnbindPage(),
+                        //       ),
+                        //     ),
+                        //     child: CustomText(
+                        //       'Request Unbind',
+                        //       color: Colors.blue,
+                        //       fontSize: 14,
+                        //       decor: TextDecoration.underline,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+
+                // ~:Footer:~
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Wrap(
+                    runSpacing: 10,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      // ~:App Version:~
+                      Text(
+                        'v1.1.10 (Alpha)',
+                        style: GlobalFont.bigfontR,
+                      ),
+
+                      // ~:More Button:~
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        child: Wrap(
+                          spacing: 5,
+                          children: [
+                            // ~:Manual Book:~
+                            StaticButton(
+                              () => openUserGuideline(),
+                              Icons.menu_book_rounded,
+                              'Manual Book',
+                            ),
+
+                            // ~:Unbind Button:~
+                            StaticButton(
+                              () => loginUtilization(state, '0'),
+                              Icons.person_off_rounded,
+                              'Request Unbind',
+                            ),
+
+                            // ~:NIP Button:~
+                            StaticButton(
+                              () => loginUtilization(state, '1'),
+                              Icons.badge,
+                              'Request NIP',
+                            ),
+
+                            // ~:Reset Button:~
+                            StaticButton(
+                              () => loginUtilization(state, '2'),
+                              Icons.lock_reset,
+                              'Reset Password',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

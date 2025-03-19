@@ -137,6 +137,7 @@ class _AttendancePageState extends State<AttendancePage> {
         await state.readAndWriteUserId(),
         await state.readAndWriteUserPass(),
         await state.generateUuid(),
+        await state.readAndWriteDeviceConfig(),
       ).then((res) {
         state.setUserAccountList(res);
       });

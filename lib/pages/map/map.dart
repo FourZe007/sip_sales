@@ -19,6 +19,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  // Calculated pixel radius
+  double radius = 60.0;
+
   // ~:Not Used for awhile:~
   Stream<String> fetchCoordinateToAddress(
     double lat,
@@ -119,7 +122,7 @@ class _MapPageState extends State<MapPage> {
                 state.getLatDisplay,
                 state.getLngDisplay,
               ),
-              initialZoom: 15.0,
+              initialZoom: 19.0,
             ),
             children: [
               TileLayer(
@@ -129,7 +132,7 @@ class _MapPageState extends State<MapPage> {
               MarkerLayer(
                 markers: [
                   Marker(
-                    width: 80.0,
+                    width: 100.0,
                     height: 100.0,
                     point: LatLng(
                       state.getLatDisplay,
@@ -142,8 +145,8 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ),
                   Marker(
-                    width: 80.0,
-                    height: 80.0,
+                    width: 100.0,
+                    height: 100.0,
                     point: LatLng(
                       state.getUserAccountList[0].latitude,
                       state.getUserAccountList[0].longitude,
@@ -153,6 +156,22 @@ class _MapPageState extends State<MapPage> {
                       color: Colors.red,
                       size: 60.0,
                     ),
+                  ),
+                ],
+              ),
+              // Add the circle around the pin location
+              CircleLayer(
+                circles: [
+                  CircleMarker(
+                    point: LatLng(
+                      state.getUserAccountList[0].latitude,
+                      state.getUserAccountList[0].longitude,
+                    ),
+                    radius: radius, // Radius in meters
+                    color: Colors.blue.withOpacity(0.2), // Fill color
+                    borderColor: Colors.blue, // Border color
+                    borderStrokeWidth: 2.0, // Border thickness
+                    useRadiusInMeter: true,
                   ),
                 ],
               ),
@@ -276,8 +295,7 @@ class _MapPageState extends State<MapPage> {
                         ),
                         Expanded(
                           child: Text(
-                            // state.getUserAccountList[0].locationName,
-                            'NEQ WULUHAN',
+                            state.getUserAccountList[0].locationName,
                             style: GlobalFont.bigfontR,
                             overflow: TextOverflow.ellipsis,
                           ),

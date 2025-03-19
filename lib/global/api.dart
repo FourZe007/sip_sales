@@ -59,6 +59,7 @@ class GlobalAPI {
     String id,
     String pass,
     String uuid,
+    String deviceName,
   ) async {
     print('URL');
     var url = Uri.https(
@@ -71,6 +72,7 @@ class GlobalAPI {
       "EmployeeID": id,
       "DecryptedPassword": pass,
       'DeviceID': uuid,
+      'DeviceName': deviceName,
     };
 
     print(mapUserAccount);
@@ -128,17 +130,17 @@ class GlobalAPI {
     );
 
     print('Map');
-    Map mapChangeUserPassword = {
+    Map mapUnbindRequest = {
       "EmployeeID": employeeId,
       "Reason": excuse,
     };
 
-    print(mapChangeUserPassword);
+    print(mapUnbindRequest);
 
     print('Try and Catch');
     try {
-      final response = await http
-          .post(url, body: jsonEncode(mapChangeUserPassword), headers: {
+      final response =
+          await http.post(url, body: jsonEncode(mapUnbindRequest), headers: {
         'Content-Type': 'application/json',
       }).timeout(const Duration(seconds: 60));
 
@@ -147,6 +149,122 @@ class GlobalAPI {
       List<ModelResultMessage2> list = [];
 
       print('Entering If Else Statement');
+      if (response.statusCode <= 200) {
+        print('Status code 200');
+        var jsonChangeUserPassword = jsonDecode(response.body);
+        if (jsonChangeUserPassword['code'] == '100' ||
+            jsonChangeUserPassword['msg'] == 'Sukses') {
+          print('Success');
+          list.addAll((jsonChangeUserPassword['data'] as List)
+              .map<ModelResultMessage2>(
+                  (data) => ModelResultMessage2.fromJson(data))
+              .toList());
+
+          return list;
+        } else {
+          print('Failed');
+          list.addAll((jsonChangeUserPassword['data'] as List)
+              .map<ModelResultMessage2>(
+                  (data) => ModelResultMessage2.fromJson(data))
+              .toList());
+
+          return list;
+        }
+      }
+
+      print('Status code 404');
+      return list;
+    } catch (e) {
+      print('API Error: ${e.toString()}');
+      return [];
+    }
+  }
+
+  static Future<List<ModelResultMessage2>> fetchReqEmployeeId(
+    String phoneNumber,
+  ) async {
+    print('URL');
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/RequestEmployeeID',
+    );
+
+    print('Map');
+    Map mapIdRequest = {
+      "PhoneNo": phoneNumber,
+    };
+
+    print(mapIdRequest);
+
+    print('Try and Catch');
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapIdRequest), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
+
+      List<ModelResultMessage2> list = [];
+
+      if (response.statusCode <= 200) {
+        print('Status code 200');
+        var jsonChangeUserPassword = jsonDecode(response.body);
+        if (jsonChangeUserPassword['code'] == '100' ||
+            jsonChangeUserPassword['msg'] == 'Sukses') {
+          print('Success');
+          list.addAll((jsonChangeUserPassword['data'] as List)
+              .map<ModelResultMessage2>(
+                  (data) => ModelResultMessage2.fromJson(data))
+              .toList());
+
+          return list;
+        } else {
+          print('Failed');
+          list.addAll((jsonChangeUserPassword['data'] as List)
+              .map<ModelResultMessage2>(
+                  (data) => ModelResultMessage2.fromJson(data))
+              .toList());
+
+          return list;
+        }
+      }
+
+      print('Status code 404');
+      return list;
+    } catch (e) {
+      print('API Error: ${e.toString()}');
+      return [];
+    }
+  }
+
+  static Future<List<ModelResultMessage2>> fetchResetPassword(
+    String id,
+  ) async {
+    print('URL');
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/api/SIPSales/RequestResetPassword',
+    );
+
+    print('Map');
+    Map mapPasswordReset = {
+      "EmployeeID": id,
+    };
+
+    print(mapPasswordReset);
+
+    print('Try and Catch');
+    try {
+      final response =
+          await http.post(url, body: jsonEncode(mapPasswordReset), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      print(response.body);
+
+      List<ModelResultMessage2> list = [];
+
       if (response.statusCode <= 200) {
         print('Status code 200');
         var jsonChangeUserPassword = jsonDecode(response.body);

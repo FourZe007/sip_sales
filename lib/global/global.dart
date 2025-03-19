@@ -325,6 +325,11 @@ class GlobalFont {
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.mediumbigfont,
   );
+  static TextStyle mediumbigfontRGrey = TextStyle(
+    color: Colors.grey,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumbigfont,
+  );
 
   static TextStyle mediumBigfontRUnderlinedBoldBlue = TextStyle(
     color: Colors.blue,
@@ -351,6 +356,13 @@ class GlobalFont {
 
   static TextStyle bigfontRWhite = TextStyle(
     color: Colors.white,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.bigfont,
+    backgroundColor: Colors.transparent,
+  );
+
+  static TextStyle bigfontRGrey = TextStyle(
+    color: Colors.grey[800],
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.bigfont,
     backgroundColor: Colors.transparent,

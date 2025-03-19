@@ -60,6 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
         await state.readAndWriteUserId(),
         await state.readAndWriteUserPass(),
         await state.generateUuid(),
+        await state.readAndWriteDeviceConfig(),
       ).then((res) {
         if (res[0].flag == 2 &&
             res[0].memo ==

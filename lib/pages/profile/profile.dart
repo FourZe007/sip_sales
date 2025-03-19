@@ -196,6 +196,7 @@ class ProfilePageState extends State<ProfilePage> {
         await state.readAndWriteUserId(),
         await state.readAndWriteUserPass(),
         await state.generateUuid(),
+        await state.readAndWriteDeviceConfig(),
       ).then((res) {
         state.setUserAccountList(res);
       });
@@ -592,7 +593,7 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.1.9',
+                'Version 1.1.10 (Alpha)',
                 style: GlobalFont.bigfontR,
               ),
             ),
