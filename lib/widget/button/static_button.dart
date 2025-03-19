@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sip_sales/global/global.dart';
 
 class StaticButton extends StatelessWidget {
   const StaticButton(
@@ -18,26 +18,18 @@ class StaticButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => func(),
       child: Container(
-        width: 180,
+        width: MediaQuery.of(context).size.width * 0.4575,
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(
           vertical: 10,
-          horizontal: 20,
+          horizontal: 5,
         ),
         margin: EdgeInsets.symmetric(
           vertical: 10,
-          horizontal: 10,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 5,
-              spreadRadius: 0.5,
-            ),
-          ],
+          borderRadius: BorderRadius.circular(16.0),
         ),
         child: Wrap(
           spacing: 10,
@@ -46,8 +38,16 @@ class StaticButton extends StatelessWidget {
             Icon(
               logo,
               color: Colors.blue,
+              size: 26,
             ),
-            Text(name),
+            Text(
+              name,
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: GlobalFontFamily.fontRubik,
+                fontSize: 11,
+              ),
+            ),
           ],
         ),
       ),

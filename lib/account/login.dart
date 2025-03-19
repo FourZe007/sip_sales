@@ -14,13 +14,12 @@ import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state_management.dart';
-import 'package:sip_sales/widget/button/wStatic_button.dart';
+import 'package:sip_sales/widget/button/static_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/text/custom_text.dart';
 import 'package:sip_sales/widget/textfield/customuserinput2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upgrader/upgrader.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
@@ -603,11 +602,10 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Wrap(
-                    runSpacing: 10,
-                    alignment: WrapAlignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  margin: EdgeInsets.symmetric(vertical: 6),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // ~:App Version:~
                       Text(
@@ -618,9 +616,10 @@ class _LoginPageState extends State<LoginPage> {
                       // ~:More Button:~
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: 5),
                         physics: BouncingScrollPhysics(),
                         child: Wrap(
-                          spacing: 5,
+                          spacing: 10,
                           children: [
                             // ~:Manual Book:~
                             StaticButton(

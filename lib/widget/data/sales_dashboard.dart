@@ -23,7 +23,7 @@ class SalesDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // Adjust width as needed
-      width: MediaQuery.of(context).size.width * 0.275,
+      width: MediaQuery.of(context).size.width * 0.28,
       // Fixed height for simplicity
       // height: MediaQuery.of(context).size.height * 0.175,
       decoration: BoxDecoration(

@@ -57,6 +57,7 @@ class GlobalFontFamily {
 }
 
 class GlobalSize {
+  static double smallfont = 10;
   static double mediumfont = 12;
   static double mediumbigfont = 14;
   static double bigfont = 16;
@@ -293,17 +294,29 @@ class GlobalFont {
   );
 
   // Rubik
+  static TextStyle smallfontR = TextStyle(
+    color: Colors.black,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.smallfont,
+  );
+
   static TextStyle mediumfontR = TextStyle(
     color: Colors.black,
     fontFamily: GlobalFontFamily.fontRubik,
-    fontSize: GlobalSize.mediumbigfont,
+    fontSize: GlobalSize.mediumfont,
+  );
+
+  static TextStyle mediumfontRBold = TextStyle(
+    color: Colors.black,
+    fontFamily: GlobalFontFamily.fontRubik,
+    fontSize: GlobalSize.mediumfont,
     fontWeight: FontWeight.w600,
   );
 
   static TextStyle mediumfontRWhite = TextStyle(
     color: Colors.white,
     fontFamily: GlobalFontFamily.fontRubik,
-    fontSize: GlobalSize.mediumbigfont,
+    fontSize: GlobalSize.mediumfont,
     fontWeight: FontWeight.w600,
   );
 
