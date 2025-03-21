@@ -609,7 +609,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       // ~:App Version:~
                       Text(
-                        'v1.1.10 (Alpha)',
+                        'v1.1.10',
                         style: GlobalFont.mediumbigfontR,
                       ),
 
