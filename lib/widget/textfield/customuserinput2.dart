@@ -77,15 +77,28 @@ class _CustomUserInput2State extends State<CustomUserInput2>
         child: TextFormField(
           maxLines: widget.isExpandable == true ? null : 1,
           autofocus: widget.autoFocus,
-          inputFormatters: [
-            widget.isCapital == true
-                ? UpperCaseText()
-                : widget.isNumber == true
-                    ? FilteringTextInputFormatter.allow(RegExp(r'^-?[0-9.]*'))
-                    : FilteringTextInputFormatter.allow(
+          inputFormatters: widget.isCapital
+              // ? UpperCaseText()
+              ? [
+                  UpperCaseText(),
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'[a-zA-Z0-9/]'),
+                  ),
+                ]
+              : widget.isNumber
+                  ? [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^-?[0-9.]*'),
+                      ),
+                    ]
+                  : [
+                      FilteringTextInputFormatter.allow(
                         RegExp(r'[a-zA-Z0-9./@]*'),
                       ),
-          ],
+                    ],
+          textCapitalization: widget.isCapital
+              ? TextCapitalization.characters
+              : TextCapitalization.none,
           controller: (widget.isDataAvailable == false)
               ? userInputController
               : TextEditingController(text: widget.input),
@@ -115,9 +128,7 @@ class _CustomUserInput2State extends State<CustomUserInput2>
                 color: Colors.black,
                 width: 2.0,
               ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(10.0),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             prefixIcon: Row(
               mainAxisSize: MainAxisSize.min,
@@ -162,11 +173,9 @@ class _CustomUserInput2State extends State<CustomUserInput2>
             maxLines: widget.isExpandable == true ? null : 1,
             autofocus: widget.autoFocus,
             inputFormatters: [
-              widget.isCapital
-                  ? UpperCaseText()
-                  : FilteringTextInputFormatter.allow(
-                      RegExp(r'[a-zA-Z0-9./@]*'),
-                    ),
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9./@]*'),
+              ),
             ],
             controller: (widget.isDataAvailable == false)
                 ? passInputController
@@ -193,9 +202,7 @@ class _CustomUserInput2State extends State<CustomUserInput2>
                 backgroundColor: Colors.transparent,
               ),
               border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10.0),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               prefixIcon: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -240,11 +247,9 @@ class _CustomUserInput2State extends State<CustomUserInput2>
             maxLines: widget.isExpandable == true ? null : 1,
             autofocus: widget.autoFocus,
             inputFormatters: [
-              widget.isCapital
-                  ? UpperCaseText()
-                  : FilteringTextInputFormatter.allow(
-                      RegExp(r'[a-zA-Z0-9./@]*'),
-                    ),
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9./@]*'),
+              ),
             ],
             controller: (widget.isDataAvailable == false)
                 ? passInputController

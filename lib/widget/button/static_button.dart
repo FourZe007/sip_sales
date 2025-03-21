@@ -18,10 +18,10 @@ class StaticButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => func(),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.4575,
+        width: MediaQuery.of(context).size.width * 0.35,
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(
-          vertical: 10,
+          vertical: 8,
           horizontal: 5,
         ),
         margin: EdgeInsets.symmetric(
@@ -29,7 +29,7 @@ class StaticButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(18.0),
         ),
         child: Wrap(
           spacing: 10,

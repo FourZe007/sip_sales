@@ -218,459 +218,463 @@ class _AttendancePageState extends State<AttendancePage> {
     }
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
   Widget attendanceBody(SipSalesState state) {
-    return Column(
-      children: [
-        // ~:Date and Time:~
-        CustomDigitalClock(
-          displayDate,
-          setDisplayDate,
-          false,
-          isIpad: (MediaQuery.of(context).size.width < 800) ? false : true,
-        ),
-
-        // ~:Attendance Frame:~
-        Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: const [
-              BoxShadow(
-                // Adjust shadow color as needed
-                color: Colors.grey,
-                // No shadow offset
-                // Adjust shadow blur radius
-                blurRadius: 5.0,
-                // Adjust shadow spread radius
-                spreadRadius: 1.0,
-              ),
-            ],
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.03,
+      ),
+      child: Column(
+        children: [
+          // ~:Date and Time:~
+          CustomDigitalClock(
+            displayDate,
+            setDisplayDate,
+            false,
+            isIpad: (MediaQuery.of(context).size.width < 800) ? false : true,
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.05,
-            vertical: MediaQuery.of(context).size.height * 0.0225,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // ~:Attendance Title:~
-              Container(
-                height: MediaQuery.of(context).size.height * 0.05,
-                alignment: Alignment.center,
-                child: Text(
-                  'Absensi',
-                  style: GlobalFont.mediumgigafontRBold,
+
+          // ~:Attendance Frame:~
+          Container(
+            width: MediaQuery.of(context).size.width * 0.975,
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: const [
+                BoxShadow(
+                  // Adjust shadow color as needed
+                  color: Colors.grey,
+                  // No shadow offset
+                  // Adjust shadow blur radius
+                  blurRadius: 5.0,
+                  // Adjust shadow spread radius
+                  spreadRadius: 0.8,
                 ),
-              ),
-
-              // ~:Clock In and Out Section:~
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.005,
-                  vertical: MediaQuery.of(context).size.height * 0.005,
+              ],
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.05,
+              vertical: MediaQuery.of(context).size.height * 0.0225,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // ~:Attendance Title:~
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Absensi',
+                    style: GlobalFont.mediumgigafontRBold,
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    // ~:Absent Type:~
-                    Expanded(
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
-                        child: CommonDropdown(
-                          state.getUserAccountList[0].locationName,
-                          defaultValue:
-                              state.getUserAccountList[0].locationName,
-                        ),
-                      ),
-                    ),
 
-                    // ~:Devider:~
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.025,
-                    ),
-
-                    // ~:Clock In Button:~
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => userAbsent(isClockIn: true),
-                        child: Container(
+                // ~:Clock In and Out Section:~
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.005,
+                    vertical: MediaQuery.of(context).size.height * 0.005,
+                  ),
+                  child: Row(
+                    children: [
+                      // ~:Absent Type:~
+                      Expanded(
+                        child: SizedBox(
                           height: MediaQuery.of(context).size.height * 0.05,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: const [
-                              BoxShadow(
-                                // Adjust shadow color as needed
-                                color: Colors.grey,
-                                // No shadow offset
-                                // Adjust shadow blur radius
-                                blurRadius: 5.0,
-                                // Adjust shadow spread radius
-                                spreadRadius: 1.0,
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            'Clock In',
-                            style: GlobalFont.bigfontR,
+                          child: CommonDropdown(
+                            state.getUserAccountList[0].locationName,
+                            defaultValue:
+                                state.getUserAccountList[0].locationName,
                           ),
                         ),
                       ),
-                    ),
-                    // ~:Clock Out Button:~
-                    // // ~:Devider:~
-                    // SizedBox(
-                    //   width: MediaQuery.of(context).size.width * 0.025,
-                    // ),
-                    // // ~:Clock Out Button:~
-                    // Expanded(
-                    //   child: GestureDetector(
-                    //     onTap: () => userAbsent(),
-                    //     child: Container(
-                    //       height:
-                    //           MediaQuery.of(context).size.height * 0.05,
-                    //       alignment: Alignment.center,
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.white,
-                    //         borderRadius: BorderRadius.circular(20),
-                    //         boxShadow: const [
-                    //           BoxShadow(
-                    //             // Adjust shadow color as needed
-                    //             color: Colors.grey,
-                    //             // No shadow offset
-                    //             // Adjust shadow blur radius
-                    //             blurRadius: 5.0,
-                    //             // Adjust shadow spread radius
-                    //             spreadRadius: 1.0,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       child: Text(
-                    //         'Clock Out',
-                    //         style: GlobalFont.bigfontR,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
-              ),
-              // ~:Current Location Button:~
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.005,
-                  vertical: MediaQuery.of(context).size.height * 0.005,
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    state.setIsAppFlowLoading();
-                    state.openMap(context);
-                    state.setIsAppFlowLoading();
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MapPage(),
+                      // ~:Devider:~
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.025,
                       ),
-                    );
-                  },
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: const [
-                        BoxShadow(
-                          // Adjust shadow color as needed
-                          color: Colors.grey,
-                          // No shadow offset
-                          // Adjust shadow blur radius
-                          blurRadius: 5.0,
-                          // Adjust shadow spread radius
-                          spreadRadius: 1.0,
+
+                      // ~:Clock In Button:~
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => userAbsent(isClockIn: true),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  // Adjust shadow color as needed
+                                  color: Colors.grey,
+                                  // No shadow offset
+                                  // Adjust shadow blur radius
+                                  blurRadius: 5.0,
+                                  // Adjust shadow spread radius
+                                  spreadRadius: 1.0,
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              'Clock In',
+                              style: GlobalFont.bigfontR,
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        if (state.getIsAppFlowLoading) {
-                          if (Platform.isIOS) {
-                            return const CupertinoActivityIndicator(
-                              radius: 12.5,
-                              color: Colors.black,
-                            );
+                      ),
+                      // ~:Clock Out Button:~
+                      // // ~:Devider:~
+                      // SizedBox(
+                      //   width: MediaQuery.of(context).size.width * 0.025,
+                      // ),
+                      // // ~:Clock Out Button:~
+                      // Expanded(
+                      //   child: GestureDetector(
+                      //     onTap: () => userAbsent(),
+                      //     child: Container(
+                      //       height:
+                      //           MediaQuery.of(context).size.height * 0.05,
+                      //       alignment: Alignment.center,
+                      //       decoration: BoxDecoration(
+                      //         color: Colors.white,
+                      //         borderRadius: BorderRadius.circular(20),
+                      //         boxShadow: const [
+                      //           BoxShadow(
+                      //             // Adjust shadow color as needed
+                      //             color: Colors.grey,
+                      //             // No shadow offset
+                      //             // Adjust shadow blur radius
+                      //             blurRadius: 5.0,
+                      //             // Adjust shadow spread radius
+                      //             spreadRadius: 1.0,
+                      //           ),
+                      //         ],
+                      //       ),
+                      //       child: Text(
+                      //         'Clock Out',
+                      //         style: GlobalFont.bigfontR,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
+                // ~:Current Location Button:~
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.005,
+                    vertical: MediaQuery.of(context).size.height * 0.005,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      state.setIsAppFlowLoading();
+                      state.openMap(context);
+                      state.setIsAppFlowLoading();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: const [
+                          BoxShadow(
+                            // Adjust shadow color as needed
+                            color: Colors.grey,
+                            // No shadow offset
+                            // Adjust shadow blur radius
+                            blurRadius: 5.0,
+                            // Adjust shadow spread radius
+                            spreadRadius: 1.0,
+                          ),
+                        ],
+                      ),
+                      child: Builder(
+                        builder: (context) {
+                          if (state.getIsAppFlowLoading) {
+                            if (Platform.isIOS) {
+                              return const CupertinoActivityIndicator(
+                                radius: 12.5,
+                                color: Colors.black,
+                              );
+                            } else {
+                              return const CircleLoading(
+                                warna: Colors.black,
+                              );
+                            }
                           } else {
-                            return const CircleLoading(
-                              warna: Colors.black,
+                            return Text(
+                              'Lokasi Anda',
+                              style: GlobalFont.bigfontR,
                             );
                           }
-                        } else {
-                          return Text(
-                            'Lokasi Anda',
-                            style: GlobalFont.bigfontR,
-                          );
-                        }
-                      },
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        // ~:Sales Dashboard:~
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.22,
-          margin: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height * 0.015,
-            bottom: MediaQuery.of(context).size.height * 0.01,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ~:Dashboard Title:~
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Text(
-                  'Dashboard',
-                  style: GlobalFont.giantfontR,
-                ),
-              ),
-
-              // ~:Divider:~
-              SizedBox(height: 10),
-
-              // ~:Dashboard Body:~
-              Expanded(
-                child: SizedBox(
+          // ~:Sales Dashboard:~
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.22,
+            margin: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.015,
+              bottom: MediaQuery.of(context).size.height * 0.01,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ~:Dashboard Title:~
+                SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  // height: MediaQuery.of(context).size.height * 0.1,
+                  child: Text(
+                    'Dashboard',
+                    style: GlobalFont.giantfontR,
+                  ),
+                ),
+
+                // ~:Divider:~
+                SizedBox(height: 10),
+
+                // ~:Dashboard Body:~
+                Expanded(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    // height: MediaQuery.of(context).size.height * 0.1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // ~:SPK:~
+                        SalesDashboard(
+                          title: 'SPK',
+                          data1:
+                              state.getSalesDashboardList[0].qtyLM.toString(),
+                          data2:
+                              state.getSalesDashboardList[0].qtyTM.toString(),
+                          percentage:
+                              state.getSalesDashboardList[0].spk.toString(),
+                          trendIcon: state.getSalesDashboardList[0].qtyLM <=
+                                  state.getSalesDashboardList[0].qtyTM
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                          trendColor: state.getSalesDashboardList[0].qtyLM <=
+                                  state.getSalesDashboardList[0].qtyTM
+                              ? Colors.green[700]!
+                              : Colors.red,
+                        ),
+
+                        // ~:Delivery:~
+                        SalesDashboard(
+                          title: 'Pengiriman',
+                          data1:
+                              state.getSalesDashboardList[0].qtySJLM.toString(),
+                          data2:
+                              state.getSalesDashboardList[0].qtySJTM.toString(),
+                          percentage: state.getSalesDashboardList[0].delivery
+                              .toString(),
+                          trendIcon: state.getSalesDashboardList[0].qtySJLM <=
+                                  state.getSalesDashboardList[0].qtySJTM
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                          trendColor: state.getSalesDashboardList[0].qtySJLM <=
+                                  state.getSalesDashboardList[0].qtySJTM
+                              ? Colors.green[700]!
+                              : Colors.red,
+                        ),
+
+                        // ~:Prospect:~
+                        SalesDashboard(
+                          title: 'Prospek',
+                          data1:
+                              state.getSalesDashboardList[0].qtyLTM.toString(),
+                          data2:
+                              state.getSalesDashboardList[0].qtyPTM.toString(),
+                          percentage: state.getSalesDashboardList[0].prospect
+                              .toString(),
+                          trendIcon: state.getSalesDashboardList[0].qtyLTM <=
+                                  state.getSalesDashboardList[0].qtyPTM
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                          trendColor: state.getSalesDashboardList[0].qtyLTM <=
+                                  state.getSalesDashboardList[0].qtyPTM
+                              ? Colors.green[700]!
+                              : Colors.red,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ~:Attendance List:~
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.35,
+            margin: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.015,
+              bottom: MediaQuery.of(context).size.height * 0.01,
+            ),
+            child: Column(
+              children: [
+                // ~:Attendance List Header:~
+                SizedBox(
+                  height: 30,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // ~:SPK:~
-                      SalesDashboard(
-                        title: 'SPK',
-                        data1: state.getSalesDashboardList[0].qtyLM.toString(),
-                        data2: state.getSalesDashboardList[0].qtyTM.toString(),
-                        percentage:
-                            state.getSalesDashboardList[0].spk.toString(),
-                        trendIcon: state.getSalesDashboardList[0].qtyLM <=
-                                state.getSalesDashboardList[0].qtyTM
-                            ? Icons.arrow_upward
-                            : Icons.arrow_downward,
-                        trendColor: state.getSalesDashboardList[0].qtyLM <=
-                                state.getSalesDashboardList[0].qtyTM
-                            ? Colors.green[700]!
-                            : Colors.red,
+                      Text(
+                        'Daftar Absensi',
+                        style: GlobalFont.giantfontR,
                       ),
-
-                      // ~:Delivery:~
-                      SalesDashboard(
-                        title: 'Pengiriman',
-                        data1:
-                            state.getSalesDashboardList[0].qtySJLM.toString(),
-                        data2:
-                            state.getSalesDashboardList[0].qtySJTM.toString(),
-                        percentage:
-                            state.getSalesDashboardList[0].delivery.toString(),
-                        trendIcon: state.getSalesDashboardList[0].qtySJLM <=
-                                state.getSalesDashboardList[0].qtySJTM
-                            ? Icons.arrow_upward
-                            : Icons.arrow_downward,
-                        trendColor: state.getSalesDashboardList[0].qtySJLM <=
-                                state.getSalesDashboardList[0].qtySJTM
-                            ? Colors.green[700]!
-                            : Colors.red,
-                      ),
-
-                      // ~:Prospect:~
-                      SalesDashboard(
-                        title: 'Prospek',
-                        data1: state.getSalesDashboardList[0].qtyLTM.toString(),
-                        data2: state.getSalesDashboardList[0].qtyPTM.toString(),
-                        percentage:
-                            state.getSalesDashboardList[0].prospect.toString(),
-                        trendIcon: state.getSalesDashboardList[0].qtyLTM <=
-                                state.getSalesDashboardList[0].qtyPTM
-                            ? Icons.arrow_upward
-                            : Icons.arrow_downward,
-                        trendColor: state.getSalesDashboardList[0].qtyLTM <=
-                                state.getSalesDashboardList[0].qtyPTM
-                            ? Colors.green[700]!
-                            : Colors.red,
+                      GestureDetector(
+                        onTap: () {
+                          state.clearState();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const AttendanceHistoryPage(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Lihat log',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontFamily: GlobalFontFamily.fontRubik,
+                            fontSize: GlobalSize.mediumgiantfont,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
 
-        // ~:Attendance List:~
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.35,
-          margin: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height * 0.015,
-            bottom: MediaQuery.of(context).size.height * 0.01,
-          ),
-          child: Column(
-            children: [
-              // ~:Attendance List Header:~
-              SizedBox(
-                height: 30,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Daftar Absensi',
-                      style: GlobalFont.giantfontR,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        state.clearState();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AttendanceHistoryPage(),
-                          ),
-                        );
+                // ~:Attendance List Content:~
+                Expanded(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    alignment: state.getUserAccountList.isEmpty
+                        ? Alignment.center
+                        : Alignment.topCenter,
+                    child: Builder(
+                      builder: (context) {
+                        if (state.getAbsentHistoryList.isEmpty) {
+                          return Column(
+                            children: [
+                              Text('No data available'),
+                            ],
+                          );
+                        } else {
+                          return ListView(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            children:
+                                state.getAbsentHistoryList.asMap().entries.map(
+                              (e) {
+                                final index = e.key;
+                                final data = e.value;
+
+                                if (index < 3) {
+                                  return Column(
+                                    children: [
+                                      AbsentList.type4(
+                                        context,
+                                        state,
+                                        data.checkIn,
+                                        data.date,
+                                      ),
+                                      Builder(
+                                        builder: (context) {
+                                          if (index != 2) {
+                                            return Divider(
+                                              color: Colors.grey,
+                                            );
+                                          } else {
+                                            return SizedBox();
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return SizedBox();
+                                }
+                              },
+                            ).toList(),
+                          );
+                        }
+                        // Note: attendance listview with shimmer loading animation
+                        // if (state.getIsAppFlowLoading || isRefresh) {
+                        //   return Shimmer.fromColors(
+                        //     baseColor: Colors.grey[300]!,
+                        //     highlightColor: Colors.white,
+                        //     period: const Duration(milliseconds: 1000),
+                        //     child: ListView.builder(
+                        //       itemCount: 3,
+                        //       itemBuilder: (context, index) {
+                        //         return Container(
+                        //           width: MediaQuery.of(context).size.width,
+                        //           height:
+                        //               MediaQuery.of(context).size.height * 0.083,
+                        //           alignment: Alignment.center,
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(10.0),
+                        //             boxShadow: const [
+                        //               BoxShadow(
+                        //                 // Adjust shadow color as needed
+                        //                 color: Colors.grey,
+                        //                 // No shadow offset
+                        //                 // Adjust shadow blur radius
+                        //                 blurRadius: 5.0,
+                        //                 // Adjust shadow spread radius
+                        //                 spreadRadius: 1.0,
+                        //               ),
+                        //             ],
+                        //           ),
+                        //           margin: EdgeInsets.symmetric(
+                        //             vertical: MediaQuery.of(context).size.height *
+                        //                 0.005,
+                        //             horizontal:
+                        //                 MediaQuery.of(context).size.width * 0.01,
+                        //           ),
+                        //           padding: EdgeInsets.symmetric(
+                        //             vertical: MediaQuery.of(context).size.height *
+                        //                 0.008,
+                        //             horizontal:
+                        //                 MediaQuery.of(context).size.width * 0.01,
+                        //           ),
+                        //         );
+                        //       },
+                        //     ),
+                        //   );
+                        // } else {
+
+                        // }
                       },
-                      child: Text(
-                        'Lihat log',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontFamily: GlobalFontFamily.fontRubik,
-                          fontSize: GlobalSize.mediumgiantfont,
-                        ),
-                      ),
                     ),
-                  ],
-                ),
-              ),
-
-              // ~:Attendance List Content:~
-              Expanded(
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  alignment: state.getUserAccountList.isEmpty
-                      ? Alignment.center
-                      : Alignment.topCenter,
-                  child: Builder(
-                    builder: (context) {
-                      if (state.getAbsentHistoryList.isEmpty) {
-                        return Column(
-                          children: [
-                            Text('No data available'),
-                          ],
-                        );
-                      } else {
-                        return ListView(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          children:
-                              state.getAbsentHistoryList.asMap().entries.map(
-                            (e) {
-                              final index = e.key;
-                              final data = e.value;
-
-                              if (index < 3) {
-                                return Column(
-                                  children: [
-                                    AbsentList.type4(
-                                      context,
-                                      state,
-                                      data.checkIn,
-                                      data.date,
-                                    ),
-                                    Builder(
-                                      builder: (context) {
-                                        if (index != 2) {
-                                          return Divider(
-                                            color: Colors.grey,
-                                          );
-                                        } else {
-                                          return SizedBox();
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                return SizedBox();
-                              }
-                            },
-                          ).toList(),
-                        );
-                      }
-                      // Note: attendance listview with shimmer loading animation
-                      // if (state.getIsAppFlowLoading || isRefresh) {
-                      //   return Shimmer.fromColors(
-                      //     baseColor: Colors.grey[300]!,
-                      //     highlightColor: Colors.white,
-                      //     period: const Duration(milliseconds: 1000),
-                      //     child: ListView.builder(
-                      //       itemCount: 3,
-                      //       itemBuilder: (context, index) {
-                      //         return Container(
-                      //           width: MediaQuery.of(context).size.width,
-                      //           height:
-                      //               MediaQuery.of(context).size.height * 0.083,
-                      //           alignment: Alignment.center,
-                      //           decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(10.0),
-                      //             boxShadow: const [
-                      //               BoxShadow(
-                      //                 // Adjust shadow color as needed
-                      //                 color: Colors.grey,
-                      //                 // No shadow offset
-                      //                 // Adjust shadow blur radius
-                      //                 blurRadius: 5.0,
-                      //                 // Adjust shadow spread radius
-                      //                 spreadRadius: 1.0,
-                      //               ),
-                      //             ],
-                      //           ),
-                      //           margin: EdgeInsets.symmetric(
-                      //             vertical: MediaQuery.of(context).size.height *
-                      //                 0.005,
-                      //             horizontal:
-                      //                 MediaQuery.of(context).size.width * 0.01,
-                      //           ),
-                      //           padding: EdgeInsets.symmetric(
-                      //             vertical: MediaQuery.of(context).size.height *
-                      //                 0.008,
-                      //             horizontal:
-                      //                 MediaQuery.of(context).size.width * 0.01,
-                      //           ),
-                      //         );
-                      //       },
-                      //     ),
-                      //   );
-                      // } else {
-
-                      // }
-                    },
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -690,7 +694,7 @@ class _AttendancePageState extends State<AttendancePage> {
         color: Colors.white,
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.width * 0.05,
+        horizontal: MediaQuery.of(context).size.width * 0.02,
         vertical: MediaQuery.of(context).size.height * 0.02,
       ),
       margin: EdgeInsets.only(

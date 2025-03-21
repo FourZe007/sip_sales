@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isUserGranted = false;
 
   void setNIP(String value) {
-    nip = value;
+    nip = value.toUpperCase();
   }
 
   void setPassword(String value) {
@@ -610,7 +610,7 @@ class _LoginPageState extends State<LoginPage> {
                       // ~:App Version:~
                       Text(
                         'v1.1.10 (Alpha)',
-                        style: GlobalFont.bigfontR,
+                        style: GlobalFont.mediumbigfontR,
                       ),
 
                       // ~:More Button:~

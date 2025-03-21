@@ -375,10 +375,9 @@ class GlobalFont {
   );
 
   static TextStyle bigfontRGrey = TextStyle(
-    color: Colors.grey[800],
+    color: Colors.grey,
     fontFamily: GlobalFontFamily.fontRubik,
     fontSize: GlobalSize.bigfont,
-    backgroundColor: Colors.transparent,
   );
 
   static TextStyle bigfontRBold = TextStyle(

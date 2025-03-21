@@ -182,7 +182,7 @@ class _IdRequestPageState extends State<IdRequestPage> {
                             style: GlobalFont.giantfontRBold,
                           ),
                           Text(
-                            'Masukkan informasi lengkap terkait request id.',
+                            'Masukkan informasi lengkap terkait request id karyawan.',
                             style: GlobalFont.bigfontR,
                           ),
                         ],
