@@ -176,6 +176,8 @@ class SipSalesState with ChangeNotifier {
 
           // Log the action for debugging
           print("Device Configuration: $deviceConfiguration");
+        } else {
+          // add handler for non-Android and non-iOS devices (upcoming v1.1.11)
         }
 
         // Notify listeners as the state changed
