@@ -82,7 +82,7 @@ class _CustomUserInput2State extends State<CustomUserInput2>
               ? [
                   UpperCaseText(),
                   FilteringTextInputFormatter.allow(
-                    RegExp(r'[a-zA-Z0-9/]'),
+                    RegExp(r'[a-zA-Z0-9/-]'),
                   ),
                 ]
               : widget.isNumber

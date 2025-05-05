@@ -684,8 +684,8 @@ class _AttendancePageState extends State<AttendancePage> {
     final state = Provider.of<SipSalesState>(context);
 
     return Container(
-      height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
@@ -696,9 +696,6 @@ class _AttendancePageState extends State<AttendancePage> {
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.02,
         vertical: MediaQuery.of(context).size.height * 0.02,
-      ),
-      margin: EdgeInsets.only(
-        top: MediaQuery.of(context).size.height * 0.12,
       ),
       child: Builder(
         builder: (context) {

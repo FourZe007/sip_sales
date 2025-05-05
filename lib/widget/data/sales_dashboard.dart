@@ -54,7 +54,6 @@ class SalesDashboard extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
             padding: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width * 0.02,
-              vertical: MediaQuery.of(context).size.height * 0.005,
             ),
             child: Column(
               children: [
@@ -86,7 +85,7 @@ class SalesDashboard extends StatelessWidget {
                               Icon(
                                 trendIcon,
                                 color: trendColor,
-                                size: 30,
+                                size: 24,
                               ),
                               Text(
                                 '$percentage%',

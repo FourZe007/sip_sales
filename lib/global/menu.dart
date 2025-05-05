@@ -247,12 +247,13 @@ class MenuPageState extends State<MenuPage> {
                 color: Colors.blue,
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                child: Stack(
+                child: Column(
                   children: [
                     // ~:Header Section:~
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.12,
                       width: MediaQuery.of(context).size.width,
+                      height: 90,
+                      alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.025,
                         vertical: MediaQuery.of(context).size.height * 0.02,
@@ -346,7 +347,9 @@ class MenuPageState extends State<MenuPage> {
                     ),
 
                     // ~:Body Section:~
-                    salesWidgetOptions[_selectedIndex],
+                    Expanded(
+                      child: salesWidgetOptions[_selectedIndex],
+                    ),
                   ],
                 ),
               ),

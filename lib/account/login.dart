@@ -602,14 +602,14 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  margin: EdgeInsets.symmetric(vertical: 6),
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  margin: EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // ~:App Version:~
                       Text(
-                        'v1.1.10',
+                        'v1.1.11',
                         style: GlobalFont.mediumbigfontR,
                       ),
 

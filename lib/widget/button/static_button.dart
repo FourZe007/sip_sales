@@ -18,12 +18,9 @@ class StaticButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => func(),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.35,
+        // width: MediaQuery.of(context).size.width * 0.35,
         alignment: Alignment.center,
-        padding: EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 5,
-        ),
+        padding: EdgeInsets.all(8),
         margin: EdgeInsets.symmetric(
           vertical: 10,
         ),

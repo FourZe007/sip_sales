@@ -373,7 +373,8 @@ class ProfilePageState extends State<ProfilePage> {
           width: MediaQuery.of(context).size.width,
           height: (state.getUserAccountList[0].code == 0)
               ? MediaQuery.of(context).size.height * 0.225
-              : MediaQuery.of(context).size.height * 0.33,
+              // : MediaQuery.of(context).size.height * 0.33,
+              : 250,
           color: Colors.grey[100],
           margin: EdgeInsets.only(
             top: MediaQuery.of(context).size.height * 0.015,
@@ -382,8 +383,8 @@ class ProfilePageState extends State<ProfilePage> {
           padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height * 0.015,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Wrap(
+            runSpacing: 8,
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(
@@ -434,18 +435,16 @@ class ProfilePageState extends State<ProfilePage> {
               // ),
 
               // ~:Privacy Policy Section:~
-              Expanded(
-                child: InkWell(
-                  onTap: () => launchLink(context),
+              InkWell(
+                onTap: () => launchLink(context),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
                   child: Row(
                     children: [
                       Expanded(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.privacy_tip_rounded,
-                            size: 30.0,
-                          ),
+                        child: const Icon(
+                          Icons.privacy_tip_rounded,
+                          size: 30.0,
                         ),
                       ),
                       Expanded(
@@ -480,9 +479,10 @@ class ProfilePageState extends State<ProfilePage> {
               ),
 
               // ~:Change Password Section:~
-              Expanded(
-                child: InkWell(
-                  onTap: () => changePassword(state),
+              InkWell(
+                onTap: () => changePassword(state),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
                   child: Row(
                     children: [
                       Expanded(
@@ -528,43 +528,39 @@ class ProfilePageState extends State<ProfilePage> {
               // ~:User Guideline:~
               Builder(builder: (context) {
                 if (state.getUserAccountList[0].code == 1) {
-                  return Expanded(
-                    child: InkWell(
-                      onTap: () => openUserGuideline(),
+                  return InkWell(
+                    onTap: () => openUserGuideline(),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
                       child: Row(
                         children: [
                           Expanded(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: const Icon(
-                                Icons.menu_book_rounded,
-                                size: 30.0,
-                              ),
+                            child: const Icon(
+                              Icons.menu_book_rounded,
+                              size: 30.0,
                             ),
                           ),
                           Expanded(
                             flex: 5,
-                            child: Padding(
+                            child: Container(
+                              // width: MediaQuery.of(context).size.width * 0.75,
                               padding: EdgeInsets.symmetric(
                                 horizontal:
                                     MediaQuery.of(context).size.width * 0.025,
                               ),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.75,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'User Guideline',
-                                      style: GlobalFont.giantfontR,
-                                    ),
-                                    Text(
-                                      'Cara menggunakan setiap fitur aplikasi',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ],
-                                ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'User Guideline',
+                                    style: GlobalFont.giantfontR,
+                                  ),
+                                  Text(
+                                    'Cara menggunakan setiap fitur aplikasi',
+                                    style: GlobalFont.bigfontR,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -593,7 +589,7 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.1.10 (Alpha)',
+                'Version 1.1.11',
                 style: GlobalFont.bigfontR,
               ),
             ),

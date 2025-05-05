@@ -2,6 +2,10 @@
 
 A new Flutter project.
 
+## Update Notes
+v1.1.11
+- Minor bug and performance fixes for Login user input and static width for footer button at Login Screen.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.8.10' // Ensure this matches your Kotlin version
+    ext.kotlin_version = '1.8.22' // Ensure this matches your Kotlin version
     repositories {
         google() // Google's Maven repository
         mavenCentral() // Maven Central repository
