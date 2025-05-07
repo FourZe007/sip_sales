@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -252,7 +253,7 @@ class MenuPageState extends State<MenuPage> {
                     // ~:Header Section:~
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      height: 90,
+                      height: (Platform.isIOS) ? 100 : 90,
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.025,
