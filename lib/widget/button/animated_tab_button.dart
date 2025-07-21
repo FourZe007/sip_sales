@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 
 class AnimatedTabButton extends StatefulWidget {
   const AnimatedTabButton(this.namaButton, this.handle,

@@ -13,7 +13,7 @@ import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/widget/button/static_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/text/custom_text.dart';

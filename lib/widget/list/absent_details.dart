@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AbsentDetailsPage extends StatefulWidget {

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/pages/activity/manager_activity.dart';
 import 'package:sip_sales/pages/attendance/attendance.dart';
 import 'package:sip_sales/pages/location/manager_new_activity.dart';
@@ -88,9 +88,9 @@ class MenuPageState extends State<MenuPage> {
     return FutureBuilder(
       future: getIsManager(state),
       builder: (context, snapshot) {
-        // ~:Manager Staff:~
+        // ~:Shop Head:~
         if (snapshot.data == 0) {
-          print('Manager Staff');
+          print('Shop Head');
           return PopScope(
             canPop: false,
             child: Scaffold(
@@ -229,9 +229,9 @@ class MenuPageState extends State<MenuPage> {
           );
         }
 
-        // ~:Sales Staff:~
+        // ~:Sales:~
         else {
-          print('Sales Staff');
+          print('Sales');
           return PopScope(
             canPop: false,
             child: Scaffold(

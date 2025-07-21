@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/widget/dropdown/custom_dropdown.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:info_popup/info_popup.dart';

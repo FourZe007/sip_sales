@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/pages/attendance/attendance_history.dart';
 import 'package:sip_sales/pages/attendance/event.dart';
 import 'package:sip_sales/pages/map/map.dart';
@@ -440,9 +440,28 @@ class _AttendancePageState extends State<AttendancePage> {
                 // ~:Dashboard Title:~
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: Text(
-                    'Dashboard',
-                    style: GlobalFont.giantfontR,
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Dashboard',
+                        style: GlobalFont.giantfontR,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/salesDashboard');
+                        },
+                        child: Text(
+                          'More',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontFamily: GlobalFontFamily.fontRubik,
+                            fontSize: GlobalSize.mediumgiantfont,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 

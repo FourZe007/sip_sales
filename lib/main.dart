@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/account/login.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/pages/location/location.dart';
 import 'package:sip_sales/global/menu.dart';
 import 'package:sip_sales/pages/profile/profile.dart';
+import 'package:sip_sales/pages/screen/sales_dashboard_screen.dart';
 import 'package:sip_sales/pages/screen/splash_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
           '/location': (context) => const LocationPage(),
           '/menu': (context) => const MenuPage(),
           '/profile': (context) => const ProfilePage(),
+          '/salesDashboard': (context) => const SalesDashboardScreen(),
         },
       ),
     );

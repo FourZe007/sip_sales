@@ -10,7 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/widget/dropdown/custom_dropdown.dart';
 import 'package:sip_sales/widget/format.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';

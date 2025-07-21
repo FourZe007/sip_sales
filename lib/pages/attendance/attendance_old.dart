@@ -9,7 +9,7 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/widget/button/animated_phone_button.dart';
 import 'package:sip_sales/widget/button/animated_tab_button.dart';
 import 'package:sip_sales/widget/date/custom_analog_clock.dart';

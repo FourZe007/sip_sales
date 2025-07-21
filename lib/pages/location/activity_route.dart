@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/pages/location/carousel_route_details.dart';
 import 'package:sip_sales/pages/location/route_details.dart';
 import 'package:sip_sales/pages/map/map_list.dart';

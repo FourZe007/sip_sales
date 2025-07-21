@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
-import 'package:sip_sales/global/state_management.dart';
+import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/pages/activity/mananger_activity_details.dart';
 import 'package:sip_sales/widget/format.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
