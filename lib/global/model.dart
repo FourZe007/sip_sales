@@ -547,3 +547,168 @@ class ModelManagerActivityDetails {
     );
   }
 }
+
+class SalesmanDashboardModel {
+  final int prospek;
+  final int spk;
+  final int spkTerbuka;
+  final int delivery;
+  final int stu;
+  final int prospekH;
+  final int spkh;
+  final int spkTerbukaH;
+  final int deliveryH;
+  final int stuh;
+  final List<CategoryModel> categoryList;
+  final List<LeasingModel> leasingList;
+  final List<DailyModel> dailyList;
+  final List<ProspekTypeModel> prospekTypeList;
+
+  SalesmanDashboardModel({
+    required this.prospek,
+    required this.spk,
+    required this.spkTerbuka,
+    required this.delivery,
+    required this.stu,
+    required this.prospekH,
+    required this.spkh,
+    required this.spkTerbukaH,
+    required this.deliveryH,
+    required this.stuh,
+    required this.categoryList,
+    required this.leasingList,
+    required this.dailyList,
+    required this.prospekTypeList,
+  });
+
+  factory SalesmanDashboardModel.fromJson(Map<String, dynamic> json) {
+    return SalesmanDashboardModel(
+      prospek: json['prospek'] ?? 0,
+      spk: json['spk'] ?? 0,
+      spkTerbuka: json['spkTerbuka'] ?? 0,
+      delivery: json['delivery'] ?? 0,
+      stu: json['stu'] ?? 0,
+      prospekH: json['prospekH'] ?? 0,
+      spkh: json['spkh'] ?? 0,
+      spkTerbukaH: json['spkTerbukaH'] ?? 0,
+      deliveryH: json['deliveryH'] ?? 0,
+      stuh: json['stuh'] ?? 0,
+      categoryList: json['category']
+          .map<CategoryModel>((data) => CategoryModel.fromJson(data))
+          .toList(),
+      leasingList: json['leasing']
+          .map<LeasingModel>((data) => LeasingModel.fromJson(data))
+          .toList(),
+      dailyList: json['daily']
+          .map<DailyModel>((data) => DailyModel.fromJson(data))
+          .toList(),
+      prospekTypeList: json['prospekType']
+          .map<ProspekTypeModel>((data) => ProspekTypeModel.fromJson(data))
+          .toList(),
+    );
+  }
+}
+
+class CategoryModel {
+  final int lineSC;
+  final String salesCategorySC;
+  final int prospekSC;
+  final int spksc;
+  final int stusc;
+  final int lmsc;
+  final int ratioSC;
+
+  CategoryModel({
+    required this.lineSC,
+    required this.salesCategorySC,
+    required this.prospekSC,
+    required this.spksc,
+    required this.stusc,
+    required this.lmsc,
+    required this.ratioSC,
+  });
+
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    return CategoryModel(
+      lineSC: json['lineSC'] ?? 0,
+      salesCategorySC: json['salesCategorySC'],
+      prospekSC: json['prospekSC'] ?? 0,
+      spksc: json['spksc'] ?? 0,
+      stusc: json['stusc'] ?? 0,
+      lmsc: json['lmsc'] ?? 0,
+      ratioSC: json['ratioSC'] ?? 0,
+    );
+  }
+}
+
+class LeasingModel {
+  final int lineLeasing;
+  final String leasingID;
+  final int totalSPKLeasing;
+  final int spkProsesLeasing;
+  final int spkTerbukaLeasing;
+  final int spkApproveLeasing;
+  final int ratioLeasing;
+
+  LeasingModel({
+    required this.lineLeasing,
+    required this.leasingID,
+    required this.totalSPKLeasing,
+    required this.spkProsesLeasing,
+    required this.spkTerbukaLeasing,
+    required this.spkApproveLeasing,
+    required this.ratioLeasing,
+  });
+
+  factory LeasingModel.fromJson(Map<String, dynamic> json) {
+    return LeasingModel(
+      lineLeasing: json['lineLeasing'] ?? 0,
+      leasingID: json['leasingID'],
+      totalSPKLeasing: json['totalSPKLeasing'] ?? 0,
+      spkProsesLeasing: json['spkProsesLeasing'] ?? 0,
+      spkTerbukaLeasing: json['spkTerbukaLeasing'] ?? 0,
+      spkApproveLeasing: json['spkApproveLeasing'] ?? 0,
+      ratioLeasing: json['ratioLeasing'] ?? 0,
+    );
+  }
+}
+
+class DailyModel {
+  final int hari;
+  final int prospekD;
+  final int stud;
+
+  DailyModel({
+    required this.hari,
+    required this.prospekD,
+    required this.stud,
+  });
+
+  factory DailyModel.fromJson(Map<String, dynamic> json) {
+    return DailyModel(
+      hari: json['hari'] ?? 0,
+      prospekD: json['prospekD'] ?? 0,
+      stud: json['stud'] ?? 0,
+    );
+  }
+}
+
+class ProspekTypeModel {
+  final String prospekType;
+  final int prospekT;
+  final int stut;
+
+  ProspekTypeModel({
+    required this.prospekType,
+    required this.prospekT,
+    required this.stut,
+  });
+
+  factory ProspekTypeModel.fromJson(Map<String, dynamic> json) {
+    return ProspekTypeModel(
+      prospekType: json['prospectType'],
+      prospekT: json['prospekT'] ?? 0,
+      stut: json['stut'] ?? 0,
+    );
+  }
+}

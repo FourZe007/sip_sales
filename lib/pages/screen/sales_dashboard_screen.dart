@@ -1,7 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_state.dart';
 
 class SalesDashboardScreen extends StatefulWidget {
   const SalesDashboardScreen({super.key});
@@ -76,6 +80,48 @@ class _SalesDashboardScreenState extends State<SalesDashboardScreen> {
               MediaQuery.of(context).size.height * 0.02,
               MediaQuery.of(context).size.width * 0.025,
               0.0,
+            ),
+            child: BlocBuilder<SalesDashboardBloc, SalesDashboardState>(
+              builder: (context, state) {
+                if (state is SalesDashboardLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is SalesDashboardError) {
+                  return Center(
+                    child: Text(
+                      'Error: ${state.message}',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                } else if (state is SalesDashboardLoaded) {
+                  log('Sales length: ${state.salesData.length}');
+                  return ListView.builder(
+                    itemCount: state.salesData.length,
+                    itemBuilder: (context, index) {
+                      final salesData = state.salesData[index];
+                      return ListTile(
+                        title: Text(salesData.prospek.toString()),
+                        subtitle: Text('Sales: ${salesData.spk.toString()}'),
+                        trailing: Text('Target: ${salesData.stu.toString()}'),
+                      );
+                    },
+                  );
+                  // return Center(
+                  //   child: Text(
+                  //     'Data loaded successfully! ${state.salesData.length} items found.',
+                  //     textAlign: TextAlign.center,
+                  //   ),
+                  // );
+                } else {
+                  return Center(
+                    child: Text(
+                      'No data available',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+              },
             ),
           ),
         ),

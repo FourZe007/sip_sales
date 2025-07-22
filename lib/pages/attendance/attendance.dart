@@ -8,6 +8,8 @@ import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state/provider.dart';
+import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
 import 'package:sip_sales/pages/attendance/attendance_history.dart';
 import 'package:sip_sales/pages/attendance/event.dart';
 import 'package:sip_sales/pages/map/map.dart';
@@ -218,7 +220,12 @@ class _AttendancePageState extends State<AttendancePage> {
     }
   }
 
-  Widget attendanceBody(SipSalesState state) {
+  Widget attendanceBody(
+    BuildContext context,
+    SipSalesState state,
+  ) {
+    final salesDashboardBloc = context.read<SalesDashboardBloc>();
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.03,
@@ -450,6 +457,13 @@ class _AttendancePageState extends State<AttendancePage> {
                       ),
                       TextButton(
                         onPressed: () {
+                          salesDashboardBloc.add(LoadSalesDashboard(
+                            state.getUserAccountList.isNotEmpty
+                                ? state.getUserAccountList[0].employeeID
+                                : '',
+                            DateTime.now().toIso8601String().substring(0, 10),
+                          ));
+
                           Navigator.pushNamed(context, '/salesDashboard');
                         },
                         child: Text(
@@ -726,7 +740,7 @@ class _AttendancePageState extends State<AttendancePage> {
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, _) => attendanceBody(state),
+                    (context, _) => attendanceBody(context, state),
                     childCount: 1,
                   ),
                 ),
@@ -737,7 +751,7 @@ class _AttendancePageState extends State<AttendancePage> {
               onRefresh: () => refreshPage(state),
               child: SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
-                child: attendanceBody(state),
+                child: attendanceBody(context, state),
               ),
             );
           }

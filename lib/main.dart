@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/account/login.dart';
+import 'package:sip_sales/global/state/bloc_constants.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/pages/location/location.dart';
 import 'package:sip_sales/global/menu.dart';
@@ -55,19 +57,22 @@ class MyApp extends StatelessWidget {
       data: MediaQuery.of(context).copyWith(
         textScaler: const TextScaler.linear(1.0),
       ),
-      child: MaterialApp(
-        title: 'SIP Sales',
-        scrollBehavior: MyCustomScrollBehavior(),
-        debugShowCheckedModeBanner: false,
-        navigatorKey: navigatorKey,
-        home: const SplashScreen(),
-        routes: {
-          '/login': (context) => const LoginPage(),
-          '/location': (context) => const LocationPage(),
-          '/menu': (context) => const MenuPage(),
-          '/profile': (context) => const ProfilePage(),
-          '/salesDashboard': (context) => const SalesDashboardScreen(),
-        },
+      child: MultiBlocProvider(
+        providers: BlocConstants.getBlocProviders(),
+        child: MaterialApp(
+          title: 'SIP Sales',
+          scrollBehavior: MyCustomScrollBehavior(),
+          debugShowCheckedModeBanner: false,
+          navigatorKey: navigatorKey,
+          home: const SplashScreen(),
+          routes: {
+            '/login': (context) => const LoginPage(),
+            '/location': (context) => const LocationPage(),
+            '/menu': (context) => const MenuPage(),
+            '/profile': (context) => const ProfilePage(),
+            '/salesDashboard': (context) => const SalesDashboardScreen(),
+          },
+        ),
       ),
     );
   }

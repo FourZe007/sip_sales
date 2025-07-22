@@ -68,6 +68,7 @@ dependencies:
   jailbreak_root_detection: ^1.1.5
   device_info_plus: ^11.3.0
   flutter_bloc: ^9.1.1
+  syncfusion_flutter_datagrid: ^30.1.40
 
 dev_dependencies:
   flutter_test:
