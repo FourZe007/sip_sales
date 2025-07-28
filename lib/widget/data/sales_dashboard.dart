@@ -25,7 +25,7 @@ class SalesDashboard extends StatelessWidget {
       // Adjust width as needed
       width: MediaQuery.of(context).size.width * 0.28,
       // Fixed height for simplicity
-      // height: MediaQuery.of(context).size.height * 0.175,
+      // height: 250,
       decoration: BoxDecoration(
         color: Colors.grey[100],
         // border: Border.all(color: Colors.black),
@@ -52,9 +52,7 @@ class SalesDashboard extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.02,
-            ),
+            padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
             child: Column(
               children: [
                 // ~:Dashboard Title:~
@@ -77,7 +75,7 @@ class SalesDashboard extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: Align(
                           alignment: Alignment.center,
                           child: Column(

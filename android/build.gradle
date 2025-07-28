@@ -1,28 +1,7 @@
-buildscript {
-    ext.kotlin_version = '1.8.22' // Ensure this matches your Kotlin version
-    repositories {
-        google() // Google's Maven repository
-        mavenCentral() // Maven Central repository
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.0' // Use a valid AGP version
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 allprojects {
     repositories {
         google()
         mavenCentral()
-    }
-
-    ext {
-        compileSdkVersion   = 34                // or higher / as desired
-        targetSdkVersion    = 34                // or higher / as desired
-        minSdkVersion       = 21                // Required minimum
-        appCompatVersion    = "1.4.2"           // or higher / as desired
-        playServicesLocationVersion = "21.0.1"  // or higher / as desired
-        // kotlin_version = '1.8.10'
     }
 }
 

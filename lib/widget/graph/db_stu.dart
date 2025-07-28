@@ -1,0 +1,68 @@
+// lib/widgets/sales_charts.dart
+import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:sip_sales/global/model.dart';
+
+class DbStuCharts extends StatelessWidget {
+  final List<ProspekTypeModel> data;
+
+  const DbStuCharts({
+    super.key,
+    required this.data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 300,
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              const Text(
+                'Asal Database & STU',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Expanded(
+                child: SfCartesianChart(
+                  primaryXAxis: CategoryAxis(),
+                  legend: Legend(
+                    isVisible: true,
+                    position: LegendPosition.bottom,
+                  ),
+                  series: [
+                    LineSeries<ProspekTypeModel, String>(
+                      dataSource: data,
+                      xValueMapper: (ProspekTypeModel sales, _) =>
+                          sales.prospekType.toString(),
+                      yValueMapper: (ProspekTypeModel sales, _) => sales.stut,
+                      dataLabelSettings:
+                          const DataLabelSettings(isVisible: true),
+                      color: Colors.orange,
+                      legendIconType: LegendIconType.horizontalLine,
+                      legendItemText: 'STU',
+                    ),
+                    BarSeries<ProspekTypeModel, String>(
+                      dataSource: data,
+                      xValueMapper: (ProspekTypeModel sales, _) =>
+                          sales.prospekType.toString(),
+                      yValueMapper: (ProspekTypeModel sales, _) =>
+                          sales.prospekT,
+                      dataLabelSettings:
+                          const DataLabelSettings(isVisible: true),
+                      color: Colors.teal[800]!,
+                      legendIconType: LegendIconType.rectangle,
+                      legendItemText: 'Prospek',
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

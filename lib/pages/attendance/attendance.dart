@@ -436,18 +436,19 @@ class _AttendancePageState extends State<AttendancePage> {
           // ~:Sales Dashboard:~
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.22,
+            // height: MediaQuery.of(context).size.height * 0.2,
+            height: 180,
             margin: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.015,
               bottom: MediaQuery.of(context).size.height * 0.01,
             ),
             child: Column(
+              spacing: 8,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ~:Dashboard Title:~
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: 40,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -457,12 +458,16 @@ class _AttendancePageState extends State<AttendancePage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          salesDashboardBloc.add(LoadSalesDashboard(
-                            state.getUserAccountList.isNotEmpty
-                                ? state.getUserAccountList[0].employeeID
-                                : '',
-                            DateTime.now().toIso8601String().substring(0, 10),
-                          ));
+                          context
+                              .read<SalesDashboardBloc>()
+                              .add(LoadSalesDashboard(
+                                state.getUserAccountList.isNotEmpty
+                                    ? state.getUserAccountList[0].employeeID
+                                    : '',
+                                DateTime.now()
+                                    .toIso8601String()
+                                    .substring(0, 10),
+                              ));
 
                           Navigator.pushNamed(context, '/salesDashboard');
                         },
@@ -479,14 +484,11 @@ class _AttendancePageState extends State<AttendancePage> {
                   ),
                 ),
 
-                // ~:Divider:~
-                SizedBox(height: 10),
-
                 // ~:Dashboard Body:~
                 Expanded(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    // height: MediaQuery.of(context).size.height * 0.1,
+                    // height: 200,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

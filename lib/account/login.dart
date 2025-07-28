@@ -541,6 +541,9 @@ class _LoginPageState extends State<LoginPage> {
                                       } else {
                                         return const CircleLoading(
                                           warna: Colors.white,
+                                          customizedHeight: 20,
+                                          customizedWidth: 20,
+                                          strokeWidth: 3,
                                         );
                                       }
                                     } else {

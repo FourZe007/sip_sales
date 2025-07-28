@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:sip_sales/global/model.dart';
 import 'package:http/http.dart' as http;
@@ -1356,8 +1357,9 @@ class GlobalAPI {
       "EmployeeID": employeeID,
       "EndDate": date,
     };
+    log('Map Sales Dashboard: $mapSalesDashboard');
 
-    List<SalesDashboardModel> salesDashboardList = [];
+    List<SalesmanDashboardModel> salesDashboardList = [];
 
     try {
       final response =
@@ -1369,27 +1371,85 @@ class GlobalAPI {
         var jsonResult = jsonDecode(response.body);
         if (jsonResult['code'] == '100' && jsonResult['msg'] == 'Sukses') {
           salesDashboardList.addAll((jsonResult['data'] as List)
-              .map<SalesDashboardModel>(
-                  (data) => SalesDashboardModel.fromJson(data))
+              .map<SalesmanDashboardModel>(
+                  (data) => SalesmanDashboardModel.fromJson(data))
               .toList());
+          log('Success');
           return {
             'status': 'sukses',
             'data': salesDashboardList,
           };
         } else {
+          log('Failed');
           return {
             'status': 'gagal',
             'data': salesDashboardList,
           };
         }
       } else {
+        log('Failed');
         return {
           'status': 'gagal',
           'data': 'Status code ${response.statusCode}, coba lagi.',
         };
       }
     } catch (e) {
-      print(e.toString());
+      log('Error: ${e.toString()}');
+      return {'status': 'error', 'data': e.toString()};
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchFollowupDashboard(
+    String employeeID,
+    String date,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/DBSales/DBSales02',
+    );
+
+    Map mapFollowupDashboard = {
+      "EmployeeID": employeeID,
+      "EndDate": date,
+    };
+    log('Map Followup Dashboard: $mapFollowupDashboard');
+
+    List<FollowUpDashboardModel> followupDashboardList = [];
+
+    try {
+      final response = await http
+          .post(url, body: jsonEncode(mapFollowupDashboard), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      if (response.statusCode <= 200) {
+        var jsonResult = jsonDecode(response.body);
+        if (jsonResult['code'] == '100' && jsonResult['msg'] == 'Sukses') {
+          followupDashboardList.addAll((jsonResult['data'] as List)
+              .map<FollowUpDashboardModel>(
+                  (data) => FollowUpDashboardModel.fromJson(data))
+              .toList());
+          log('Success');
+          return {
+            'status': 'sukses',
+            'data': followupDashboardList,
+          };
+        } else {
+          log('Failed');
+          return {
+            'status': 'gagal',
+            'data': followupDashboardList,
+          };
+        }
+      } else {
+        log('Failed');
+        return {
+          'status': 'gagal',
+          'data': 'Status code ${response.statusCode}, coba lagi.',
+        };
+      }
+    } catch (e) {
+      log('Error: ${e.toString()}');
       return {'status': 'error', 'data': e.toString()};
     }
   }

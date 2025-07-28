@@ -583,16 +583,16 @@ class SalesmanDashboardModel {
 
   factory SalesmanDashboardModel.fromJson(Map<String, dynamic> json) {
     return SalesmanDashboardModel(
-      prospek: json['prospek'] ?? 0,
-      spk: json['spk'] ?? 0,
-      spkTerbuka: json['spkTerbuka'] ?? 0,
-      delivery: json['delivery'] ?? 0,
-      stu: json['stu'] ?? 0,
-      prospekH: json['prospekH'] ?? 0,
-      spkh: json['spkh'] ?? 0,
-      spkTerbukaH: json['spkTerbukaH'] ?? 0,
-      deliveryH: json['deliveryH'] ?? 0,
-      stuh: json['stuh'] ?? 0,
+      prospek: json['prospek'],
+      spk: json['spk'],
+      spkTerbuka: json['spkTerbuka'],
+      delivery: json['delivery'],
+      stu: json['stu'],
+      prospekH: json['prospekH'],
+      spkh: json['spkh'],
+      spkTerbukaH: json['spkTerbukaH'],
+      deliveryH: json['deliveryH'],
+      stuh: json['stuh'],
       categoryList: json['category']
           .map<CategoryModel>((data) => CategoryModel.fromJson(data))
           .toList(),
@@ -630,13 +630,13 @@ class CategoryModel {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
-      lineSC: json['lineSC'] ?? 0,
+      lineSC: json['lineSC'],
       salesCategorySC: json['salesCategorySC'],
-      prospekSC: json['prospekSC'] ?? 0,
-      spksc: json['spksc'] ?? 0,
-      stusc: json['stusc'] ?? 0,
-      lmsc: json['lmsc'] ?? 0,
-      ratioSC: json['ratioSC'] ?? 0,
+      prospekSC: json['prospekSC'],
+      spksc: json['spksc'],
+      stusc: json['stusc'],
+      lmsc: json['lmsc'],
+      ratioSC: json['ratioSC'],
     );
   }
 }
@@ -648,7 +648,7 @@ class LeasingModel {
   final int spkProsesLeasing;
   final int spkTerbukaLeasing;
   final int spkApproveLeasing;
-  final int ratioLeasing;
+  final dynamic ratioLeasing;
 
   LeasingModel({
     required this.lineLeasing,
@@ -662,13 +662,13 @@ class LeasingModel {
 
   factory LeasingModel.fromJson(Map<String, dynamic> json) {
     return LeasingModel(
-      lineLeasing: json['lineLeasing'] ?? 0,
+      lineLeasing: json['lineLeasing'],
       leasingID: json['leasingID'],
-      totalSPKLeasing: json['totalSPKLeasing'] ?? 0,
-      spkProsesLeasing: json['spkProsesLeasing'] ?? 0,
-      spkTerbukaLeasing: json['spkTerbukaLeasing'] ?? 0,
-      spkApproveLeasing: json['spkApproveLeasing'] ?? 0,
-      ratioLeasing: json['ratioLeasing'] ?? 0,
+      totalSPKLeasing: json['totalSPKLeasing'],
+      spkProsesLeasing: json['spkProsesLeasing'],
+      spkTerbukaLeasing: json['spkTerbukaLeasing'],
+      spkApproveLeasing: json['spkApproveLeasing'],
+      ratioLeasing: json['ratioLeasing'],
     );
   }
 }
@@ -686,9 +686,9 @@ class DailyModel {
 
   factory DailyModel.fromJson(Map<String, dynamic> json) {
     return DailyModel(
-      hari: json['hari'] ?? 0,
-      prospekD: json['prospekD'] ?? 0,
-      stud: json['stud'] ?? 0,
+      hari: json['hari'],
+      prospekD: json['prospekD'],
+      stud: json['stud'],
     );
   }
 }
@@ -707,8 +707,84 @@ class ProspekTypeModel {
   factory ProspekTypeModel.fromJson(Map<String, dynamic> json) {
     return ProspekTypeModel(
       prospekType: json['prospectType'],
-      prospekT: json['prospekT'] ?? 0,
-      stut: json['stut'] ?? 0,
+      prospekT: json['prospekT'],
+      stut: json['stut'],
+    );
+  }
+}
+
+class FollowUpDashboardModel {
+  final int totalProspect;
+  final int newProspect;
+  final int prosesFU;
+  final int closing;
+  final int batal;
+  final int belumFU;
+  final double persenNew;
+  final List<FollowUpDashboardDetailModel> detail;
+
+  FollowUpDashboardModel({
+    required this.totalProspect,
+    required this.newProspect,
+    required this.prosesFU,
+    required this.closing,
+    required this.batal,
+    required this.belumFU,
+    required this.persenNew,
+    required this.detail,
+  });
+
+  factory FollowUpDashboardModel.fromJson(Map<String, dynamic> json) {
+    return FollowUpDashboardModel(
+      totalProspect: json['totalProspect'],
+      newProspect: json['newProspect'],
+      prosesFU: json['prosesFU'],
+      closing: json['closing'],
+      batal: json['batal'],
+      belumFU: json['belumFU'],
+      persenNew: json['persenNew'],
+      detail: json['detail']
+          .map<FollowUpDashboardDetailModel>(
+              (data) => FollowUpDashboardDetailModel.fromJson(data))
+          .toList(),
+    );
+  }
+}
+
+class FollowUpDashboardDetailModel {
+  final String prospectDate;
+  final String prospectDateFormat;
+  final String customerName;
+  final String customerStatus;
+  final String mobilePhone;
+  final String fuStatus;
+  final String lastFUDate;
+  final String lastFUMemo;
+  final String nextFUDate;
+
+  FollowUpDashboardDetailModel({
+    required this.prospectDate,
+    required this.prospectDateFormat,
+    required this.customerName,
+    required this.customerStatus,
+    required this.mobilePhone,
+    required this.fuStatus,
+    required this.lastFUDate,
+    required this.lastFUMemo,
+    required this.nextFUDate,
+  });
+
+  factory FollowUpDashboardDetailModel.fromJson(Map<String, dynamic> json) {
+    return FollowUpDashboardDetailModel(
+      prospectDate: json['prospectDate'],
+      prospectDateFormat: json['prospectDateFormat'],
+      customerName: json['customerName'],
+      customerStatus: json['customerStatus'],
+      mobilePhone: json['mobilePhone'],
+      fuStatus: json['fuStatus'],
+      lastFUDate: json['lastFUDate'],
+      lastFUMemo: json['lastFUMemo'],
+      nextFUDate: json['nextFUDate'],
     );
   }
 }

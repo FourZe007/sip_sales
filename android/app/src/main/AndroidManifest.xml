@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-package="com.stsj.sipsales">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.stsj.sipsales">
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -20,7 +20,6 @@ package="com.stsj.sipsales">
         or higher if your app targets Android 14 (API level 34) or higher.  -->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <application
-        tools:replace="android:label"
         android:label="SIP Sales"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -28,6 +27,7 @@ package="com.stsj.sipsales">
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
+            android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -50,12 +50,18 @@ package="com.stsj.sipsales">
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <!-- <meta-data android:name="android.immersive" android:value="true" /> -->
     </application>
-    <!-- Provide required visibility configuration for API level 30 and above -->
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
-        <!-- Place inside the <queries> element. -->
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+         <!-- Place inside the <queries> element. -->
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>

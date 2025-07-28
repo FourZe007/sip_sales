@@ -274,6 +274,7 @@ class _LocationPageState extends State<LocationPage> {
                                         warna: Colors.white,
                                         customizedHeight: 20.0,
                                         customizedWidth: 20.0,
+                                        strokeWidth: 3,
                                       );
                                     }
                                   } else {

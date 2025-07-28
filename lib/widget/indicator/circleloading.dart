@@ -5,12 +5,14 @@ class CircleLoading extends StatelessWidget {
     this.warna = Colors.black,
     this.customizedWidth = 0,
     this.customizedHeight = 0,
+    this.strokeWidth = 5,
     super.key,
   });
 
   final Color warna;
   final double customizedWidth;
   final double customizedHeight;
+  final double strokeWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class CircleLoading extends StatelessWidget {
           height: customizedHeight,
           width: customizedWidth,
           child: CircularProgressIndicator(
-            strokeWidth: 5,
+            strokeWidth: strokeWidth,
             color: warna,
           ),
         ),
@@ -35,7 +37,7 @@ class CircleLoading extends StatelessWidget {
           height: 25,
           width: 25,
           child: CircularProgressIndicator(
-            strokeWidth: 5,
+            strokeWidth: strokeWidth,
             color: warna,
           ),
         ),

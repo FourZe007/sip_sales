@@ -23,9 +23,7 @@ class SalesDashboardBloc
         event.date,
       ).then((response) {
         if (response['status'] == 'sukses') {
-          salesData = (response['data'] as List)
-              .map((item) => SalesmanDashboardModel.fromJson(item))
-              .toList();
+          salesData.addAll(response['data'] as List<SalesmanDashboardModel>);
         }
       });
 

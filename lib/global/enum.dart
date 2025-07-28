@@ -1,0 +1,4 @@
+enum DashboardType {
+  salesman,
+  followup,
+}
