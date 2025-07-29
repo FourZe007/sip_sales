@@ -29,6 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<SipSalesState>(context);
+    late TabController tabController;
 
     return SafeArea(
       top: false,
@@ -108,126 +109,204 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ),
-          body: Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: BlocBuilder<DashboardTypeCubit, DashboardType>(
-                builder: (context, state) {
-                  String name = state.name;
-                  if (name == 'followup') {
-                    name = 'Follow-Up';
-                  }
-
-                  if (MediaQuery.of(context).size.width < 800) {
-                    return Text(
-                      'Dashboard ${name[0].toUpperCase()}${name.substring(1)}',
-                      style: GlobalFont.bigfontRBold,
-                    );
-                  } else {
-                    return Text(
-                      'Dashboard ${name[0].toUpperCase()}${name.substring(1)}',
-                      style: GlobalFont.bigfontRBold.copyWith(fontSize: 20),
-                    );
-                  }
-                },
-              ),
-              backgroundColor: Colors.blue,
-              leading: Builder(
-                builder: (context) {
-                  if (Platform.isIOS) {
-                    return IconButton(
-                      onPressed: () {
-                        context
-                            .read<DashboardTypeCubit>()
-                            .changeType(DashboardType.salesman);
-
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: (MediaQuery.of(context).size.width < 800)
-                            ? 20.0
-                            : 35.0,
-                        color: Colors.black,
-                      ),
-                    );
-                  } else {
-                    return IconButton(
-                      onPressed: () {
-                        context
-                            .read<DashboardTypeCubit>()
-                            .changeType(DashboardType.salesman);
-
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_rounded,
-                        size: (MediaQuery.of(context).size.width < 800)
-                            ? 20.0
-                            : 35.0,
-                        color: Colors.black,
-                      ),
-                    );
-                  }
-                },
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () => panelController.open(),
-                  icon: Icon(
-                    Icons.filter_alt,
-                    size:
-                        (MediaQuery.of(context).size.width < 800) ? 25.0 : 40.0,
-                    color: Colors.black,
-                  ),
+          body: DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(
+                  'Dashboard',
+                  style: GlobalFont.bigfontR,
                 ),
-              ],
-            ),
-            body: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                  color: Colors.white,
-                ),
-                padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
-                child: BlocConsumer<DashboardTypeCubit, DashboardType>(
-                  listener: (context, state) {
-                    log('Dashboard Type: ${state.name}');
-                    final salesmanId = appState.getUserAccountList.isNotEmpty
-                        ? appState.getUserAccountList[0].employeeID
-                        : '';
-                    final date =
-                        DateTime.now().toIso8601String().substring(0, 10);
+                // title: BlocBuilder<DashboardTypeCubit, DashboardType>(
+                //   builder: (context, state) {
+                //     String name = state.name;
+                //     if (name == 'followup') {
+                //       name = 'Follow-Up';
+                //     }
+                //
+                //     if (MediaQuery.of(context).size.width < 800) {
+                //       return Text(
+                //         'Dashboard ${name[0].toUpperCase()}${name.substring(1)}',
+                //         style: GlobalFont.bigfontRBold,
+                //       );
+                //     } else {
+                //       return Text(
+                //         'Dashboard ${name[0].toUpperCase()}${name.substring(1)}',
+                //         style: GlobalFont.bigfontRBold.copyWith(fontSize: 20),
+                //       );
+                //     }
+                //   },
+                // ),
+                backgroundColor: Colors.blue,
+                leading: Builder(
+                  builder: (context) {
+                    if (Platform.isIOS) {
+                      return IconButton(
+                        onPressed: () {
+                          context
+                              .read<DashboardTypeCubit>()
+                              .changeType(DashboardType.salesman);
 
-                    if (state.name == 'salesman') {
-                      context.read<SalesDashboardBloc>().add(
-                            LoadSalesDashboard(salesmanId, date),
-                          );
-                    } else if (state.name == 'followup') {
-                      context.read<FollowupDashboardBloc>().add(
-                            LoadFollowupDashboard(salesmanId, date),
-                          );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state.name == 'salesman') {
-                      return SalesmanDashboard();
-                    } else if (state.name == 'followup') {
-                      return FollowupDashboard();
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: (MediaQuery.of(context).size.width < 800)
+                              ? 20.0
+                              : 35.0,
+                          color: Colors.black,
+                        ),
+                      );
                     } else {
-                      return Center(
-                        child: Text('No filter selected'),
+                      return IconButton(
+                        onPressed: () {
+                          context
+                              .read<DashboardTypeCubit>()
+                              .changeType(DashboardType.salesman);
+
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.arrow_back_rounded,
+                          size: (MediaQuery.of(context).size.width < 800)
+                              ? 20.0
+                              : 35.0,
+                          color: Colors.black,
+                        ),
                       );
                     }
                   },
+                ),
+                actions: [
+                  IconButton(
+                    onPressed: () => panelController.open(),
+                    icon: Icon(
+                      Icons.filter_alt,
+                      size: (MediaQuery.of(context).size.width < 800)
+                          ? 25.0
+                          : 40.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+                bottom: TabBar(
+                  onTap: (index) {
+                    log('Index: ${index.toString()}');
+                    context.read<DashboardTypeCubit>().changeType(index == 0
+                        ? DashboardType.salesman
+                        : DashboardType.followup);
+                  },
+                  indicatorColor: Colors.black,
+                  indicatorWeight: 2,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.black,
+                  unselectedLabelStyle: GlobalFont.bigfontR,
+                  labelStyle: GlobalFont.bigfontR.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  dividerColor: Colors.transparent,
+                  tabs: [
+                    Tab(text: 'Salesman'),
+                    Tab(text: 'Follow-Up'),
+                  ],
+                ),
+              ),
+              body: BlocListener<DashboardTypeCubit, DashboardType>(
+                listener: (context, state) {
+                  log('Dashboard Type: ${state.name}');
+                  final salesmanId = appState.getUserAccountList.isNotEmpty
+                      ? appState.getUserAccountList[0].employeeID
+                      : '';
+                  final date =
+                      DateTime.now().toIso8601String().substring(0, 10);
+
+                  if (state.name == 'salesman') {
+                    context.read<SalesDashboardBloc>().add(
+                          LoadSalesDashboard(salesmanId, date),
+                        );
+                  } else if (state.name == 'followup') {
+                    context.read<FollowupDashboardBloc>().add(
+                          LoadFollowupDashboard(salesmanId, date),
+                        );
+                  }
+                },
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      ),
+                      color: Colors.white,
+                    ),
+                    padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
+                    child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        // ~:Salesman:~
+                        SalesmanDashboard(),
+
+                        // ~:Follow-Up:~
+                        FollowupDashboard(),
+
+                        // DecoratedBox(
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.blue,
+                        //   ),
+                        //   child: Container(
+                        //     height: MediaQuery.of(context).size.height,
+                        //     width: MediaQuery.of(context).size.width,
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.only(
+                        //         topLeft: Radius.circular(20.0),
+                        //         topRight: Radius.circular(20.0),
+                        //       ),
+                        //       color: Colors.white,
+                        //     ),
+                        //     padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
+                        //     child: BlocConsumer<DashboardTypeCubit, DashboardType>(
+                        //       listener: (context, state) {
+                        //         log('Dashboard Type: ${state.name}');
+                        //         final salesmanId =
+                        //             appState.getUserAccountList.isNotEmpty
+                        //                 ? appState.getUserAccountList[0].employeeID
+                        //                 : '';
+                        //         final date =
+                        //             DateTime.now().toIso8601String().substring(0, 10);
+                        //
+                        //         if (state.name == 'salesman') {
+                        //           context.read<SalesDashboardBloc>().add(
+                        //                 LoadSalesDashboard(salesmanId, date),
+                        //               );
+                        //         } else if (state.name == 'followup') {
+                        //           context.read<FollowupDashboardBloc>().add(
+                        //                 LoadFollowupDashboard(salesmanId, date),
+                        //               );
+                        //         }
+                        //       },
+                        //       builder: (context, state) {
+                        //         if (state.name == 'salesman') {
+                        //           return SalesmanDashboard();
+                        //         } else if (state.name == 'followup') {
+                        //           return FollowupDashboard();
+                        //         } else {
+                        //           return Center(
+                        //             child: Text('No filter selected'),
+                        //           );
+                        //         }
+                        //       },
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

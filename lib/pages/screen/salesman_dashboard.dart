@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_state.dart';
 import 'package:sip_sales/widget/datagrid/leasing_condition.dart';
@@ -76,100 +77,153 @@ class SalesmanDashboard extends StatelessWidget {
                       spacing: 8,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // ~:Title:~
                         Text('Akumulasi'),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          child: Row(
-                            spacing: 4,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              // ~:Prospek:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Prospek'),
-                                    Text(salesData.prospek.toString()),
-                                  ],
-                                ),
-                              ),
 
-                              // ~:SPK:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('SPK'),
-                                    Text(salesData.spk.toString()),
-                                  ],
-                                ),
+                        // ~:Data:~
+                        Row(
+                          spacing: 4,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // ~:Prospek:~
+                            Container(
+                              width: 64,
+                              height: 75,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(12),
                               ),
+                              padding: EdgeInsets.symmetric(
+                                vertical: 4,
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'P',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.prospek.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-                              // ~:SPK Terbuka:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Terbuka'),
-                                    Text(salesData.spkTerbuka.toString()),
-                                  ],
-                                ),
+                            // ~:SPK:~
+                            Container(
+                              width: 64,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(12),
                               ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'SPK',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.spk.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-                              // ~:STU:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('STU'),
-                                    Text(salesData.stu.toString()),
-                                  ],
-                                ),
+                            // ~:SPK Terbuka:~
+                            Container(
+                              width: 64,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(12),
                               ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'Tbk',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.spkTerbuka.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-                              // ~:Delivery:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Delivery'),
-                                    Text(salesData.delivery.toString()),
-                                  ],
-                                ),
+                            // ~:STU:~
+                            Container(
+                              width: 64,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ],
-                          ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'STU',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.stu.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // ~:Delivery:~
+                            Container(
+                              width: 64,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'Deliv',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.delivery.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -183,83 +237,122 @@ class SalesmanDashboard extends StatelessWidget {
                       spacing: 8,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // ~:Title:~
                         Text('Harian'),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          child: Row(
-                            spacing: 4,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              // ~:Prospek:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.green[200],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Prospek'),
-                                    Text(salesData.prospek.toString()),
-                                  ],
-                                ),
-                              ),
 
-                              // ~:SPK:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.green[200],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('SPK'),
-                                    Text(salesData.spk.toString()),
-                                  ],
-                                ),
+                        // ~:Data:~
+                        Row(
+                          spacing: 4,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // ~:Prospek:~
+                            Container(
+                              width: 80,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.green[200],
+                                borderRadius: BorderRadius.circular(12),
                               ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'P',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.prospek.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-                              // ~:SPK Terbuka:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.green[200],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Terbuka'),
-                                    Text(salesData.spkTerbuka.toString()),
-                                  ],
-                                ),
+                            // ~:SPK:~
+                            Container(
+                              width: 80,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.green[200],
+                                borderRadius: BorderRadius.circular(12),
                               ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'SPK',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.spk.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-                              // ~:STU:~
-                              Container(
-                                width: 75,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.green[200],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('STU'),
-                                    Text(salesData.stu.toString()),
-                                  ],
-                                ),
+                            // ~:SPK Terbuka:~
+                            Container(
+                              width: 80,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.green[200],
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ],
-                          ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'Tbk',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.spkTerbuka.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // ~:STU:~
+                            Container(
+                              width: 80,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.green[200],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text(
+                                      'STU',
+                                      style: GlobalFont.bigfontR,
+                                    ),
+                                  ),
+                                  Text(
+                                    salesData.stu.toString(),
+                                    style: GlobalFont.bigfontRBold.copyWith(
+                                      fontSize: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

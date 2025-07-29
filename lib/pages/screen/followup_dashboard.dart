@@ -41,6 +41,7 @@ class FollowupDashboard extends StatelessWidget {
           return Column(
             spacing: 20,
             children: [
+              // ~:Data:~
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
@@ -49,8 +50,8 @@ class FollowupDashboard extends StatelessWidget {
                   children: [
                     // ~:Total Prospek:~
                     Container(
-                      width: 80,
-                      height: 110,
+                      width: 65,
+                      height: 100,
                       decoration: BoxDecoration(
                         color: Colors.blue[200],
                         borderRadius: BorderRadius.circular(12),
@@ -60,10 +61,9 @@ class FollowupDashboard extends StatelessWidget {
                       child: Column(
                         children: [
                           Container(
-                            height: 32,
                             alignment: Alignment.center,
                             child: Text(
-                              'Total Prospek',
+                              'TP',
                               style: GlobalFont.mediumbigfontR.copyWith(
                                 fontSize: 12,
                               ),
@@ -72,8 +72,9 @@ class FollowupDashboard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               state.salesData[0].totalProspect.toString(),
-                              style: GlobalFont.giantfontRBold
-                                  .copyWith(fontSize: GlobalSize.dateFont1),
+                              style: GlobalFont.giantfontRBold.copyWith(
+                                fontSize: GlobalSize.mediumgigafont1,
+                              ),
                             ),
                           ),
                         ],
@@ -82,8 +83,8 @@ class FollowupDashboard extends StatelessWidget {
 
                     // ~:Belum Follow-Up:~
                     Container(
-                      width: 80,
-                      height: 110,
+                      width: 70,
+                      height: 100,
                       decoration: BoxDecoration(
                         color: Colors.grey[400],
                         borderRadius: BorderRadius.circular(12),
@@ -93,10 +94,10 @@ class FollowupDashboard extends StatelessWidget {
                       child: Column(
                         children: [
                           Container(
-                            height: 32,
+                            height: 28,
                             alignment: Alignment.center,
                             child: Text(
-                              'Belum Follow Up',
+                              'BFU',
                               style: GlobalFont.mediumbigfontR.copyWith(
                                 fontSize: 12,
                               ),
@@ -105,8 +106,9 @@ class FollowupDashboard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               state.salesData[0].belumFU.toString(),
-                              style: GlobalFont.giantfontRBold
-                                  .copyWith(fontSize: GlobalSize.dateFont1),
+                              style: GlobalFont.giantfontRBold.copyWith(
+                                fontSize: GlobalSize.titleMenuFont2,
+                              ),
                             ),
                           ),
                         ],
@@ -115,8 +117,8 @@ class FollowupDashboard extends StatelessWidget {
 
                     // ~:Proses Follow-Up:~
                     Container(
-                      width: 80,
-                      height: 110,
+                      width: 70,
+                      height: 100,
                       decoration: BoxDecoration(
                         color: Colors.yellow[300],
                         borderRadius: BorderRadius.circular(12),
@@ -126,10 +128,10 @@ class FollowupDashboard extends StatelessWidget {
                       child: Column(
                         children: [
                           Container(
-                            height: 32,
+                            height: 28,
                             alignment: Alignment.center,
                             child: Text(
-                              'Proses Follow Up',
+                              'PFU',
                               style: GlobalFont.mediumbigfontR.copyWith(
                                 fontSize: 12,
                               ),
@@ -138,8 +140,9 @@ class FollowupDashboard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               state.salesData[0].prosesFU.toString(),
-                              style: GlobalFont.giantfontRBold
-                                  .copyWith(fontSize: GlobalSize.dateFont1),
+                              style: GlobalFont.giantfontRBold.copyWith(
+                                fontSize: GlobalSize.titleMenuFont2,
+                              ),
                             ),
                           ),
                         ],
@@ -148,8 +151,8 @@ class FollowupDashboard extends StatelessWidget {
 
                     // ~:Closing:~
                     Container(
-                      width: 80,
-                      height: 110,
+                      width: 70,
+                      height: 100,
                       decoration: BoxDecoration(
                         color: Colors.green[300],
                         borderRadius: BorderRadius.circular(12),
@@ -159,7 +162,7 @@ class FollowupDashboard extends StatelessWidget {
                       child: Column(
                         children: [
                           Container(
-                            height: 32,
+                            height: 28,
                             alignment: Alignment.center,
                             child: Text(
                               'Closing',
@@ -171,8 +174,9 @@ class FollowupDashboard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               state.salesData[0].closing.toString(),
-                              style: GlobalFont.giantfontRBold
-                                  .copyWith(fontSize: GlobalSize.dateFont1),
+                              style: GlobalFont.giantfontRBold.copyWith(
+                                fontSize: GlobalSize.titleMenuFont2,
+                              ),
                             ),
                           ),
                         ],
@@ -181,8 +185,8 @@ class FollowupDashboard extends StatelessWidget {
 
                     // ~:Batal:~
                     Container(
-                      width: 80,
-                      height: 110,
+                      width: 70,
+                      height: 100,
                       decoration: BoxDecoration(
                         color: Colors.red[300],
                         borderRadius: BorderRadius.circular(12),
@@ -192,7 +196,6 @@ class FollowupDashboard extends StatelessWidget {
                       child: Column(
                         children: [
                           Container(
-                            height: 32,
                             alignment: Alignment.center,
                             child: Text(
                               'Batal',
@@ -204,8 +207,9 @@ class FollowupDashboard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               state.salesData[0].batal.toString(),
-                              style: GlobalFont.giantfontRBold
-                                  .copyWith(fontSize: GlobalSize.dateFont1),
+                              style: GlobalFont.giantfontRBold.copyWith(
+                                fontSize: GlobalSize.titleMenuFont2,
+                              ),
                             ),
                           ),
                         ],
