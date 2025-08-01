@@ -9,6 +9,13 @@ class GlobalVar {
   static String? password = '';
 }
 
+class GlobalFUIcon {
+  static Icon notYet = Icon(Icons.person_search_rounded);
+  static Icon inProgress = Icon(Icons.local_fire_department_rounded);
+  static Icon completed = Icon(Icons.check_circle_rounded);
+  static Icon cancelled = Icon(Icons.cancel_rounded);
+}
+
 class GlobalFunction {
   static tampilkanDialog(
       BuildContext context, bool isDismissible, Widget widget) {

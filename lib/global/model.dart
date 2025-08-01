@@ -616,7 +616,7 @@ class CategoryModel {
   final int spksc;
   final int stusc;
   final int lmsc;
-  final int ratioSC;
+  final dynamic ratioSC;
 
   CategoryModel({
     required this.lineSC,
@@ -720,7 +720,7 @@ class FollowUpDashboardModel {
   final int closing;
   final int batal;
   final int belumFU;
-  final double persenNew;
+  final dynamic persenNew;
   final List<FollowUpDashboardDetailModel> detail;
 
   FollowUpDashboardModel({
@@ -742,7 +742,9 @@ class FollowUpDashboardModel {
       closing: json['closing'],
       batal: json['batal'],
       belumFU: json['belumFU'],
-      persenNew: json['persenNew'],
+      persenNew: json['persenNew'] is double
+          ? (json['persenNew'] as double)
+          : (json['persenNew'] as int).toDouble(),
       detail: json['detail']
           .map<FollowUpDashboardDetailModel>(
               (data) => FollowUpDashboardDetailModel.fromJson(data))
@@ -784,6 +786,67 @@ class FollowUpDashboardDetailModel {
       fuStatus: json['fuStatus'],
       lastFUDate: json['lastFUDate'],
       lastFUMemo: json['lastFUMemo'],
+      nextFUDate: json['nextFUDate'],
+    );
+  }
+}
+
+class UpdateFollowUpDashboardModel {
+  final String customerName;
+  final String prospectDate;
+  final String customerStatus;
+  final String modelName;
+  final String mobilePhone;
+  final String prospectStatus;
+  final List<UpdateFollowupDashboardDetails> followup;
+
+  UpdateFollowUpDashboardModel({
+    required this.customerName,
+    required this.prospectDate,
+    required this.customerStatus,
+    required this.modelName,
+    required this.mobilePhone,
+    required this.prospectStatus,
+    required this.followup,
+  });
+
+  factory UpdateFollowUpDashboardModel.fromJson(Map<String, dynamic> json) {
+    return UpdateFollowUpDashboardModel(
+      customerName: json['customerName'],
+      prospectDate: json['prospectDate'],
+      customerStatus: json['customerStatus'],
+      modelName: json['modelName'],
+      mobilePhone: json['mobilePhone'],
+      prospectStatus: json['prospectStatus'],
+      followup: json['followUp']
+          .map<UpdateFollowupDashboardDetails>(
+              (data) => UpdateFollowupDashboardDetails.fromJson(data))
+          .toList(),
+    );
+  }
+}
+
+class UpdateFollowupDashboardDetails {
+  final int line;
+  final String fuDate;
+  final String fuResult;
+  final String fuMemo;
+  final String nextFUDate;
+
+  UpdateFollowupDashboardDetails({
+    required this.line,
+    required this.fuDate,
+    required this.fuResult,
+    required this.fuMemo,
+    required this.nextFUDate,
+  });
+
+  factory UpdateFollowupDashboardDetails.fromJson(Map<String, dynamic> json) {
+    return UpdateFollowupDashboardDetails(
+      line: json['line'],
+      fuDate: json['fuDate'],
+      fuResult: json['fuResult'],
+      fuMemo: json['fuMemo'],
       nextFUDate: json['nextFUDate'],
     );
   }

@@ -1453,5 +1453,67 @@ class GlobalAPI {
       return {'status': 'error', 'data': e.toString()};
     }
   }
+
+  static Future<Map<String, dynamic>> fetchUpdateFollowupDashboard(
+    String employeeID,
+    String mobilePhone,
+    String prospectDate,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/DBSales/DBSales02/ProspectDetail',
+    );
+
+    Map mapUpdateFollowupDashboard = {
+      "EmployeeID": employeeID,
+      "MobilePhone": mobilePhone,
+      "ProspectDate": prospectDate,
+    };
+    log('Map Update Followup Dashboard: $mapUpdateFollowupDashboard');
+
+    List<UpdateFollowUpDashboardModel> updateFollowupDashboardList = [];
+
+    try {
+      final response = await http
+          .post(url, body: jsonEncode(mapUpdateFollowupDashboard), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      log('Response: ${response.body}');
+
+      if (response.statusCode <= 200) {
+        log('Status Code: ${response.statusCode}');
+        var jsonResult = jsonDecode(response.body);
+        if (jsonResult['code'] == '100' &&
+            jsonResult['msg'] == 'Sukses' &&
+            jsonResult['data'] != null) {
+          log('Data: ${((jsonResult['data'] as List).length)}');
+          updateFollowupDashboardList.addAll((jsonResult['data'] as List)
+              .map<UpdateFollowUpDashboardModel>(
+                  (e) => UpdateFollowUpDashboardModel.fromJson(e)));
+          log('Success');
+          return {
+            'status': 'sukses',
+            'data': updateFollowupDashboardList,
+          };
+        } else {
+          log('Failed');
+          return {
+            'status': 'gagal',
+            'data': updateFollowupDashboardList,
+          };
+        }
+      } else {
+        log('Failed');
+        return {
+          'status': 'gagal',
+          'data': 'Status code ${response.statusCode}, coba lagi.',
+        };
+      }
+    } catch (e) {
+      log('Error: ${e.toString()}');
+      return {'status': 'error', 'data': e.toString()};
+    }
+  }
   // ~:New:~
 }

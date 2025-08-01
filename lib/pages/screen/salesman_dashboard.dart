@@ -4,9 +4,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_state.dart';
+import 'package:sip_sales/widget/custom.dart';
 import 'package:sip_sales/widget/datagrid/leasing_condition.dart';
 import 'package:sip_sales/widget/datagrid/sales_category.dart';
 import 'package:sip_sales/widget/graph/db_stu.dart';
@@ -65,163 +67,65 @@ class SalesmanDashboard extends StatelessWidget {
             physics: BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               final salesData = state.salesData[index];
+              double categoryHeight = 52 + salesData.categoryList.length * 50;
+              double leasingHeight = 52 + salesData.leasingList.length * 50;
 
               return Column(
-                spacing: 8,
+                spacing: 12,
                 children: [
                   // ~:Akumulasi:~
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: 120,
                     child: Column(
                       spacing: 8,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // ~:Title:~
-                        Text('Akumulasi'),
+                        Text(
+                          'Akumulasi',
+                          style: GlobalFont.mediumbigfontR.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
 
                         // ~:Data:~
                         Row(
-                          spacing: 4,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             // ~:Prospek:~
-                            Container(
-                              width: 64,
-                              height: 75,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical: 4,
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'P',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.prospek.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'Pros',
+                              value: salesData.prospek,
                             ),
 
                             // ~:SPK:~
-                            Container(
-                              width: 64,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'SPK',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.spk.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'SPK',
+                              value: salesData.spk,
                             ),
 
                             // ~:SPK Terbuka:~
-                            Container(
-                              width: 64,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'Tbk',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.spkTerbuka.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'Tbk',
+                              value: salesData.spkTerbuka,
                             ),
 
                             // ~:STU:~
-                            Container(
-                              width: 64,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'STU',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.stu.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'STU',
+                              value: salesData.stu,
                             ),
 
                             // ~:Delivery:~
-                            Container(
-                              width: 64,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'Deliv',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.delivery.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'Deliv',
+                              value: salesData.delivery,
                             ),
                           ],
                         ),
@@ -232,13 +136,31 @@ class SalesmanDashboard extends StatelessWidget {
                   // ~:Harian:~
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: 120,
                     child: Column(
                       spacing: 8,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ~:Title:~
-                        Text('Harian'),
+                        // ~:Title & Date:~
+                        Row(
+                          spacing: 4,
+                          children: [
+                            // ~:Title:~
+                            Text(
+                              'Harian,',
+                              style: GlobalFont.mediumbigfontRBold.copyWith(
+                                fontSize: 16,
+                              ),
+                            ),
+
+                            // ~:Date:~
+                            Text(
+                              DateFormat('dd MMMM yyyy').format(DateTime.now()),
+                              style: GlobalFont.mediumbigfontRBold.copyWith(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
 
                         // ~:Data:~
                         Row(
@@ -246,111 +168,43 @@ class SalesmanDashboard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             // ~:Prospek:~
-                            Container(
-                              width: 80,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.green[200],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'P',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.prospek.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'Pros',
+                              value: salesData.prospekH,
+                              boxWidth: 80,
+                              boxHeight: 75,
+                              boxColor: Colors.green[200]!,
                             ),
 
                             // ~:SPK:~
-                            Container(
-                              width: 80,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.green[200],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'SPK',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.spk.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'SPK',
+                              value: salesData.spkh,
+                              boxWidth: 80,
+                              boxHeight: 75,
+                              boxColor: Colors.green[200]!,
                             ),
 
                             // ~:SPK Terbuka:~
-                            Container(
-                              width: 80,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.green[200],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'Tbk',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.spkTerbuka.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'Tbk',
+                              value: salesData.spkTerbukaH,
+                              boxWidth: 80,
+                              boxHeight: 75,
+                              boxColor: Colors.green[200]!,
                             ),
 
                             // ~:STU:~
-                            Container(
-                              width: 80,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.green[200],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    child: Text(
-                                      'STU',
-                                      style: GlobalFont.bigfontR,
-                                    ),
-                                  ),
-                                  Text(
-                                    salesData.stu.toString(),
-                                    style: GlobalFont.bigfontRBold.copyWith(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            CustomWidget.buildStatBox(
+                              context: context,
+                              label: 'STU',
+                              value: salesData.stuh,
+                              boxWidth: 80,
+                              boxHeight: 75,
+                              boxColor: Colors.green[200]!,
                             ),
                           ],
                         ),
@@ -377,7 +231,7 @@ class SalesmanDashboard extends StatelessWidget {
 
                           // ~:Table:~
                           Container(
-                            height: 300, // Fixed height for the grid
+                            height: categoryHeight,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey[300]!),
                               borderRadius: BorderRadius.circular(8.0),
@@ -387,65 +241,55 @@ class SalesmanDashboard extends StatelessWidget {
                                 categoryData: state.salesData[0].categoryList,
                               ),
                               columnWidthMode: ColumnWidthMode.fill,
+                              horizontalScrollPhysics:
+                                  NeverScrollableScrollPhysics(),
                               verticalScrollPhysics:
                                   NeverScrollableScrollPhysics(),
                               columns: [
                                 GridColumn(
                                   columnName: 'method',
-                                  minimumWidth: 120,
-                                  label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                  minimumWidth: 100,
+                                  label: Align(
                                     alignment: Alignment.center,
-                                    child: Text('Cara Jual'),
+                                    child: Text('Cara'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'pros',
-                                  minimumWidth: 60,
+                                  minimumWidth: 32,
                                   label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
                                     alignment: Alignment.center,
-                                    child: Text('PROS'),
+                                    child: Text('Pros'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'spk',
-                                  minimumWidth: 50,
+                                  minimumWidth: 32,
                                   label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
                                     alignment: Alignment.center,
                                     child: Text('SPK'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'stu',
-                                  minimumWidth: 50,
+                                  minimumWidth: 32,
                                   label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
                                     alignment: Alignment.center,
                                     child: Text('STU'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'lm',
-                                  minimumWidth: 50,
+                                  minimumWidth: 32,
                                   label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
                                     alignment: Alignment.center,
                                     child: Text('LM'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: '%',
-                                  minimumWidth: 60,
+                                  minimumWidth: 64,
                                   label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
                                     alignment: Alignment.center,
                                     child: Text('Ratio'),
                                   ),
@@ -477,7 +321,7 @@ class SalesmanDashboard extends StatelessWidget {
 
                           // ~:Table:~
                           Container(
-                            height: 300, // Fixed height for the grid
+                            height: leasingHeight,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey[300]!),
                               borderRadius: BorderRadius.circular(8.0),
@@ -487,25 +331,23 @@ class SalesmanDashboard extends StatelessWidget {
                                 categoryData: state.salesData[0].leasingList,
                               ),
                               columnWidthMode: ColumnWidthMode.fill,
+                              horizontalScrollPhysics:
+                                  NeverScrollableScrollPhysics(),
                               verticalScrollPhysics:
                                   NeverScrollableScrollPhysics(),
                               columns: [
                                 GridColumn(
                                   columnName: 'name',
-                                  minimumWidth: 75,
-                                  label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                  minimumWidth: 72,
+                                  label: Align(
                                     alignment: Alignment.center,
                                     child: Text('Leasing'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'total',
-                                  minimumWidth: 75,
-                                  label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                  minimumWidth: 48,
+                                  label: Align(
                                     alignment: Alignment.center,
                                     child: Text(
                                       'Total SPK',
@@ -515,30 +357,24 @@ class SalesmanDashboard extends StatelessWidget {
                                 ),
                                 GridColumn(
                                   columnName: 'proses',
-                                  minimumWidth: 65,
-                                  label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                  minimumWidth: 44,
+                                  label: Align(
                                     alignment: Alignment.center,
                                     child: Text('Proses'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'terbuka',
-                                  minimumWidth: 70,
-                                  label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                  minimumWidth: 40,
+                                  label: Align(
                                     alignment: Alignment.center,
-                                    child: Text('Terbuka'),
+                                    child: Text('Tbk'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'unit',
-                                  minimumWidth: 50,
-                                  label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                  minimumWidth: 40,
+                                  label: Align(
                                     alignment: Alignment.center,
                                     child: Text('Unit'),
                                   ),
@@ -546,9 +382,7 @@ class SalesmanDashboard extends StatelessWidget {
                                 GridColumn(
                                   columnName: '%',
                                   minimumWidth: 75,
-                                  label: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                  label: Align(
                                     alignment: Alignment.center,
                                     child: Text('Ratio'),
                                   ),

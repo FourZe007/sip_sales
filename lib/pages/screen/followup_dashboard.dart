@@ -1,18 +1,29 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_state.dart';
+import 'package:sip_sales/global/state/provider.dart';
+import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_event.dart';
+import 'package:sip_sales/pages/screen/followup_dashboard_detail.dart';
+import 'package:sip_sales/widget/custom.dart';
+import 'package:sip_sales/widget/format.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FollowupDashboard extends StatelessWidget {
   const FollowupDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<SipSalesState>(context);
+
     return BlocBuilder<FollowupDashboardBloc, FollowupDashboardState>(
       builder: (context, state) {
         if (state is FollowupDashboardLoading) {
@@ -38,212 +49,398 @@ class FollowupDashboard extends StatelessWidget {
           // return Center(
           //   child: Text('Followup Dashboard data loaded'),
           // );
-          return Column(
-            spacing: 20,
-            children: [
-              // ~:Data:~
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  spacing: 8,
-                  children: [
-                    // ~:Total Prospek:~
-                    Container(
-                      width: 65,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.blue[200],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'TP',
-                              style: GlobalFont.mediumbigfontR.copyWith(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              state.salesData[0].totalProspect.toString(),
-                              style: GlobalFont.giantfontRBold.copyWith(
-                                fontSize: GlobalSize.mediumgigafont1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+          return ListView.builder(
+            itemCount: state.salesData.length,
+            physics: BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              final salesData = state.salesData[index];
 
-                    // ~:Belum Follow-Up:~
-                    Container(
-                      width: 70,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 28,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'BFU',
-                              style: GlobalFont.mediumbigfontR.copyWith(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              state.salesData[0].belumFU.toString(),
-                              style: GlobalFont.giantfontRBold.copyWith(
-                                fontSize: GlobalSize.titleMenuFont2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // ~:Proses Follow-Up:~
-                    Container(
-                      width: 70,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.yellow[300],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 28,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'PFU',
-                              style: GlobalFont.mediumbigfontR.copyWith(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              state.salesData[0].prosesFU.toString(),
-                              style: GlobalFont.giantfontRBold.copyWith(
-                                fontSize: GlobalSize.titleMenuFont2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // ~:Closing:~
-                    Container(
-                      width: 70,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.green[300],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 28,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Closing',
-                              style: GlobalFont.mediumbigfontR.copyWith(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              state.salesData[0].closing.toString(),
-                              style: GlobalFont.giantfontRBold.copyWith(
-                                fontSize: GlobalSize.titleMenuFont2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // ~:Batal:~
-                    Container(
-                      width: 70,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.red[300],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Batal',
-                              style: GlobalFont.mediumbigfontR.copyWith(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              state.salesData[0].batal.toString(),
-                              style: GlobalFont.giantfontRBold.copyWith(
-                                fontSize: GlobalSize.titleMenuFont2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // ~:New Prospect Progress Bar:~
-              Stack(
-                alignment: Alignment.center,
+              return Column(
+                spacing: 16,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: 40,
-                    child: LinearProgressIndicator(
-                      value: state.salesData[0].newProspect.toDouble() /
-                          state.salesData[0].totalProspect.toDouble(),
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation(Colors.blue[200]),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                  // ~:Data:~
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // ~:Total Prospek:~
+                      CustomWidget.buildStatBox(
+                        context: context,
+                        label: 'T.Pros',
+                        value: salesData.totalProspect,
+                        boxWidth: 64,
+                        boxHeight: 90,
+                        lableHeight: 28,
+                        boxColor: Colors.blue[200]!,
+                      ),
+
+                      // ~:Belum Follow-Up:~
+                      CustomWidget.buildStatBox(
+                        context: context,
+                        label: 'BFU',
+                        value: salesData.belumFU,
+                        boxWidth: 64,
+                        boxHeight: 90,
+                        lableHeight: 28,
+                        boxColor: Colors.grey[400]!,
+                      ),
+
+                      // ~:Proses Follow-Up:~
+                      CustomWidget.buildStatBox(
+                        context: context,
+                        label: 'PFU',
+                        value: salesData.prosesFU,
+                        boxWidth: 64,
+                        boxHeight: 90,
+                        lableHeight: 28,
+                        boxColor: Colors.yellow[300]!,
+                      ),
+
+                      // ~:Closing:~
+                      CustomWidget.buildStatBox(
+                        context: context,
+                        label: 'Deal',
+                        value: salesData.closing,
+                        boxWidth: 64,
+                        boxHeight: 90,
+                        lableHeight: 28,
+                        boxColor: Colors.green[300]!,
+                      ),
+
+                      // ~:Batal:~
+                      CustomWidget.buildStatBox(
+                        context: context,
+                        label: 'Batal',
+                        value: salesData.batal,
+                        boxWidth: 64,
+                        boxHeight: 90,
+                        lableHeight: 28,
+                        boxColor: Colors.red[300]!,
+                      ),
+                    ],
                   ),
-                  Center(
-                    child: Text(
-                      'Prospek Baru: ${state.salesData[0].newProspect.toString()} orang (${state.salesData[0].persenNew.toString()}%)',
-                      style: GlobalFont.mediumbigfontR,
-                      textAlign: TextAlign.center,
-                    ),
+
+                  // ~:New Prospect Progress Bar:~
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 40,
+                        child: LinearProgressIndicator(
+                          value: salesData.newProspect.toDouble() /
+                              salesData.totalProspect.toDouble(),
+                          backgroundColor: Colors.grey[300],
+                          valueColor: AlwaysStoppedAnimation(Colors.blue[200]),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          'Prospek Baru: ${salesData.newProspect.toString()} orang (${salesData.persenNew.toString()}%)',
+                          style: GlobalFont.mediumbigfontR,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // ~:Follow-Up:~
+                  Column(
+                    children: salesData.detail.map((e) {
+                      final icon = switch (
+                          e.fuStatus.toLowerCase().replaceAll(' ', '')) {
+                        'belumfollowup' => Icons.local_fire_department_outlined,
+                        'prosesfollowup' => Icons.person_pin_rounded,
+                        'closing' => Icons.check_circle_rounded,
+                        'batal' => Icons.cancel_rounded,
+                        _ => Icons.question_mark_rounded,
+                      };
+
+                      return Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                spacing: 8,
+                                children: [
+                                  // ~:Icon Status:~
+                                  Icon(icon, size: 40),
+
+                                  // ~:Data Status:~
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          e.fuStatus,
+                                          style: GlobalFont.mediumfontRBold
+                                              .copyWith(fontSize: 14),
+                                        ),
+                                        Text(
+                                          e.prospectDateFormat,
+                                          style: GlobalFont.mediumfontR,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // ~:Reach Out CTA:~
+                                  IconButton(
+                                    onPressed: () async {
+                                      Uri url = Uri.parse(
+                                        'https://wa.me/62${e.mobilePhone.replaceFirst('0', '')}',
+                                      );
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
+                                      }
+                                    },
+                                    icon: Icon(Icons.chat_bubble, size: 20),
+                                  ),
+                                ],
+                              ),
+
+                              // ~:Divider:~
+                              Divider(
+                                color: Colors.grey,
+                                thickness: 1,
+                              ),
+
+                              // ~:Notes:~
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                // height: 164,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                child: Column(
+                                  spacing: 4,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // ~:Customer Name:~
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Nama',
+                                            style: GlobalFont.mediumfontR,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            Format.toTitleCase(e.customerName),
+                                            style: GlobalFont.mediumfontR
+                                                .copyWith(fontSize: 14),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // ~:Phone Number:~
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'No. Telp',
+                                            style: GlobalFont.mediumfontR,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            e.mobilePhone,
+                                            style: GlobalFont.mediumfontR,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // ~:Customer Status:~
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Status',
+                                            style: GlobalFont.mediumfontR,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            e.customerStatus,
+                                            style: GlobalFont.mediumfontR,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // ~:Prospect Date:~
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Prospect Date',
+                                            style: GlobalFont.mediumfontR,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            e.prospectDate,
+                                            style: GlobalFont.mediumfontR,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // ~:Follow-Up Data:~
+                                    Builder(
+                                      builder: (context) {
+                                        if (e.lastFUDate.isNotEmpty &&
+                                            e.lastFUMemo.isNotEmpty &&
+                                            e.nextFUDate.isNotEmpty) {
+                                          return Wrap(
+                                            children: [
+                                              // ~:Last Follow-Up Data:~
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Tanggal Follow-Up Terakhir',
+                                                      style: GlobalFont
+                                                          .mediumfontR,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      e.lastFUDate,
+                                                      style: GlobalFont
+                                                          .mediumfontR,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              // ~:Last Follow-Up Memo:~
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Keterangan',
+                                                      style: GlobalFont
+                                                          .mediumfontR,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      e.lastFUMemo,
+                                                      style: GlobalFont
+                                                          .mediumfontR,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              // ~:Next Follow-Up Data:~
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Tanggal Follow-Up Berikutnya',
+                                                      style: GlobalFont
+                                                          .mediumfontR,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      e.nextFUDate,
+                                                      style: GlobalFont
+                                                          .mediumfontR,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                        return const SizedBox.shrink();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // ~:Update Button:~
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                alignment: Alignment.centerRight,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    final salesmanId =
+                                        appState.getUserAccountList.isNotEmpty
+                                            ? appState.getUserAccountList[0]
+                                                .employeeID
+                                            : '';
+
+                                    log('Salesman ID: $salesmanId');
+                                    log('Mobile Phone: ${e.mobilePhone}');
+                                    log('Prospect Date: ${e.prospectDate}');
+                                    context
+                                        .read<UpdateFollowupDashboardBloc>()
+                                        .add(
+                                          LoadUpdateFollowupDashboard(
+                                            salesmanId,
+                                            e.mobilePhone,
+                                            e.prospectDate,
+                                          ),
+                                        );
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            FollowupDashboardDetail(
+                                          mobilePhone: e.mobilePhone,
+                                          prospectDate: e.prospectDate,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(92, 32),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    backgroundColor: Colors.black,
+                                  ),
+                                  child: Text(
+                                    'Update',
+                                    style: GlobalFont.mediumfontRWhite
+                                        .copyWith(fontSize: 14),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ],
-              ),
-            ],
+              );
+            },
           );
         } else {
           return Center(

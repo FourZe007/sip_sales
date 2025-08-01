@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
+import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
+import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
@@ -468,6 +470,10 @@ class _AttendancePageState extends State<AttendancePage> {
                                     .toIso8601String()
                                     .substring(0, 10),
                               ));
+
+                          context
+                              .read<DashboardTypeCubit>()
+                              .changeType(DashboardType.salesman);
 
                           Navigator.pushNamed(context, '/salesDashboard');
                         },

@@ -3,6 +3,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 
 class BlocConstants {
   static List<SingleChildWidget> getBlocProviders() {
@@ -12,6 +13,9 @@ class BlocConstants {
       ),
       BlocProvider<FollowupDashboardBloc>(
         create: (context) => FollowupDashboardBloc(),
+      ),
+      BlocProvider<UpdateFollowupDashboardBloc>(
+        create: (context) => UpdateFollowupDashboardBloc(),
       ),
       BlocProvider<DashboardTypeCubit>(
         create: (context) => DashboardTypeCubit(),
