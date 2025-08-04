@@ -74,6 +74,76 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     return card.fuDate.isNotEmpty && card.fuMemo.isNotEmpty;
   }
 
+  void selectDate(
+    BuildContext context,
+    UpdateFollowupDashboardDetails e,
+    int index,
+    List<UpdateFollowupDashboardDetails> data,
+  ) async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate:
+          e.fuDate.isNotEmpty ? DateTime.parse(e.fuDate) : DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+
+    if (date != null) {
+      final newFollowup = UpdateFollowupDashboardDetails(
+        fuDate: date.toIso8601String(),
+        fuMemo: e.fuMemo,
+        fuResult: e.fuResult,
+        nextFUDate: e.nextFUDate,
+        line: e.line,
+      );
+      setState(() {
+        data[index] = newFollowup;
+      });
+    }
+  }
+
+  void saveFollowup(
+    BuildContext context,
+    UpdateFollowupDashboardDetails e,
+    int index,
+    UpdateFollowupDashboardBloc updateFollowup,
+    SipSalesState appState,
+  ) {
+    final salesmanId = appState.getUserAccountList.isNotEmpty
+        ? appState.getUserAccountList[0].employeeID
+        : '';
+
+    if (_isCardFilled(e)) {
+      updateFollowup.add(
+        SaveUpdateFollowupStatus(
+          salesmanId,
+          widget.mobilePhone,
+          widget.prospectDate,
+          index,
+          e.fuDate,
+          e.fuResult,
+          e.fuMemo,
+          e.nextFUDate,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.grey,
+          content: Text(
+            'Harap isi semua kolom!',
+            style: GlobalFont.bigfontR,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          margin: EdgeInsets.all(8),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -84,6 +154,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<SipSalesState>(context);
+    final updateFollowup = context.read<UpdateFollowupDashboardBloc>();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -132,6 +203,11 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
           padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
           child: BlocBuilder<UpdateFollowupDashboardBloc,
               UpdateFollowupDashboardState>(
+            bloc: updateFollowup,
+            buildWhen: (previous, current) =>
+                current is UpdateFollowupDashboardLoading ||
+                current is UpdateFollowupDashboardLoaded ||
+                current is UpdateFollowupDashboardError,
             // listener: (context, state) => refreshFollowupDashboard(
             //   context,
             //   appState,
@@ -151,6 +227,16 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                   );
                 }
               } else if (state is UpdateFollowupDashboardError) {
+                log('Error: ${state.message}');
+                if (state.message.contains('[]')) {
+                  return Center(
+                    child: Text(
+                      'Data Tidak Ditemukan',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+
                 return Center(
                   child: Text(
                     state.message,
@@ -160,8 +246,19 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
               } else if (state is UpdateFollowupDashboardLoaded) {
                 log('Data length: ${state.updateFollowupData.length}');
                 log('Detail length: ${state.updateFollowupData[0].followup.length}');
+
+                if (state.updateFollowupData.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'Data Tidak Ditemukan',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+
                 return ListView.builder(
                   itemCount: state.updateFollowupData.length,
+                  physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     final data = state.updateFollowupData[index];
 
@@ -194,7 +291,8 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                     Expanded(
                                       flex: 2,
                                       child: Text(
-                                        Format.toTitleCase(data.customerName),
+                                        Format.toSentenceUpperCase(
+                                            data.customerName),
                                         style: GlobalFont.bigfontR,
                                         maxLines: null,
                                         overflow: TextOverflow.visible,
@@ -261,7 +359,8 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                     Expanded(
                                       flex: 2,
                                       child: Text(
-                                        Format.toTitleCase(data.modelName),
+                                        Format.toSentenceUpperCase(
+                                            data.modelName),
                                         style: GlobalFont.bigfontR,
                                         maxLines: null,
                                         overflow: TextOverflow.visible,
@@ -272,22 +371,110 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
 
                                 // ~:Prospect Status:~
                                 Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
+                                    // ~:Label:~
                                     Expanded(
                                       child: Text(
                                         'Status',
                                         style: GlobalFont.bigfontR,
                                       ),
                                     ),
+
+                                    // ~:Dropdown Options:~
                                     Expanded(
                                       flex: 2,
                                       child: Text(
-                                        Format.toTitleCase(data.prospectStatus),
+                                        Format.toSentenceUpperCase(
+                                            data.prospectStatus),
                                         style: GlobalFont.bigfontR,
                                         maxLines: null,
                                         overflow: TextOverflow.visible,
                                       ),
+                                      // ~:Dropdown Followup Options:~
+                                      // child: BlocBuilder<
+                                      //         UpdateFollowupDashboardBloc,
+                                      //         UpdateFollowupDashboardState>(
+                                      //     builder: (context, state) {
+                                      //   String status = '';
+                                      //   if (state
+                                      //       is UpdateFollowupDashboardStatusSucceed) {
+                                      //     status = state.status.name;
+                                      //   } else {
+                                      //     status = FollowUpStatus.notYet.name;
+                                      //   }
+                                      //
+                                      //   return Container(
+                                      //     width: double.infinity,
+                                      //     height: 36,
+                                      //     alignment: Alignment.center,
+                                      //     decoration: BoxDecoration(
+                                      //       borderRadius:
+                                      //           BorderRadius.circular(20.0),
+                                      //       border: Border.all(
+                                      //         color: Colors.blue,
+                                      //         width: 1.5,
+                                      //       ),
+                                      //     ),
+                                      //     padding: const EdgeInsets.symmetric(
+                                      //       horizontal: 8.0,
+                                      //       vertical: 4.0,
+                                      //     ),
+                                      //     child: DropdownButton<String>(
+                                      //       value: status,
+                                      //       isExpanded: true,
+                                      //       dropdownColor: Colors.white,
+                                      //       icon: const Icon(
+                                      //         Icons.arrow_drop_down_rounded,
+                                      //         color: Colors.blue,
+                                      //       ),
+                                      //       iconSize: 28,
+                                      //       elevation: 0,
+                                      //       style: GlobalFont.bigfontR,
+                                      //       underline: SizedBox(),
+                                      //       onChanged: (String? newValue) {
+                                      //         log('Change prospect status to $newValue');
+                                      //         updateFollowup.add(
+                                      //           SelectUpdateFollowupStatus(
+                                      //             FollowUpStatus.values
+                                      //                 .firstWhere((e) =>
+                                      //                     e.name == newValue),
+                                      //           ),
+                                      //         );
+                                      //       },
+                                      //       items: FollowUpStatus.values
+                                      //           .map<DropdownMenuItem<String>>(
+                                      //               (value) {
+                                      //         // ~:Option 2 is the best approach:~
+                                      //         // It is more concise and easier to read.
+                                      //         // The switch statement is more efficient than the if-else chain.
+                                      //         // The code is also more maintainable since it is easier to add or remove cases.
+                                      //
+                                      //         String status = '';
+                                      //         switch (value) {
+                                      //           case FollowUpStatus.notYet:
+                                      //             status = 'Belum Follow-Up';
+                                      //             break;
+                                      //           case FollowUpStatus.inProgress:
+                                      //             status = 'Proses Follow-Up';
+                                      //             break;
+                                      //           case FollowUpStatus.completed:
+                                      //             status = 'Deal';
+                                      //             break;
+                                      //           case FollowUpStatus.cancelled:
+                                      //             status = 'Cancel';
+                                      //             break;
+                                      //         }
+                                      //
+                                      //         return DropdownMenuItem<String>(
+                                      //           value: value.name,
+                                      //           child: Text(status),
+                                      //         );
+                                      //       }).toList(),
+                                      //     ),
+                                      //   );
+                                      // }),
                                     ),
                                   ],
                                 ),
@@ -303,8 +490,10 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                             final e = entry.value;
 
                             // Check if this card should be editable
-                            final bool isEditable =
-                                _isCardEditable(data.followup, index);
+                            final bool isEditable = _isCardEditable(
+                              data.followup,
+                              index,
+                            );
 
                             return Card(
                               child: Padding(
@@ -314,30 +503,140 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // ~:Follow-Up Data Header:~
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Follow-Up #${index + 1}',
-                                          style: GlobalFont.bigfontRBold,
-                                        ),
-                                        Builder(
-                                          builder: (context) {
-                                            if (!isEditable &&
-                                                _isCardFilled(e)) {
-                                              return const Icon(
-                                                Icons.check_circle,
-                                                color: Colors.green,
-                                                size: 20,
-                                              );
-                                            }
-                                            return const SizedBox.shrink();
-                                          },
-                                        ),
-                                      ],
+                                    SizedBox(
+                                      height: 40,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Follow-Up #${index + 1}',
+                                            style: GlobalFont.bigfontRBold,
+                                          ),
+                                          Builder(
+                                            builder: (context) {
+                                              if (!isEditable &&
+                                                  _isCardFilled(e)) {
+                                                return const Icon(
+                                                  Icons.check_circle,
+                                                  color: Colors.green,
+                                                  size: 20,
+                                                );
+                                              } else if (isEditable) {
+                                                return ElevatedButton(
+                                                  onPressed: () => saveFollowup(
+                                                    context,
+                                                    e,
+                                                    index,
+                                                    updateFollowup,
+                                                    appState,
+                                                  ),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.black,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                        20,
+                                                      ),
+                                                    ),
+                                                    minimumSize:
+                                                        const Size(52, 32),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8),
+                                                  ),
+                                                  child: BlocConsumer<
+                                                          UpdateFollowupDashboardBloc,
+                                                          UpdateFollowupDashboardState>(
+                                                      listener:
+                                                          (context, state) {
+                                                    if (state
+                                                        is SaveFollowupSucceed) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          backgroundColor:
+                                                              Colors.grey,
+                                                          content: Text(
+                                                            'Update follow-up berhasil.',
+                                                            style: GlobalFont
+                                                                .bigfontR,
+                                                          ),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                          margin:
+                                                              EdgeInsets.all(8),
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating,
+                                                        ),
+                                                      );
+                                                    } else if (state
+                                                        is SaveFollowupFailed) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          backgroundColor:
+                                                              Colors.grey,
+                                                          content: Text(
+                                                            state.message,
+                                                            style: GlobalFont
+                                                                .bigfontR,
+                                                          ),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                          margin:
+                                                              EdgeInsets.all(8),
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating,
+                                                        ),
+                                                      );
+                                                    }
+                                                  }, builder: (context, state) {
+                                                    if (state
+                                                        is SaveFollowupLoading) {
+                                                      return const Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color: Colors.white,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return Text(
+                                                        'Save',
+                                                        style: GlobalFont
+                                                            .bigfontR
+                                                            .copyWith(
+                                                          color: Colors.white,
+                                                          fontSize: 14,
+                                                        ),
+                                                      );
+                                                    }
+                                                  }),
+                                                );
+                                              }
+                                              return const SizedBox.shrink();
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    const SizedBox(height: 8),
 
                                     // ~:Follow-Up Date:~
                                     Row(
@@ -346,68 +645,71 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Tanggal',
+                                            'Tanggal FU',
                                             style: GlobalFont.bigfontR,
                                           ),
                                         ),
                                         Expanded(
                                           flex: 2,
-                                          child: InkWell(
-                                            onTap: isEditable
-                                                ? () async {
-                                                    final date =
-                                                        await showDatePicker(
-                                                      context: context,
-                                                      initialDate:
-                                                          e.fuDate.isNotEmpty
-                                                              ? DateTime.parse(
-                                                                  e.fuDate)
-                                                              : DateTime.now(),
-                                                      firstDate: DateTime(2020),
-                                                      lastDate: DateTime(2030),
-                                                    );
-
-                                                    if (date != null) {
-                                                      final newFollowup =
-                                                          UpdateFollowupDashboardDetails(
-                                                        fuDate: date
-                                                            .toIso8601String(),
-                                                        fuMemo: e.fuMemo,
-                                                        fuResult: e.fuResult,
-                                                        nextFUDate:
-                                                            e.nextFUDate,
-                                                        line: e.line,
-                                                      );
-                                                      setState(() {
-                                                        data.followup[index] =
-                                                            newFollowup;
-                                                      });
-                                                    }
-                                                  }
-                                                : null,
-                                            child: Text(
-                                              isEditable
-                                                  ? e.fuDate.isNotEmpty
-                                                      ? DateFormat(
-                                                          'dd MMMM yyyy',
-                                                          'id_ID',
-                                                        ).format(DateTime.parse(
-                                                          e.fuDate))
-                                                      : DateFormat(
-                                                          'dd MMMM yyyy',
-                                                          'id_ID',
-                                                        ).format(DateTime.now())
-                                                  : '-',
-                                              style:
-                                                  GlobalFont.bigfontR.copyWith(
-                                                color: isEditable
-                                                    ? Colors.blue
-                                                    : Colors.black,
-                                                fontStyle: isEditable
-                                                    ? FontStyle.italic
-                                                    : FontStyle.normal,
-                                              ),
-                                            ),
+                                          child: Builder(
+                                            builder: (context) {
+                                              if (isEditable) {
+                                                return InkWell(
+                                                  onTap: () async => selectDate(
+                                                    context,
+                                                    e,
+                                                    index,
+                                                    data.followup,
+                                                  ),
+                                                  child: Text(
+                                                    e.fuDate.isNotEmpty
+                                                        ? DateFormat(
+                                                            'dd MMMM yyyy',
+                                                            'id_ID',
+                                                          ).format(
+                                                            DateTime.parse(
+                                                                e.fuDate))
+                                                        : DateFormat(
+                                                            'dd MMMM yyyy',
+                                                            'id_ID',
+                                                          ).format(
+                                                            DateTime.now()),
+                                                    style: GlobalFont.bigfontR
+                                                        .copyWith(
+                                                      color: Colors.blue,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                    ),
+                                                  ),
+                                                );
+                                              } else {
+                                                if (e.fuDate.isNotEmpty) {
+                                                  return Text(
+                                                    DateFormat(
+                                                      'dd MMMM yyyy',
+                                                      'id_ID',
+                                                    ).format(DateTime.parse(
+                                                        e.fuDate)),
+                                                    style: GlobalFont.bigfontR
+                                                        .copyWith(
+                                                      color: Colors.black,
+                                                      fontStyle:
+                                                          FontStyle.normal,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Text(
+                                                    '-',
+                                                    style: GlobalFont.bigfontR
+                                                        .copyWith(
+                                                      color: Colors.black,
+                                                      fontStyle:
+                                                          FontStyle.normal,
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                            },
                                           ),
                                         ),
                                       ],
@@ -457,9 +759,11 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                 );
                                               } else {
                                                 return Text(
-                                                  e.fuMemo.isNotEmpty
-                                                      ? e.fuMemo
-                                                      : '-',
+                                                  e.fuMemo.isEmpty
+                                                      ? '-'
+                                                      : Format
+                                                          .toFirstLetterUpperCase(
+                                                              e.fuMemo),
                                                   style: e.fuMemo.isNotEmpty
                                                       ? GlobalFont.bigfontR
                                                       : GlobalFont.bigfontR

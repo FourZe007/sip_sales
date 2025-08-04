@@ -21,7 +21,8 @@ class Format {
     return thn;
   }
 
-  static String toTitleCase(String text) {
+  // ~:Change all text in a sentence to uppercase:~
+  static String toSentenceUpperCase(String text) {
     if (text.isEmpty) return text;
 
     // Split into words, trim whitespace, and filter out empty strings
@@ -39,5 +40,10 @@ class Format {
     }
 
     return result.join(' ');
+  }
+
+  // ~:Change only first letter of a sentence to uppercase:~
+  static String toFirstLetterUpperCase(String text) {
+    return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 }

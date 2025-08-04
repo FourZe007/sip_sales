@@ -134,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   color: Colors.white,
                 ),
-                padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
+                padding: EdgeInsets.fromLTRB(12, 16, 12, 8),
                 child: TabBarView(
                   physics: const NeverScrollableScrollPhysics(),
                   children: [

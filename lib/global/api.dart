@@ -1515,5 +1515,79 @@ class GlobalAPI {
       return {'status': 'error', 'data': e.toString()};
     }
   }
+
+  static Future<Map<String, dynamic>> saveFollowupStatus(
+    String employeeID,
+    String mobilePhone,
+    String prospectDate,
+    int line,
+    String fuDate,
+    String fuResult,
+    String fuMemo,
+    String nextFUDate,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/DBSales/DBSales02/ModifyFU',
+    );
+
+    Map mapSaveFollowupStatus = {
+      "EmployeeID": employeeID,
+      "MobilePhone": mobilePhone,
+      "ProspectDate": prospectDate,
+      "Line": line,
+      "FUDate": fuDate,
+      "FUResult": fuResult,
+      "FUMemo": fuMemo,
+      "NextFUDate": nextFUDate,
+    };
+    log('Map Save Followup Status: $mapSaveFollowupStatus');
+
+    try {
+      final response = await http
+          .post(url, body: jsonEncode(mapSaveFollowupStatus), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      if (response.statusCode <= 200) {
+        var jsonResult = jsonDecode(response.body);
+        if (jsonResult['code'] == '100' && jsonResult['msg'] == 'Sukses') {
+          if (jsonResult['data'] != null &&
+              jsonResult['data'][0]['resultMessage'].toString().toLowerCase() ==
+                  'sukses') {
+            log('Success');
+            return {
+              'status': 'sukses',
+              'data': 'success',
+            };
+          } else {
+            log('Failed');
+            return {
+              'status': 'gagal',
+              'data': jsonResult['data'][0]['resultMessage']
+                  .toString()
+                  .toLowerCase(),
+            };
+          }
+        } else {
+          log('Failed');
+          return {
+            'status': 'gagal',
+            'data': 'Error ${jsonResult['code']}, ${jsonResult['msg']}',
+          };
+        }
+      } else {
+        log('Failed');
+        return {
+          'status': 'gagal',
+          'data': 'Status code ${response.statusCode}, coba lagi.',
+        };
+      }
+    } catch (e) {
+      log('Error: ${e.toString()}');
+      return {'status': 'error', 'data': e.toString()};
+    }
+  }
+
   // ~:New:~
 }

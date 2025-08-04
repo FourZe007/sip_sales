@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_state.dart';
@@ -23,6 +24,8 @@ class FollowupDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<SipSalesState>(context);
+    final updateFollowupDashboardBloc =
+        context.read<UpdateFollowupDashboardBloc>();
 
     return BlocBuilder<FollowupDashboardBloc, FollowupDashboardState>(
       builder: (context, state) {
@@ -52,6 +55,7 @@ class FollowupDashboard extends StatelessWidget {
           return ListView.builder(
             itemCount: state.salesData.length,
             physics: BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 8.0),
             itemBuilder: (context, index) {
               final salesData = state.salesData[index];
 
@@ -231,7 +235,8 @@ class FollowupDashboard extends StatelessWidget {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            Format.toTitleCase(e.customerName),
+                                            Format.toSentenceUpperCase(
+                                                e.customerName),
                                             style: GlobalFont.mediumfontR
                                                 .copyWith(fontSize: 14),
                                           ),
@@ -342,7 +347,10 @@ class FollowupDashboard extends StatelessWidget {
                                                   Expanded(
                                                     flex: 2,
                                                     child: Text(
-                                                      e.lastFUMemo,
+                                                      Format
+                                                          .toFirstLetterUpperCase(
+                                                        e.lastFUMemo,
+                                                      ),
                                                       style: GlobalFont
                                                           .mediumfontR,
                                                     ),
@@ -394,18 +402,22 @@ class FollowupDashboard extends StatelessWidget {
                                                 .employeeID
                                             : '';
 
+                                    updateFollowupDashboardBloc.add(
+                                      SelectUpdateFollowupStatus(
+                                        FollowUpStatus.notYet,
+                                      ),
+                                    );
+
                                     log('Salesman ID: $salesmanId');
                                     log('Mobile Phone: ${e.mobilePhone}');
                                     log('Prospect Date: ${e.prospectDate}');
-                                    context
-                                        .read<UpdateFollowupDashboardBloc>()
-                                        .add(
-                                          LoadUpdateFollowupDashboard(
-                                            salesmanId,
-                                            e.mobilePhone,
-                                            e.prospectDate,
-                                          ),
-                                        );
+                                    updateFollowupDashboardBloc.add(
+                                      LoadUpdateFollowupDashboard(
+                                        salesmanId,
+                                        e.mobilePhone,
+                                        e.prospectDate,
+                                      ),
+                                    );
 
                                     Navigator.push(
                                       context,

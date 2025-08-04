@@ -65,6 +65,7 @@ class SalesmanDashboard extends StatelessWidget {
           return ListView.builder(
             itemCount: state.salesData.length,
             physics: BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 8.0),
             itemBuilder: (context, index) {
               final salesData = state.salesData[index];
               double categoryHeight = 52 + salesData.categoryList.length * 50;
