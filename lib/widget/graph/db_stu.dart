@@ -13,54 +13,49 @@ class DbStuCharts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: Card(
-        elevation: 5,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const Text(
-                'Asal Database & STU',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Expanded(
-                child: SfCartesianChart(
-                  primaryXAxis: CategoryAxis(),
-                  legend: Legend(
-                    isVisible: true,
-                    position: LegendPosition.bottom,
-                  ),
-                  series: [
-                    LineSeries<ProspekTypeModel, String>(
-                      dataSource: data,
-                      xValueMapper: (ProspekTypeModel sales, _) =>
-                          sales.prospekType.toString(),
-                      yValueMapper: (ProspekTypeModel sales, _) => sales.stut,
-                      dataLabelSettings:
-                          const DataLabelSettings(isVisible: true),
-                      color: Colors.orange,
-                      legendIconType: LegendIconType.horizontalLine,
-                      legendItemText: 'STU',
-                    ),
-                    BarSeries<ProspekTypeModel, String>(
-                      dataSource: data,
-                      xValueMapper: (ProspekTypeModel sales, _) =>
-                          sales.prospekType.toString(),
-                      yValueMapper: (ProspekTypeModel sales, _) =>
-                          sales.prospekT,
-                      dataLabelSettings:
-                          const DataLabelSettings(isVisible: true),
-                      color: Colors.teal[800]!,
-                      legendIconType: LegendIconType.rectangle,
-                      legendItemText: 'Prospek',
-                    )
-                  ],
-                ),
-              ),
-            ],
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SfCartesianChart(
+          enableMultiSelection: true,
+          title: ChartTitle(
+            text: 'Asal Database & STU',
+            textStyle: TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          legend: Legend(
+            isVisible: true,
+            position: LegendPosition.bottom,
+          ),
+          primaryXAxis: CategoryAxis(labelRotation: -30),
+          series: [
+            LineSeries<ProspekTypeModel, String>(
+              dataSource: data,
+              animationDuration: 1500,
+              xValueMapper: (ProspekTypeModel sales, _) =>
+                  sales.prospekType.toString(),
+              yValueMapper: (ProspekTypeModel sales, _) => sales.stut,
+              dataLabelSettings: const DataLabelSettings(isVisible: true),
+              color: Colors.orange,
+              legendIconType: LegendIconType.horizontalLine,
+              legendItemText: 'STU',
+            ),
+            BarSeries<ProspekTypeModel, String>(
+              dataSource: data,
+              animationDuration: 1500,
+              xValueMapper: (ProspekTypeModel sales, _) =>
+                  sales.prospekType.toString(),
+              yValueMapper: (ProspekTypeModel sales, _) => sales.prospekT,
+              dataLabelSettings: const DataLabelSettings(isVisible: true),
+              color: Colors.teal[800]!,
+              legendIconType: LegendIconType.rectangle,
+              legendItemText: 'Prospek',
+            )
+          ],
         ),
       ),
     );

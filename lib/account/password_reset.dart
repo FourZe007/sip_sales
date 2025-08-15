@@ -148,6 +148,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
         ),
       ),
       body: SafeArea(
+        maintainBottomViewPadding: true,
         child: DecoratedBox(
           decoration: BoxDecoration(color: Colors.blue),
           child: Container(

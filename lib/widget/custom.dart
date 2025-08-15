@@ -9,6 +9,7 @@ class CustomWidget {
     double boxWidth = 64,
     double boxHeight = 75,
     double lableHeight = 20,
+    double labelSize = 16,
     Color boxColor = Colors.amber,
   }) {
     return Container(
@@ -29,7 +30,7 @@ class CustomWidget {
             alignment: Alignment.center,
             child: Text(
               label,
-              style: GlobalFont.bigfontR,
+              style: GlobalFont.bigfontR.copyWith(fontSize: labelSize),
             ),
           ),
           Expanded(

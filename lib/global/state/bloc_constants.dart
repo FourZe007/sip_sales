@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/followupdate_cubit.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 
@@ -19,6 +20,9 @@ class BlocConstants {
       ),
       BlocProvider<DashboardTypeCubit>(
         create: (context) => DashboardTypeCubit(),
+      ),
+      BlocProvider<FollowupCubit>(
+        create: (context) => FollowupCubit(),
       ),
     ];
   }

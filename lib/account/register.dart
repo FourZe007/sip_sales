@@ -138,87 +138,90 @@ class _RegisterPageState extends State<RegisterPage> {
           },
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.symmetric(
-              vertical: MediaQuery.of(context).size.height * 0.025,
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * 0.025,
+              ),
+              child: const SizedBox(),
             ),
-            child: const SizedBox(),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.05,
-            ),
-            child: CustomUserInput2(
-              setUsername,
-              username,
-              mode: 0,
-              isIcon: true,
-              icon: Icons.person,
-              label: 'Username',
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.05,
-            ),
-            child: CustomUserInput2(
-              setPassword,
-              password,
-              mode: 0,
-              isPass: true,
-              isIcon: true,
-              icon: Icons.lock,
-              label: 'Password',
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.05,
-            ),
-            child: CustomUserInput2(
-              setConfirmation,
-              confirmation,
-              mode: 0,
-              isPass: true,
-              isIcon: true,
-              icon: Icons.lock,
-              label: 'Password Konfirmasi',
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.55,
-          ),
-          GestureDetector(
-            onTap: createDummyAccount,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.04,
-              alignment: Alignment.center,
+            Container(
               margin: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05,
-                vertical: MediaQuery.of(context).size.height * 0.01,
               ),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey, // Adjust shadow color as needed
-                    offset: Offset(2.0, 4.0), // Adjust shadow offset
-                    blurRadius: 5.0, // Adjust shadow blur radius
-                    spreadRadius: 1.0, // Adjust shadow spread radius
-                  ),
-                ],
-              ),
-              child: Text(
-                'REGISTER',
-                style: GlobalFont.bigfontMWhiteBold,
+              child: CustomUserInput2(
+                setUsername,
+                username,
+                mode: 0,
+                isIcon: true,
+                icon: Icons.person,
+                label: 'Username',
               ),
             ),
-          ),
-        ],
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+              ),
+              child: CustomUserInput2(
+                setPassword,
+                password,
+                mode: 0,
+                isPass: true,
+                isIcon: true,
+                icon: Icons.lock,
+                label: 'Password',
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+              ),
+              child: CustomUserInput2(
+                setConfirmation,
+                confirmation,
+                mode: 0,
+                isPass: true,
+                isIcon: true,
+                icon: Icons.lock,
+                label: 'Password Konfirmasi',
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.55,
+            ),
+            GestureDetector(
+              onTap: createDummyAccount,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.04,
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                  vertical: MediaQuery.of(context).size.height * 0.01,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey, // Adjust shadow color as needed
+                      offset: Offset(2.0, 4.0), // Adjust shadow offset
+                      blurRadius: 5.0, // Adjust shadow blur radius
+                      spreadRadius: 1.0, // Adjust shadow spread radius
+                    ),
+                  ],
+                ),
+                child: Text(
+                  'REGISTER',
+                  style: GlobalFont.bigfontMWhiteBold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

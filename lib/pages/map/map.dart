@@ -113,201 +113,205 @@ class _MapPageState extends State<MapPage> {
           ),
         ),
       ),
-      body: Stack(
-        children: [
-          // ~:Maps and its details
-          FlutterMap(
-            options: MapOptions(
-              initialCenter: LatLng(
-                state.getLatDisplay,
-                state.getLngDisplay,
-              ),
-              initialZoom: 19.0,
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.stsj.sipsales',
-              ),
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    width: 100.0,
-                    height: 100.0,
-                    point: LatLng(
-                      state.getLatDisplay,
-                      state.getLngDisplay,
-                    ),
-                    child: const Icon(
-                      Icons.location_pin,
-                      color: Colors.black,
-                      size: 60.0,
-                    ),
-                  ),
-                  Marker(
-                    width: 100.0,
-                    height: 100.0,
-                    point: LatLng(
-                      state.getUserAccountList[0].latitude,
-                      state.getUserAccountList[0].longitude,
-                    ),
-                    child: const Icon(
-                      Icons.location_pin,
-                      color: Colors.red,
-                      size: 60.0,
-                    ),
-                  ),
-                ],
-              ),
-              // Add the circle around the pin location
-              CircleLayer(
-                circles: [
-                  CircleMarker(
-                    point: LatLng(
-                      state.getUserAccountList[0].latitude,
-                      state.getUserAccountList[0].longitude,
-                    ),
-                    radius: radius, // Radius in meters
-                    color: Colors.blue.withOpacity(0.2), // Fill color
-                    borderColor: Colors.blue, // Border color
-                    borderStrokeWidth: 2.0, // Border thickness
-                    useRadiusInMeter: true,
-                  ),
-                ],
-              ),
-              Container(
-                alignment: Alignment.bottomCenter,
-                margin: EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 25,
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: Stack(
+          children: [
+            // ~:Maps and its details
+            FlutterMap(
+              options: MapOptions(
+                initialCenter: LatLng(
+                  state.getLatDisplay,
+                  state.getLngDisplay,
                 ),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 75,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: (Platform.isIOS)
-                        ? BorderRadius.circular(50)
-                        : BorderRadius.circular(25),
-                  ),
-                  child: StreamBuilder(
-                    stream: fetchIsClose(state),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Loading...',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                            ),
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${snapshot.error}',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                            ),
-                          ),
-                        );
-                      } else {
-                        if (snapshot.data == true) {
-                          return Text(
-                            'Anda berada dalam radius',
-                            style: GlobalFont.giantfontRBold,
-                          );
-                        } else {
-                          return Text(
-                            'Anda berada di luar radius',
-                            style: GlobalFont.giantfontRBoldRed,
-                          );
-                        }
-                      }
-                    },
-                  ),
+                initialZoom: 19.0,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.stsj.sipsales',
                 ),
-              ),
-            ],
-          ),
-
-          // ~:Legend:~
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.06,
-            right: 10,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.125,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.03,
-                vertical: MediaQuery.of(context).size.height * 0.01,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ~:Legend Title:~
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Informasi',
-                        style: GlobalFont.bigfontRBold,
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      width: 100.0,
+                      height: 100.0,
+                      point: LatLng(
+                        state.getLatDisplay,
+                        state.getLngDisplay,
+                      ),
+                      child: const Icon(
+                        Icons.location_pin,
+                        color: Colors.black,
+                        size: 60.0,
                       ),
                     ),
+                    Marker(
+                      width: 100.0,
+                      height: 100.0,
+                      point: LatLng(
+                        state.getUserAccountList[0].latitude,
+                        state.getUserAccountList[0].longitude,
+                      ),
+                      child: const Icon(
+                        Icons.location_pin,
+                        color: Colors.red,
+                        size: 60.0,
+                      ),
+                    ),
+                  ],
+                ),
+                // Add the circle around the pin location
+                CircleLayer(
+                  circles: [
+                    CircleMarker(
+                      point: LatLng(
+                        state.getUserAccountList[0].latitude,
+                        state.getUserAccountList[0].longitude,
+                      ),
+                      radius: radius, // Radius in meters
+                      color: Colors.blue.withOpacity(0.2), // Fill color
+                      borderColor: Colors.blue, // Border color
+                      borderStrokeWidth: 2.0, // Border thickness
+                      useRadiusInMeter: true,
+                    ),
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 25,
                   ),
-
-                  // ~:Legend Details 1:~
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.location_pin,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                        Expanded(
-                          child: Text(
-                            'Lokasi Anda',
-                            style: GlobalFont.bigfontR,
-                          ),
-                        ),
-                      ],
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 75,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: (Platform.isIOS)
+                          ? BorderRadius.circular(50)
+                          : BorderRadius.circular(25),
+                    ),
+                    child: StreamBuilder(
+                      stream: fetchIsClose(state),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Loading...',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${snapshot.error}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
+                            ),
+                          );
+                        } else {
+                          if (snapshot.data == true) {
+                            return Text(
+                              'Anda berada dalam radius',
+                              style: GlobalFont.giantfontRBold,
+                            );
+                          } else {
+                            return Text(
+                              'Anda berada di luar radius',
+                              style: GlobalFont.giantfontRBoldRed,
+                            );
+                          }
+                        }
+                      },
                     ),
                   ),
+                ),
+              ],
+            ),
 
-                  // ~:Legend Details 2:~
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.location_pin,
-                          color: Colors.red,
-                          size: 30,
+            // ~:Legend:~
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.06,
+              right: 10,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.45,
+                height: MediaQuery.of(context).size.height * 0.125,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.03,
+                  vertical: MediaQuery.of(context).size.height * 0.01,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ~:Legend Title:~
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Informasi',
+                          style: GlobalFont.bigfontRBold,
                         ),
-                        Expanded(
-                          child: Text(
-                            state.getUserAccountList[0].locationName,
-                            style: GlobalFont.bigfontR,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+
+                    // ~:Legend Details 1:~
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_pin,
+                            color: Colors.black,
+                            size: 30,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Lokasi Anda',
+                              style: GlobalFont.bigfontR,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // ~:Legend Details 2:~
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_pin,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                          Expanded(
+                            child: Text(
+                              state.getUserAccountList[0].locationName,
+                              style: GlobalFont.bigfontR,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

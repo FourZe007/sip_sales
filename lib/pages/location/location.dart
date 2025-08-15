@@ -182,112 +182,117 @@ class _LocationPageState extends State<LocationPage> {
                     statusBarColor: Colors.transparent,
                   ),
                   child: Scaffold(
-                    body: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      alignment: Alignment.center,
-                      color: Colors.grey[300],
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.03,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 3.0,
-                              ),
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                            child: const Icon(
-                              Icons.location_on,
-                              size: 80.0,
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.005,
-                            ),
-                            child: Text(
-                              'Dimana kamu berada?',
-                              style: GlobalFont.mediumgigafontMBold,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.005,
-                            ),
-                            child: Text(
-                              'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
-                              style: GlobalFont.bigfontM,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => checkLocationPermission(
-                              context,
-                              locationState,
-                            ),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.35,
-                              alignment: Alignment.center,
+                    backgroundColor: Colors.grey[300],
+                    body: SafeArea(
+                      maintainBottomViewPadding: true,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        alignment: Alignment.center,
+                        color: Colors.grey[300],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
                               margin: EdgeInsets.symmetric(
                                 vertical:
-                                    MediaQuery.of(context).size.height * 0.02,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.015,
+                                    MediaQuery.of(context).size.height * 0.03,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(25.0),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    // Adjust shadow color as needed
-                                    color: Colors.grey,
-                                    // Adjust shadow blur radius
-                                    blurRadius: 5.0,
-                                    // Adjust shadow spread radius
-                                    spreadRadius: 1.0,
-                                  ),
-                                ],
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 3.0,
+                                ),
+                                borderRadius: BorderRadius.circular(50.0),
                               ),
-                              child: Builder(
-                                builder: (context) {
-                                  if (isLoading) {
-                                    if (Platform.isIOS) {
-                                      return const CupertinoActivityIndicator(
-                                        radius: 10.0,
-                                        color: Colors.white,
-                                      );
-                                    } else {
-                                      return const CircleLoading(
-                                        warna: Colors.white,
-                                        customizedHeight: 20.0,
-                                        customizedWidth: 20.0,
-                                        strokeWidth: 3,
-                                      );
-                                    }
-                                  } else {
-                                    return Text(
-                                      'CONTINUE',
-                                      style: GlobalFont.mediumbigfontMWhiteBold,
-                                    );
-                                  }
-                                },
+                              child: const Icon(
+                                Icons.location_on,
+                                size: 80.0,
                               ),
                             ),
-                          ),
-                        ],
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.75,
+                              margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.005,
+                              ),
+                              child: Text(
+                                'Dimana kamu berada?',
+                                style: GlobalFont.mediumgigafontMBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.75,
+                              margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.005,
+                              ),
+                              child: Text(
+                                'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
+                                style: GlobalFont.bigfontM,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => checkLocationPermission(
+                                context,
+                                locationState,
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.35,
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.symmetric(
+                                  vertical:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: MediaQuery.of(context).size.height *
+                                      0.015,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      // Adjust shadow color as needed
+                                      color: Colors.grey,
+                                      // Adjust shadow blur radius
+                                      blurRadius: 5.0,
+                                      // Adjust shadow spread radius
+                                      spreadRadius: 1.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Builder(
+                                  builder: (context) {
+                                    if (isLoading) {
+                                      if (Platform.isIOS) {
+                                        return const CupertinoActivityIndicator(
+                                          radius: 10.0,
+                                          color: Colors.white,
+                                        );
+                                      } else {
+                                        return const CircleLoading(
+                                          warna: Colors.white,
+                                          customizedHeight: 20.0,
+                                          customizedWidth: 20.0,
+                                          strokeWidth: 3,
+                                        );
+                                      }
+                                    } else {
+                                      return Text(
+                                        'CONTINUE',
+                                        style:
+                                            GlobalFont.mediumbigfontMWhiteBold,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -298,94 +303,98 @@ class _LocationPageState extends State<LocationPage> {
                     statusBarColor: Colors.transparent,
                   ),
                   child: Scaffold(
-                    body: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      alignment: Alignment.center,
-                      color: Colors.grey[300],
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.03,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 3.0,
-                              ),
-                              borderRadius: BorderRadius.circular(100.0),
-                            ),
-                            child: const Icon(
-                              Icons.location_on,
-                              size: 130.0,
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.005,
-                            ),
-                            child: Text(
-                              'Dimana kamu berada?',
-                              style: GlobalFont.petafontRBold,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.005,
-                            ),
-                            child: Text(
-                              'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
-                              style: GlobalFont.gigafontR,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => checkLocationPermission(
-                              context,
-                              locationState,
-                            ),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.35,
-                              alignment: Alignment.center,
+                    backgroundColor: Colors.grey[300],
+                    body: SafeArea(
+                      maintainBottomViewPadding: true,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        alignment: Alignment.center,
+                        color: Colors.grey[300],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
                               margin: EdgeInsets.symmetric(
                                 vertical:
-                                    MediaQuery.of(context).size.height * 0.02,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.015,
+                                    MediaQuery.of(context).size.height * 0.03,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(25.0),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    // Adjust shadow color as needed
-                                    color: Colors.grey,
-                                    // Adjust shadow offset
-                                    offset: Offset(2.0, 4.0),
-                                    // Adjust shadow blur radius
-                                    blurRadius: 5.0,
-                                    // Adjust shadow spread radius
-                                    spreadRadius: 1.0,
-                                  ),
-                                ],
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 3.0,
+                                ),
+                                borderRadius: BorderRadius.circular(100.0),
                               ),
-                              child: Text(
-                                'CONTINUE',
-                                style: GlobalFont.mediumgigafontRBoldWhite,
+                              child: const Icon(
+                                Icons.location_on,
+                                size: 130.0,
                               ),
                             ),
-                          ),
-                        ],
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.75,
+                              margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.005,
+                              ),
+                              child: Text(
+                                'Dimana kamu berada?',
+                                style: GlobalFont.petafontRBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.75,
+                              margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.005,
+                              ),
+                              child: Text(
+                                'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
+                                style: GlobalFont.gigafontR,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => checkLocationPermission(
+                                context,
+                                locationState,
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.35,
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.symmetric(
+                                  vertical:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: MediaQuery.of(context).size.height *
+                                      0.015,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      // Adjust shadow color as needed
+                                      color: Colors.grey,
+                                      // Adjust shadow offset
+                                      offset: Offset(2.0, 4.0),
+                                      // Adjust shadow blur radius
+                                      blurRadius: 5.0,
+                                      // Adjust shadow spread radius
+                                      spreadRadius: 1.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'CONTINUE',
+                                  style: GlobalFont.mediumgigafontRBoldWhite,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

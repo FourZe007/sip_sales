@@ -52,69 +52,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final appState = Provider.of<SipSalesState>(context);
     // late TabController tabController;
 
-    return SafeArea(
-      top: false,
-      bottom: false,
-      left: false,
-      right: false,
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              'Dashboard',
-              style: GlobalFont.bigfontR,
-            ),
-            backgroundColor: Colors.blue,
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(
-                Platform.isIOS
-                    ? Icons.arrow_back_ios_new_rounded
-                    : Icons.arrow_back_rounded,
-                size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                color: Colors.black,
-              ),
-            ),
-            actions: [
-              BlocBuilder<DashboardTypeCubit, DashboardType>(
-                  builder: (context, state) {
-                return IconButton(
-                  onPressed: () => refreshDashboard(context, appState, state),
-                  icon: Icon(
-                    Icons.refresh_rounded,
-                    size:
-                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                    color: Colors.black,
-                  ),
-                );
-              }),
-            ],
-            bottom: TabBar(
-              onTap: (index) {
-                log('Index: ${index.toString()}');
-                context.read<DashboardTypeCubit>().changeType(index == 0
-                    ? DashboardType.salesman
-                    : DashboardType.followup);
-              },
-              indicatorColor: Colors.black,
-              indicatorWeight: 2,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.black,
-              unselectedLabelStyle: GlobalFont.bigfontR,
-              labelStyle: GlobalFont.bigfontR.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-              dividerColor: Colors.transparent,
-              tabs: [
-                Tab(text: 'Salesman'),
-                Tab(text: 'Follow-Up'),
-              ],
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'Dashboard',
+            style: GlobalFont.bigfontR,
+          ),
+          backgroundColor: Colors.blue,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              Platform.isIOS
+                  ? Icons.arrow_back_ios_new_rounded
+                  : Icons.arrow_back_rounded,
+              size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+              color: Colors.black,
             ),
           ),
-          body: BlocListener<DashboardTypeCubit, DashboardType>(
+          actions: [
+            BlocBuilder<DashboardTypeCubit, DashboardType>(
+                builder: (context, state) {
+              return IconButton(
+                onPressed: () => refreshDashboard(context, appState, state),
+                icon: Icon(
+                  Icons.refresh_rounded,
+                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                  color: Colors.black,
+                ),
+              );
+            }),
+          ],
+          bottom: TabBar(
+            onTap: (index) {
+              log('Index: ${index.toString()}');
+              context.read<DashboardTypeCubit>().changeType(
+                  index == 0 ? DashboardType.salesman : DashboardType.followup);
+            },
+            indicatorColor: Colors.black,
+            indicatorWeight: 2,
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.black,
+            unselectedLabelStyle: GlobalFont.bigfontR,
+            labelStyle: GlobalFont.bigfontR.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            dividerColor: Colors.transparent,
+            tabs: [
+              Tab(text: 'Salesman'),
+              Tab(text: 'Follow-Up'),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          maintainBottomViewPadding: true,
+          child: BlocListener<DashboardTypeCubit, DashboardType>(
             listener: (context, state) => refreshDashboard(
               context,
               appState,

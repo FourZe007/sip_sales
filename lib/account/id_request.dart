@@ -148,6 +148,7 @@ class _IdRequestPageState extends State<IdRequestPage> {
         ),
       ),
       body: SafeArea(
+        maintainBottomViewPadding: true,
         child: DecoratedBox(
           decoration: BoxDecoration(color: Colors.blue),
           child: Container(

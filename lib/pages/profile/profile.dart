@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -267,8 +268,10 @@ class ProfilePageState extends State<ProfilePage> {
               Expanded(
                 child: Builder(
                   builder: (context) {
-                    if (state.getProfilePicture == '' &&
-                        state.getProfilePicturePreview == '') {
+                    log('Profile Picture: ${state.getProfilePicture.isEmpty}');
+                    log('Profile Picture Preview: ${state.getProfilePicturePreview.isEmpty}');
+                    if (state.getProfilePicture.isEmpty &&
+                        state.getProfilePicturePreview.isEmpty) {
                       return GestureDetector(
                         onTap: () => takePhoto(context, state),
                         child: Align(
@@ -314,6 +317,22 @@ class ProfilePageState extends State<ProfilePage> {
                         ),
                       );
                     } else {
+                      if (state.getProfilePicture.isEmpty) {
+                        return CircleAvatar(
+                          radius: 35,
+                          backgroundColor: Colors.black,
+                          child: ClipOval(
+                            child: SizedBox.fromSize(
+                              size: Size.fromRadius(33),
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
                       return InkWell(
                         onTap: () => viewPhoto(context, state),
                         child: CircleAvatar(

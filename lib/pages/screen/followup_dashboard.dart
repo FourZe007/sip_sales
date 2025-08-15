@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_state.dart';
+import 'package:sip_sales/global/state/followupdate_cubit.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_event.dart';
@@ -26,6 +27,7 @@ class FollowupDashboard extends StatelessWidget {
     final appState = Provider.of<SipSalesState>(context);
     final updateFollowupDashboardBloc =
         context.read<UpdateFollowupDashboardBloc>();
+    final followupCubit = context.read<FollowupCubit>();
 
     return BlocBuilder<FollowupDashboardBloc, FollowupDashboardState>(
       builder: (context, state) {
@@ -42,6 +44,15 @@ class FollowupDashboard extends StatelessWidget {
             );
           }
         } else if (state is FollowupDashboardError) {
+          if (state.message == 'empty') {
+            return const Center(
+              child: Text(
+                'Data Tidak Ditemukan',
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+
           return Center(
             child: Text(
               'Error: ${state.message}',
@@ -74,6 +85,7 @@ class FollowupDashboard extends StatelessWidget {
                         boxWidth: 64,
                         boxHeight: 90,
                         lableHeight: 28,
+                        labelSize: 12,
                         boxColor: Colors.blue[200]!,
                       ),
 
@@ -85,6 +97,7 @@ class FollowupDashboard extends StatelessWidget {
                         boxWidth: 64,
                         boxHeight: 90,
                         lableHeight: 28,
+                        labelSize: 12,
                         boxColor: Colors.grey[400]!,
                       ),
 
@@ -96,6 +109,7 @@ class FollowupDashboard extends StatelessWidget {
                         boxWidth: 64,
                         boxHeight: 90,
                         lableHeight: 28,
+                        labelSize: 12,
                         boxColor: Colors.yellow[300]!,
                       ),
 
@@ -107,6 +121,7 @@ class FollowupDashboard extends StatelessWidget {
                         boxWidth: 64,
                         boxHeight: 90,
                         lableHeight: 28,
+                        labelSize: 12,
                         boxColor: Colors.green[300]!,
                       ),
 
@@ -118,6 +133,7 @@ class FollowupDashboard extends StatelessWidget {
                         boxWidth: 64,
                         boxHeight: 90,
                         lableHeight: 28,
+                        labelSize: 12,
                         boxColor: Colors.red[300]!,
                       ),
                     ],
@@ -136,6 +152,7 @@ class FollowupDashboard extends StatelessWidget {
                           backgroundColor: Colors.grey[300],
                           valueColor: AlwaysStoppedAnimation(Colors.blue[200]),
                           borderRadius: BorderRadius.circular(16),
+                          stopIndicatorRadius: 16,
                         ),
                       ),
                       Center(
@@ -191,7 +208,7 @@ class FollowupDashboard extends StatelessWidget {
                                     ),
                                   ),
 
-                                  // ~:Reach Out CTA:~
+                                  // ~:CTA button:~
                                   IconButton(
                                     onPressed: () async {
                                       Uri url = Uri.parse(
@@ -201,7 +218,11 @@ class FollowupDashboard extends StatelessWidget {
                                         await launchUrl(url);
                                       }
                                     },
-                                    icon: Icon(Icons.chat_bubble, size: 20),
+                                    icon: Icon(
+                                      FontAwesomeIcons.whatsapp,
+                                      size: 20,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -403,9 +424,7 @@ class FollowupDashboard extends StatelessWidget {
                                             : '';
 
                                     updateFollowupDashboardBloc.add(
-                                      SelectUpdateFollowupStatus(
-                                        FollowUpStatus.notYet,
-                                      ),
+                                      InitUpdateFollowupResults(),
                                     );
 
                                     log('Salesman ID: $salesmanId');
@@ -418,6 +437,8 @@ class FollowupDashboard extends StatelessWidget {
                                         e.prospectDate,
                                       ),
                                     );
+
+                                    followupCubit.resetFollowup();
 
                                     Navigator.push(
                                       context,

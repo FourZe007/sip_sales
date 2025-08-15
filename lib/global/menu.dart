@@ -120,109 +120,117 @@ class MenuPageState extends State<MenuPage> {
                   color: Colors.black,
                 ),
               ),
-              body: Container(
-                color: Colors.blue,
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: Stack(
-                  children: [
-                    // ~:Header Section:~
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.12,
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.centerLeft,
-                      margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.025,
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
+              body: SafeArea(
+                maintainBottomViewPadding: true,
+                child: Container(
+                  color: Colors.blue,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Stack(
+                    children: [
+                      // ~:Header Section:~
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.12,
+                        width: MediaQuery.of(context).size.width,
+                        alignment: Alignment.centerLeft,
+                        margin: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width * 0.025,
-                          vertical: MediaQuery.of(context).size.height * 0.02,
                         ),
-                        child: InkWell(
-                          onTap: openProfile,
-                          child: Wrap(
-                            spacing: MediaQuery.of(context).size.width * 0.05,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 30.0,
-                                backgroundColor: Colors.white,
-                                child: Builder(
-                                  builder: (context) {
-                                    if (state.getProfilePicture != '') {
-                                      return ClipOval(
-                                        child: SizedBox.fromSize(
-                                          size: Size.fromRadius(28),
-                                          child: Image.memory(
-                                            base64Decode(
-                                              state.getProfilePicture,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.025,
+                            vertical: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          child: InkWell(
+                            onTap: openProfile,
+                            child: Wrap(
+                              spacing: MediaQuery.of(context).size.width * 0.05,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 30.0,
+                                  backgroundColor: Colors.white,
+                                  child: Builder(
+                                    builder: (context) {
+                                      if (state.getProfilePicture != '') {
+                                        return ClipOval(
+                                          child: SizedBox.fromSize(
+                                            size: Size.fromRadius(28),
+                                            child: Image.memory(
+                                              base64Decode(
+                                                state.getProfilePicture,
+                                              ),
+                                              fit: BoxFit.cover,
                                             ),
-                                            fit: BoxFit.cover,
                                           ),
-                                        ),
-                                      );
-                                    } else {
-                                      return const Icon(
-                                        Icons.person,
-                                        size: 25.0,
-                                        color: Colors.black,
-                                      );
-                                    }
-                                  },
+                                        );
+                                      } else {
+                                        return const Icon(
+                                          Icons.person,
+                                          size: 25.0,
+                                          color: Colors.black,
+                                        );
+                                      }
+                                    },
+                                  ),
                                 ),
-                              ),
 
-                              // ~:Profile Section:~
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Builder(
-                                    builder: (context) {
-                                      if (state.getUserAccountList.isNotEmpty) {
-                                        return Text(
-                                          state.getUserAccountList[0]
-                                              .employeeName,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GlobalFont.mediumgigafontRBold,
-                                        );
-                                      } else {
-                                        return Text(
-                                          'GUEST',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GlobalFont.mediumgigafontRBold,
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  Builder(
-                                    builder: (context) {
-                                      if (state.getUserAccountList.isNotEmpty) {
-                                        return Text(
-                                          state
-                                              .getUserAccountList[0].employeeID,
-                                          style: GlobalFont.bigfontR,
-                                        );
-                                      } else {
-                                        return Text(
-                                          'XXXXX/XXXXXX',
-                                          style: GlobalFont.bigfontR,
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
+                                // ~:Profile Section:~
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Builder(
+                                      builder: (context) {
+                                        if (state
+                                            .getUserAccountList.isNotEmpty) {
+                                          return Text(
+                                            state.getUserAccountList[0]
+                                                .employeeName,
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                GlobalFont.mediumgigafontRBold,
+                                          );
+                                        } else {
+                                          return Text(
+                                            'GUEST',
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                GlobalFont.mediumgigafontRBold,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    Builder(
+                                      builder: (context) {
+                                        if (state
+                                            .getUserAccountList.isNotEmpty) {
+                                          return Text(
+                                            state.getUserAccountList[0]
+                                                .employeeID,
+                                            style: GlobalFont.bigfontR,
+                                          );
+                                        } else {
+                                          return Text(
+                                            'XXXXX/XXXXXX',
+                                            style: GlobalFont.bigfontR,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    // ~:Body Section:~
-                    ManagerActivityPage(isInserted: isInserted),
-                  ],
+                      // ~:Body Section:~
+                      ManagerActivityPage(isInserted: isInserted),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -244,114 +252,123 @@ class MenuPageState extends State<MenuPage> {
                 scrolledUnderElevation: 0.0,
                 shadowColor: Colors.blue,
               ),
-              body: Container(
-                color: Colors.blue,
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  children: [
-                    // ~:Header Section:~
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: (Platform.isIOS) ? 100 : 90,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.025,
-                        vertical: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      margin: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.025,
-                      ),
-                      child: InkWell(
-                        onTap: openProfile,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // ~:Profile Icon:~
-                            CircleAvatar(
-                              radius: 30.0,
-                              backgroundColor: Colors.white,
-                              child: Builder(
-                                builder: (context) {
-                                  if (state.getProfilePicture != '') {
-                                    return ClipOval(
-                                      child: SizedBox.fromSize(
-                                        size: Size.fromRadius(28),
-                                        child: Image.memory(
-                                          base64Decode(
-                                            state.getProfilePicture,
+              body: SafeArea(
+                maintainBottomViewPadding: true,
+                child: Container(
+                  color: Colors.blue,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    children: [
+                      // ~:Header Section:~
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.025,
+                          vertical: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.025,
+                        ),
+                        child: InkWell(
+                          onTap: openProfile,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // ~:Profile Icon:~
+                              CircleAvatar(
+                                radius: 30.0,
+                                backgroundColor: Colors.white,
+                                child: Builder(
+                                  builder: (context) {
+                                    if (state.getProfilePicture.isNotEmpty &&
+                                        state.getProfilePicturePreview
+                                            .isNotEmpty) {
+                                      return ClipOval(
+                                        child: SizedBox.fromSize(
+                                          size: Size.fromRadius(28),
+                                          child: Image.memory(
+                                            base64Decode(
+                                              state.getProfilePicturePreview,
+                                            ),
+                                            fit: BoxFit.cover,
                                           ),
-                                          fit: BoxFit.cover,
                                         ),
-                                      ),
-                                    );
-                                  } else {
-                                    return const Icon(
-                                      Icons.person,
-                                      size: 25.0,
-                                      color: Colors.black,
-                                    );
-                                  }
-                                },
+                                      );
+                                    } else {
+                                      return const Icon(
+                                        Icons.person,
+                                        size: 25.0,
+                                        color: Colors.black,
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
-                            ),
-                            // ~:Devider:~
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.05,
-                            ),
-                            // ~:User Config:~
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Builder(
-                                    builder: (context) {
-                                      if (state.getUserAccountList.isNotEmpty) {
-                                        return Text(
-                                          state.getUserAccountList[0]
-                                              .employeeName,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GlobalFont.mediumgigafontRBold,
-                                        );
-                                      } else {
-                                        return Text(
-                                          'GUEST',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GlobalFont.mediumgigafontRBold,
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  Builder(
-                                    builder: (context) {
-                                      if (state.getUserAccountList.isNotEmpty) {
-                                        return Text(
-                                          state
-                                              .getUserAccountList[0].employeeID,
-                                          style: GlobalFont.bigfontR,
-                                        );
-                                      } else {
-                                        return Text(
-                                          'XXXXX/XXXXXX',
-                                          style: GlobalFont.bigfontR,
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ],
+                              // ~:Devider:~
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.05,
                               ),
-                            ),
-                          ],
+                              // ~:User Config:~
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Builder(
+                                      builder: (context) {
+                                        if (state
+                                            .getUserAccountList.isNotEmpty) {
+                                          return Text(
+                                            state.getUserAccountList[0]
+                                                .employeeName,
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                GlobalFont.mediumgigafontRBold,
+                                          );
+                                        } else {
+                                          return Text(
+                                            'GUEST',
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                GlobalFont.mediumgigafontRBold,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    Builder(
+                                      builder: (context) {
+                                        if (state
+                                            .getUserAccountList.isNotEmpty) {
+                                          return Text(
+                                            state.getUserAccountList[0]
+                                                .employeeID,
+                                            style: GlobalFont.bigfontR,
+                                          );
+                                        } else {
+                                          return Text(
+                                            'XXXXX/XXXXXX',
+                                            style: GlobalFont.bigfontR,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
 
-                    // ~:Body Section:~
-                    Expanded(
-                      child: salesWidgetOptions[_selectedIndex],
-                    ),
-                  ],
+                      // ~:Body Section:~
+                      Expanded(
+                        child: salesWidgetOptions[_selectedIndex],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

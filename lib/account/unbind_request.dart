@@ -138,6 +138,7 @@ class _UnbindRequestPageState extends State<UnbindRequestPage> {
         ),
       ),
       body: SafeArea(
+        maintainBottomViewPadding: true,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: Colors.blue,

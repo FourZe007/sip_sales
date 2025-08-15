@@ -1434,6 +1434,14 @@ class GlobalAPI {
             'status': 'sukses',
             'data': followupDashboardList,
           };
+        } else if (jsonResult['code'] == '100' &&
+            jsonResult['msg'].toString().toLowerCase().replaceAll(' ', '') ==
+                'nodata') {
+          log('No data');
+          return {
+            'status': 'sukses',
+            'data': [],
+          };
         } else {
           log('Failed');
           return {
@@ -1511,12 +1519,12 @@ class GlobalAPI {
         };
       }
     } catch (e) {
-      log('Error: ${e.toString()}');
+      log('API Error: ${e.toString()}');
       return {'status': 'error', 'data': e.toString()};
     }
   }
 
-  static Future<Map<String, dynamic>> saveFollowupStatus(
+  static Future<Map<String, dynamic>> saveFollowup(
     String employeeID,
     String mobilePhone,
     String prospectDate,
@@ -1541,7 +1549,7 @@ class GlobalAPI {
       "FUMemo": fuMemo,
       "NextFUDate": nextFUDate,
     };
-    log('Map Save Followup Status: $mapSaveFollowupStatus');
+    log('Map Save Followup: $mapSaveFollowupStatus');
 
     try {
       final response = await http
@@ -1588,6 +1596,5 @@ class GlobalAPI {
       return {'status': 'error', 'data': e.toString()};
     }
   }
-
   // ~:New:~
 }

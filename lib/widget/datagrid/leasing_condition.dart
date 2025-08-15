@@ -54,11 +54,13 @@ class LeasingConditionDataSource extends DataGridSource {
         cells: row.getCells().map<Widget>((dataGridCell) {
       return Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        padding: EdgeInsets.symmetric(horizontal: 4.0),
         child: Text(
-          dataGridCell.columnName == '%'
-              ? '${dataGridCell.value.toString()}%'
-              : dataGridCell.value.toString(),
+          dataGridCell.value.toString() == '0'
+              ? '-'
+              : dataGridCell.columnName == '%'
+                  ? '${dataGridCell.value.toString()}%'
+                  : dataGridCell.value.toString(),
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
         ),

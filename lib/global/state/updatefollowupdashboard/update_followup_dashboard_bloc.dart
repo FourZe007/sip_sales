@@ -7,19 +7,46 @@ import 'update_followup_dashboard_state.dart';
 class UpdateFollowupDashboardBloc
     extends Bloc<UpdateFollowupDashboardEvent, UpdateFollowupDashboardState> {
   UpdateFollowupDashboardBloc() : super(UpdateFollowupDashboardInitial()) {
-    on<SelectUpdateFollowupStatus>(selectUpdateFollowupStatus);
+    // on<UpdateFollowupDate>(updateFollowUpDate);
+    on<InitUpdateFollowupResults>(initUpdateFollowupResults);
+    on<SelectUpdateFollowupResults>(selectUpdateFollowupResults);
     on<LoadUpdateFollowupDashboard>(loadUpdateFollowupDashboard);
-    on<SaveUpdateFollowupStatus>(saveUpdateFollowupStatus);
+    on<SaveUpdateFollowup>(saveUpdateFollowup);
   }
 
-  Future<void> selectUpdateFollowupStatus(
-    SelectUpdateFollowupStatus event,
+  // Future<void> updateFollowUpDate(
+  //   UpdateFollowupDate event,
+  //   Emitter<UpdateFollowupDashboardState> emit,
+  // ) async {
+  //   try {
+  //     if (event.mode == 1) {
+  //       emit(UpdateFollowUpDateSuccess(event.fuData));
+  //     } else if (event.mode == 2) {
+  //       emit(UpdateNextFollowUpDateSuccess(event.fuData));
+  //     } else {
+  //       emit(UpdateFollowUpDateFailed('Mode tidak ditemukan'));
+  //     }
+  //   } catch (e) {
+  //     emit(UpdateFollowUpDateFailed(e.toString()));
+  //   }
+  // }
+
+  Future<void> initUpdateFollowupResults(
+    InitUpdateFollowupResults event,
+    Emitter<UpdateFollowupDashboardState> emit,
+  ) async {
+    emit(UpdateFollowupDashboardResultsInitial());
+  }
+
+  Future<void> selectUpdateFollowupResults(
+    SelectUpdateFollowupResults event,
     Emitter<UpdateFollowupDashboardState> emit,
   ) async {
     try {
-      emit(UpdateFollowupDashboardStatusSucceed(event.status));
+      emit(UpdateFollowupDashboardResultsSucceed(
+          oldResults: [], newResult: event.results, index: event.index));
     } catch (e) {
-      emit(UpdateFollowupDashboardError(e.toString()));
+      emit(UpdateFollowupDashboardResultsFailed(e.toString()));
     }
   }
 
@@ -49,19 +76,36 @@ class UpdateFollowupDashboardBloc
     }
   }
 
-  Future<void> saveUpdateFollowupStatus(
-    SaveUpdateFollowupStatus event,
+  Future<void> saveUpdateFollowup(
+    SaveUpdateFollowup event,
     Emitter<UpdateFollowupDashboardState> emit,
   ) async {
     emit(SaveFollowupLoading());
     try {
-      await GlobalAPI.saveFollowupStatus(
+      String finalFuResult = '';
+      if (event.fuResult.isEmpty) {
+        finalFuResult = 'PD';
+      } else {
+        switch (event.fuResult.toLowerCase()) {
+          case 'pending':
+            finalFuResult = 'PD';
+            break;
+          case 'deal':
+            finalFuResult = 'DL';
+            break;
+          case 'cancel':
+            finalFuResult = 'CL';
+            break;
+        }
+      }
+
+      await GlobalAPI.saveFollowup(
         event.salesmanId,
         event.mobilePhone,
         event.prospectDate,
         event.line,
         event.fuDate,
-        event.fuResult,
+        finalFuResult,
         event.fuMemo,
         event.nextFUDate,
       ).then((response) {

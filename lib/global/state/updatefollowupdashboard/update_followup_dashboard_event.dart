@@ -2,10 +2,21 @@ import 'package:sip_sales/global/enum.dart';
 
 abstract class UpdateFollowupDashboardEvent {}
 
-class SelectUpdateFollowupStatus extends UpdateFollowupDashboardEvent {
-  final FollowUpStatus status;
+class InitUpdateFollowupResults extends UpdateFollowupDashboardEvent {}
 
-  SelectUpdateFollowupStatus(this.status);
+// class UpdateFollowupDate extends UpdateFollowupDashboardEvent {
+//   final UpdateFollowUpDashboardModel fuData;
+//   final int mode;
+
+//   UpdateFollowupDate(this.fuData, this.mode);
+// }
+
+// ~:Dropdown FU Results:~
+class SelectUpdateFollowupResults extends UpdateFollowupDashboardEvent {
+  final FollowUpResults results;
+  final int index;
+
+  SelectUpdateFollowupResults(this.results, this.index);
 }
 
 class LoadUpdateFollowupDashboard extends UpdateFollowupDashboardEvent {
@@ -20,7 +31,7 @@ class LoadUpdateFollowupDashboard extends UpdateFollowupDashboardEvent {
   );
 }
 
-class SaveUpdateFollowupStatus extends UpdateFollowupDashboardEvent {
+class SaveUpdateFollowup extends UpdateFollowupDashboardEvent {
   final String salesmanId;
   final String mobilePhone;
   final String prospectDate;
@@ -30,7 +41,7 @@ class SaveUpdateFollowupStatus extends UpdateFollowupDashboardEvent {
   final String fuMemo;
   final String nextFUDate;
 
-  SaveUpdateFollowupStatus(
+  SaveUpdateFollowup(
     this.salesmanId,
     this.mobilePhone,
     this.prospectDate,

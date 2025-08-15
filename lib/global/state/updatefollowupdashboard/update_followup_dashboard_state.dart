@@ -5,6 +5,34 @@ abstract class UpdateFollowupDashboardState {}
 
 class UpdateFollowupDashboardInitial extends UpdateFollowupDashboardState {}
 
+// ~:Update Follow Up Date:~
+// ~:Delete later:~
+class UpdateFollowUpDateSuccess extends UpdateFollowupDashboardState {
+  final UpdateFollowUpDashboardModel data;
+
+  UpdateFollowUpDateSuccess(this.data);
+}
+
+class UpdateFollowUpDateFailed extends UpdateFollowupDashboardState {
+  final String message;
+
+  UpdateFollowUpDateFailed(this.message);
+}
+
+// ~:Update Next Follow Up Date:~
+// ~:Delete later:~
+class UpdateNextFollowUpDateSuccess extends UpdateFollowupDashboardState {
+  final UpdateFollowUpDashboardModel data;
+
+  UpdateNextFollowUpDateSuccess(this.data);
+}
+
+class UpdateNextFollowUpDateFailed extends UpdateFollowupDashboardState {
+  final String message;
+
+  UpdateNextFollowUpDateFailed(this.message);
+}
+
 class UpdateFollowupDashboardLoading extends UpdateFollowupDashboardState {}
 
 class UpdateFollowupDashboardLoaded extends UpdateFollowupDashboardState {
@@ -18,24 +46,34 @@ class UpdateFollowupDashboardError extends UpdateFollowupDashboardState {
   UpdateFollowupDashboardError(this.message);
 }
 
-class UpdateFollowupDashboardStatusInitial
+// ~:Update Followup Results:~
+class UpdateFollowupDashboardResultsInitial
     extends UpdateFollowupDashboardState {
-  final FollowUpStatus status;
+  final List<FollowUpResults> results;
 
-  UpdateFollowupDashboardStatusInitial() : status = FollowUpStatus.values.first;
+  UpdateFollowupDashboardResultsInitial()
+      : results = List.generate(
+          FollowUpResults.values.length,
+          (index) => FollowUpResults.pending,
+        );
 }
 
-class UpdateFollowupDashboardStatusSucceed
+class UpdateFollowupDashboardResultsSucceed
     extends UpdateFollowupDashboardState {
-  final FollowUpStatus status;
+  final List<FollowUpResults> results;
 
-  UpdateFollowupDashboardStatusSucceed(this.status);
+  UpdateFollowupDashboardResultsSucceed(
+      {required List<FollowUpResults> oldResults,
+      required FollowUpResults newResult,
+      required int index})
+      : results = List.from(oldResults)..[index] = newResult;
 }
 
-class UpdateFollowupDashboardStatusFailed extends UpdateFollowupDashboardState {
+class UpdateFollowupDashboardResultsFailed
+    extends UpdateFollowupDashboardState {
   final String message;
 
-  UpdateFollowupDashboardStatusFailed(this.message);
+  UpdateFollowupDashboardResultsFailed(this.message);
 }
 
 // ~:Save Followup Data:~

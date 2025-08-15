@@ -13,53 +13,47 @@ class ProspekStuCharts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: Card(
-        elevation: 5,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const Text(
-                'Prospek & STU by Day',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Expanded(
-                child: SfCartesianChart(
-                  primaryXAxis: CategoryAxis(),
-                  legend: Legend(
-                    isVisible: true,
-                    position: LegendPosition.bottom,
-                  ),
-                  series: [
-                    LineSeries<DailyModel, String>(
-                      dataSource: data,
-                      xValueMapper: (DailyModel sales, _) =>
-                          sales.hari.toString(),
-                      yValueMapper: (DailyModel sales, _) => sales.prospekD,
-                      dataLabelSettings:
-                          const DataLabelSettings(isVisible: true),
-                      color: Colors.indigo[700]!.withAlpha(150),
-                      legendIconType: LegendIconType.horizontalLine,
-                      legendItemText: 'Prospek',
-                    ),
-                    BarSeries<DailyModel, String>(
-                      dataSource: data,
-                      xValueMapper: (DailyModel sales, _) =>
-                          sales.hari.toString(),
-                      yValueMapper: (DailyModel sales, _) => sales.stud,
-                      dataLabelSettings:
-                          const DataLabelSettings(isVisible: true),
-                      color: Colors.orange[300],
-                      legendIconType: LegendIconType.rectangle,
-                      legendItemText: 'STU',
-                    )
-                  ],
-                ),
-              ),
-            ],
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SfCartesianChart(
+          enableMultiSelection: true,
+          title: ChartTitle(
+            text: 'Prospek & STU by Day',
+            textStyle: TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          legend: Legend(
+            isVisible: true,
+            position: LegendPosition.bottom,
+          ),
+          primaryXAxis: CategoryAxis(labelRotation: -30),
+          series: [
+            LineSeries<DailyModel, String>(
+              dataSource: data,
+              animationDuration: 1500,
+              xValueMapper: (DailyModel sales, _) => sales.hari.toString(),
+              yValueMapper: (DailyModel sales, _) => sales.prospekD,
+              dataLabelSettings: const DataLabelSettings(isVisible: true),
+              color: Colors.indigo[700]!.withAlpha(150),
+              legendIconType: LegendIconType.horizontalLine,
+              legendItemText: 'Prospek',
+            ),
+            BarSeries<DailyModel, String>(
+              dataSource: data,
+              animationDuration: 1500,
+              xValueMapper: (DailyModel sales, _) => sales.hari.toString(),
+              yValueMapper: (DailyModel sales, _) => sales.stud,
+              dataLabelSettings: const DataLabelSettings(isVisible: true),
+              color: Colors.orange[300],
+              legendIconType: LegendIconType.rectangle,
+              legendItemText: 'STU',
+            )
+          ],
         ),
       ),
     );

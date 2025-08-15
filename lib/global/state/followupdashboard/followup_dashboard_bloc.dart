@@ -22,12 +22,17 @@ class FollowupDashboardBloc
         event.salesmanId,
         event.date,
       ).then((response) {
-        if (response['status'] == 'sukses') {
+        if (response['status'] == 'sukses' &&
+            (response['data'] as List).isNotEmpty) {
           followupData.addAll(response['data'] as List<FollowUpDashboardModel>);
+          emit(FollowupDashboardLoaded(followupData));
+        } else if (response['status'] == 'sukses' &&
+            (response['data'] as List).isEmpty) {
+          emit(FollowupDashboardError('empty'));
+        } else {
+          emit(FollowupDashboardError(response['data'].toString()));
         }
       });
-
-      emit(FollowupDashboardLoaded(followupData));
     } catch (e) {
       emit(FollowupDashboardError(e.toString()));
     }

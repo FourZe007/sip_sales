@@ -226,8 +226,6 @@ class _AttendancePageState extends State<AttendancePage> {
     BuildContext context,
     SipSalesState state,
   ) {
-    final salesDashboardBloc = context.read<SalesDashboardBloc>();
-
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.03,
@@ -501,58 +499,83 @@ class _AttendancePageState extends State<AttendancePage> {
                         // ~:SPK:~
                         SalesDashboard(
                           title: 'SPK',
-                          data1:
-                              state.getSalesDashboardList[0].qtyLM.toString(),
-                          data2:
-                              state.getSalesDashboardList[0].qtyTM.toString(),
-                          percentage:
-                              state.getSalesDashboardList[0].spk.toString(),
-                          trendIcon: state.getSalesDashboardList[0].qtyLM <=
-                                  state.getSalesDashboardList[0].qtyTM
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward,
-                          trendColor: state.getSalesDashboardList[0].qtyLM <=
-                                  state.getSalesDashboardList[0].qtyTM
-                              ? Colors.green[700]!
-                              : Colors.red,
+                          data1: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyLM.toString()
+                              : '',
+                          data2: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyTM.toString()
+                              : '',
+                          percentage: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].spk.toString()
+                              : '',
+                          trendIcon: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyLM <=
+                                      state.getSalesDashboardList[0].qtyTM
+                                  ? Icons.arrow_upward
+                                  : Icons.arrow_downward
+                              : CupertinoIcons.equal,
+                          trendColor: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyLM <=
+                                      state.getSalesDashboardList[0].qtyTM
+                                  ? Colors.green[700]!
+                                  : Colors.red
+                              : Colors.grey,
                         ),
 
                         // ~:Delivery:~
                         SalesDashboard(
                           title: 'Pengiriman',
-                          data1:
-                              state.getSalesDashboardList[0].qtySJLM.toString(),
-                          data2:
-                              state.getSalesDashboardList[0].qtySJTM.toString(),
-                          percentage: state.getSalesDashboardList[0].delivery
-                              .toString(),
-                          trendIcon: state.getSalesDashboardList[0].qtySJLM <=
-                                  state.getSalesDashboardList[0].qtySJTM
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward,
-                          trendColor: state.getSalesDashboardList[0].qtySJLM <=
-                                  state.getSalesDashboardList[0].qtySJTM
-                              ? Colors.green[700]!
-                              : Colors.red,
+                          data1: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtySJLM
+                                  .toString()
+                              : '',
+                          data2: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtySJTM
+                                  .toString()
+                              : '',
+                          percentage: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].delivery
+                                  .toString()
+                              : '',
+                          trendIcon: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtySJLM <=
+                                      state.getSalesDashboardList[0].qtySJTM
+                                  ? Icons.arrow_upward
+                                  : Icons.arrow_downward
+                              : CupertinoIcons.equal,
+                          trendColor: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtySJLM <=
+                                      state.getSalesDashboardList[0].qtySJTM
+                                  ? Colors.green[700]!
+                                  : Colors.red
+                              : Colors.grey,
                         ),
 
                         // ~:Prospect:~
                         SalesDashboard(
                           title: 'Prospek',
-                          data1:
-                              state.getSalesDashboardList[0].qtyLTM.toString(),
-                          data2:
-                              state.getSalesDashboardList[0].qtyPTM.toString(),
-                          percentage: state.getSalesDashboardList[0].prospect
-                              .toString(),
-                          trendIcon: state.getSalesDashboardList[0].qtyLTM <=
-                                  state.getSalesDashboardList[0].qtyPTM
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward,
-                          trendColor: state.getSalesDashboardList[0].qtyLTM <=
-                                  state.getSalesDashboardList[0].qtyPTM
-                              ? Colors.green[700]!
-                              : Colors.red,
+                          data1: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyLTM.toString()
+                              : '',
+                          data2: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyPTM.toString()
+                              : '',
+                          percentage: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].prospect
+                                  .toString()
+                              : '',
+                          trendIcon: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyLTM <=
+                                      state.getSalesDashboardList[0].qtyPTM
+                                  ? Icons.arrow_upward
+                                  : Icons.arrow_downward
+                              : CupertinoIcons.equal,
+                          trendColor: state.getSalesDashboardList.isNotEmpty
+                              ? state.getSalesDashboardList[0].qtyLTM <=
+                                      state.getSalesDashboardList[0].qtyPTM
+                                  ? Colors.green[700]!
+                                  : Colors.red
+                              : Colors.grey,
                         ),
                       ],
                     ),
@@ -565,10 +588,9 @@ class _AttendancePageState extends State<AttendancePage> {
           // ~:Attendance List:~
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.325,
             margin: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.015,
-              bottom: MediaQuery.of(context).size.height * 0.01,
             ),
             child: Column(
               children: [

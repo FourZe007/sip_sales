@@ -99,6 +99,7 @@ class SalesmanDashboard extends StatelessWidget {
                               context: context,
                               label: 'Pros',
                               value: salesData.prospek,
+                              labelSize: 12,
                             ),
 
                             // ~:SPK:~
@@ -106,6 +107,7 @@ class SalesmanDashboard extends StatelessWidget {
                               context: context,
                               label: 'SPK',
                               value: salesData.spk,
+                              labelSize: 12,
                             ),
 
                             // ~:SPK Terbuka:~
@@ -113,6 +115,7 @@ class SalesmanDashboard extends StatelessWidget {
                               context: context,
                               label: 'Tbk',
                               value: salesData.spkTerbuka,
+                              labelSize: 12,
                             ),
 
                             // ~:STU:~
@@ -120,6 +123,7 @@ class SalesmanDashboard extends StatelessWidget {
                               context: context,
                               label: 'STU',
                               value: salesData.stu,
+                              labelSize: 12,
                             ),
 
                             // ~:Delivery:~
@@ -127,6 +131,7 @@ class SalesmanDashboard extends StatelessWidget {
                               context: context,
                               label: 'Deliv',
                               value: salesData.delivery,
+                              labelSize: 12,
                             ),
                           ],
                         ),
@@ -175,6 +180,7 @@ class SalesmanDashboard extends StatelessWidget {
                               value: salesData.prospekH,
                               boxWidth: 80,
                               boxHeight: 75,
+                              labelSize: 12,
                               boxColor: Colors.green[200]!,
                             ),
 
@@ -185,6 +191,7 @@ class SalesmanDashboard extends StatelessWidget {
                               value: salesData.spkh,
                               boxWidth: 80,
                               boxHeight: 75,
+                              labelSize: 12,
                               boxColor: Colors.green[200]!,
                             ),
 
@@ -195,6 +202,7 @@ class SalesmanDashboard extends StatelessWidget {
                               value: salesData.spkTerbukaH,
                               boxWidth: 80,
                               boxHeight: 75,
+                              labelSize: 12,
                               boxColor: Colors.green[200]!,
                             ),
 
@@ -205,6 +213,7 @@ class SalesmanDashboard extends StatelessWidget {
                               value: salesData.stuh,
                               boxWidth: 80,
                               boxHeight: 75,
+                              labelSize: 12,
                               boxColor: Colors.green[200]!,
                             ),
                           ],
@@ -374,15 +383,15 @@ class SalesmanDashboard extends StatelessWidget {
                                 ),
                                 GridColumn(
                                   columnName: 'unit',
-                                  minimumWidth: 40,
+                                  minimumWidth: 36,
                                   label: Align(
                                     alignment: Alignment.center,
-                                    child: Text('Unit'),
+                                    child: Text('App'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: '%',
-                                  minimumWidth: 75,
+                                  minimumWidth: 64,
                                   label: Align(
                                     alignment: Alignment.center,
                                     child: Text('Ratio'),

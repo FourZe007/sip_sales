@@ -9,3 +9,9 @@ enum FollowUpStatus {
   completed,
   cancelled,
 }
+
+enum FollowUpResults {
+  pending,
+  deal,
+  cancel,
+}
