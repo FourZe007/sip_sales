@@ -3,9 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_state.dart';
 import 'package:sip_sales/global/state/followupdate_cubit.dart';
@@ -13,11 +14,10 @@ import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_event.dart';
 import 'package:sip_sales/pages/screen/followup_dashboard_detail.dart';
-import 'package:sip_sales/widget/custom.dart';
+import 'package:sip_sales/widget/data/fu_dashboard_header.dart';
 import 'package:sip_sales/widget/format.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class FollowupDashboard extends StatelessWidget {
   const FollowupDashboard({super.key});
@@ -71,101 +71,15 @@ class FollowupDashboard extends StatelessWidget {
               final salesData = state.salesData[index];
 
               return Column(
-                spacing: 16,
+                spacing: 8,
                 children: [
-                  // ~:Data:~
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // ~:Total Prospek:~
-                      CustomWidget.buildStatBox(
-                        context: context,
-                        label: 'T.Pros',
-                        value: salesData.totalProspect,
-                        boxWidth: 64,
-                        boxHeight: 90,
-                        lableHeight: 28,
-                        labelSize: 12,
-                        boxColor: Colors.blue[200]!,
-                      ),
-
-                      // ~:Belum Follow-Up:~
-                      CustomWidget.buildStatBox(
-                        context: context,
-                        label: 'BFU',
-                        value: salesData.belumFU,
-                        boxWidth: 64,
-                        boxHeight: 90,
-                        lableHeight: 28,
-                        labelSize: 12,
-                        boxColor: Colors.grey[400]!,
-                      ),
-
-                      // ~:Proses Follow-Up:~
-                      CustomWidget.buildStatBox(
-                        context: context,
-                        label: 'PFU',
-                        value: salesData.prosesFU,
-                        boxWidth: 64,
-                        boxHeight: 90,
-                        lableHeight: 28,
-                        labelSize: 12,
-                        boxColor: Colors.yellow[300]!,
-                      ),
-
-                      // ~:Closing:~
-                      CustomWidget.buildStatBox(
-                        context: context,
-                        label: 'Deal',
-                        value: salesData.closing,
-                        boxWidth: 64,
-                        boxHeight: 90,
-                        lableHeight: 28,
-                        labelSize: 12,
-                        boxColor: Colors.green[300]!,
-                      ),
-
-                      // ~:Batal:~
-                      CustomWidget.buildStatBox(
-                        context: context,
-                        label: 'Batal',
-                        value: salesData.batal,
-                        boxWidth: 64,
-                        boxHeight: 90,
-                        lableHeight: 28,
-                        labelSize: 12,
-                        boxColor: Colors.red[300]!,
-                      ),
-                    ],
+                  // ~:Follow Up Header:~
+                  FuDashboardHeader(
+                    fuData: salesData,
+                    isFuDeal: false,
                   ),
 
-                  // ~:New Prospect Progress Bar:~
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 40,
-                        child: LinearProgressIndicator(
-                          value: salesData.newProspect.toDouble() /
-                              salesData.totalProspect.toDouble(),
-                          backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation(Colors.blue[200]),
-                          borderRadius: BorderRadius.circular(16),
-                          stopIndicatorRadius: 16,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          'Prospek Baru: ${salesData.newProspect.toString()} orang (${salesData.persenNew.toString()}%)',
-                          style: GlobalFont.mediumbigfontR,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // ~:Follow-Up:~
+                  // ~:Follow-Up Detail:~
                   Column(
                     children: salesData.detail.map((e) {
                       final icon = switch (
@@ -210,16 +124,18 @@ class FollowupDashboard extends StatelessWidget {
 
                                   // ~:CTA button:~
                                   IconButton(
-                                    onPressed: () async {
-                                      Uri url = Uri.parse(
-                                        'https://wa.me/62${e.mobilePhone.replaceFirst('0', '')}',
-                                      );
-                                      if (await canLaunchUrl(url)) {
-                                        await launchUrl(url);
-                                      }
+                                    onPressed: () {
+                                      log('More Button pressed');
+                                      context
+                                          .read<DashboardSlidingUpCubit>()
+                                          .changeType(
+                                            DashboardSlidingUpType.moreoption,
+                                            data: e.mobilePhone,
+                                          );
                                     },
                                     icon: Icon(
-                                      FontAwesomeIcons.whatsapp,
+                                      // FontAwesomeIcons.whatsapp,
+                                      Icons.more_vert_rounded,
                                       size: 20,
                                       color: Colors.black,
                                     ),
@@ -308,7 +224,7 @@ class FollowupDashboard extends StatelessWidget {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Prospect Date',
+                                            'Tgl Prospek',
                                             style: GlobalFont.mediumfontR,
                                           ),
                                         ),

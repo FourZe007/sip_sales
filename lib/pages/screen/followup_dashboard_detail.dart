@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
+import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_event.dart';
 import 'package:sip_sales/global/state/followupdate_cubit.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
@@ -35,7 +37,7 @@ class FollowupDashboardDetail extends StatefulWidget {
 }
 
 class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
-  String results = '';
+  String fuResults = 'PD';
 
   void refreshFollowupDashboard(
     BuildContext context,
@@ -44,8 +46,13 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     final salesmanId = appState.getUserAccountList.isNotEmpty
         ? appState.getUserAccountList[0].employeeID
         : '';
+    final date = DateTime.now().toIso8601String().substring(0, 10);
 
     context.read<FollowupCubit>().resetFollowup();
+
+    context.read<FollowupDashboardBloc>().add(
+          LoadFollowupDashboard(salesmanId, date),
+        );
 
     context.read<UpdateFollowupDashboardBloc>().add(
           LoadUpdateFollowupDashboard(
@@ -90,12 +97,16 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
   // Helper method to check if a card has been filled
   bool _isCardFilled(UpdateFollowupDashboardDetails card) {
     if (card.fuResult != FollowUpResults.pending.name) {
-      return card.fuDate.isNotEmpty && card.fuMemo.isNotEmpty;
+      return card.fuDate.isNotEmpty;
     }
 
     return card.fuDate.isNotEmpty &&
         card.nextFUDate.isNotEmpty &&
         card.fuMemo.isNotEmpty;
+  }
+
+  bool isFollowUpInProcess(UpdateFollowupDashboardDetails card) {
+    return card.fuResult == FollowUpResults.pending.name;
   }
 
   void selectDate(
@@ -110,7 +121,8 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     final date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
+      firstDate:
+          DateTime.now(), // Set to the current date to disable previous dates
       lastDate: DateTime(2100),
     );
 
@@ -234,14 +246,15 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
 
     if (fuMode == 0) {
       log('index 0');
-      log(followup.getFollowup.firstFUDate.split('T')[0]);
       updateFollowup.add(
         SaveUpdateFollowup(
           salesmanId,
           widget.mobilePhone,
           widget.prospectDate,
           fuMode,
-          followup.getFollowup.firstFUDate.split('T')[0],
+          followup.getFollowup.firstFUDate.split('T')[0].isEmpty
+              ? DateTime.now().toIso8601String()
+              : followup.getFollowup.firstFUDate.split('T')[0],
           '',
           '',
           '',
@@ -316,8 +329,6 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
   @override
   void dispose() {
     super.dispose();
-
-    results = '';
     // newFuDate = '';
     // newNextFuDate = '';
   }
@@ -717,7 +728,23 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
 
                         // ~:Customer Follow-Up Attempts:~
                         Column(
-                          children: data.followup.asMap().entries.map((entry) {
+                          children:
+                              data.followup.asMap().entries.where((entry) {
+                            // Show first follow-up card always
+                            if (entry.key == 0) return true;
+
+                            // For follow-up cards after the first one, check if previous card is filled
+                            final previousIndex = entry.key - 1;
+                            if (previousIndex >= 0 &&
+                                previousIndex < data.followup.length) {
+                              return _isCardFilled(
+                                  data.followup[previousIndex]);
+                            } else if (!isFollowUpInProcess(
+                                data.followup[previousIndex])) {
+                              return false;
+                            }
+                            return false;
+                          }).map((entry) {
                             final index = entry.key;
                             final e = entry.value;
 
@@ -725,385 +752,416 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                             final bool isEditable =
                                 _isCardEditable(data, index);
 
-                            return Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  spacing: 8,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // ~:Follow-Up Data Header:~
-                                    SizedBox(
-                                      height: 40,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Follow-Up #${index + 1}',
-                                            style: GlobalFont.bigfontRBold,
-                                          ),
-                                          Builder(
-                                            builder: (context) {
-                                              if (!isEditable &&
-                                                  _isCardFilled(e)) {
-                                                return const Icon(
-                                                  Icons.check_circle,
-                                                  color: Colors.green,
-                                                  size: 20,
-                                                );
-                                              } else if (isEditable) {
-                                                return ElevatedButton(
-                                                  onPressed: () => saveFollowup(
-                                                    context,
-                                                    data,
-                                                    index + 1,
-                                                    updateFollowup,
-                                                    followup,
-                                                    appState,
-                                                    fuDetailsIndex: index,
-                                                  ),
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.black,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        20,
-                                                      ),
+                            return BlocListener<UpdateFollowupDashboardBloc,
+                                UpdateFollowupDashboardState>(
+                              listener: (context, state) {
+                                if (state is UpdateFollowUpDateSuccess) {
+                                  context.read<FollowupCubit>().changeFollowup(
+                                        state.data,
+                                      );
+                                }
+                              },
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    spacing: 8,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // ~:Follow-Up Data Header:~
+                                      SizedBox(
+                                        height: 40,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Follow-Up #${index + 1}',
+                                              style: GlobalFont.bigfontRBold,
+                                            ),
+                                            Builder(
+                                              builder: (context) {
+                                                if (!isEditable &&
+                                                    _isCardFilled(e)) {
+                                                  return const Icon(
+                                                    Icons.check_circle,
+                                                    color: Colors.green,
+                                                    size: 20,
+                                                  );
+                                                } else if (isEditable) {
+                                                  return ElevatedButton(
+                                                    onPressed: () =>
+                                                        saveFollowup(
+                                                      context,
+                                                      data,
+                                                      index + 1,
+                                                      updateFollowup,
+                                                      followup,
+                                                      appState,
+                                                      fuDetailsIndex: index,
                                                     ),
-                                                    minimumSize:
-                                                        const Size(52, 32),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8),
-                                                  ),
-                                                  child: BlocConsumer<
-                                                          UpdateFollowupDashboardBloc,
-                                                          UpdateFollowupDashboardState>(
-                                                      listener:
-                                                          (context, state) {
-                                                    if (state
-                                                        is SaveFollowupSucceed) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                          backgroundColor:
-                                                              Colors.grey,
-                                                          content: Text(
-                                                            'Update follow-up berhasil.',
-                                                            style: GlobalFont
-                                                                .bigfontR,
-                                                          ),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                          ),
-                                                          margin:
-                                                              EdgeInsets.all(8),
-                                                          behavior:
-                                                              SnackBarBehavior
-                                                                  .floating,
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          20,
                                                         ),
-                                                      );
-
-                                                      refreshFollowupDashboard(
-                                                        context,
-                                                        appState,
-                                                      );
-                                                    } else if (state
-                                                        is SaveFollowupFailed) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                          backgroundColor:
-                                                              Colors.grey,
-                                                          content: Text(
-                                                            state.message,
-                                                            style: GlobalFont
-                                                                .bigfontR,
+                                                      ),
+                                                      minimumSize:
+                                                          const Size(52, 32),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8),
+                                                    ),
+                                                    child: BlocConsumer<
+                                                            UpdateFollowupDashboardBloc,
+                                                            UpdateFollowupDashboardState>(
+                                                        listener:
+                                                            (context, state) {
+                                                      if (state
+                                                          is SaveFollowupSucceed) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                            backgroundColor:
+                                                                Colors.grey,
+                                                            content: Text(
+                                                              'Update follow-up berhasil.',
+                                                              style: GlobalFont
+                                                                  .bigfontR,
+                                                            ),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                            ),
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    8),
+                                                            behavior:
+                                                                SnackBarBehavior
+                                                                    .floating,
                                                           ),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                          ),
-                                                          margin:
-                                                              EdgeInsets.all(8),
-                                                          behavior:
-                                                              SnackBarBehavior
-                                                                  .floating,
-                                                        ),
-                                                      );
-                                                    }
-                                                  }, builder: (context, state) {
-                                                    if (state
-                                                        is SaveFollowupLoading) {
-                                                      if (Platform.isIOS) {
-                                                        return const CupertinoActivityIndicator(
-                                                          radius: 12.5,
-                                                          color: Colors.white,
                                                         );
-                                                      } else {
-                                                        return const CircleLoading(
-                                                          warna: Colors.white,
-                                                          customizedHeight: 20,
-                                                          customizedWidth: 20,
-                                                          strokeWidth: 3,
+
+                                                        refreshFollowupDashboard(
+                                                          context,
+                                                          appState,
+                                                        );
+                                                      } else if (state
+                                                          is SaveFollowupFailed) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                            backgroundColor:
+                                                                Colors.grey,
+                                                            content: Text(
+                                                              state.message,
+                                                              style: GlobalFont
+                                                                  .bigfontR,
+                                                            ),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                            ),
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    8),
+                                                            behavior:
+                                                                SnackBarBehavior
+                                                                    .floating,
+                                                          ),
                                                         );
                                                       }
-                                                    } else {
-                                                      return Text(
-                                                        'Save',
-                                                        style: GlobalFont
-                                                            .bigfontR
-                                                            .copyWith(
-                                                          color: Colors.white,
-                                                          fontSize: 14,
-                                                        ),
-                                                      );
-                                                    }
-                                                  }),
-                                                );
-                                              }
-                                              return const SizedBox.shrink();
-                                            },
-                                          ),
-                                        ],
+                                                    }, builder:
+                                                            (context, state) {
+                                                      if (state
+                                                          is SaveFollowupLoading) {
+                                                        if (Platform.isIOS) {
+                                                          return const CupertinoActivityIndicator(
+                                                            radius: 12.5,
+                                                            color: Colors.white,
+                                                          );
+                                                        } else {
+                                                          return const CircleLoading(
+                                                            warna: Colors.white,
+                                                            customizedHeight:
+                                                                20,
+                                                            customizedWidth: 20,
+                                                            strokeWidth: 3,
+                                                          );
+                                                        }
+                                                      } else {
+                                                        return Text(
+                                                          'Save',
+                                                          style: GlobalFont
+                                                              .bigfontR
+                                                              .copyWith(
+                                                            color: Colors.white,
+                                                            fontSize: 14,
+                                                          ),
+                                                        );
+                                                      }
+                                                    }),
+                                                  );
+                                                }
+                                                return const SizedBox.shrink();
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
 
-                                    // ~:Follow-Up Date:~
-                                    BlocBuilder<FollowupCubit,
-                                            UpdateFollowUpDashboardModel>(
-                                        builder: (context, state) {
-                                      final currentFollowup =
-                                          state.followup.elementAtOrNull(index);
-
-                                      return FollowupDatePicker(
-                                        label: 'Tanggal FU',
-                                        date:
-                                            currentFollowup?.fuDate ?? e.fuDate,
-                                        isEditable: isEditable,
-                                        onTap: () => selectDate(
-                                          context,
-                                          fuMode: 1,
-                                          data: data,
-                                          details: currentFollowup ?? e,
-                                          index: index,
-                                        ),
-                                      );
-                                    }),
-
-                                    // ~:Followup Result:~
-                                    Row(
-                                      children: [
-                                        // ~:Title:~
-                                        Expanded(
-                                          child: Text(
-                                            'Hasil FU',
-                                            style: GlobalFont.bigfontR,
-                                          ),
-                                        ),
-
-                                        // ~:Dropdown:~
-                                        Expanded(
-                                          flex: 2,
-                                          child: BlocBuilder<FollowupCubit,
-                                                  UpdateFollowUpDashboardModel>(
-                                              builder: (context, state) {
-                                            if (isEditable) {
-                                              return Container(
-                                                width: double.infinity,
-                                                height: 36,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0),
-                                                  border: Border.all(
-                                                    color: Colors.blue,
-                                                    width: 1.5,
-                                                  ),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 8.0,
-                                                  vertical: 4.0,
-                                                ),
-                                                child: DropdownButton<String>(
-                                                  value: state.followup.isEmpty
-                                                      ? FollowUpResults
-                                                          .pending.name
-                                                      : state.followup[index]
-                                                              .fuResult.isEmpty
-                                                          ? FollowUpResults
-                                                              .pending.name
-                                                          : state
-                                                              .followup[index]
-                                                              .fuResult,
-                                                  isExpanded: true,
-                                                  dropdownColor: Colors.white,
-                                                  icon: const Icon(
-                                                    Icons
-                                                        .arrow_drop_down_rounded,
-                                                    color: Colors.blue,
-                                                  ),
-                                                  iconSize: 28,
-                                                  elevation: 0,
-                                                  style: GlobalFont.bigfontR,
-                                                  underline: SizedBox(),
-                                                  onChanged:
-                                                      (String? newValue) =>
-                                                          selectFollowupStatus(
-                                                    context,
-                                                    newValue!,
-                                                    data,
-                                                    index,
-                                                  ),
-                                                  items: FollowUpResults.values
-                                                      .map<
-                                                          DropdownMenuItem<
-                                                              String>>((value) {
-                                                    String result = '';
-                                                    switch (value) {
-                                                      case FollowUpResults
-                                                            .pending:
-                                                        result = 'Pending';
-                                                        break;
-                                                      case FollowUpResults.deal:
-                                                        result = 'Deal';
-                                                        break;
-                                                      case FollowUpResults
-                                                            .cancel:
-                                                        result = 'Cancel';
-                                                        break;
-                                                    }
-
-                                                    return DropdownMenuItem<
-                                                        String>(
-                                                      value: value.name,
-                                                      child: Text(result),
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                              );
-                                            } else {
-                                              return Text(
-                                                e.fuResult.isNotEmpty
-                                                    ? getFollowupStatus(
-                                                        e.fuResult)
-                                                    : '-',
-                                                style: GlobalFont.bigfontR,
-                                                overflow: TextOverflow.visible,
-                                              );
-                                            }
-                                          }),
-                                        ),
-                                      ],
-                                    ),
-
-                                    // ~:Next Followup Date:~
-                                    BlocBuilder<FollowupCubit,
-                                            UpdateFollowUpDashboardModel>(
-                                        builder: (context, state) {
-                                      if (state.followup.isNotEmpty &&
-                                          state.followup[index].fuResult !=
-                                              '' &&
-                                          state.followup[index].fuResult !=
-                                              FollowUpResults.pending.name) {
-                                        log(state.followup[index].fuResult);
-                                        return SizedBox.shrink();
-                                      } else {
-                                        final currentNextFollowup = state
-                                            .followup
+                                      // ~:Follow-Up Date:~
+                                      BlocBuilder<FollowupCubit,
+                                              UpdateFollowUpDashboardModel>(
+                                          builder: (context, state) {
+                                        final currentFollowup = state.followup
                                             .elementAtOrNull(index);
 
                                         return FollowupDatePicker(
-                                          label: 'Next FU',
-                                          date:
-                                              currentNextFollowup?.nextFUDate ??
-                                                  e.nextFUDate,
+                                          label: 'Tanggal FU',
+                                          date: currentFollowup?.fuDate ??
+                                              e.fuDate,
                                           isEditable: isEditable,
                                           onTap: () => selectDate(
                                             context,
-                                            fuMode: 2,
+                                            fuMode: 1,
                                             data: data,
-                                            details: currentNextFollowup ?? e,
+                                            details: currentFollowup ?? e,
                                             index: index,
                                           ),
                                         );
-                                      }
-                                    }),
+                                      }),
 
-                                    // ~:Follow-Up Information:~
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Keterangan',
-                                            style: GlobalFont.bigfontR,
+                                      // ~:Followup Result:~
+                                      Row(
+                                        children: [
+                                          // ~:Title:~
+                                          Expanded(
+                                            child: Text(
+                                              'Hasil FU',
+                                              style: GlobalFont.bigfontR,
+                                            ),
                                           ),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Builder(
-                                            builder: (context) {
+
+                                          // ~:Dropdown:~
+                                          Expanded(
+                                            flex: 2,
+                                            child: BlocBuilder<FollowupCubit,
+                                                    UpdateFollowUpDashboardModel>(
+                                                builder: (context, state) {
                                               if (isEditable) {
-                                                return TextFormField(
-                                                  initialValue: e.fuMemo,
-                                                  decoration: InputDecoration(
-                                                    hintText:
-                                                        'Masukkan keterangan...',
-                                                    border: InputBorder.none,
-                                                    contentPadding:
-                                                        EdgeInsets.zero,
+                                                return Container(
+                                                  width: double.infinity,
+                                                  height: 36,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                    border: Border.all(
+                                                      color: Colors.blue,
+                                                      width: 1.5,
+                                                    ),
                                                   ),
-                                                  style: GlobalFont.bigfontR,
-                                                  maxLines: null,
-                                                  onChanged: (value) =>
-                                                      modifyFUDesc(
-                                                    context,
-                                                    value,
-                                                    data,
-                                                    index,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 8.0,
+                                                    vertical: 4.0,
                                                   ),
+                                                  child: BlocBuilder<
+                                                          FollowupCubit,
+                                                          UpdateFollowUpDashboardModel>(
+                                                      builder:
+                                                          (context, state) {
+                                                    log('fuResult: ${e.fuResult}');
+                                                    return DropdownButton(
+                                                      value: e.fuResult.isEmpty
+                                                          ? null
+                                                          : e.fuResult,
+                                                      isExpanded: true,
+                                                      dropdownColor:
+                                                          Colors.white,
+                                                      icon: const Icon(
+                                                        Icons
+                                                            .arrow_drop_down_rounded,
+                                                        color: Colors.blue,
+                                                      ),
+                                                      iconSize: 28,
+                                                      elevation: 0,
+                                                      style:
+                                                          GlobalFont.bigfontR,
+                                                      underline: SizedBox(),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                        20.0,
+                                                      ),
+                                                      onChanged: (newValue) {
+                                                        if (newValue != null) {
+                                                          selectFollowupStatus(
+                                                            context,
+                                                            newValue,
+                                                            state.followup
+                                                                    .isEmpty
+                                                                ? data
+                                                                : state,
+                                                            index,
+                                                          );
+                                                        }
+                                                      },
+                                                      items: FollowUpResults
+                                                          .values
+                                                          .map((e) {
+                                                        switch (e) {
+                                                          case FollowUpResults
+                                                                .pending:
+                                                            return DropdownMenuItem(
+                                                              value: 'PD',
+                                                              child: Text(
+                                                                  'Proses Follow Up'),
+                                                            );
+                                                          case FollowUpResults
+                                                                .deal:
+                                                            return DropdownMenuItem(
+                                                              value: 'DL',
+                                                              child:
+                                                                  Text('Deal'),
+                                                            );
+                                                          case FollowUpResults
+                                                                .cancel:
+                                                            return DropdownMenuItem(
+                                                              value: 'CL',
+                                                              child: Text(
+                                                                  'Cancel'),
+                                                            );
+                                                        }
+                                                      }).toList(),
+                                                    );
+                                                  }),
                                                 );
                                               } else {
                                                 return Text(
-                                                  e.fuMemo.isEmpty
-                                                      ? '-'
-                                                      : Format
-                                                          .toFirstLetterUpperCase(
-                                                              e.fuMemo),
-                                                  style: e.fuMemo.isNotEmpty
-                                                      ? GlobalFont.bigfontR
-                                                      : GlobalFont.bigfontR
-                                                          .copyWith(
-                                                          color: Colors.black,
-                                                        ),
-                                                  maxLines: null,
+                                                  e.fuResult.isNotEmpty
+                                                      ? getFollowupStatus(
+                                                          e.fuResult)
+                                                      : '-',
+                                                  style: GlobalFont.bigfontR,
                                                   overflow:
                                                       TextOverflow.visible,
                                                 );
                                               }
-                                            },
+                                            }),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+
+                                      // ~:Follow-Up Information:~
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Keterangan',
+                                              style: GlobalFont.bigfontR,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Builder(
+                                              builder: (context) {
+                                                if (isEditable) {
+                                                  return TextFormField(
+                                                    initialValue: e.fuMemo,
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                          'Masukkan keterangan...',
+                                                      border: InputBorder.none,
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
+                                                    ),
+                                                    style: GlobalFont.bigfontR,
+                                                    maxLines: null,
+                                                    onChanged: (value) =>
+                                                        modifyFUDesc(
+                                                      context,
+                                                      value,
+                                                      data,
+                                                      index,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Text(
+                                                    e.fuMemo.isEmpty
+                                                        ? '-'
+                                                        : Format
+                                                            .toFirstLetterUpperCase(
+                                                                e.fuMemo),
+                                                    style: e.fuMemo.isNotEmpty
+                                                        ? GlobalFont.bigfontR
+                                                        : GlobalFont.bigfontR
+                                                            .copyWith(
+                                                            color: Colors.black,
+                                                          ),
+                                                    maxLines: null,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      // ~:Next Followup Date:~
+                                      BlocBuilder<FollowupCubit,
+                                              UpdateFollowUpDashboardModel>(
+                                          builder: (context, state) {
+                                        if (state.followup.isNotEmpty &&
+                                            state.followup[index].fuResult !=
+                                                '' &&
+                                            state.followup[index].fuResult !=
+                                                FollowUpResults.pending.name) {
+                                          log(state.followup[index].fuResult);
+                                          return SizedBox.shrink();
+                                        } else {
+                                          final currentNextFollowup = state
+                                              .followup
+                                              .elementAtOrNull(index);
+
+                                          return FollowupDatePicker(
+                                            label: 'Next FU',
+                                            date: currentNextFollowup
+                                                    ?.nextFUDate ??
+                                                e.nextFUDate,
+                                            isEditable: isEditable,
+                                            onTap: () => selectDate(
+                                              context,
+                                              fuMode: 2,
+                                              data: data,
+                                              details: currentNextFollowup ?? e,
+                                              index: index,
+                                            ),
+                                          );
+                                        }
+                                      }),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

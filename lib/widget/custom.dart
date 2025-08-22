@@ -8,7 +8,7 @@ class CustomWidget {
     required int value,
     double boxWidth = 64,
     double boxHeight = 75,
-    double lableHeight = 20,
+    double labelHeight = 20,
     double labelSize = 16,
     Color boxColor = Colors.amber,
   }) {
@@ -26,7 +26,7 @@ class CustomWidget {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            height: lableHeight,
+            height: labelHeight,
             alignment: Alignment.center,
             child: Text(
               label,
@@ -40,7 +40,7 @@ class CustomWidget {
               child: Text(
                 value.toString(),
                 style: GlobalFont.bigfontRBold.copyWith(
-                  fontSize: 32,
+                  fontSize: 30,
                 ),
               ),
             ),

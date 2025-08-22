@@ -43,6 +43,8 @@ class DbStuCharts extends StatelessWidget {
               color: Colors.orange,
               legendIconType: LegendIconType.horizontalLine,
               legendItemText: 'STU',
+              dataLabelMapper: (ProspekTypeModel sales, _) =>
+                  sales.stut == 0 ? '' : sales.stut.toString(),
             ),
             BarSeries<ProspekTypeModel, String>(
               dataSource: data,
@@ -54,6 +56,8 @@ class DbStuCharts extends StatelessWidget {
               color: Colors.teal[800]!,
               legendIconType: LegendIconType.rectangle,
               legendItemText: 'Prospek',
+              dataLabelMapper: (ProspekTypeModel sales, _) =>
+                  sales.prospekT == 0 ? '' : sales.prospekT.toString(),
             )
           ],
         ),

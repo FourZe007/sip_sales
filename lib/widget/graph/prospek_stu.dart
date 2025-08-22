@@ -42,6 +42,8 @@ class ProspekStuCharts extends StatelessWidget {
               color: Colors.indigo[700]!.withAlpha(150),
               legendIconType: LegendIconType.horizontalLine,
               legendItemText: 'Prospek',
+              dataLabelMapper: (DailyModel sales, _) =>
+                  sales.prospekD == 0 ? '' : sales.prospekD.toString(),
             ),
             BarSeries<DailyModel, String>(
               dataSource: data,
@@ -52,6 +54,8 @@ class ProspekStuCharts extends StatelessWidget {
               color: Colors.orange[300],
               legendIconType: LegendIconType.rectangle,
               legendItemText: 'STU',
+              dataLabelMapper: (DailyModel sales, _) =>
+                  sales.stud == 0 ? '' : sales.stud.toString(),
             )
           ],
         ),

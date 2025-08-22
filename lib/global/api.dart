@@ -1462,6 +1462,69 @@ class GlobalAPI {
     }
   }
 
+  static Future<Map<String, dynamic>> fetchFollowupDealDashboard(
+    String employeeID,
+    String date,
+  ) async {
+    var url = Uri.https(
+      'wsip.yamaha-jatim.co.id:2448',
+      '/DBSales/DBSales03',
+    );
+
+    Map mapFollowupDealDashboard = {
+      "EmployeeID": employeeID,
+      "EndDate": date,
+    };
+    log('Map Followup Deal Dashboard: $mapFollowupDealDashboard');
+
+    List<FollowUpDealDashboardModel> followupDealDashboardList = [];
+
+    try {
+      final response = await http
+          .post(url, body: jsonEncode(mapFollowupDealDashboard), headers: {
+        'Content-Type': 'application/json',
+      }).timeout(const Duration(seconds: 60));
+
+      if (response.statusCode <= 200) {
+        var jsonResult = jsonDecode(response.body);
+        if (jsonResult['code'] == '100' && jsonResult['msg'] == 'Sukses') {
+          followupDealDashboardList.addAll((jsonResult['data'] as List)
+              .map<FollowUpDealDashboardModel>(
+                  (data) => FollowUpDealDashboardModel.fromJson(data))
+              .toList());
+          log('Success');
+          return {
+            'status': 'sukses',
+            'data': followupDealDashboardList,
+          };
+        } else if (jsonResult['code'] == '100' &&
+            jsonResult['msg'].toString().toLowerCase().replaceAll(' ', '') ==
+                'nodata') {
+          log('No data');
+          return {
+            'status': 'sukses',
+            'data': [],
+          };
+        } else {
+          log('Failed');
+          return {
+            'status': 'gagal',
+            'data': followupDealDashboardList,
+          };
+        }
+      } else {
+        log('Failed');
+        return {
+          'status': 'gagal',
+          'data': 'Status code ${response.statusCode}, coba lagi.',
+        };
+      }
+    } catch (e) {
+      log('Error: ${e.toString()}');
+      return {'status': 'error', 'data': e.toString()};
+    }
+  }
+
   static Future<Map<String, dynamic>> fetchUpdateFollowupDashboard(
     String employeeID,
     String mobilePhone,

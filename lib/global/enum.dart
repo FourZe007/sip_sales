@@ -15,3 +15,9 @@ enum FollowUpResults {
   deal,
   cancel,
 }
+
+enum DashboardSlidingUpType {
+  none,
+  followupfilter, // for filter controls
+  moreoption, // for each cards if needed in the future
+}

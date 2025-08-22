@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
@@ -16,11 +17,14 @@ import 'package:sip_sales/widget/graph/prospek_stu.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class SalesmanDashboard extends StatelessWidget {
+class SalesmanDashboard extends StatefulWidget {
   const SalesmanDashboard({super.key});
 
   @override
+  State<SalesmanDashboard> createState() => _SalesmanDashboardState();
+}
 
+class _SalesmanDashboardState extends State<SalesmanDashboard> {
   /// Builds the UI for the sales dashboard screen.
   ///
   /// This screen displays the sales data in various formats, including
@@ -38,6 +42,15 @@ class SalesmanDashboard extends StatelessWidget {
   ///
   /// The screen also includes a button that, when clicked, displays a
   /// dialog box with additional information about the sales data.
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize date formatting for Indonesian locale
+    initializeDateFormatting('id_ID', null);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<SalesDashboardBloc, SalesDashboardState>(
       builder: (context, state) {
@@ -74,65 +87,102 @@ class SalesmanDashboard extends StatelessWidget {
               return Column(
                 spacing: 12,
                 children: [
-                  // ~:Akumulasi:~
+                  // ~:Hasil Akumulasi:~
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // ~:Title:~
-                        Text(
-                          'Akumulasi',
-                          style: GlobalFont.mediumbigfontR.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          spacing: 4,
+                          children: [
+                            Text(
+                              'Hasil Akumulasi,',
+                              style: GlobalFont.mediumbigfontR.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Builder(
+                              builder: (context) {
+                                DateTime now = DateTime.now();
+                                String formattedDate;
+
+                                if (now.day == 1) {
+                                  formattedDate =
+                                      DateFormat('dd MMMM yyyy', 'id_ID')
+                                          .format(now);
+                                } else {
+                                  formattedDate =
+                                      '1 - ${DateFormat('dd MMMM yyyy', 'id_ID').format(now)}';
+                                }
+
+                                return Text(
+                                  formattedDate,
+                                  style: GlobalFont.mediumbigfontRBold.copyWith(
+                                    fontSize: 16,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
 
                         // ~:Data:~
                         Row(
+                          spacing: 4,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             // ~:Prospek:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'Pros',
-                              value: salesData.prospek,
-                              labelSize: 12,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'Prospek',
+                                value: salesData.prospek,
+                                labelSize: 12,
+                              ),
                             ),
 
                             // ~:SPK:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'SPK',
-                              value: salesData.spk,
-                              labelSize: 12,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'SPK',
+                                value: salesData.spk,
+                                labelSize: 12,
+                              ),
                             ),
 
                             // ~:SPK Terbuka:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'Tbk',
-                              value: salesData.spkTerbuka,
-                              labelSize: 12,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'Terbuka',
+                                value: salesData.spkTerbuka,
+                                labelSize: 12,
+                              ),
                             ),
 
                             // ~:STU:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'STU',
-                              value: salesData.stu,
-                              labelSize: 12,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'STU',
+                                value: salesData.stu,
+                                labelSize: 12,
+                              ),
                             ),
 
                             // ~:Delivery:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'Deliv',
-                              value: salesData.delivery,
-                              labelSize: 12,
-                            ),
+                            // Expanded(
+                            //   child: CustomWidget.buildStatBox(
+                            //     context: context,
+                            //     label: 'Deliv',
+                            //     value: salesData.delivery,
+                            //     labelSize: 12,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ],
@@ -152,7 +202,7 @@ class SalesmanDashboard extends StatelessWidget {
                           children: [
                             // ~:Title:~
                             Text(
-                              'Harian,',
+                              'Hasil hari ${DateFormat('EEEE', 'id_ID').format(DateTime.now())},',
                               style: GlobalFont.mediumbigfontRBold.copyWith(
                                 fontSize: 16,
                               ),
@@ -160,7 +210,8 @@ class SalesmanDashboard extends StatelessWidget {
 
                             // ~:Date:~
                             Text(
-                              DateFormat('dd MMMM yyyy').format(DateTime.now()),
+                              DateFormat('dd MMMM yyyy', 'id_ID')
+                                  .format(DateTime.now()),
                               style: GlobalFont.mediumbigfontRBold.copyWith(
                                 fontSize: 16,
                               ),
@@ -174,47 +225,55 @@ class SalesmanDashboard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             // ~:Prospek:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'Pros',
-                              value: salesData.prospekH,
-                              boxWidth: 80,
-                              boxHeight: 75,
-                              labelSize: 12,
-                              boxColor: Colors.green[200]!,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'Prospek',
+                                value: salesData.prospekH,
+                                boxWidth: 80,
+                                boxHeight: 75,
+                                labelSize: 12,
+                                boxColor: Colors.green[200]!,
+                              ),
                             ),
 
                             // ~:SPK:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'SPK',
-                              value: salesData.spkh,
-                              boxWidth: 80,
-                              boxHeight: 75,
-                              labelSize: 12,
-                              boxColor: Colors.green[200]!,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'SPK',
+                                value: salesData.spkh,
+                                boxWidth: 80,
+                                boxHeight: 75,
+                                labelSize: 12,
+                                boxColor: Colors.green[200]!,
+                              ),
                             ),
 
                             // ~:SPK Terbuka:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'Tbk',
-                              value: salesData.spkTerbukaH,
-                              boxWidth: 80,
-                              boxHeight: 75,
-                              labelSize: 12,
-                              boxColor: Colors.green[200]!,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'Terbuka',
+                                value: salesData.spkTerbukaH,
+                                boxWidth: 80,
+                                boxHeight: 75,
+                                labelSize: 12,
+                                boxColor: Colors.green[200]!,
+                              ),
                             ),
 
                             // ~:STU:~
-                            CustomWidget.buildStatBox(
-                              context: context,
-                              label: 'STU',
-                              value: salesData.stuh,
-                              boxWidth: 80,
-                              boxHeight: 75,
-                              labelSize: 12,
-                              boxColor: Colors.green[200]!,
+                            Expanded(
+                              child: CustomWidget.buildStatBox(
+                                context: context,
+                                label: 'STU',
+                                value: salesData.stuh,
+                                boxWidth: 80,
+                                boxHeight: 75,
+                                labelSize: 12,
+                                boxColor: Colors.green[200]!,
+                              ),
                             ),
                           ],
                         ),
@@ -258,18 +317,18 @@ class SalesmanDashboard extends StatelessWidget {
                               columns: [
                                 GridColumn(
                                   columnName: 'method',
-                                  minimumWidth: 100,
+                                  minimumWidth: 68,
                                   label: Align(
                                     alignment: Alignment.center,
-                                    child: Text('Cara'),
+                                    child: Text(''),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'pros',
-                                  minimumWidth: 32,
+                                  minimumWidth: 56,
                                   label: Container(
                                     alignment: Alignment.center,
-                                    child: Text('Pros'),
+                                    child: Text('Prospek'),
                                   ),
                                 ),
                                 GridColumn(
@@ -290,18 +349,18 @@ class SalesmanDashboard extends StatelessWidget {
                                 ),
                                 GridColumn(
                                   columnName: 'lm',
-                                  minimumWidth: 32,
+                                  minimumWidth: 50,
                                   label: Container(
                                     alignment: Alignment.center,
-                                    child: Text('LM'),
+                                    child: Text('STU BL'),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: '%',
-                                  minimumWidth: 64,
+                                  minimumWidth: 68,
                                   label: Container(
                                     alignment: Alignment.center,
-                                    child: Text('Ratio'),
+                                    child: Text('% Grow'),
                                   ),
                                 ),
                               ],
@@ -322,7 +381,7 @@ class SalesmanDashboard extends StatelessWidget {
                         children: [
                           // ~:Title:~
                           Text(
-                            'Leasing Condition',
+                            'Kondisi Leasing',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -348,15 +407,15 @@ class SalesmanDashboard extends StatelessWidget {
                               columns: [
                                 GridColumn(
                                   columnName: 'name',
-                                  minimumWidth: 72,
+                                  minimumWidth: 52,
                                   label: Align(
                                     alignment: Alignment.center,
-                                    child: Text('Leasing'),
+                                    child: Text(''),
                                   ),
                                 ),
                                 GridColumn(
                                   columnName: 'total',
-                                  minimumWidth: 48,
+                                  minimumWidth: 52,
                                   label: Align(
                                     alignment: Alignment.center,
                                     child: Text(
@@ -367,7 +426,7 @@ class SalesmanDashboard extends StatelessWidget {
                                 ),
                                 GridColumn(
                                   columnName: 'proses',
-                                  minimumWidth: 44,
+                                  minimumWidth: 48,
                                   label: Align(
                                     alignment: Alignment.center,
                                     child: Text('Proses'),
@@ -375,10 +434,10 @@ class SalesmanDashboard extends StatelessWidget {
                                 ),
                                 GridColumn(
                                   columnName: 'terbuka',
-                                  minimumWidth: 40,
+                                  minimumWidth: 56,
                                   label: Align(
                                     alignment: Alignment.center,
-                                    child: Text('Tbk'),
+                                    child: Text('Terbuka'),
                                   ),
                                 ),
                                 GridColumn(
@@ -394,7 +453,7 @@ class SalesmanDashboard extends StatelessWidget {
                                   minimumWidth: 64,
                                   label: Align(
                                     alignment: Alignment.center,
-                                    child: Text('Ratio'),
+                                    child: Text('% App'),
                                   ),
                                 ),
                               ],

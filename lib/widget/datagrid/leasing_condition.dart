@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sip_sales/global/model.dart';
+import 'package:sip_sales/widget/format.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class LeasingConditionDataSource extends DataGridSource {
@@ -60,8 +61,14 @@ class LeasingConditionDataSource extends DataGridSource {
               ? '-'
               : dataGridCell.columnName == '%'
                   ? '${dataGridCell.value.toString()}%'
-                  : dataGridCell.value.toString(),
-          overflow: TextOverflow.ellipsis,
+                  : (dataGridCell.columnName == 'name' &&
+                          (dataGridCell.value.toString() == 'CASH' ||
+                              dataGridCell.value.toString() == 'KREDIT' ||
+                              dataGridCell.value.toString() == 'OTHERS'))
+                      ? Format.toFirstLetterUpperCase(
+                          dataGridCell.value.toString(),
+                        )
+                      : dataGridCell.value.toString(),
           textAlign: TextAlign.center,
         ),
       );

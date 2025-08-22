@@ -45,7 +45,6 @@ class SalesCategoryDataSource extends DataGridSource {
               : dataGridCell.columnName == '%'
                   ? '${dataGridCell.value.toString()}%'
                   : dataGridCell.value.toString(),
-          overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
         ),
       );

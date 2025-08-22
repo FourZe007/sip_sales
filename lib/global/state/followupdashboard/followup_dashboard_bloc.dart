@@ -8,6 +8,7 @@ class FollowupDashboardBloc
     extends Bloc<FollowupDashboardEvent, FollowupDashboardState> {
   FollowupDashboardBloc() : super(FollowupDashboardInitial()) {
     on<LoadFollowupDashboard>(loadFollowupDashboard);
+    on<LoadFollowupDealDashboard>(loadFollowupDealDashboard);
   }
 
   Future<void> loadFollowupDashboard(
@@ -35,6 +36,35 @@ class FollowupDashboardBloc
       });
     } catch (e) {
       emit(FollowupDashboardError(e.toString()));
+    }
+  }
+
+  Future<void> loadFollowupDealDashboard(
+    LoadFollowupDealDashboard event,
+    Emitter<FollowupDashboardState> emit,
+  ) async {
+    emit(FollowupDealDashboardLoading());
+    try {
+      List<FollowUpDealDashboardModel> followupDealData = [];
+
+      await GlobalAPI.fetchFollowupDealDashboard(
+        event.salesmanId,
+        event.date,
+      ).then((response) {
+        if (response['status'] == 'sukses' &&
+            (response['data'] as List).isNotEmpty) {
+          followupDealData
+              .addAll(response['data'] as List<FollowUpDealDashboardModel>);
+          emit(FollowupDealDashboardLoaded(followupDealData));
+        } else if (response['status'] == 'sukses' &&
+            (response['data'] as List).isEmpty) {
+          emit(FollowupDealDashboardError('empty'));
+        } else {
+          emit(FollowupDealDashboardError(response['data'].toString()));
+        }
+      });
+    } catch (e) {
+      emit(FollowupDealDashboardError(e.toString()));
     }
   }
 }
