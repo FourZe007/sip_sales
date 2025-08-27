@@ -13,9 +13,10 @@ class FuFilterControlsCubit extends Cubit<FuFilterControlsState> {
           newFilters[key] = false;
         }
       }
-
-      emit(state.copyWith(activeFilters: newFilters));
+    } else {
+      newFilters[filterType] = value;
     }
+    emit(state.copyWith(activeFilters: newFilters));
   }
 
   void resetFilters() {

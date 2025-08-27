@@ -105,7 +105,7 @@ class UpdateFollowupDashboardBloc
         event.prospectDate,
         event.line,
         event.fuDate,
-        finalFuResult,
+        event.fuResult,
         event.fuMemo,
         event.nextFUDate,
       ).then((response) {

@@ -26,6 +26,11 @@ class FollowupDashboardBloc
         if (response['status'] == 'sukses' &&
             (response['data'] as List).isNotEmpty) {
           followupData.addAll(response['data'] as List<FollowUpDashboardModel>);
+          if (event.sortByName) {
+            followupData[0].detail.sort(
+                  (a, b) => a.customerName.compareTo(b.customerName),
+                );
+          }
           emit(FollowupDashboardLoaded(followupData));
         } else if (response['status'] == 'sukses' &&
             (response['data'] as List).isEmpty) {
@@ -55,6 +60,11 @@ class FollowupDashboardBloc
             (response['data'] as List).isNotEmpty) {
           followupDealData
               .addAll(response['data'] as List<FollowUpDealDashboardModel>);
+          if (event.sortByName) {
+            followupDealData[0].detail.sort(
+                  (a, b) => a.customerName.compareTo(b.customerName),
+                );
+          }
           emit(FollowupDealDashboardLoaded(followupDealData));
         } else if (response['status'] == 'sukses' &&
             (response['data'] as List).isEmpty) {

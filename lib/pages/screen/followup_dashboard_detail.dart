@@ -51,7 +51,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     context.read<FollowupCubit>().resetFollowup();
 
     context.read<FollowupDashboardBloc>().add(
-          LoadFollowupDashboard(salesmanId, date),
+          LoadFollowupDashboard(salesmanId, date, false),
         );
 
     context.read<UpdateFollowupDashboardBloc>().add(
@@ -96,7 +96,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
 
   // Helper method to check if a card has been filled
   bool _isCardFilled(UpdateFollowupDashboardDetails card) {
-    if (card.fuResult != FollowUpResults.pending.name) {
+    if (card.fuResult != 'PD') {
       return card.fuDate.isNotEmpty;
     }
 
@@ -106,7 +106,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
   }
 
   bool isFollowUpInProcess(UpdateFollowupDashboardDetails card) {
-    return card.fuResult == FollowUpResults.pending.name;
+    return card.fuResult == 'PD';
   }
 
   void selectDate(
@@ -115,14 +115,15 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     required UpdateFollowUpDashboardModel data,
     UpdateFollowupDashboardDetails? details,
     int index = 0,
+    DateTime? initDate,
   }) async {
     log('fuMode: $fuMode');
 
     final date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate:
-          DateTime.now(), // Set to the current date to disable previous dates
+      currentDate: initDate ?? DateTime.now(),
+      initialDate: initDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
@@ -175,7 +176,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     final followupCubit = context.read<FollowupCubit>();
 
     final updatedDetailedData = data.followup[index].copyWith(
-      fuDate: followupCubit.getFollowup.followup[index].fuDate,
+      fuDate: DateTime.now().toIso8601String().split('T')[0],
       fuResult: newValue,
       nextFUDate: followupCubit.getFollowup.followup[index].nextFUDate,
       fuMemo: followupCubit.getFollowup.followup[index].fuMemo,
@@ -221,11 +222,11 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
   String getFollowupStatus(String status) {
     switch (status.toUpperCase()) {
       case 'PD':
-        return 'Pending';
+        return 'Proses Follow-Up';
       case 'DL':
         return 'Deal';
       case 'CL':
-        return 'Cancel';
+        return 'Batal';
       default:
         return '';
     }
@@ -263,31 +264,36 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     } else {
       UpdateFollowUpDashboardModel modifiedData =
           context.read<FollowupCubit>().getFollowup;
+      log('Detail length: ${modifiedData.followup.length}');
 
-      if (modifiedData.followup.isEmpty) {
-        final details = data.followup[fuDetailsIndex].copyWith(
-          fuDate: DateTime.now().toIso8601String(),
-          fuResult: 'PD',
-          fuMemo: '-',
-          nextFUDate: DateTime.now().toIso8601String(),
-        );
+      final details = data.followup[fuDetailsIndex].copyWith(
+        fuDate: DateTime.now().toIso8601String().split('T')[0],
+        fuResult: modifiedData.followup[fuDetailsIndex].fuResult.isEmpty
+            ? 'PD'
+            : modifiedData.followup[fuDetailsIndex].fuResult,
+        fuMemo: modifiedData.followup[fuDetailsIndex].fuMemo,
+        nextFUDate: modifiedData.followup[fuDetailsIndex].nextFUDate.isEmpty
+            ? DateTime.now().toIso8601String().split('T')[0]
+            : modifiedData.followup[fuDetailsIndex].nextFUDate,
+      );
 
-        modifiedData = data.copyWith(
-          followup: [details],
-        );
-      }
+      modifiedData = data.copyWith(
+        followup:
+            List<UpdateFollowupDashboardDetails>.from(modifiedData.followup)
+              ..replaceRange(fuDetailsIndex, fuDetailsIndex + 1, [details]),
+      );
+
+      log('Follow-Up #${fuDetailsIndex + 1}');
+      log('Salesman Id: $salesmanId');
+      log('Mobile Phone: ${modifiedData.mobilePhone}');
+      log('Prospect Date: ${modifiedData.prospectDate}');
+      log('Line: ${fuDetailsIndex + 1}');
+      log('Follow-Up Date: ${modifiedData.followup[fuDetailsIndex].fuDate}');
+      log('Follow-Up Result: ${modifiedData.followup[fuDetailsIndex].fuResult}');
+      log('Follow-Up Memo: ${modifiedData.followup[fuDetailsIndex].fuMemo}');
+      log('Follow-Up Next Date: ${modifiedData.followup[fuDetailsIndex].nextFUDate}');
 
       if (_isCardFilled(modifiedData.followup[fuDetailsIndex])) {
-        log('Follow-Up #${fuDetailsIndex + 1}');
-        log('Salesman Id: $salesmanId');
-        log('Mobile Phone: ${modifiedData.mobilePhone}');
-        log('Prospect Date: ${modifiedData.prospectDate}');
-        log('Line: ${fuDetailsIndex + 1}');
-        log('Follow-Up Date: ${modifiedData.followup[fuDetailsIndex].fuDate}');
-        log('Follow-Up Result: ${modifiedData.followup[fuDetailsIndex].fuResult}');
-        log('Follow-Up Memo: ${modifiedData.followup[fuDetailsIndex].fuMemo}');
-        log('Follow-Up Next Date: ${modifiedData.followup[fuDetailsIndex].nextFUDate}');
-
         updateFollowup.add(
           SaveUpdateFollowup(
             salesmanId,
@@ -303,7 +309,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: Colors.grey,
+            backgroundColor: Colors.grey[300],
             content: Text(
               'Harap isi semua kolom!',
               style: GlobalFont.bigfontR,
@@ -384,13 +390,20 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
             color: Colors.white,
           ),
           padding: EdgeInsets.fromLTRB(12, 16, 12, 16),
-          child: BlocBuilder<UpdateFollowupDashboardBloc,
+          child: BlocConsumer<UpdateFollowupDashboardBloc,
               UpdateFollowupDashboardState>(
             bloc: updateFollowup,
             buildWhen: (previous, current) =>
                 current is UpdateFollowupDashboardLoading ||
                 current is UpdateFollowupDashboardLoaded ||
                 current is UpdateFollowupDashboardError,
+            listener: (context, state) {
+              if (state is UpdateFollowupDashboardLoaded) {
+                context.read<FollowupCubit>().changeFollowup(
+                      state.updateFollowupData[0],
+                    );
+              }
+            },
             builder: (context, state) {
               log('Builder State: $state');
               if (state is UpdateFollowupDashboardLoading) {
@@ -737,11 +750,12 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                             final previousIndex = entry.key - 1;
                             if (previousIndex >= 0 &&
                                 previousIndex < data.followup.length) {
-                              return _isCardFilled(
-                                  data.followup[previousIndex]);
-                            } else if (!isFollowUpInProcess(
-                                data.followup[previousIndex])) {
-                              return false;
+                              if (data.followup[previousIndex].fuResult ==
+                                  'PD') {
+                                return true;
+                              } else {
+                                return false;
+                              }
                             }
                             return false;
                           }).map((entry) {
@@ -831,7 +845,8 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                             .showSnackBar(
                                                           SnackBar(
                                                             backgroundColor:
-                                                                Colors.grey,
+                                                                Colors
+                                                                    .grey[300],
                                                             content: Text(
                                                               'Update follow-up berhasil.',
                                                               style: GlobalFont
@@ -864,7 +879,8 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                             .showSnackBar(
                                                           SnackBar(
                                                             backgroundColor:
-                                                                Colors.grey,
+                                                                Colors
+                                                                    .grey[300],
                                                             content: Text(
                                                               state.message,
                                                               style: GlobalFont
@@ -892,15 +908,15 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                           is SaveFollowupLoading) {
                                                         if (Platform.isIOS) {
                                                           return const CupertinoActivityIndicator(
-                                                            radius: 12.5,
+                                                            radius: 8,
                                                             color: Colors.white,
                                                           );
                                                         } else {
                                                           return const CircleLoading(
                                                             warna: Colors.white,
                                                             customizedHeight:
-                                                                20,
-                                                            customizedWidth: 20,
+                                                                12,
+                                                            customizedWidth: 12,
                                                             strokeWidth: 3,
                                                           );
                                                         }
@@ -926,26 +942,14 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                       ),
 
                                       // ~:Follow-Up Date:~
-                                      BlocBuilder<FollowupCubit,
-                                              UpdateFollowUpDashboardModel>(
-                                          builder: (context, state) {
-                                        final currentFollowup = state.followup
-                                            .elementAtOrNull(index);
-
-                                        return FollowupDatePicker(
-                                          label: 'Tanggal FU',
-                                          date: currentFollowup?.fuDate ??
-                                              e.fuDate,
-                                          isEditable: isEditable,
-                                          onTap: () => selectDate(
-                                            context,
-                                            fuMode: 1,
-                                            data: data,
-                                            details: currentFollowup ?? e,
-                                            index: index,
-                                          ),
-                                        );
-                                      }),
+                                      FollowupDatePicker(
+                                        label: 'Tanggal FU',
+                                        date: DateTime.now()
+                                            .toIso8601String()
+                                            .split('T')[0],
+                                        isEditable: false,
+                                        onTap: () {},
+                                      ),
 
                                       // ~:Followup Result:~
                                       Row(
@@ -990,9 +994,16 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                           (context, state) {
                                                     log('fuResult: ${e.fuResult}');
                                                     return DropdownButton(
-                                                      value: e.fuResult.isEmpty
-                                                          ? null
-                                                          : e.fuResult,
+                                                      value: state == null ||
+                                                              state
+                                                                  .followup[
+                                                                      index]
+                                                                  .fuResult
+                                                                  .isEmpty
+                                                          ? 'PD'
+                                                          : state
+                                                              .followup[index]
+                                                              .fuResult,
                                                       isExpanded: true,
                                                       dropdownColor:
                                                           Colors.white,
@@ -1055,9 +1066,14 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                 );
                                               } else {
                                                 return Text(
-                                                  e.fuResult.isNotEmpty
-                                                      ? getFollowupStatus(
-                                                          e.fuResult)
+                                                  state != null &&
+                                                          state
+                                                              .followup[index]
+                                                              .fuResult
+                                                              .isNotEmpty
+                                                      ? getFollowupStatus(state
+                                                          .followup[index]
+                                                          .fuResult)
                                                       : '-',
                                                   style: GlobalFont.bigfontR,
                                                   overflow:
@@ -1136,7 +1152,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                             state.followup[index].fuResult !=
                                                 '' &&
                                             state.followup[index].fuResult !=
-                                                FollowUpResults.pending.name) {
+                                                'PD') {
                                           log(state.followup[index].fuResult);
                                           return SizedBox.shrink();
                                         } else {
@@ -1156,6 +1172,15 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                               data: data,
                                               details: currentNextFollowup ?? e,
                                               index: index,
+                                              initDate:
+                                                  currentNextFollowup != null &&
+                                                          currentNextFollowup
+                                                              .nextFUDate
+                                                              .isNotEmpty
+                                                      ? DateTime.parse(
+                                                          currentNextFollowup
+                                                              .nextFUDate)
+                                                      : DateTime.now(),
                                             ),
                                           );
                                         }

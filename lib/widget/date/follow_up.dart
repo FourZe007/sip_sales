@@ -7,6 +7,7 @@ class FollowupDatePicker extends StatelessWidget {
   final String? date;
   final bool isEditable;
   final VoidCallback onTap;
+  final bool enableDateFormatter;
 
   const FollowupDatePicker({
     super.key,
@@ -14,6 +15,7 @@ class FollowupDatePicker extends StatelessWidget {
     this.date,
     required this.isEditable,
     required this.onTap,
+    this.enableDateFormatter = true,
   });
 
   @override
@@ -46,8 +48,10 @@ class FollowupDatePicker extends StatelessWidget {
                 )
               : Text(
                   date != null && date!.isNotEmpty
-                      ? DateFormat('dd MMMM yyyy', 'id_ID')
-                          .format(DateTime.parse(date!))
+                      ? enableDateFormatter
+                          ? DateFormat('dd MMMM yyyy', 'id_ID')
+                              .format(DateTime.parse(date!))
+                          : date!
                       : '-',
                   style: GlobalFont.bigfontR.copyWith(
                     color: Colors.black,

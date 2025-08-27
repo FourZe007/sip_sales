@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -35,8 +36,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void refreshDashboard(
     BuildContext context,
     SipSalesState appState,
-    DashboardType state,
-  ) {
+    DashboardType state, {
+    bool sortByName = false,
+  }) {
     final salesmanId = appState.getUserAccountList.isNotEmpty
         ? appState.getUserAccountList[0].employeeID
         : '';
@@ -44,24 +46,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (state.name == 'salesman') {
       log('Dashboard type: salesman');
-      context.read<SalesDashboardBloc>().add(
-            LoadSalesDashboard(salesmanId, date),
-          );
+      context
+          .read<SalesDashboardBloc>()
+          .add(LoadSalesDashboard(salesmanId, date));
     } else if (state.name == 'followup') {
       log('Dashboard type: followup');
       // context.read<FuFilterControlsCubit>().resetFilters();
+      context.read<FuFilterControlsCubit>().toggleFilter('sortByName', false);
 
       final activeFilters =
           context.read<FuFilterControlsCubit>().state.activeFilters;
       if (activeFilters['notFollowedUp'] == true) {
         log('notFollowedUp');
         context.read<FollowupDashboardBloc>().add(
-              LoadFollowupDashboard(salesmanId, date),
+              LoadFollowupDashboard(salesmanId, date, sortByName),
             );
       } else if (activeFilters['deal'] == true) {
         log('deal');
         context.read<FollowupDashboardBloc>().add(
-              LoadFollowupDealDashboard(salesmanId, date),
+              LoadFollowupDealDashboard(salesmanId, date, sortByName),
             );
       }
     }
@@ -98,8 +101,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void valueOnChanged(
     BuildContext context,
     SipSalesState appState,
-    FollowUpStatus? newValue,
-  ) async {
+    FollowUpStatus? newValue, {
+    bool sortByName = false,
+  }) async {
     if (newValue != null) {
       context.read<DashboardSlidingUpCubit>().closePanel();
       if (newValue == FollowUpStatus.notYet) {
@@ -114,10 +118,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
       }
 
+      context.read<FuFilterControlsCubit>().toggleFilter(
+            'sortByName',
+            sortByName,
+          );
+
       refreshDashboard(
         context,
         appState,
         DashboardType.followup,
+        sortByName: sortByName,
       );
     }
   }
@@ -136,14 +146,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backdropColor: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20.0),
         minHeight: 0.0,
-        maxHeight: MediaQuery.of(context).size.height * 0.175,
+        maxHeight: MediaQuery.of(context).size.height * 0.215,
         defaultPanelState: PanelState.CLOSED,
         onPanelClosed: () =>
             context.read<DashboardSlidingUpCubit>().closePanel(),
         panel: Material(
           color: Colors.transparent,
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.175,
+            height: MediaQuery.of(context).size.height * 0.215,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -168,58 +178,65 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                 // ~:Content:~
                 Expanded(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: BlocBuilder<DashboardSlidingUpCubit,
-                          DashboardSlidingUpState>(
-                        builder: (context, state) {
-                          if (state.type ==
-                              DashboardSlidingUpType.followupfilter) {
-                            return Column(
-                              spacing: 8,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // ~:Title:~
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    'Filter',
-                                    style: GlobalFont.bigfontR.copyWith(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: BlocBuilder<DashboardSlidingUpCubit,
+                        DashboardSlidingUpState>(
+                      builder: (context, state) {
+                        if (state.type ==
+                            DashboardSlidingUpType.followupfilter) {
+                          return Column(
+                            spacing: 12,
+                            children: [
+                              // ~:Filter Title:~
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Filter',
+                                  style: GlobalFont.bigfontR.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                              ),
 
-                                // ~:Dropdown:~
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 40,
-                                  child: Row(
-                                    spacing: 12,
-                                    children: [
-                                      // ~:Title:~
-                                      Text('Tipe Data'),
+                              // ~:1st Filter:~
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height: 40,
+                                child: Row(
+                                  spacing: 12,
+                                  children: [
+                                    // ~:Title:~
+                                    Expanded(child: Text('Tipe Data')),
 
-                                      // ~:Dropdown:~
-                                      Expanded(
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                            border: Border.all(
-                                              color: Colors.blue,
-                                              width: 1.5,
-                                            ),
+                                    // ~:Dropdown:~
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                          border: Border.all(
+                                            color: Colors.blue,
+                                            width: 1.5,
                                           ),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0,
-                                            vertical: 4.0,
-                                          ),
-                                          child: DropdownButton(
-                                            value: dataTypeLabel,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0,
+                                          vertical: 4.0,
+                                        ),
+                                        child: BlocBuilder<
+                                                FuFilterControlsCubit,
+                                                FuFilterControlsState>(
+                                            builder: (context, state) {
+                                          return DropdownButton(
+                                            value: state.activeFilters[
+                                                        'notFollowedUp'] ==
+                                                    true
+                                                ? FollowUpStatus.notYet
+                                                : FollowUpStatus.completed,
                                             onChanged: (newValue) =>
                                                 valueOnChanged(
                                               context,
@@ -246,20 +263,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                         FollowUpStatus
                                                             .completed)
                                                 .map((FollowUpStatus value) {
-                                              dataTypeLabel = value;
-
-                                              switch (dataTypeLabel) {
+                                              switch (value) {
                                                 case FollowUpStatus.notYet:
                                                   return DropdownMenuItem<
                                                       FollowUpStatus>(
-                                                    value: dataTypeLabel,
+                                                    value:
+                                                        FollowUpStatus.notYet,
                                                     child:
                                                         Text('Belum Follow Up'),
                                                   );
                                                 case FollowUpStatus.completed:
                                                   return DropdownMenuItem<
                                                       FollowUpStatus>(
-                                                    value: dataTypeLabel,
+                                                    value: FollowUpStatus
+                                                        .completed,
                                                     child: Text('Deal'),
                                                   );
                                                 default:
@@ -272,60 +289,102 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                   );
                                               }
                                             }).toList(),
-                                          ),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // ~:2nd Filter:~
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  children: [
+                                    // ~:Title:~
+                                    Expanded(child: Text('Sort names A-Z')),
+
+                                    // ~:Switch:~
+                                    Expanded(
+                                      flex: 2,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: BlocBuilder<
+                                            FuFilterControlsCubit,
+                                            FuFilterControlsState>(
+                                          builder: (context, state) {
+                                            log('isSortByName active: ${state.activeFilters['sortByName']!}');
+                                            return CupertinoSwitch(
+                                              value: state.activeFilters[
+                                                      'sortByName'] ??
+                                                  false,
+                                              onChanged: (value) =>
+                                                  valueOnChanged(
+                                                context,
+                                                appState,
+                                                state.activeFilters[
+                                                            'notFollowedUp'] ==
+                                                        true
+                                                    ? FollowUpStatus.notYet
+                                                    : FollowUpStatus.completed,
+                                                sortByName: value,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          } else if (state.type ==
-                              DashboardSlidingUpType.moreoption) {
-                            return Column(
-                              spacing: 8,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // ~:Title:~
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    'Quick Action',
-                                    style: GlobalFont.bigfontR.copyWith(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
                                     ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        } else if (state.type ==
+                            DashboardSlidingUpType.moreoption) {
+                          return Column(
+                            spacing: 8,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // ~:Title:~
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Quick Action',
+                                  style: GlobalFont.bigfontR.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                              ),
 
-                                // ~:CTA WhatsApp:~
-                                ElevatedButton.icon(
-                                  onPressed: () async => openLink(
-                                    context,
-                                    'https://wa.me/62${state.optionalData.replaceFirst('0', '')}',
-                                  ),
-                                  icon: Icon(
-                                    FontAwesomeIcons.whatsapp,
-                                    color: Colors.black,
-                                  ),
-                                  label: Text(
-                                    'Hubungi via WhatsApp',
-                                    style: GlobalFont.bigfontR,
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(
-                                      MediaQuery.of(context).size.width,
-                                      40,
-                                    ),
+                              // ~:CTA WhatsApp:~
+                              ElevatedButton.icon(
+                                onPressed: () async => openLink(
+                                  context,
+                                  'https://wa.me/62${state.optionalData.replaceFirst('0', '')}',
+                                ),
+                                icon: Icon(
+                                  FontAwesomeIcons.whatsapp,
+                                  color: Colors.black,
+                                ),
+                                label: Text(
+                                  'Hubungi via WhatsApp',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    40,
                                   ),
                                 ),
-                              ],
-                            );
-                          } else {
-                            return SizedBox.shrink();
-                          }
-                        },
-                      ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                      },
                     ),
                   ),
                 ),

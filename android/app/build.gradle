@@ -34,12 +34,12 @@ android {
     ndkVersion "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
@@ -52,12 +52,21 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('C:/Users/Joseph Angelus/my-keystore.jks')
+            // Use forward slashes and quotes for Windows paths with spaces
+            def keystorePath = "${System.properties['user.home']}/my-keystore.jks".replace('\\', '/')
+            storeFile file(keystorePath)
             storePassword 'josephangelus'
             keyAlias = 'meteor'
             keyPassword 'josephangelus'
         }
     }
+    
+    // Fix for Windows path issues with spaces
+    // tasks.withType(JavaCompile) {
+    //     options.fork = true
+    //     options.forkOptions.executable = 'javac'
+    //     options.forkOptions.jvmArgs = ['-Duser.home=' + System.getProperty('user.home').replace('\\', '/')]
+    // }
 
     buildTypes {
         release {
