@@ -53,7 +53,7 @@ android {
     signingConfigs {
         release {
             // Use forward slashes and quotes for Windows paths with spaces
-            def keystorePath = "${System.properties['user.home']}/my-keystore.jks".replace('\\', '/')
+            def keystorePath = "${System.properties['user.home']}/office_keystore/my-keystore.jks".replace('\\', '/')
             storeFile file(keystorePath)
             storePassword 'josephangelus'
             keyAlias = 'meteor'

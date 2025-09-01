@@ -77,23 +77,21 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.symmetric(
-        vertical: MediaQuery.of(context).size.height * 0.03,
-      ),
       child: Column(
+        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // ~:Time:~
           DigitalClock(
             datetime: DateTime.now(),
             textScaleFactor: 1.75,
             isLive: true,
             showSeconds: false,
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
+
+          // ~:Date:~
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

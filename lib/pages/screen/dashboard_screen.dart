@@ -146,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backdropColor: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20.0),
         minHeight: 0.0,
-        maxHeight: MediaQuery.of(context).size.height * 0.215,
+        maxHeight: 175,
         defaultPanelState: PanelState.CLOSED,
         onPanelClosed: () =>
             context.read<DashboardSlidingUpCubit>().closePanel(),
@@ -158,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.215,
+              height: 175,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: Colors.white,

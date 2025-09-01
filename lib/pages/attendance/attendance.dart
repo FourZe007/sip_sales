@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -101,7 +102,7 @@ class _AttendancePageState extends State<AttendancePage> {
     String endDate = '',
     bool isRefresh = false,
   }) async {
-    print('Fetch Attendance History');
+    log('Fetch Attendance History');
     if (isRefresh) {
       setIsRefresh();
     } else {
@@ -117,13 +118,13 @@ class _AttendancePageState extends State<AttendancePage> {
         endDate,
       ));
 
-      print('Absent History list length: ${temp.length}');
+      log('Absent History list length: ${temp.length}');
 
       setState(() {
         state.absentHistoryList = temp;
       });
     } catch (e) {
-      print('Fetch Attendance History failed: ${e.toString()}');
+      log('Fetch Attendance History failed: ${e.toString()}');
     }
 
     if (isRefresh) {
@@ -157,17 +158,17 @@ class _AttendancePageState extends State<AttendancePage> {
               highResImg == 'error') {
             state.setProfilePicturePreview('');
             await prefs.setString('highResImage', '');
-            print('High Res Image is not available.');
+            log('High Res Image is not available.');
           } else {
             state.setProfilePicturePreview(highResImg);
             await prefs.setString('highResImage', highResImg);
-            print('High Res Image successfully loaded.');
-            print('High Res Image: $highResImg');
+            log('High Res Image successfully loaded.');
+            log('High Res Image: $highResImg');
           }
         });
       }
     } catch (e) {
-      print('Fetch User Latest Data failed: ${e.toString()}');
+      log('Fetch User Latest Data failed: ${e.toString()}');
       state.setProfilePicturePreview('');
       await prefs.setString('highResImage', '');
     }
@@ -194,13 +195,13 @@ class _AttendancePageState extends State<AttendancePage> {
   // }
 
   Future<void> refreshPage(SipSalesState state) async {
-    print('Refresh page');
+    log('Refresh page');
     try {
       await getUserLatestData(state);
       await getUserAttendanceHistory(state);
       await state.getSalesDashboard();
     } catch (e) {
-      print('Refresh Page error: ${e.toString()}');
+      log('Refresh Page error: ${e.toString()}');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -227,10 +228,9 @@ class _AttendancePageState extends State<AttendancePage> {
     SipSalesState state,
   ) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.width * 0.03,
-      ),
+      padding: EdgeInsets.fromLTRB(10, 24, 10, 0),
       child: Column(
+        spacing: 20,
         children: [
           // ~:Date and Time:~
           CustomDigitalClock(
@@ -368,6 +368,7 @@ class _AttendancePageState extends State<AttendancePage> {
                     ],
                   ),
                 ),
+
                 // ~:Current Location Button:~
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -434,20 +435,16 @@ class _AttendancePageState extends State<AttendancePage> {
           ),
 
           // ~:Sales Dashboard:~
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
-            // height: MediaQuery.of(context).size.height * 0.2,
             height: 180,
-            margin: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.015,
-              bottom: MediaQuery.of(context).size.height * 0.01,
-            ),
             child: Column(
-              spacing: 8,
+              spacing: 4,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ~:Dashboard Title:~
-                Padding(
+                Container(
+                  height: 40,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -475,6 +472,9 @@ class _AttendancePageState extends State<AttendancePage> {
 
                           Navigator.pushNamed(context, '/salesDashboard');
                         },
+                        style: TextButton.styleFrom(
+                          fixedSize: Size.fromHeight(20),
+                        ),
                         child: Text(
                           'More',
                           style: TextStyle(
@@ -586,13 +586,11 @@ class _AttendancePageState extends State<AttendancePage> {
           ),
 
           // ~:Attendance List:~
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.325,
-            margin: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.015,
-            ),
+            height: 265,
             child: Column(
+              spacing: 8,
               children: [
                 // ~:Attendance List Header:~
                 SizedBox(
@@ -630,8 +628,7 @@ class _AttendancePageState extends State<AttendancePage> {
 
                 // ~:Attendance List Content:~
                 Expanded(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height,
+                  child: Align(
                     alignment: state.getUserAccountList.isEmpty
                         ? Alignment.center
                         : Alignment.topCenter,

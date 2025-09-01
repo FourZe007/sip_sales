@@ -97,7 +97,7 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
   // Helper method to check if a card has been filled
   bool _isCardFilled(UpdateFollowupDashboardDetails card) {
     if (card.fuResult != 'PD') {
-      return card.fuDate.isNotEmpty;
+      return card.fuDate.isNotEmpty && card.fuMemo.isNotEmpty;
     }
 
     return card.fuDate.isNotEmpty &&
@@ -1100,12 +1100,20 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                             flex: 2,
                                             child: Builder(
                                               builder: (context) {
+                                                final isDeal = context
+                                                        .watch<FollowupCubit>()
+                                                        .getFollowup
+                                                        .followup[index]
+                                                        .fuResult ==
+                                                    'DL';
+
                                                 if (isEditable) {
                                                   return TextFormField(
                                                     initialValue: e.fuMemo,
                                                     decoration: InputDecoration(
-                                                      hintText:
-                                                          'Masukkan keterangan...',
+                                                      hintText: isDeal
+                                                          ? 'cth. NIK konsumen'
+                                                          : 'Masukkan keterangan...',
                                                       border: InputBorder.none,
                                                       contentPadding:
                                                           EdgeInsets.zero,

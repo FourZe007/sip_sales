@@ -37,7 +37,7 @@ class _ManagerActivityDetailsState extends State<ManagerActivityDetails> {
         title: (MediaQuery.of(context).size.width < 800)
             ? Text(
                 'Detail',
-                style: GlobalFont.giantfontRBold,
+                style: GlobalFont.mediumgiantfontRBold,
               )
             : Text(
                 'Detail',
@@ -79,8 +79,10 @@ class _ManagerActivityDetailsState extends State<ManagerActivityDetails> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Column(
+                    spacing: 12,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // ~:Loading Indicator:~
                       Builder(
                         builder: (context) {
                           if (Platform.isIOS) {
@@ -88,15 +90,12 @@ class _ManagerActivityDetailsState extends State<ManagerActivityDetails> {
                               color: Colors.black,
                             );
                           } else {
-                            return const CircleLoading(
-                              warna: Colors.black,
-                            );
+                            return const CircleLoading(strokeWidth: 3);
                           }
                         },
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
+
+                      // ~:Loading Text:~
                       Text(
                         'Loading...',
                         style: GlobalFont.mediumgiantfontR,

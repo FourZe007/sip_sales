@@ -112,7 +112,7 @@ class MenuPageState extends State<MenuPage> {
               backdropColor: Colors.black.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(20.0),
               minHeight: 0.0,
-              maxHeight: MediaQuery.of(context).size.height * 0.175,
+              maxHeight: 150,
               defaultPanelState: PanelState.CLOSED,
               onPanelClosed: () =>
                   context.read<DashboardSlidingUpCubit>().closePanel(),
@@ -125,7 +125,7 @@ class MenuPageState extends State<MenuPage> {
                   color: Colors.transparent,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.175,
+                    height: 150,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -139,11 +139,27 @@ class MenuPageState extends State<MenuPage> {
                       spacing: 12,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // ~:Title:~
-                        Text(
-                          'Apakah anda yakin ingin menghapus aktivitas ini?',
-                          style: GlobalFont.bigfontR.copyWith(fontSize: 14),
-                          textAlign: TextAlign.center,
+                        // ~:Header:~
+                        Column(
+                          spacing: 8,
+                          children: [
+                            // ~:Title:~
+                            Text(
+                              'Peringatan!',
+                              style: GlobalFont.bigfontR.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+
+                            // ~:Description:~
+                            Text(
+                              'Apakah anda yakin ingin menghapus aktivitas ini?',
+                              style: GlobalFont.bigfontR.copyWith(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
 
                         // ~:Buttons:~
@@ -154,6 +170,15 @@ class MenuPageState extends State<MenuPage> {
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () => slidingPanelController.close(),
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    side: BorderSide(
+                                      color: Colors.blue,
+                                      width: 3.0,
+                                    ),
+                                  ),
+                                ),
                                 child: Text(
                                   'Batal',
                                   style: GlobalFont.bigfontR,
@@ -210,7 +235,7 @@ class MenuPageState extends State<MenuPage> {
                                             ),
                                           ),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: Colors.blue,
                                       ),
                                       child: state
                                               is SMActivitiesDashboardLoading
@@ -225,10 +250,7 @@ class MenuPageState extends State<MenuPage> {
                                                 )
                                           : Text(
                                               'Hapus',
-                                              style:
-                                                  GlobalFont.bigfontR.copyWith(
-                                                color: Colors.white,
-                                              ),
+                                              style: GlobalFont.bigfontRWhite,
                                             ),
                                     );
                                   }
@@ -243,7 +265,7 @@ class MenuPageState extends State<MenuPage> {
                                           ),
                                         ),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: Colors.blue,
                                     ),
                                     child: state is SMActivitiesDashboardLoading
                                         ? Platform.isIOS
@@ -256,9 +278,7 @@ class MenuPageState extends State<MenuPage> {
                                               )
                                         : Text(
                                             'Hapus',
-                                            style: GlobalFont.bigfontR.copyWith(
-                                              color: Colors.white,
-                                            ),
+                                            style: GlobalFont.bigfontRWhite,
                                           ),
                                   );
                                 },
@@ -284,7 +304,7 @@ class MenuPageState extends State<MenuPage> {
                   }
                 },
                 child: Scaffold(
-                  resizeToAvoidBottomInset: true,
+                  resizeToAvoidBottomInset: false,
                   appBar: AppBar(
                     automaticallyImplyLeading: false,
                     backgroundColor: Colors.blue,
@@ -441,7 +461,7 @@ class MenuPageState extends State<MenuPage> {
 
         // ~:Sales:~
         else {
-          print('Sales');
+          log('Sales');
           return PopScope(
             canPop: false,
             child: Scaffold(

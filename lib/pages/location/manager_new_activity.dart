@@ -569,6 +569,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                             ),
                           ],
                         ),
+
+                        // ================ Activity Type Section ================
                         Container(
                           margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height * 0.01,
@@ -614,6 +616,8 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
                             ],
                           ),
                         ),
+
+                        // ============ Activity Description Section =============
                         Container(
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.only(

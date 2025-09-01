@@ -52,7 +52,7 @@ class SalesDashboard extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
+            padding: EdgeInsets.all(6),
             child: Column(
               children: [
                 // ~:Dashboard Title:~

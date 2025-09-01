@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -34,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacementNamed(context, '/login');
       }
     } catch (e) {
-      print('App Initialization Error: $e');
+      log('App Initialization Error: $e');
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.clear();
@@ -67,16 +68,16 @@ class _SplashScreenState extends State<SplashScreen> {
                 'Login by new device, please contact admin to unbind the old device') {
           isSignedIn = false;
           prefs.setBool('isLoggedIn', false);
-          print('User signed out');
+          log('User signed out');
         } else {
           state.setUserAccountList(res);
         }
       });
 
-      print('User info: ${state.getUserAccountList.length}');
-      print('Load Employee Id: ${state.getUserAccountList[0].employeeID}');
+      log('User info: ${state.getUserAccountList.length}');
+      log('Load Employee Id: ${state.getUserAccountList[0].employeeID}');
     } else {
-      print('User signed out');
+      log('User signed out');
     }
 
     // if (prefs.getString('highResImage') != null) {
@@ -95,19 +96,19 @@ class _SplashScreenState extends State<SplashScreen> {
   ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (await state.readAndWriteIsUserManager()) {
-      print("It's Manager");
+      log("It's Manager");
       // Note -> get Activity Insertation dropdown for Manager
       await state.fetchManagerActivityData().then((value) {
-        print('Manager Activity fetch process finished');
+        log('Manager Activity fetch process finished');
       });
       await state.fetchManagerActivities().then((res) {
         state.setManagerActivities(res);
-        print(
+        log(
           'Manager activities list length: ${state.getManagerActivitiesList.length}',
         );
       });
     } else {
-      print("It's Sales");
+      log("It's Sales");
       // ~:Sales Old Activity Insertation:~
       // Note -> get Activity Insertation dropdown for Sales
       // await Provider.of<SipSalesState>(context, listen: false)
@@ -120,39 +121,39 @@ class _SplashScreenState extends State<SplashScreen> {
       // ~:Reset dropdown default value to User's placement:~
       // state.setAbsentType(state.getUserAccountList[0].locationName);
 
-      print('User Account List: ${state.getUserAccountList.length}');
-      print('Profile Picture: ${state.getProfilePicture}');
-      print('Profile Picture Preview: ${state.getProfilePicturePreview}');
+      log('User Account List: ${state.getUserAccountList.length}');
+      log('Profile Picture: ${state.getProfilePicture}');
+      log('Profile Picture Preview: ${state.getProfilePicturePreview}');
 
       if (state.getUserAccountList.isNotEmpty &&
           state.getProfilePicture.isEmpty &&
           state.getProfilePicturePreview.isEmpty) {
-        print('Retrieve profile picture');
+        log('Retrieve profile picture');
         state.setProfilePicture(state.getUserAccountList[0].profilePicture);
         try {
           await GlobalAPI.fetchShowImage(state.getUserAccountList[0].employeeID)
               .then((String highResImg) async {
-            print('High Res Image state: $highResImg');
+            log('High Res Image state: $highResImg');
             if (highResImg == 'not available' ||
                 highResImg == 'failed' ||
                 highResImg == 'error') {
               state.setProfilePicturePreview('');
               await prefs.setString('highResImage', '');
-              print('High Res Image is not available.');
+              log('High Res Image is not available.');
             } else {
               state.setProfilePicturePreview(highResImg);
               await prefs.setString('highResImage', highResImg);
-              print('High Res Image successfully loaded.');
-              print('High Res Image: $highResImg');
+              log('High Res Image successfully loaded.');
+              log('High Res Image: $highResImg');
             }
           });
         } catch (e) {
-          print('Show HD Image Error: $e');
+          log('Show HD Image Error: $e');
           state.setProfilePicturePreview('');
           await prefs.setString('highResImage', '');
         }
       } else {
-        print('Skip profile picture retrieval');
+        log('Skip profile picture retrieval');
       }
     }
   }
@@ -167,6 +168,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+        elevation: 0.0,
+        scrolledUnderElevation: 0.0,
+        automaticallyImplyLeading: false,
+      ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -184,9 +192,9 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             (Platform.isIOS)
                 ? const CupertinoActivityIndicator(
-                    radius: 12.5,
+                    radius: 12,
                   )
-                : const CircleLoading(),
+                : const CircleLoading(strokeWidth: 3),
           ],
         ),
       ),

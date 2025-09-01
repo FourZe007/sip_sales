@@ -27,17 +27,16 @@ class TextSwitch extends StatelessWidget {
         vertical: MediaQuery.of(context).size.height * 0.015,
       ),
       child: Row(
+        spacing: 8,
         children: [
+          // ~:Consent Text:~
           Expanded(
-            flex: 4,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    number,
-                    style: GlobalFont.mediumgiantfontR,
-                  ),
+                Text(
+                  number,
+                  style: GlobalFont.bigfontR,
                 ),
                 Expanded(
                   flex: 6,
@@ -47,13 +46,16 @@ class TextSwitch extends StatelessWidget {
                         children: [
                           Text(
                             text,
-                            style: GlobalFont.mediumgiantfontR,
+                            style: GlobalFont.bigfontR,
                           ),
                           InkWell(
                             onTap: () => linkFunction!(context),
                             child: Text(
                               link,
-                              style: GlobalFont.mediumgiantfontRBlueUnderlined,
+                              style: GlobalFont.bigfontR.copyWith(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
                         ],
@@ -61,7 +63,7 @@ class TextSwitch extends StatelessWidget {
                     } else {
                       return Text(
                         text,
-                        style: GlobalFont.mediumgiantfontR,
+                        style: GlobalFont.bigfontR,
                       );
                     }
                   }),
@@ -69,8 +71,10 @@ class TextSwitch extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
-            child: Builder(builder: (context) {
+
+          // ~:Switch:~
+          Builder(
+            builder: (context) {
               if (Platform.isIOS) {
                 return CupertinoSwitch(
                   value: value,
@@ -83,7 +87,7 @@ class TextSwitch extends StatelessWidget {
                   activeTrackColor: Colors.blue[800],
                 );
               }
-            }),
+            },
           ),
         ],
       ),
