@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -407,7 +408,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
         activityType,
         activityDescription,
       )) {
-        print('Activity Created');
+        log('Activity Created');
         Navigator.pop(context, true);
       }
     } else {
@@ -419,7 +420,7 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
             activityType,
             activityDescription,
           )) {
-            print('Activity Created');
+            log('Activity Created');
             Navigator.pop(context, true);
           }
         } else {
@@ -448,7 +449,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     Provider.of<SipSalesState>(context, listen: false).clearState();

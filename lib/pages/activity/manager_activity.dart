@@ -1,15 +1,22 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
+import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
+import 'package:sip_sales/global/state/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales/global/state/provider.dart';
+import 'package:sip_sales/global/state/smactivitiesdashboard/sm_activities_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/smactivitiesdashboard/sm_activities_dashboard_event.dart';
+import 'package:sip_sales/global/state/smactivitiesdashboard/sm_activities_dashboard_state.dart';
 import 'package:sip_sales/pages/activity/mananger_activity_details.dart';
 import 'package:sip_sales/widget/format.dart';
 
@@ -79,16 +86,15 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
     SipSalesState state,
     String date,
   ) async {
-    print('Refresh or Load Data');
-    print('Date: $date');
+    log('Refresh or Load Data');
+    log('Date: $date');
     try {
       await state.fetchManagerActivities(date: date).then((res) {
         state.setManagerActivities(res);
       });
-      print(
-          'Manager activities length: ${state.getManagerActivitiesList.length}');
+      log('Manager activities length: ${state.getManagerActivitiesList.length}');
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       if (Platform.isIOS) {
         GlobalDialog.showCrossPlatformDialog(
           context,
@@ -114,7 +120,6 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
   void initState() {
     toggleIsDateInit();
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -125,11 +130,8 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
 
   Widget activityView(BuildContext context, SipSalesState state) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.95,
+      height: MediaQuery.of(context).size.height * 0.7,
       alignment: Alignment.center,
-      margin: EdgeInsets.only(
-        top: MediaQuery.of(context).size.height * 0.01,
-      ),
       child: Builder(
         builder: (context) {
           if (state.getManagerActivitiesList.isEmpty) {
@@ -173,7 +175,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                             ),
                           );
                         } else {
-                          return SizedBox();
+                          return SizedBox.shrink();
                         }
                       },
                     ),
@@ -207,8 +209,10 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                         MediaQuery.of(context).size.height * 0.015,
                       ),
                       child: Column(
+                        spacing: 8,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // ~:Card Information:~
                           Row(
                             children: [
                               Builder(
@@ -275,14 +279,15 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                          ),
+
+                          // ~:Card Utilities:~
                           Row(
+                            spacing: 8,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              InkWell(
-                                onTap: () => Navigator.push(
+                              // ~:View Details Button :~
+                              ElevatedButton(
+                                onPressed: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
@@ -292,20 +297,57 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                                     ),
                                   ),
                                 ),
-                                hoverColor: Colors.transparent,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(120, 20),
+                                  // backgroundColor: Colors.blue,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12.5,
                                     vertical: 5.0,
                                   ),
-                                  child: Text(
-                                    'Lihat Detail',
-                                    style: GlobalFont.mediumgiantfontRBold,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
                                   ),
+                                  shadowColor: Colors.grey,
+                                ),
+                                child: Text(
+                                  'Lihat Detail',
+                                  style: GlobalFont.mediumgiantfontR,
+                                ),
+                              ),
+
+                              // ~:Delete Button:~
+                              ElevatedButton(
+                                onPressed: () {
+                                  // ~:Save required parameters to delete certain report:~
+                                  context.read<SMActivitiesDashboardBloc>().add(
+                                        SaveSMActivitiesDashboard(
+                                          employeeID: data.employeeId,
+                                          activityID: data.activityId,
+                                        ),
+                                      );
+
+                                  // ~:toggling panel:~
+                                  context
+                                      .read<DashboardSlidingUpCubit>()
+                                      .changeType(
+                                        DashboardSlidingUpType
+                                            .deleteManagerActivity,
+                                      );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(80, 20),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.5,
+                                    vertical: 5.0,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                  shadowColor: Colors.grey,
+                                ),
+                                child: Text(
+                                  'Hapus',
+                                  style: GlobalFont.mediumgiantfontR,
                                 ),
                               ),
                             ],
@@ -369,10 +411,9 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
               padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.02,
               ),
-              child: Wrap(
-                direction: Axis.vertical,
-                runSpacing: MediaQuery.of(context).size.width * 0.025,
-                crossAxisAlignment: WrapCrossAlignment.start,
+              child: Row(
+                spacing: 8,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Open Filter Button
                   InkWell(
@@ -454,7 +495,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
                         date,
                       ),
                       child: SingleChildScrollView(
-                        physics: AlwaysScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         child: activityView(context, state),
                       ),
                     );

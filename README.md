@@ -6,6 +6,9 @@ A new Flutter project.
 v1.1.11
 - Minor bug and performance fixes for Login user input and static width for footer button at Login Screen.
 
+v1.1.12
+- New Screen! User with sales role can access Sales Dashboard.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

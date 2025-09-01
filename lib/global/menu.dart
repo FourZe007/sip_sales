@@ -1,17 +1,28 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales/global/state/provider.dart';
+import 'package:sip_sales/global/state/smactivitiesdashboard/sm_activities_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/smactivitiesdashboard/sm_activities_dashboard_event.dart';
+import 'package:sip_sales/global/state/smactivitiesdashboard/sm_activities_dashboard_state.dart';
 import 'package:sip_sales/pages/activity/manager_activity.dart';
 import 'package:sip_sales/pages/attendance/attendance.dart';
 import 'package:sip_sales/pages/location/manager_new_activity.dart';
 import 'package:sip_sales/pages/profile/profile.dart';
+import 'package:sip_sales/widget/indicator/circleloading.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -21,20 +32,22 @@ class MenuPage extends StatefulWidget {
 }
 
 class MenuPageState extends State<MenuPage> {
-  int _selectedIndex = 0;
+  // int _selectedIndex = 0;
   String title = '';
   String displayDate = ''; // date for UI/UX display
   String date = ''; // date for store in database
 
   bool isInserted = false;
 
-  final List<Widget> salesWidgetOptions = <Widget>[
-    const AttendancePage(),
-    // const AttendanceHistoryPage(),
-    // const ActivityRoutePage(),
-    // const SalesNewActivityPage(),
-    // const SalesActivityPage(),
-  ];
+  final PanelController slidingPanelController = PanelController();
+
+  // final List<Widget> salesWidgetOptions = <Widget>[
+  //   const AttendancePage(),
+  //   // const AttendanceHistoryPage(),
+  //   // const ActivityRoutePage(),
+  //   // const SalesNewActivityPage(),
+  //   // const SalesActivityPage(),
+  // ];
 
   // Note -> keep this for future use, but temporarily disable it
   final List<Widget> managerWidgetOptions = <Widget>[
@@ -42,11 +55,11 @@ class MenuPageState extends State<MenuPage> {
     ManagerActivityPage(),
   ];
 
-  void onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   void openProfile() {
     Navigator.push(
@@ -90,146 +103,335 @@ class MenuPageState extends State<MenuPage> {
       builder: (context, snapshot) {
         // ~:Shop Head:~
         if (snapshot.data == 0) {
-          print('Shop Head');
+          log('Shop Head');
           return PopScope(
             canPop: false,
-            child: Scaffold(
-              resizeToAvoidBottomInset: true,
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                backgroundColor: Colors.blue,
-                toolbarHeight: MediaQuery.of(context).size.height * 0.01,
-                elevation: 0.0,
-                scrolledUnderElevation: 0.0,
-                shadowColor: Colors.blue,
-              ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () async {
-                  isInserted = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ManagerNewActivityPage(),
-                        ),
-                      ) ??
-                      false;
-                },
-                backgroundColor: Colors.blue[200],
-                child: const Icon(
-                  Icons.add_rounded,
-                  size: 30.0,
-                  color: Colors.black,
-                ),
-              ),
-              body: SafeArea(
+            child: SlidingUpPanel(
+              controller: slidingPanelController,
+              backdropEnabled: true,
+              backdropColor: Colors.black.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(20.0),
+              minHeight: 0.0,
+              maxHeight: MediaQuery.of(context).size.height * 0.175,
+              defaultPanelState: PanelState.CLOSED,
+              onPanelClosed: () =>
+                  context.read<DashboardSlidingUpCubit>().closePanel(),
+              panel: SafeArea(
+                top: false,
+                left: false,
+                right: false,
                 maintainBottomViewPadding: true,
-                child: Container(
-                  color: Colors.blue,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    children: [
-                      // ~:Header Section:~
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.12,
-                        width: MediaQuery.of(context).size.width,
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.025,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.175,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      spacing: 12,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // ~:Title:~
+                        Text(
+                          'Apakah anda yakin ingin menghapus aktivitas ini?',
+                          style: GlobalFont.bigfontR.copyWith(fontSize: 14),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.025,
-                            vertical: MediaQuery.of(context).size.height * 0.02,
-                          ),
-                          child: InkWell(
-                            onTap: openProfile,
-                            child: Wrap(
-                              spacing: MediaQuery.of(context).size.width * 0.05,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                CircleAvatar(
-                                  radius: 30.0,
-                                  backgroundColor: Colors.white,
-                                  child: Builder(
-                                    builder: (context) {
-                                      if (state.getProfilePicture != '') {
-                                        return ClipOval(
-                                          child: SizedBox.fromSize(
-                                            size: Size.fromRadius(28),
-                                            child: Image.memory(
-                                              base64Decode(
-                                                state.getProfilePicture,
-                                              ),
-                                              fit: BoxFit.cover,
+
+                        // ~:Buttons:~
+                        Row(
+                          spacing: 12,
+                          children: [
+                            // ~:Cancel Button:~
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () => slidingPanelController.close(),
+                                child: Text(
+                                  'Batal',
+                                  style: GlobalFont.bigfontR,
+                                ),
+                              ),
+                            ),
+
+                            // ~:Delete Button:~
+                            Expanded(
+                              child: BlocConsumer<SMActivitiesDashboardBloc,
+                                  SMActivitiesDashboardState>(
+                                listener: (context, state) {
+                                  if (state is SMActivitiesDashboardDeleted) {
+                                    log('Deleted');
+                                    context
+                                        .read<DashboardSlidingUpCubit>()
+                                        .closePanel();
+
+                                    Fluttertoast.showToast(
+                                      msg: 'Laporan berhasil dihapus!',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.grey[300],
+                                      textColor: Colors.black,
+                                      fontSize: 16.0,
+                                    );
+                                  } else if (state
+                                      is SMActivitiesDashboardDeletedFailed) {
+                                    log('Failed');
+                                    Fluttertoast.showToast(
+                                      msg: state.message,
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.grey[300],
+                                      textColor: Colors.black,
+                                      fontSize: 16.0,
+                                    );
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if (state is SMActivitiesDashboardSaved) {
+                                    return ElevatedButton(
+                                      onPressed: () => context
+                                          .read<SMActivitiesDashboardBloc>()
+                                          .add(
+                                            DeleteSMActivitiesDashboard(
+                                              employeeID: state.employeeID,
+                                              activityID: state.activityID,
+                                              date: DateTime.now()
+                                                  .toIso8601String()
+                                                  .split('T')[0],
                                             ),
                                           ),
-                                        );
-                                      } else {
-                                        return const Icon(
-                                          Icons.person,
-                                          size: 25.0,
-                                          color: Colors.black,
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ),
-
-                                // ~:Profile Section:~
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Builder(
-                                      builder: (context) {
-                                        if (state
-                                            .getUserAccountList.isNotEmpty) {
-                                          return Text(
-                                            state.getUserAccountList[0]
-                                                .employeeName,
-                                            overflow: TextOverflow.ellipsis,
-                                            style:
-                                                GlobalFont.mediumgigafontRBold,
-                                          );
-                                        } else {
-                                          return Text(
-                                            'GUEST',
-                                            overflow: TextOverflow.ellipsis,
-                                            style:
-                                                GlobalFont.mediumgigafontRBold,
-                                          );
-                                        }
-                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      child: state
+                                              is SMActivitiesDashboardLoading
+                                          ? Platform.isIOS
+                                              ? CupertinoActivityIndicator(
+                                                  radius: 8,
+                                                  color: Colors.black,
+                                                )
+                                              : const CircleLoading(
+                                                  warna: Colors.black,
+                                                  strokeWidth: 4,
+                                                )
+                                          : Text(
+                                              'Hapus',
+                                              style:
+                                                  GlobalFont.bigfontR.copyWith(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                    );
+                                  }
+                                  return ElevatedButton(
+                                    onPressed: () => context
+                                        .read<SMActivitiesDashboardBloc>()
+                                        .add(
+                                          DeleteSMActivitiesDashboard(
+                                            employeeID: '',
+                                            activityID: '',
+                                            date: '',
+                                          ),
+                                        ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
                                     ),
-                                    Builder(
-                                      builder: (context) {
-                                        if (state
-                                            .getUserAccountList.isNotEmpty) {
-                                          return Text(
-                                            state.getUserAccountList[0]
-                                                .employeeID,
-                                            style: GlobalFont.bigfontR,
-                                          );
-                                        } else {
-                                          return Text(
-                                            'XXXXX/XXXXXX',
-                                            style: GlobalFont.bigfontR,
-                                          );
-                                        }
-                                      },
+                                    child: state is SMActivitiesDashboardLoading
+                                        ? Platform.isIOS
+                                            ? const CupertinoActivityIndicator(
+                                                radius: 12.5,
+                                                color: Colors.black,
+                                              )
+                                            : const CircleLoading(
+                                                warna: Colors.black,
+                                              )
+                                        : Text(
+                                            'Hapus',
+                                            style: GlobalFont.bigfontR.copyWith(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              body: BlocListener<DashboardSlidingUpCubit,
+                  DashboardSlidingUpState>(
+                listener: (context, state) {
+                  if (state.type ==
+                      DashboardSlidingUpType.deleteManagerActivity) {
+                    log('Opening Sliding Up Panel - State: $state');
+                    slidingPanelController.open();
+                  } else {
+                    log('Closing Sliding Up Panel - State: $state');
+                    slidingPanelController.close();
+                  }
+                },
+                child: Scaffold(
+                  resizeToAvoidBottomInset: true,
+                  appBar: AppBar(
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.blue,
+                    toolbarHeight: MediaQuery.of(context).size.height * 0.01,
+                    elevation: 0.0,
+                    scrolledUnderElevation: 0.0,
+                    shadowColor: Colors.blue,
+                  ),
+                  floatingActionButton: FloatingActionButton(
+                    onPressed: () async {
+                      isInserted = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ManagerNewActivityPage(),
+                            ),
+                          ) ??
+                          false;
+                    },
+                    backgroundColor: Colors.blue[200],
+                    child: const Icon(
+                      Icons.add_rounded,
+                      size: 30.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  body: SafeArea(
+                    maintainBottomViewPadding: true,
+                    child: Container(
+                      color: Colors.blue,
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: Stack(
+                        children: [
+                          // ~:Header Section:~
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 92,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.025,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.025,
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.02,
+                              ),
+                              child: InkWell(
+                                onTap: openProfile,
+                                child: Row(
+                                  spacing: 20,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // ~:Avatar Section:~
+                                    CircleAvatar(
+                                      radius: 30.0,
+                                      backgroundColor: Colors.white,
+                                      child: Builder(
+                                        builder: (context) {
+                                          if (state.getProfilePicture != '') {
+                                            return ClipOval(
+                                              child: SizedBox.fromSize(
+                                                size: Size.fromRadius(28),
+                                                child: Image.memory(
+                                                  base64Decode(
+                                                    state.getProfilePicture,
+                                                  ),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return const Icon(
+                                              Icons.person,
+                                              size: 25.0,
+                                              color: Colors.black,
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+
+                                    // ~:Profile Section:~
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Builder(
+                                            builder: (context) {
+                                              if (state.getUserAccountList
+                                                  .isNotEmpty) {
+                                                return Text(
+                                                  state.getUserAccountList[0]
+                                                      .employeeName,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GlobalFont
+                                                      .mediumgigafontRBold,
+                                                );
+                                              } else {
+                                                return Text(
+                                                  'GUEST',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GlobalFont
+                                                      .mediumgigafontRBold,
+                                                );
+                                              }
+                                            },
+                                          ),
+                                          Builder(
+                                            builder: (context) {
+                                              if (state.getUserAccountList
+                                                  .isNotEmpty) {
+                                                return Text(
+                                                  state.getUserAccountList[0]
+                                                      .employeeID,
+                                                  style: GlobalFont.bigfontR,
+                                                );
+                                              } else {
+                                                return Text(
+                                                  'XXXXX/XXXXXX',
+                                                  style: GlobalFont.bigfontR,
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
 
-                      // ~:Body Section:~
-                      ManagerActivityPage(isInserted: isInserted),
-                    ],
+                          // ~:Body Section:~
+                          ManagerActivityPage(isInserted: isInserted),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -365,7 +567,7 @@ class MenuPageState extends State<MenuPage> {
 
                       // ~:Body Section:~
                       Expanded(
-                        child: salesWidgetOptions[_selectedIndex],
+                        child: AttendancePage(),
                       ),
                     ],
                   ),

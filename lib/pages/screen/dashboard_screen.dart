@@ -150,245 +150,253 @@ class _DashboardScreenState extends State<DashboardScreen> {
         defaultPanelState: PanelState.CLOSED,
         onPanelClosed: () =>
             context.read<DashboardSlidingUpCubit>().closePanel(),
-        panel: Material(
-          color: Colors.transparent,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.215,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-            ),
-            child: Column(
-              spacing: 4,
-              children: [
-                // Draggable handle
-                Container(
-                  width: 60,
-                  height: 8,
-                  margin: const EdgeInsets.only(top: 8, bottom: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+        panel: SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          maintainBottomViewPadding: true,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.215,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
                 ),
+              ),
+              child: Column(
+                spacing: 4,
+                children: [
+                  // Draggable handle
+                  Container(
+                    width: 60,
+                    height: 8,
+                    margin: const EdgeInsets.only(top: 8, bottom: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
 
-                // ~:Content:~
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: BlocBuilder<DashboardSlidingUpCubit,
-                        DashboardSlidingUpState>(
-                      builder: (context, state) {
-                        if (state.type ==
-                            DashboardSlidingUpType.followupfilter) {
-                          return Column(
-                            spacing: 12,
-                            children: [
-                              // ~:Filter Title:~
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'Filter',
-                                  style: GlobalFont.bigfontR.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                  // ~:Content:~
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: BlocBuilder<DashboardSlidingUpCubit,
+                          DashboardSlidingUpState>(
+                        builder: (context, state) {
+                          if (state.type ==
+                              DashboardSlidingUpType.followupfilter) {
+                            return Column(
+                              spacing: 12,
+                              children: [
+                                // ~:Filter Title:~
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Filter',
+                                    style: GlobalFont.bigfontR.copyWith(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
 
-                              // ~:1st Filter:~
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                height: 40,
-                                child: Row(
-                                  spacing: 12,
-                                  children: [
-                                    // ~:Title:~
-                                    Expanded(child: Text('Tipe Data')),
+                                // ~:1st Filter:~
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 40,
+                                  child: Row(
+                                    spacing: 12,
+                                    children: [
+                                      // ~:Title:~
+                                      Expanded(child: Text('Tipe Data')),
 
-                                    // ~:Dropdown:~
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                          border: Border.all(
-                                            color: Colors.blue,
-                                            width: 1.5,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0,
-                                          vertical: 4.0,
-                                        ),
-                                        child: BlocBuilder<
-                                                FuFilterControlsCubit,
-                                                FuFilterControlsState>(
-                                            builder: (context, state) {
-                                          return DropdownButton(
-                                            value: state.activeFilters[
-                                                        'notFollowedUp'] ==
-                                                    true
-                                                ? FollowUpStatus.notYet
-                                                : FollowUpStatus.completed,
-                                            onChanged: (newValue) =>
-                                                valueOnChanged(
-                                              context,
-                                              appState,
-                                              newValue,
-                                            ),
-                                            isExpanded: true,
-                                            dropdownColor: Colors.white,
-                                            icon: const Icon(
-                                              Icons.arrow_drop_down_rounded,
-                                              color: Colors.blue,
-                                            ),
-                                            iconSize: 28,
-                                            elevation: 4,
-                                            style: GlobalFont.bigfontR,
-                                            underline: SizedBox(),
+                                      // ~:Dropdown:~
+                                      Expanded(
+                                        flex: 2,
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(20.0),
-                                            items: FollowUpStatus.values
-                                                .where((element) =>
-                                                    element ==
-                                                        FollowUpStatus.notYet ||
-                                                    element ==
-                                                        FollowUpStatus
-                                                            .completed)
-                                                .map((FollowUpStatus value) {
-                                              switch (value) {
-                                                case FollowUpStatus.notYet:
-                                                  return DropdownMenuItem<
-                                                      FollowUpStatus>(
-                                                    value:
-                                                        FollowUpStatus.notYet,
-                                                    child:
-                                                        Text('Belum Follow Up'),
-                                                  );
-                                                case FollowUpStatus.completed:
-                                                  return DropdownMenuItem<
-                                                      FollowUpStatus>(
-                                                    value: FollowUpStatus
-                                                        .completed,
-                                                    child: Text('Deal'),
-                                                  );
-                                                default:
-                                                  return DropdownMenuItem<
-                                                      FollowUpStatus>(
-                                                    value:
-                                                        FollowUpStatus.notYet,
-                                                    child:
-                                                        Text('Belum Follow Up'),
-                                                  );
-                                              }
-                                            }).toList(),
-                                          );
-                                        }),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // ~:2nd Filter:~
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: Row(
-                                  children: [
-                                    // ~:Title:~
-                                    Expanded(child: Text('Sort names A-Z')),
-
-                                    // ~:Switch:~
-                                    Expanded(
-                                      flex: 2,
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: BlocBuilder<
-                                            FuFilterControlsCubit,
-                                            FuFilterControlsState>(
-                                          builder: (context, state) {
-                                            log('isSortByName active: ${state.activeFilters['sortByName']!}');
-                                            return CupertinoSwitch(
+                                            border: Border.all(
+                                              color: Colors.blue,
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
+                                            vertical: 4.0,
+                                          ),
+                                          child: BlocBuilder<
+                                                  FuFilterControlsCubit,
+                                                  FuFilterControlsState>(
+                                              builder: (context, state) {
+                                            return DropdownButton(
                                               value: state.activeFilters[
-                                                      'sortByName'] ??
-                                                  false,
-                                              onChanged: (value) =>
+                                                          'notFollowedUp'] ==
+                                                      true
+                                                  ? FollowUpStatus.notYet
+                                                  : FollowUpStatus.completed,
+                                              onChanged: (newValue) =>
                                                   valueOnChanged(
                                                 context,
                                                 appState,
-                                                state.activeFilters[
-                                                            'notFollowedUp'] ==
-                                                        true
-                                                    ? FollowUpStatus.notYet
-                                                    : FollowUpStatus.completed,
-                                                sortByName: value,
+                                                newValue,
                                               ),
+                                              isExpanded: true,
+                                              dropdownColor: Colors.white,
+                                              icon: const Icon(
+                                                Icons.arrow_drop_down_rounded,
+                                                color: Colors.blue,
+                                              ),
+                                              iconSize: 28,
+                                              elevation: 4,
+                                              style: GlobalFont.bigfontR,
+                                              underline: SizedBox(),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                              items: FollowUpStatus.values
+                                                  .where((element) =>
+                                                      element ==
+                                                          FollowUpStatus
+                                                              .notYet ||
+                                                      element ==
+                                                          FollowUpStatus
+                                                              .completed)
+                                                  .map((FollowUpStatus value) {
+                                                switch (value) {
+                                                  case FollowUpStatus.notYet:
+                                                    return DropdownMenuItem<
+                                                        FollowUpStatus>(
+                                                      value:
+                                                          FollowUpStatus.notYet,
+                                                      child: Text(
+                                                          'Belum Follow Up'),
+                                                    );
+                                                  case FollowUpStatus.completed:
+                                                    return DropdownMenuItem<
+                                                        FollowUpStatus>(
+                                                      value: FollowUpStatus
+                                                          .completed,
+                                                      child: Text('Deal'),
+                                                    );
+                                                  default:
+                                                    return DropdownMenuItem<
+                                                        FollowUpStatus>(
+                                                      value:
+                                                          FollowUpStatus.notYet,
+                                                      child: Text(
+                                                          'Belum Follow Up'),
+                                                    );
+                                                }
+                                              }).toList(),
                                             );
-                                          },
+                                          }),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        } else if (state.type ==
-                            DashboardSlidingUpType.moreoption) {
-                          return Column(
-                            spacing: 8,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // ~:Title:~
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'Quick Action',
-                                  style: GlobalFont.bigfontR.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                    ],
                                   ),
                                 ),
-                              ),
 
-                              // ~:CTA WhatsApp:~
-                              ElevatedButton.icon(
-                                onPressed: () async => openLink(
-                                  context,
-                                  'https://wa.me/62${state.optionalData.replaceFirst('0', '')}',
-                                ),
-                                icon: Icon(
-                                  FontAwesomeIcons.whatsapp,
-                                  color: Colors.black,
-                                ),
-                                label: Text(
-                                  'Hubungi via WhatsApp',
-                                  style: GlobalFont.bigfontR,
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: Size(
-                                    MediaQuery.of(context).size.width,
-                                    40,
+                                // ~:2nd Filter:~
+                                // Bug: The switch is not properly changed when the switch is toggled
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    children: [
+                                      // ~:Title:~
+                                      Expanded(child: Text('Sort names A-Z')),
+
+                                      // ~:Switch:~
+                                      Expanded(
+                                        flex: 2,
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: BlocBuilder<
+                                              FuFilterControlsCubit,
+                                              FuFilterControlsState>(
+                                            builder: (context, state) {
+                                              log('isSortByName active: ${state.activeFilters['sortByName']!}');
+                                              return CupertinoSwitch(
+                                                value: state.activeFilters[
+                                                        'sortByName'] ??
+                                                    false,
+                                                onChanged: (value) =>
+                                                    valueOnChanged(
+                                                  context,
+                                                  appState,
+                                                  state.activeFilters[
+                                                              'notFollowedUp'] ==
+                                                          true
+                                                      ? FollowUpStatus.notYet
+                                                      : FollowUpStatus
+                                                          .completed,
+                                                  sortByName: value,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return SizedBox.shrink();
-                        }
-                      },
+                              ],
+                            );
+                          } else if (state.type ==
+                              DashboardSlidingUpType.moreoption) {
+                            return Column(
+                              spacing: 8,
+                              children: [
+                                // ~:Title:~
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Quick Action',
+                                    style: GlobalFont.bigfontR.copyWith(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                // ~:CTA WhatsApp:~
+                                ElevatedButton.icon(
+                                  onPressed: () async => openLink(
+                                    context,
+                                    'https://wa.me/62${state.optionalData.replaceFirst('0', '')}',
+                                  ),
+                                  icon: Icon(
+                                    FontAwesomeIcons.whatsapp,
+                                    color: Colors.black,
+                                  ),
+                                  label: Text(
+                                    'Hubungi via WhatsApp',
+                                    style: GlobalFont.bigfontR,
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: Size(
+                                      MediaQuery.of(context).size.width,
+                                      40,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return SizedBox.shrink();
+                          }
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -398,7 +406,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 state.type == DashboardSlidingUpType.moreoption) {
               log('Opening Sliding Up Panel - State: $state');
               slidingPanelController.open();
-            } else if (state.type == DashboardSlidingUpType.none) {
+            } else {
               log('Closing Sliding Up Panel - State: $state');
               slidingPanelController.close();
             }

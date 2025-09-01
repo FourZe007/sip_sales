@@ -91,178 +91,183 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     final state = Provider.of<SipSalesState>(context);
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-        // toolbarHeight: (MediaQuery.of(context).size.width < 800)
-        //     ? MediaQuery.of(context).size.height * 0.075
-        //     : MediaQuery.of(context).size.height * 0.075,
-        title: (MediaQuery.of(context).size.width < 800)
-            ? Text(
-                'Ubah Sandi',
-                style: GlobalFont.giantfontRBold,
-              )
-            : Text(
-                'Ubah Sandi',
-                style: GlobalFont.terafontRBold,
-              ),
-        leading: Builder(
-          builder: (context) {
-            if (Platform.isIOS) {
-              return IconButton(
-                onPressed: () => Navigator.pop(context),
-                tooltip: 'Kembali',
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
+    return SafeArea(
+      maintainBottomViewPadding: true,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.blue,
+          // toolbarHeight: (MediaQuery.of(context).size.width < 800)
+          //     ? MediaQuery.of(context).size.height * 0.075
+          //     : MediaQuery.of(context).size.height * 0.075,
+          title: (MediaQuery.of(context).size.width < 800)
+              ? Text(
+                  'Ubah Sandi',
+                  style: GlobalFont.giantfontRBold,
+                )
+              : Text(
+                  'Ubah Sandi',
+                  style: GlobalFont.terafontRBold,
                 ),
-              );
-            } else {
-              return IconButton(
-                onPressed: () => Navigator.pop(context),
-                tooltip: 'Kembali',
-                icon: Icon(
-                  Icons.arrow_back_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            }
-          },
-        ),
-      ),
-      body: SafeArea(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.blue,
+          leading: Builder(
+            builder: (context) {
+              if (Platform.isIOS) {
+                return IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  tooltip: 'Kembali',
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size:
+                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                    color: Colors.black,
+                  ),
+                );
+              } else {
+                return IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  tooltip: 'Kembali',
+                  icon: Icon(
+                    Icons.arrow_back_rounded,
+                    size:
+                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                    color: Colors.black,
+                  ),
+                );
+              }
+            },
           ),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
+        ),
+        body: SafeArea(
+          child: DecoratedBox(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-              color: Colors.white,
+              color: Colors.blue,
             ),
-            padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
-            child: Column(
-              children: [
-                // ~:Header:~
-                Expanded(
-                  child: Wrap(
-                    runSpacing: 20,
-                    children: [
-                      // ~:Title Section:~
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // ~:Page Title:~
-                          Text(
-                            'Kata Sandi Baru',
-                            style: GlobalFont.giantfontRBold,
-                          ),
-
-                          // ~:Page Subtitle:~
-                          Builder(
-                            builder: (context) {
-                              if (state.getEmployeeId.isEmpty) {
-                                return Text(
-                                  'Buat kata sandi baru untuk akun anda.',
-                                  style: GlobalFont.bigfontR,
-                                );
-                              } else {
-                                return Text(
-                                  'Buat kata sandi baru untuk akun dengan ID ${state.getEmployeeId}',
-                                  style: GlobalFont.bigfontR,
-                                );
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-
-                      // ~:Body Section:~
-                      Wrap(
-                        runSpacing: 5,
-                        children: [
-                          // ~:Current Password Form:~
-                          CustomUserInput2(
-                            setCurrentPassword,
-                            currentPassword,
-                            mode: 0,
-                            isPass: true,
-                            isIcon: true,
-                            useHint: false,
-                            icon: Icons.lock,
-                            label: 'Kata Sandi Lama',
-                            useValidator: true,
-                            passDiscriminator: currentPassword,
-                          ),
-
-                          // ~:New Password Form:~
-                          CustomUserInput2(
-                            setNewPassword,
-                            newPassword,
-                            mode: 0,
-                            isPass: true,
-                            isIcon: true,
-                            useHint: false,
-                            icon: Icons.lock,
-                            label: 'Kata Sandi Baru',
-                            useValidator: true,
-                            passDiscriminator: confirmPassword,
-                          ),
-
-                          // ~:New Password Form:~
-                          CustomUserInput2(
-                            setConfirmPassword,
-                            confirmPassword,
-                            mode: 0,
-                            isPass: true,
-                            isIcon: true,
-                            useHint: false,
-                            icon: Icons.lock,
-                            label: 'Ketik Ulang Kata Sandi Baru',
-                            useValidator: true,
-                            passDiscriminator: newPassword,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
+                color: Colors.white,
+              ),
+              padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
+              child: Column(
+                children: [
+                  // ~:Header:~
+                  Expanded(
+                    child: Wrap(
+                      runSpacing: 20,
+                      children: [
+                        // ~:Title Section:~
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // ~:Page Title:~
+                            Text(
+                              'Kata Sandi Baru',
+                              style: GlobalFont.giantfontRBold,
+                            ),
 
-                // ~:Footer - 'Ubah' Button:~
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: ElevatedButton(
-                    onPressed: () => changePassword(
-                      state,
-                      currentPassword,
-                      newPassword,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(
-                        MediaQuery.of(context).size.width * 0.95,
-                        MediaQuery.of(context).size.height * 0.04,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      backgroundColor: Colors.blue[300],
-                    ),
-                    child: Text(
-                      'Ubah',
-                      style: GlobalFont.mediumgiantfontR,
+                            // ~:Page Subtitle:~
+                            Builder(
+                              builder: (context) {
+                                if (state.getEmployeeId.isEmpty) {
+                                  return Text(
+                                    'Buat kata sandi baru untuk akun anda.',
+                                    style: GlobalFont.bigfontR,
+                                  );
+                                } else {
+                                  return Text(
+                                    'Buat kata sandi baru untuk akun dengan ID ${state.getEmployeeId}',
+                                    style: GlobalFont.bigfontR,
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+
+                        // ~:Body Section:~
+                        Wrap(
+                          runSpacing: 5,
+                          children: [
+                            // ~:Current Password Form:~
+                            CustomUserInput2(
+                              setCurrentPassword,
+                              currentPassword,
+                              mode: 0,
+                              isPass: true,
+                              isIcon: true,
+                              useHint: false,
+                              icon: Icons.lock,
+                              label: 'Kata Sandi Lama',
+                              useValidator: true,
+                              passDiscriminator: currentPassword,
+                            ),
+
+                            // ~:New Password Form:~
+                            CustomUserInput2(
+                              setNewPassword,
+                              newPassword,
+                              mode: 0,
+                              isPass: true,
+                              isIcon: true,
+                              useHint: false,
+                              icon: Icons.lock,
+                              label: 'Kata Sandi Baru',
+                              useValidator: true,
+                              passDiscriminator: confirmPassword,
+                            ),
+
+                            // ~:New Password Form:~
+                            CustomUserInput2(
+                              setConfirmPassword,
+                              confirmPassword,
+                              mode: 0,
+                              isPass: true,
+                              isIcon: true,
+                              useHint: false,
+                              icon: Icons.lock,
+                              label: 'Ketik Ulang Kata Sandi Baru',
+                              useValidator: true,
+                              passDiscriminator: newPassword,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+
+                  // ~:Footer - 'Ubah' Button:~
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ElevatedButton(
+                      onPressed: () => changePassword(
+                        state,
+                        currentPassword,
+                        newPassword,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(
+                          MediaQuery.of(context).size.width * 0.95,
+                          MediaQuery.of(context).size.height * 0.04,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        backgroundColor: Colors.blue[300],
+                      ),
+                      child: Text(
+                        'Ubah',
+                        style: GlobalFont.mediumgiantfontR,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

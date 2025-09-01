@@ -265,104 +265,99 @@ class ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Picture
-              Expanded(
-                child: Builder(
-                  builder: (context) {
-                    log('Profile Picture: ${state.getProfilePicture.isEmpty}');
-                    log('Profile Picture Preview: ${state.getProfilePicturePreview.isEmpty}');
-                    if (state.getProfilePicture.isEmpty &&
-                        state.getProfilePicturePreview.isEmpty) {
-                      return GestureDetector(
-                        onTap: () => takePhoto(context, state),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 35,
-                                backgroundColor: Colors.black,
-                                child: ClipOval(
-                                  child: SizedBox.fromSize(
-                                    size: Size.fromRadius(33),
-                                    child: Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    ),
+              Builder(
+                builder: (context) {
+                  log('Profile Picture: ${state.getProfilePicture.isEmpty}');
+                  log('Profile Picture Preview: ${state.getProfilePicturePreview.isEmpty}');
+                  if (state.getProfilePicture.isEmpty &&
+                      state.getProfilePicturePreview.isEmpty) {
+                    return GestureDetector(
+                      onTap: () => takePhoto(context, state),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 35,
+                              backgroundColor: Colors.black,
+                              child: ClipOval(
+                                child: SizedBox.fromSize(
+                                  size: Size.fromRadius(33),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
-                              Builder(
-                                builder: (context) {
-                                  if (state.getUserAccountList[0].code == 0) {
-                                    return SizedBox();
-                                  } else {
-                                    return Positioned(
-                                      top: 43,
-                                      left: 43,
-                                      child: CircleAvatar(
-                                        radius: 13,
-                                        backgroundColor: Colors.grey,
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 18,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      if (state.getProfilePicture.isEmpty) {
-                        return CircleAvatar(
-                          radius: 35,
-                          backgroundColor: Colors.black,
-                          child: ClipOval(
-                            child: SizedBox.fromSize(
-                              size: Size.fromRadius(33),
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              ),
                             ),
-                          ),
-                        );
-                      }
-
-                      return InkWell(
-                        onTap: () => viewPhoto(context, state),
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.white,
-                          child: ClipOval(
-                            child: SizedBox.fromSize(
-                              size: Size.fromRadius(38),
-                              child: Image.memory(
-                                base64Decode(
-                                  state.getProfilePicture,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
+                            Builder(
+                              builder: (context) {
+                                if (state.getUserAccountList[0].code == 0) {
+                                  return SizedBox();
+                                } else {
+                                  return Positioned(
+                                    top: 43,
+                                    left: 43,
+                                    child: CircleAvatar(
+                                      radius: 13,
+                                      backgroundColor: Colors.grey,
+                                      child: Icon(
+                                        Icons.edit,
+                                        size: 18,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    if (state.getProfilePicture.isEmpty) {
+                      return CircleAvatar(
+                        radius: 35,
+                        backgroundColor: Colors.black,
+                        child: ClipOval(
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(33),
+                            child: Icon(
+                              Icons.person,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       );
                     }
-                  },
-                ),
+
+                    return InkWell(
+                      onTap: () => viewPhoto(context, state),
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        child: ClipOval(
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(38),
+                            child: Image.memory(
+                              base64Decode(
+                                state.getProfilePicture,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
 
               // User Data, contains of name and employee ID
               Expanded(
-                flex: 3,
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.025,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -608,7 +603,7 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.1.11',
+                'Version 1.1.12 beta',
                 style: GlobalFont.bigfontR,
               ),
             ),
@@ -884,6 +879,7 @@ class ProfilePageState extends State<ProfilePage> {
           ),
         ),
         body: SafeArea(
+          maintainBottomViewPadding: true,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.blue,

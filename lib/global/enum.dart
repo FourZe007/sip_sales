@@ -20,4 +20,15 @@ enum DashboardSlidingUpType {
   none,
   followupfilter, // for filter controls
   moreoption, // for each cards if needed in the future
+  deleteManagerActivity, // for delete manager activity
+}
+
+enum StatusCode {
+  success(100),
+  noContent(204),
+  notFound(404);
+
+  final int value;
+
+  const StatusCode(this.value);
 }

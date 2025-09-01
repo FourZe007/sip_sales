@@ -617,7 +617,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         // ~:App Version:~
                         Text(
-                          'v1.1.11',
+                          'v1.1.12 beta',
                           style: GlobalFont.mediumbigfontR,
                         ),
 

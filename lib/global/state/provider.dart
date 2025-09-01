@@ -2,7 +2,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
+import 'dart:math' as math;
+import 'dart:developer';
 import 'dart:typed_data';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
@@ -1600,8 +1601,9 @@ class SipSalesState with ChangeNotifier {
   static String getFileSizeString(int bytes, {int decimals = 0}) {
     if (bytes <= 0) return "0 Bytes";
     const suffixes = [" Bytes", "KB", "MB", "GB", "TB"];
-    var i = (log(bytes) / log(1024)).floor();
-    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + suffixes[i];
+    var i = (math.log(bytes) / math.log(1024)).floor();
+    return ((bytes / math.pow(1024, i)).toStringAsFixed(decimals)) +
+        suffixes[i];
   }
 
   Future<bool> uploadImageFromCamera(BuildContext context) async {
@@ -1851,14 +1853,14 @@ class SipSalesState with ChangeNotifier {
     }
 
     if (filteredList.isNotEmpty) {
-      print('Image List is not empty');
+      log('Image List is not empty');
     } else {
-      print('Image List is empty');
+      log('Image List is empty');
     }
 
     bool isSuccess = false;
     if (type != '' && desc != '' && filteredList.isNotEmpty) {
-      print('User Input is not empty');
+      log('User Input is not empty');
       try {
         await location.getLocation().then(
           (coordinate) async {
@@ -1875,8 +1877,9 @@ class SipSalesState with ChangeNotifier {
             newActivitiesList.clear();
             try {
               newActivitiesList.addAll(await GlobalAPI.fetchNewManagerActivity(
+                '1',
                 getUserAccountList[0].employeeID,
-                DateTime.now().toString().split(' ')[0],
+                DateTime.now().toIso8601String().split('T')[0],
                 DateFormat('HH:mm').format(DateTime.now()),
                 getUserAccountList[0].branch,
                 getUserAccountList[0].shop,
@@ -1887,20 +1890,19 @@ class SipSalesState with ChangeNotifier {
                 filteredList,
               ));
             } catch (e) {
-              print('Error: $e');
+              log('Error: $e');
             }
 
             // setIsLoading(false);
             if (newActivitiesList.isNotEmpty) {
-              print('New Activities List is not empty');
+              log('New Activities List is not empty');
             } else {
-              print(
-                  'New Activities List: ${newActivitiesList[0].resultMessage}');
+              log('New Activities List: ${newActivitiesList[0].resultMessage}');
             }
 
             if (newActivitiesList.isNotEmpty) {
               if (newActivitiesList[0].resultMessage == 'SUKSES') {
-                print('Activity created successfully');
+                log('Activity created successfully');
                 setIsLoading(false);
 
                 if (Platform.isIOS) {
@@ -1924,7 +1926,7 @@ class SipSalesState with ChangeNotifier {
 
                 isSuccess = true;
               } else {
-                print('Activity failed to create');
+                log('Activity failed to create');
                 setIsLoading(false);
 
                 if (Platform.isIOS) {
@@ -1949,7 +1951,7 @@ class SipSalesState with ChangeNotifier {
                 isSuccess = false;
               }
             } else {
-              print(newActivitiesList[0].resultMessage);
+              log(newActivitiesList[0].resultMessage);
               setIsLoading(false);
 
               if (Platform.isIOS) {
@@ -1976,7 +1978,7 @@ class SipSalesState with ChangeNotifier {
           },
         );
       } catch (e) {
-        print('Error: $e');
+        log('Error: $e');
         setIsLoading(false);
 
         if (Platform.isIOS) {
@@ -2001,7 +2003,7 @@ class SipSalesState with ChangeNotifier {
         isSuccess = false;
       }
     } else {
-      print('User Input is not empty');
+      log('User Input is not empty');
       setIsLoading(false);
 
       if (Platform.isIOS) {
@@ -2026,7 +2028,7 @@ class SipSalesState with ChangeNotifier {
       isSuccess = false;
     }
 
-    print('isSuccess: $isSuccess');
+    log('isSuccess: $isSuccess');
     return isSuccess;
   }
 
@@ -2130,7 +2132,7 @@ class SipSalesState with ChangeNotifier {
     if (date == '') {
       date = DateTime.now().toString().split(' ')[0];
     }
-    // print('Manager Activities Date: $date');
+    log('Manager Activities Date: $date');
 
     List<ModelManagerActivities> temp = [];
     await GlobalAPI.fetchManagerActivity(
@@ -2141,7 +2143,7 @@ class SipSalesState with ChangeNotifier {
       notifyListeners();
     });
 
-    print('Manager Activities List length: ${temp.length}');
+    log('Manager Activities List length: ${temp.length}');
 
     return temp;
   }
@@ -2167,11 +2169,6 @@ class SipSalesState with ChangeNotifier {
       date = DateTime.now().toString().split(' ')[0];
     }
 
-    // print('State Management');
-    // print('Employee ID: $eId');
-    // print('Date: $date');
-    // print('Activity ID: $actId');
-
     managerActivityDetails = ModelManagerActivityDetails(
       time: '',
       lat: 0,
@@ -2189,7 +2186,7 @@ class SipSalesState with ChangeNotifier {
       managerActivityDetails = value[0];
     });
 
-    print(managerActivityDetails.pic1);
+    log(managerActivityDetails.pic1);
 
     return managerActivityDetails;
   }

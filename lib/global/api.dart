@@ -1103,6 +1103,7 @@ class GlobalAPI {
   }
 
   static Future<List<ModelResultMessage2>> fetchNewManagerActivity(
+    String mode,
     String employeeID,
     String date,
     String time,
@@ -1120,6 +1121,7 @@ class GlobalAPI {
     );
 
     Map mapNewManagerActivity = {
+      "Mode": mode,
       "EmployeeID": employeeID,
       "CurrentDate": date,
       "CurrentTime": time,
@@ -1148,19 +1150,25 @@ class GlobalAPI {
         var jsonActivitytypes = jsonDecode(response.body);
         if (jsonActivitytypes['code'] == '100' &&
             jsonActivitytypes['msg'] == 'Sukses') {
-          activityTypesList = (jsonActivitytypes['data'] as List)
+          activityTypesList.addAll((jsonActivitytypes['data'] as List)
               .map<ModelResultMessage2>(
                   (list) => ModelResultMessage2.fromJson(list))
-              .toList();
+              .toList());
 
           return activityTypesList;
         } else {
+          activityTypesList.add(ModelResultMessage2(resultMessage: '100'));
           return activityTypesList;
         }
-      } else {}
-      return activityTypesList;
+      } else {
+        activityTypesList.add(ModelResultMessage2(resultMessage: '204'));
+
+        return activityTypesList;
+      }
     } catch (e) {
       print(e.toString());
+      activityTypesList.add(ModelResultMessage2(resultMessage: '404'));
+
       return activityTypesList;
     }
   }
@@ -1209,50 +1217,50 @@ class GlobalAPI {
   }
 
   // ~:OLD:~
-  static Future<List<ModelManagerActivities>> fetchOldManagerActivity(
-    String employeeID,
-    String date,
-  ) async {
-    var url = Uri.https(
-      'wsip.yamaha-jatim.co.id:2448',
-      '/api/SIPSales/EmployeeActivitySM',
-    );
+  // static Future<List<ModelManagerActivities>> fetchOldManagerActivity(
+  //   String employeeID,
+  //   String date,
+  // ) async {
+  //   var url = Uri.https(
+  //     'wsip.yamaha-jatim.co.id:2448',
+  //     '/api/SIPSales/EmployeeActivitySM',
+  //   );
 
-    Map mapManagerActivity = {
-      "EmployeeID": employeeID,
-      "CurrentDate": date,
-    };
+  //   Map mapManagerActivity = {
+  //     "EmployeeID": employeeID,
+  //     "CurrentDate": date,
+  //   };
 
-    List<ModelManagerActivities> managerActivityList = [];
+  //   List<ModelManagerActivities> managerActivityList = [];
 
-    try {
-      final response =
-          await http.post(url, body: jsonEncode(mapManagerActivity), headers: {
-        'Content-Type': 'application/json',
-      }).timeout(const Duration(minutes: 2));
+  //   try {
+  //     final response =
+  //         await http.post(url, body: jsonEncode(mapManagerActivity), headers: {
+  //       'Content-Type': 'application/json',
+  //     }).timeout(const Duration(minutes: 2));
 
-      if (response.statusCode <= 200) {
-        var jsonManagerActivity = jsonDecode(response.body);
-        if (jsonManagerActivity['code'] == '100' &&
-            jsonManagerActivity['msg'] == 'Sukses') {
-          managerActivityList = (jsonManagerActivity['data'] as List)
-              .map<ModelManagerActivities>(
-                  (list) => ModelManagerActivities.fromJson(list))
-              .toList();
+  //     if (response.statusCode <= 200) {
+  //       var jsonManagerActivity = jsonDecode(response.body);
+  //       if (jsonManagerActivity['code'] == '100' &&
+  //           jsonManagerActivity['msg'] == 'Sukses') {
+  //         managerActivityList = (jsonManagerActivity['data'] as List)
+  //             .map<ModelManagerActivities>(
+  //                 (list) => ModelManagerActivities.fromJson(list))
+  //             .toList();
 
-          // print('Activity List: $managerActivityList');
+  //         // print('Activity List: $managerActivityList');
 
-          return managerActivityList;
-        } else {
-          return managerActivityList;
-        }
-      } else {}
-      return managerActivityList;
-    } catch (e) {
-      print(e.toString());
-      return managerActivityList;
-    }
-  }
+  //         return managerActivityList;
+  //       } else {
+  //         return managerActivityList;
+  //       }
+  //     } else {}
+  //     return managerActivityList;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return managerActivityList;
+  //   }
+  // }
 
   static Future<List<ModelManagerActivities>> fetchManagerActivity(
     String employeeID,
@@ -1267,6 +1275,7 @@ class GlobalAPI {
       "EmployeeID": employeeID,
       "CurrentDate": date,
     };
+    log('Map Activity: $mapManagerActivity');
 
     List<ModelManagerActivities> managerActivityList = [];
 

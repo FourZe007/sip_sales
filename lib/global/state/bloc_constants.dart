@@ -6,6 +6,7 @@ import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc
 import 'package:sip_sales/global/state/followupdate_cubit.dart';
 import 'package:sip_sales/global/state/fufiltercontrols_cubit.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/smactivitiesdashboard/sm_activities_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 
 class BlocConstants {
@@ -31,6 +32,9 @@ class BlocConstants {
       ),
       BlocProvider<DashboardSlidingUpCubit>(
         create: (context) => DashboardSlidingUpCubit(),
+      ),
+      BlocProvider<SMActivitiesDashboardBloc>(
+        create: (context) => SMActivitiesDashboardBloc(),
       ),
     ];
   }
