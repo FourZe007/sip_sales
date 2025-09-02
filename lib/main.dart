@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/account/login.dart';
@@ -17,11 +16,11 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 //091188
 void main() async {
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black,
-    // Adjust for icon visibility
-    statusBarBrightness: Brightness.light,
-  ));
+  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  //   statusBarColor: Colors.blue,
+  //   // Adjust for icon visibility
+  //   statusBarBrightness: Brightness.light,
+  // ));
 
   runApp(
     ChangeNotifierProvider(

@@ -1,8 +1,10 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
@@ -33,14 +35,14 @@ class _MapPageState extends State<MapPage> {
     // Get the first result (if available)
     if (placemarks.isNotEmpty) {
       Placemark firstResult = placemarks.first;
-      print('Placemark: $firstResult');
+      log('Placemark: $firstResult');
 
       // Access the street address
       String address = firstResult.street!;
-      print('Address: $address');
+      log('Address: $address');
 
       // Print the address
-      print('Address: $address');
+      log('Address: $address');
       yield firstResult.street!;
     }
 
@@ -64,7 +66,7 @@ class _MapPageState extends State<MapPage> {
         }
       });
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       isClose = false;
     }
 
@@ -75,47 +77,54 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     final state = Provider.of<SipSalesState>(context);
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0.0,
-        leading: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: CircleAvatar(
-            backgroundColor: Colors.black,
-            child: Builder(
-              builder: (context) {
-                if (Platform.isIOS) {
-                  return IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    tooltip: 'Kembali',
-                    icon: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: (MediaQuery.of(context).size.width < 800) ? 25 : 35,
-                      color: Colors.white,
-                    ),
-                  );
-                } else {
-                  return IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    tooltip: 'Kembali',
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      size: (MediaQuery.of(context).size.width < 800) ? 25 : 35,
-                      color: Colors.white,
-                    ),
-                  );
-                }
-              },
+    return SafeArea(
+      top: false,
+      bottom: false,
+      maintainBottomViewPadding: true,
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.dark,
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0.0,
+          leading: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: CircleAvatar(
+              backgroundColor: Colors.black,
+              child: Builder(
+                builder: (context) {
+                  if (Platform.isIOS) {
+                    return IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      tooltip: 'Kembali',
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size:
+                            (MediaQuery.of(context).size.width < 800) ? 25 : 35,
+                        color: Colors.white,
+                      ),
+                    );
+                  } else {
+                    return IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      tooltip: 'Kembali',
+                      icon: Icon(
+                        Icons.arrow_back_rounded,
+                        size:
+                            (MediaQuery.of(context).size.width < 800) ? 25 : 35,
+                        color: Colors.white,
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ),
-      ),
-      body: SafeArea(
-        maintainBottomViewPadding: true,
-        child: Stack(
+        body: Stack(
           children: [
             // ~:Maps and its details
             FlutterMap(

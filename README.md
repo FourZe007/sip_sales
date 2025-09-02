@@ -3,11 +3,25 @@
 A new Flutter project.
 
 ## Update Notes
-v1.1.11
-- Minor bug and performance fixes for Login user input and static width for footer button at Login Screen.
+## Version History
 
-v1.1.12
-- New Screen! User with sales role can access Sales Dashboard.
+### 🚀 v1.1.12 - "Sales Power Unleashed!"
+**What's New:**
+
+✨ **Brand New Sales Dashboard**
+- Sales team, rejoice! Your dedicated command center is here
+- Track performance metrics and key sales indicators at a glance
+- Quick access to essential sales tools and reports
+
+🎨 **Fresh New Look**
+- Completely redesigned splash screen for a more polished first impression
+- Sleeker login experience that's both beautiful and functional
+- Revamped user consent flow that's clearer and more intuitive
+- Modernized profile interface that puts you in control
+- Enhanced location screen with improved usability
+
+### v1.1.11
+- Minor bug fixes and performance improvements for login experience
 
 ## Getting Started
 

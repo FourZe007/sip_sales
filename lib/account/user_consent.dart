@@ -86,96 +86,95 @@ class _UserConsentPageState extends State<UserConsentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        backgroundColor: Colors.grey[300],
-        centerTitle: true,
-        toolbarHeight: 60,
-        elevation: 0.0,
-        scrolledUnderElevation: 0.0,
-        title: Text(
-          'Syarat & Ketentuan',
-          style: GlobalFont.giantfontRBold,
+    return SafeArea(
+      top: false,
+      bottom: false,
+      maintainBottomViewPadding: true,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.grey[300],
+          centerTitle: true,
+          // toolbarHeight: 60,
+          elevation: 0.0,
+          scrolledUnderElevation: 0.0,
+          title: Text(
+            'Syarat & Ketentuan',
+            style: GlobalFont.mediumgiantfontRBold,
+          ),
+          leading: Builder(
+            builder: (context) {
+              if (Platform.isIOS) {
+                return IconButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size:
+                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                    color: Colors.black,
+                  ),
+                );
+              } else {
+                return IconButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  icon: Icon(
+                    Icons.arrow_back_rounded,
+                    size:
+                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                    color: Colors.black,
+                  ),
+                );
+              }
+            },
+          ),
         ),
-        leading: Builder(
-          builder: (context) {
-            if (Platform.isIOS) {
-              return IconButton(
-                onPressed: () => Navigator.pop(context, false),
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            } else {
-              return IconButton(
-                onPressed: () => Navigator.pop(context, false),
-                icon: Icon(
-                  Icons.arrow_back_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            }
-          },
-        ),
-      ),
-      body: SafeArea(
-        maintainBottomViewPadding: true,
-        child: Container(
+        body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           color: Colors.grey[300],
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.05,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    // User Location Permission
-                    TextSwitch(
-                      '1. ',
-                      'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
-                      isLocationGranted,
-                      toggleLocationSwitch,
-                    ),
+              Column(
+                spacing: 12,
+                children: [
+                  // User Location Permission
+                  TextSwitch(
+                    '1. ',
+                    'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
+                    isLocationGranted,
+                    toggleLocationSwitch,
+                  ),
 
-                    // User Photo Permission
-                    TextSwitch(
-                      '2. ',
-                      'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                      isPhotoGranted,
-                      togglePhotoSwitch,
-                    ),
+                  // User Photo Permission
+                  TextSwitch(
+                    '2. ',
+                    'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                    isPhotoGranted,
+                    togglePhotoSwitch,
+                  ),
 
-                    // User Camera Permission
-                    TextSwitch(
-                      '3. ',
-                      'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                      isCameraGranted,
-                      toggleCameraSwitch,
-                    ),
+                  // User Camera Permission
+                  TextSwitch(
+                    '3. ',
+                    'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                    isCameraGranted,
+                    toggleCameraSwitch,
+                  ),
 
-                    // App Privacy Policy
-                    TextSwitch(
-                      '4. ',
-                      'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
-                      isPolicyGranted,
-                      togglePolicySwitch,
-                      isLinkAvailable: true,
-                      link:
-                          'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-                      linkFunction: (dynamic) => launchLink(context),
-                    ),
-                  ],
-                ),
+                  // App Privacy Policy
+                  TextSwitch(
+                    '4. ',
+                    'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
+                    isPolicyGranted,
+                    togglePolicySwitch,
+                    isLinkAvailable: true,
+                    link:
+                        'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                    linkFunction: (dynamic) => launchLink(context),
+                  ),
+                ],
               ),
 
               // Return Button
@@ -194,12 +193,10 @@ class _UserConsentPageState extends State<UserConsentPage> {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(40.0),
                         ),
-                        margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.025,
-                        ),
                         child: Text(
                           'Return',
                           style: GlobalFont.mediumgiantfontRBoldWhite,
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     );
@@ -215,12 +212,10 @@ class _UserConsentPageState extends State<UserConsentPage> {
                           color: Colors.grey,
                           borderRadius: BorderRadius.circular(40.0),
                         ),
-                        margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.025,
-                        ),
                         child: Text(
                           'Return',
                           style: GlobalFont.mediumgiantfontRBold,
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     );

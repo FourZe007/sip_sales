@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
@@ -603,7 +604,7 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.1.12 beta',
+                'Version 1.1.12',
                 style: GlobalFont.bigfontR,
               ),
             ),
@@ -664,106 +665,109 @@ class ProfilePageState extends State<ProfilePage> {
     // State Mangement
     final profileState = Provider.of<SipSalesState>(context);
 
-    return SlidingUpPanel(
-      renderPanelSheet: false,
-      backdropEnabled: true,
-      backdropTapClosesPanel: false,
-      minHeight: 0.0,
-      maxHeight: (MediaQuery.of(context).size.width < 800)
-          ? MediaQuery.of(context).size.height * 0.4
-          : MediaQuery.of(context).size.height * 0.35,
-      controller: panelController,
-      panel: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 800) {
-            return Container(
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(25.0),
-                  topLeft: Radius.circular(25.0),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                      child: IconButton(
-                        onPressed: toggleLogOutPage,
-                        icon: const Icon(
-                          Icons.close_rounded,
-                          size: 30.0,
-                        ),
-                      ),
-                    ),
+    return SafeArea(
+      top: false,
+      bottom: false,
+      maintainBottomViewPadding: true,
+      child: SlidingUpPanel(
+        renderPanelSheet: false,
+        backdropEnabled: true,
+        backdropTapClosesPanel: false,
+        minHeight: 0.0,
+        maxHeight: (MediaQuery.of(context).size.width < 800)
+            ? MediaQuery.of(context).size.height * 0.4
+            : MediaQuery.of(context).size.height * 0.35,
+        controller: panelController,
+        panel: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 800) {
+              return Container(
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(25.0),
+                    topLeft: Radius.circular(25.0),
                   ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.08,
-                    ),
-                    child: Wrap(
-                      children: [
-                        DefaultTextStyle(
-                          style: GlobalFont.mediumgigafontRBold,
-                          textAlign: TextAlign.center,
-                          child: Text(
-                            'Apakah anda ingin keluar dari akun ini?',
+                ),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.05,
+                        ),
+                        child: IconButton(
+                          onPressed: toggleLogOutPage,
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            size: 30.0,
                           ),
                         ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                        ),
-                        DefaultTextStyle(
-                          style: GlobalFont.bigfontR,
-                          textAlign: TextAlign.center,
-                          child: Text(
-                            'Pastikan anda mengingat username dan password anda.',
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.075,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ColoredButton(
-                              toggleLogOutPage,
-                              'Cancel',
-                            ),
-                            ColoredButton(
-                              () => logout(profileState),
-                              'SIGN OUT',
-                              isCancel: true,
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.2,
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(25.0),
-                  topLeft: Radius.circular(25.0),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.08,
+                      ),
+                      child: Wrap(
+                        children: [
+                          DefaultTextStyle(
+                            style: GlobalFont.mediumgigafontRBold,
+                            textAlign: TextAlign.center,
+                            child: Text(
+                              'Apakah anda ingin keluar dari akun ini?',
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.1,
+                          ),
+                          DefaultTextStyle(
+                            style: GlobalFont.bigfontR,
+                            textAlign: TextAlign.center,
+                            child: Text(
+                              'Pastikan anda mengingat username dan password anda.',
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.075,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ColoredButton(
+                                toggleLogOutPage,
+                                'Cancel',
+                              ),
+                              ColoredButton(
+                                () => logout(profileState),
+                                'SIGN OUT',
+                                isCancel: true,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05,
-              ),
-              child: Material(
+              );
+            } else {
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(25.0),
+                    topLeft: Radius.circular(25.0),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                ),
                 child: Column(
                   children: [
                     Align(
@@ -827,60 +831,57 @@ class ProfilePageState extends State<ProfilePage> {
                     )
                   ],
                 ),
-              ),
-            );
-          }
-        },
-      ),
-      body: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Colors.blue,
-          elevation: 0.0,
-          scrolledUnderElevation: 0.0,
-          // toolbarHeight: (MediaQuery.of(context).size.width < 800)
-          //     ? MediaQuery.of(context).size.height * 0.075
-          //     : MediaQuery.of(context).size.height * 0.075,
-          title: (MediaQuery.of(context).size.width < 800)
-              ? Text(
-                  'Profile',
-                  style: GlobalFont.giantfontRBold,
-                )
-              : Text(
-                  'Profile',
-                  style: GlobalFont.terafontRBold,
-                ),
-          leading: Builder(
-            builder: (context) {
-              if (Platform.isIOS) {
-                return IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  tooltip: 'Kembali',
-                  icon: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    size:
-                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                    color: Colors.black,
-                  ),
-                );
-              } else {
-                return IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  tooltip: 'Kembali',
-                  icon: Icon(
-                    Icons.arrow_back_rounded,
-                    size:
-                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                    color: Colors.black,
-                  ),
-                );
-              }
-            },
-          ),
+              );
+            }
+          },
         ),
-        body: SafeArea(
-          maintainBottomViewPadding: true,
-          child: DecoratedBox(
+        body: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: Colors.blue,
+            elevation: 0.0,
+            scrolledUnderElevation: 0.0,
+            title: (MediaQuery.of(context).size.width < 800)
+                ? Text(
+                    'Profile',
+                    style: GlobalFont.giantfontRBold,
+                  )
+                : Text(
+                    'Profile',
+                    style: GlobalFont.terafontRBold,
+                  ),
+            leading: Builder(
+              builder: (context) {
+                if (Platform.isIOS) {
+                  return IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    tooltip: 'Kembali',
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: (MediaQuery.of(context).size.width < 800)
+                          ? 20.0
+                          : 35.0,
+                      color: Colors.black,
+                    ),
+                  );
+                } else {
+                  return IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    tooltip: 'Kembali',
+                    icon: Icon(
+                      Icons.arrow_back_rounded,
+                      size: (MediaQuery.of(context).size.width < 800)
+                          ? 20.0
+                          : 35.0,
+                      color: Colors.black,
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+          body: DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
@@ -928,112 +929,6 @@ class ProfilePageState extends State<ProfilePage> {
                   }
                 },
               ),
-              // Refresh Behavior with Shimmer Effect
-              // child: Builder(
-              //   builder: (context) {
-              //     if (isLoading) {
-              //       return Shimmer.fromColors(
-              //         baseColor: Colors.grey[300]!,
-              //         highlightColor: Colors.white,
-              //         period: const Duration(milliseconds: 1000),
-              //         child: ListView(
-              //           children: [
-              //             // ~:Profile Section:~
-              //             ShimmerBox(
-              //               MediaQuery.of(context).size.width,
-              //               MediaQuery.of(context).size.height * 0.15,
-              //               topLeftRadius: 20,
-              //               topRightRadius: 20,
-              //               color: Colors.grey[100]!,
-              //               verticalPadding:
-              //                   MediaQuery.of(context).size.height * 0.025,
-              //               horizontalPadding:
-              //                   MediaQuery.of(context).size.width * 0.05,
-              //             ),
-              //
-              //             ShimmerBox(
-              //               MediaQuery.of(context).size.width,
-              //               MediaQuery.of(context).size.height * 0.22,
-              //               color: Colors.grey[100]!,
-              //               verticalPadding:
-              //                   MediaQuery.of(context).size.height * 0.025,
-              //               horizontalPadding:
-              //                   MediaQuery.of(context).size.width * 0.05,
-              //               verticalMargin:
-              //                   MediaQuery.of(context).size.height * 0.0125,
-              //             ),
-              //
-              //             Column(
-              //               children: [
-              //                 // ~:App Version Section:~
-              //                 Container(
-              //                   width: MediaQuery.of(context).size.width,
-              //                   alignment: Alignment.centerLeft,
-              //                   margin: EdgeInsets.only(
-              //                     left:
-              //                         MediaQuery.of(context).size.width * 0.05,
-              //                     right:
-              //                         MediaQuery.of(context).size.width * 0.05,
-              //                     top:
-              //                         MediaQuery.of(context).size.height * 0.01,
-              //                   ),
-              //                   child: Text(
-              //                     'Version x.x.x',
-              //                     style: GlobalFont.bigfontR,
-              //                   ),
-              //                 ),
-              //
-              //                 // ~:Log Out Button:~
-              //                 ShimmerBox(
-              //                   MediaQuery.of(context).size.width,
-              //                   MediaQuery.of(context).size.height * 0.05,
-              //                   topLeftRadius: 20,
-              //                   topRightRadius: 20,
-              //                   bottomLeftRadius: 20,
-              //                   bottomrightRadius: 20,
-              //                   color: Colors.grey[100]!,
-              //                   verticalMargin:
-              //                       MediaQuery.of(context).size.height * 0.015,
-              //                   horizontalMargin:
-              //                       MediaQuery.of(context).size.width * 0.03,
-              //                 ),
-              //               ],
-              //             ),
-              //           ],
-              //         ),
-              //       );
-              //     } else {
-              //       return Builder(
-              //         builder: (context) {
-              //           if (Platform.isIOS) {
-              //             return CustomScrollView(
-              //               slivers: [
-              //                 CupertinoSliverRefreshControl(
-              //                   onRefresh: () =>
-              //                       getUserLatestData(profileState),
-              //                 ),
-              //                 SliverList(
-              //                   delegate: SliverChildBuilderDelegate(
-              //                     (context, _) => profileBody(profileState),
-              //                     childCount: 1,
-              //                   ),
-              //                 ),
-              //               ],
-              //             );
-              //           } else {
-              //             return RefreshIndicator(
-              //               onRefresh: () => getUserLatestData(profileState),
-              //               child: SingleChildScrollView(
-              //                 physics: AlwaysScrollableScrollPhysics(),
-              //                 child: profileBody(profileState),
-              //               ),
-              //             );
-              //           }
-              //         },
-              //       );
-              //     }
-              //   },
-              // ),
             ),
           ),
         ),

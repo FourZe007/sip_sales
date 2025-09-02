@@ -137,25 +137,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final appState = Provider.of<SipSalesState>(context);
     // late TabController tabController;
 
-    return DefaultTabController(
-      length: 2,
-      animationDuration: Duration(milliseconds: 500),
-      child: SlidingUpPanel(
-        controller: slidingPanelController,
-        backdropEnabled: true,
-        backdropColor: Colors.black.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(20.0),
-        minHeight: 0.0,
-        maxHeight: 175,
-        defaultPanelState: PanelState.CLOSED,
-        onPanelClosed: () =>
-            context.read<DashboardSlidingUpCubit>().closePanel(),
-        panel: SafeArea(
-          top: false,
-          left: false,
-          right: false,
-          maintainBottomViewPadding: true,
-          child: Material(
+    return SafeArea(
+      top: false,
+      bottom: false,
+      maintainBottomViewPadding: true,
+      child: DefaultTabController(
+        length: 2,
+        animationDuration: Duration(milliseconds: 500),
+        child: SlidingUpPanel(
+          controller: slidingPanelController,
+          backdropEnabled: true,
+          backdropColor: Colors.black.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(20.0),
+          minHeight: 0.0,
+          maxHeight: 175,
+          defaultPanelState: PanelState.CLOSED,
+          onPanelClosed: () =>
+              context.read<DashboardSlidingUpCubit>().closePanel(),
+          panel: Material(
             color: Colors.transparent,
             child: Container(
               height: 175,
@@ -399,82 +398,81 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-        ),
-        body: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
-          listener: (context, state) {
-            if (state.type == DashboardSlidingUpType.followupfilter ||
-                state.type == DashboardSlidingUpType.moreoption) {
-              log('Opening Sliding Up Panel - State: $state');
-              slidingPanelController.open();
-            } else {
-              log('Closing Sliding Up Panel - State: $state');
-              slidingPanelController.close();
-            }
-          },
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text(
-                'Laporan Penjualan',
-                style: GlobalFont.bigfontR,
-              ),
-              backgroundColor: Colors.blue,
-              leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Platform.isIOS
-                      ? Icons.arrow_back_ios_new_rounded
-                      : Icons.arrow_back_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
+          body: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
+            listener: (context, state) {
+              if (state.type == DashboardSlidingUpType.followupfilter ||
+                  state.type == DashboardSlidingUpType.moreoption) {
+                log('Opening Sliding Up Panel - State: $state');
+                slidingPanelController.open();
+              } else {
+                log('Closing Sliding Up Panel - State: $state');
+                slidingPanelController.close();
+              }
+            },
+            child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(
+                  'Laporan Penjualan',
+                  style: GlobalFont.bigfontR,
                 ),
-              ),
-              actions: [
-                BlocBuilder<DashboardTypeCubit, DashboardType>(
-                    builder: (context, state) {
-                  return IconButton(
-                    onPressed: () => refreshDashboard(context, appState, state),
-                    icon: Icon(
-                      Icons.refresh_rounded,
-                      size: (MediaQuery.of(context).size.width < 800)
-                          ? 20.0
-                          : 35.0,
-                      color: Colors.black,
-                    ),
-                  );
-                }),
-              ],
-              bottom: TabBar(
-                onTap: (index) {
-                  log('Index: ${index.toString()}');
-                  log(context
-                      .read<FuFilterControlsCubit>()
-                      .state
-                      .activeFilters
-                      .toString());
-                  context.read<DashboardTypeCubit>().changeType(index == 0
-                      ? DashboardType.salesman
-                      : DashboardType.followup);
-                },
-                indicatorColor: Colors.black,
-                indicatorWeight: 2,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.black,
-                unselectedLabelStyle: GlobalFont.bigfontR,
-                labelStyle: GlobalFont.bigfontR.copyWith(
-                  fontWeight: FontWeight.bold,
+                backgroundColor: Colors.blue,
+                leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(
+                    Platform.isIOS
+                        ? Icons.arrow_back_ios_new_rounded
+                        : Icons.arrow_back_rounded,
+                    size:
+                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                    color: Colors.black,
+                  ),
                 ),
-                dividerColor: Colors.transparent,
-                tabs: [
-                  Tab(text: 'Dashboard'),
-                  Tab(text: 'Follow-Up'),
+                actions: [
+                  BlocBuilder<DashboardTypeCubit, DashboardType>(
+                      builder: (context, state) {
+                    return IconButton(
+                      onPressed: () =>
+                          refreshDashboard(context, appState, state),
+                      icon: Icon(
+                        Icons.refresh_rounded,
+                        size: (MediaQuery.of(context).size.width < 800)
+                            ? 20.0
+                            : 35.0,
+                        color: Colors.black,
+                      ),
+                    );
+                  }),
                 ],
+                bottom: TabBar(
+                  onTap: (index) {
+                    log('Index: ${index.toString()}');
+                    log(context
+                        .read<FuFilterControlsCubit>()
+                        .state
+                        .activeFilters
+                        .toString());
+                    context.read<DashboardTypeCubit>().changeType(index == 0
+                        ? DashboardType.salesman
+                        : DashboardType.followup);
+                  },
+                  indicatorColor: Colors.black,
+                  indicatorWeight: 2,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.black,
+                  unselectedLabelStyle: GlobalFont.bigfontR,
+                  labelStyle: GlobalFont.bigfontR.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  dividerColor: Colors.transparent,
+                  tabs: [
+                    Tab(text: 'Dashboard'),
+                    Tab(text: 'Follow-Up'),
+                  ],
+                ),
               ),
-            ),
-            body: SafeArea(
-              maintainBottomViewPadding: true,
-              child: BlocListener<DashboardTypeCubit, DashboardType>(
+              body: BlocListener<DashboardTypeCubit, DashboardType>(
                 listener: (context, state) => refreshDashboard(
                   context,
                   appState,

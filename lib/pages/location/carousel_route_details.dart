@@ -363,7 +363,8 @@ class CarouselRouteDetailsPageState extends State<CarouselRouteDetailsPage> {
                 alignment: Alignment.center,
                 child: DotsIndicator(
                   dotsCount: carouselRouteDetailsState.imageList.length,
-                  position: carouselRouteDetailsState.getIsActive,
+                  position: double.parse(
+                      carouselRouteDetailsState.getIsActive.toString()),
                   decorator: DotsDecorator(
                     size: const Size(8.0, 8.0),
                     activeSize: const Size(12.0, 12.0),

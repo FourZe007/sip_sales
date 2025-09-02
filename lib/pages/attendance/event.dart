@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:developer';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -205,13 +206,11 @@ class _EventDescPageState extends State<EventDescPage> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width,
                             child: DottedBorder(
-                              // Dash length: 6, Gap length: 3
-                              dashPattern: const [6, 3],
-                              strokeWidth: 2,
-                              color: Colors.grey,
-                              // Rounded rectangle border
-                              borderType: BorderType.RRect,
-                              radius: const Radius.circular(12),
+                              options: RectDottedBorderOptions(
+                                dashPattern: const [6, 3],
+                                strokeWidth: 2,
+                                color: Colors.grey,
+                              ),
                               child: GestureDetector(
                                 onTap: () =>
                                     eventPhotoInteraction(context, state),
@@ -224,7 +223,7 @@ class _EventDescPageState extends State<EventDescPage> {
                                   () {
                                     if (state.getEventPhoto.isNotEmpty) {
                                       // Delete image
-                                      print('Delete image');
+                                      log('Delete image');
                                       state.setEventPhoto('');
                                     }
                                   },

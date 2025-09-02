@@ -22,75 +22,70 @@ class TextSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: MediaQuery.of(context).size.height * 0.015,
-      ),
-      child: Row(
-        spacing: 8,
-        children: [
-          // ~:Consent Text:~
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  number,
-                  style: GlobalFont.bigfontR,
-                ),
-                Expanded(
-                  flex: 6,
-                  child: Builder(builder: (context) {
-                    if (isLinkAvailable) {
-                      return Column(
-                        children: [
-                          Text(
-                            text,
-                            style: GlobalFont.bigfontR,
-                          ),
-                          InkWell(
-                            onTap: () => linkFunction!(context),
-                            child: Text(
-                              link,
-                              style: GlobalFont.bigfontR.copyWith(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                              ),
+    return Row(
+      spacing: 8,
+      children: [
+        // ~:Consent Text:~
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                number,
+                style: GlobalFont.bigfontR,
+              ),
+              Expanded(
+                flex: 6,
+                child: Builder(builder: (context) {
+                  if (isLinkAvailable) {
+                    return Column(
+                      children: [
+                        Text(
+                          text,
+                          style: GlobalFont.bigfontR,
+                        ),
+                        InkWell(
+                          onTap: () => linkFunction!(context),
+                          child: Text(
+                            link,
+                            style: GlobalFont.bigfontR.copyWith(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
                             ),
                           ),
-                        ],
-                      );
-                    } else {
-                      return Text(
-                        text,
-                        style: GlobalFont.bigfontR,
-                      );
-                    }
-                  }),
-                ),
-              ],
-            ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Text(
+                      text,
+                      style: GlobalFont.bigfontR,
+                    );
+                  }
+                }),
+              ),
+            ],
           ),
+        ),
 
-          // ~:Switch:~
-          Builder(
-            builder: (context) {
-              if (Platform.isIOS) {
-                return CupertinoSwitch(
-                  value: value,
-                  onChanged: function,
-                );
-              } else {
-                return Switch(
-                  value: value,
-                  onChanged: function,
-                  activeTrackColor: Colors.blue[800],
-                );
-              }
-            },
-          ),
-        ],
-      ),
+        // ~:Switch:~
+        Builder(
+          builder: (context) {
+            if (Platform.isIOS) {
+              return CupertinoSwitch(
+                value: value,
+                onChanged: function,
+              );
+            } else {
+              return Switch(
+                value: value,
+                onChanged: function,
+                activeTrackColor: Colors.blue[800],
+              );
+            }
+          },
+        ),
+      ],
     );
   }
 }

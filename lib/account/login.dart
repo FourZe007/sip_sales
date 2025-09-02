@@ -441,10 +441,10 @@ class _LoginPageState extends State<LoginPage> {
       dialogStyle: (Platform.isIOS)
           ? UpgradeDialogStyle.cupertino
           : UpgradeDialogStyle.material,
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-        ),
+      child: SafeArea(
+        top: false,
+        bottom: false,
+        maintainBottomViewPadding: true,
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
@@ -459,175 +459,176 @@ class _LoginPageState extends State<LoginPage> {
             height: MediaQuery.of(context).size.height,
             alignment: Alignment.center,
             color: Colors.grey[300],
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // ~:Header & Body:~
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.825,
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // ~:Logo:~
-                        Image(
-                          image: const AssetImage('assets/SIP.png'),
-                          width: MediaQuery.of(context).size.width * 0.55,
-                        ),
-
-                        // ~:Title:~
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical:
-                                MediaQuery.of(context).size.height * 0.025,
-                          ),
-                          child: CustomText(
-                            'LOGIN',
-                            fontSize: MediaQuery.of(context).size.width * 0.075,
-                            isBold: true,
-                          ),
-                        ),
-
-                        // ~:User Input:~
-                        Column(
-                          spacing: 8,
-                          children: [
-                            Column(
-                              children: [
-                                CustomUserInput2(
-                                  setNIP,
-                                  nip,
-                                  mode: 0,
-                                  isIcon: true,
-                                  icon: Icons.person,
-                                  label: 'NIP Karyawan',
-                                  isCapital: true,
-                                ),
-                                CustomUserInput2(
-                                  setPassword,
-                                  password,
-                                  mode: 0,
-                                  isPass: true,
-                                  isIcon: true,
-                                  icon: Icons.lock,
-                                  label: 'Password',
-                                ),
-                              ],
-                            ),
-
-                            // ~:Submit Button:~
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                shadowColor: Colors.black,
-                                elevation: 7.5,
-                              ),
-                              onPressed: () => login(state),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(
-                                  vertical:
-                                      MediaQuery.of(context).size.height * 0.01,
-                                ),
-                                child: Builder(
-                                  builder: (context) {
-                                    if (isLoading) {
-                                      if (Platform.isIOS) {
-                                        return const CupertinoActivityIndicator(
-                                          radius: 12.5,
-                                          color: Colors.white,
-                                        );
-                                      } else {
-                                        return const CircleLoading(
-                                          warna: Colors.white,
-                                          customizedHeight: 20,
-                                          customizedWidth: 20,
-                                          strokeWidth: 3,
-                                        );
-                                      }
-                                    } else {
-                                      return CustomText(
-                                        'SIGN IN',
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        isBold: true,
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              shrinkWrap: true,
+              children: [
+                // ~:Header & Body:~
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.83,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 40,
                   ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // ~:Logo:~
+                      Image(
+                        image: const AssetImage('assets/SIP.png'),
+                        width: MediaQuery.of(context).size.width * 0.55,
+                      ),
 
-                  // ~:Footer:~
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 84,
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    margin: EdgeInsets.symmetric(vertical: 4),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // ~:App Version:~
-                        Text(
-                          'v1.1.12 beta',
-                          style: GlobalFont.mediumbigfontR,
+                      // ~:Title:~
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * 0.025,
                         ),
+                        child: CustomText(
+                          'LOGIN',
+                          fontSize: MediaQuery.of(context).size.width * 0.075,
+                          isBold: true,
+                        ),
+                      ),
 
-                        // ~:More Button:~
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          physics: BouncingScrollPhysics(),
-                          child: Wrap(
-                            spacing: 10,
+                      // ~:User Input:~
+                      Column(
+                        spacing: 8,
+                        children: [
+                          Column(
                             children: [
-                              // ~:Manual Book:~
-                              StaticButton(
-                                () => openUserGuideline(),
-                                Icons.menu_book_rounded,
-                                'Manual Book',
+                              CustomUserInput2(
+                                setNIP,
+                                nip,
+                                mode: 0,
+                                isIcon: true,
+                                icon: Icons.person,
+                                label: 'NIP Karyawan',
+                                isCapital: true,
                               ),
-
-                              // ~:Unbind Button:~
-                              StaticButton(
-                                () => loginUtilization(state, '0'),
-                                Icons.person_off_rounded,
-                                'Request Unbind',
-                              ),
-
-                              // ~:NIP Button:~
-                              StaticButton(
-                                () => loginUtilization(state, '1'),
-                                Icons.badge,
-                                'Request NIP',
-                              ),
-
-                              // ~:Reset Button:~
-                              StaticButton(
-                                () => loginUtilization(state, '2'),
-                                Icons.lock_reset,
-                                'Reset Password',
+                              CustomUserInput2(
+                                setPassword,
+                                password,
+                                mode: 0,
+                                isPass: true,
+                                isIcon: true,
+                                icon: Icons.lock,
+                                label: 'Password',
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
+
+                          // ~:Submit Button:~
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              shadowColor: Colors.black,
+                              elevation: 7.5,
+                            ),
+                            onPressed: () => login(state),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.01,
+                              ),
+                              child: Builder(
+                                builder: (context) {
+                                  if (isLoading) {
+                                    if (Platform.isIOS) {
+                                      return const CupertinoActivityIndicator(
+                                        radius: 12.5,
+                                        color: Colors.white,
+                                      );
+                                    } else {
+                                      return const CircleLoading(
+                                        warna: Colors.white,
+                                        customizedHeight: 20,
+                                        customizedWidth: 20,
+                                        strokeWidth: 3,
+                                      );
+                                    }
+                                  } else {
+                                    return CustomText(
+                                      'SIGN IN',
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      isBold: true,
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                // ~:Footer:~
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 84,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  margin: EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // ~:App Version:~
+                      Text(
+                        'v1.1.12',
+                        style: GlobalFont.mediumbigfontR,
+                      ),
+
+                      // ~:More Button:~
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        physics: BouncingScrollPhysics(),
+                        child: Wrap(
+                          spacing: 10,
+                          children: [
+                            // ~:Manual Book:~
+                            StaticButton(
+                              () => openUserGuideline(),
+                              Icons.menu_book_rounded,
+                              'Manual Book',
+                            ),
+
+                            // ~:Unbind Button:~
+                            StaticButton(
+                              () => loginUtilization(state, '0'),
+                              Icons.person_off_rounded,
+                              'Request Unbind',
+                            ),
+
+                            // ~:NIP Button:~
+                            StaticButton(
+                              () => loginUtilization(state, '1'),
+                              Icons.badge,
+                              'Request NIP',
+                            ),
+
+                            // ~:Reset Button:~
+                            StaticButton(
+                              () => loginUtilization(state, '2'),
+                              Icons.lock_reset,
+                              'Reset Password',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

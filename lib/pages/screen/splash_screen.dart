@@ -167,35 +167,50 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        toolbarHeight: 0.0,
-        elevation: 0.0,
-        scrolledUnderElevation: 0.0,
-        automaticallyImplyLeading: false,
-      ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image(
-              image: const AssetImage('assets/SIP.png'),
-              width: MediaQuery.of(context).size.width * 0.55,
-              fit: BoxFit.cover,
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.05,
-            ),
-            (Platform.isIOS)
-                ? const CupertinoActivityIndicator(
-                    radius: 12,
-                  )
-                : const CircleLoading(strokeWidth: 3),
-          ],
+    return SafeArea(
+      top: false,
+      bottom: false,
+      maintainBottomViewPadding: true,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          toolbarHeight: 0.0,
+          elevation: 0.0,
+          backgroundColor: Colors.white,
+          scrolledUnderElevation: 0.0,
+          automaticallyImplyLeading: false,
+        ),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.white,
+          child: Column(
+            spacing: 20,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // ~:Logo:~
+              Image(
+                image: const AssetImage('assets/SIP.png'),
+                width: MediaQuery.of(context).size.width * 0.55,
+                fit: BoxFit.cover,
+              ),
+
+              // ~:Loading Indicator:~
+              Builder(
+                builder: (context) {
+                  if (Platform.isIOS) {
+                    return const CupertinoActivityIndicator(
+                      radius: 12,
+                    );
+                  } else {
+                    return const CircleLoading(
+                      strokeWidth: 3,
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

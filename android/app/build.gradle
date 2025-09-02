@@ -30,8 +30,8 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.stsj.sipsales"
-    compileSdk flutter.compileSdkVersion
-    ndkVersion "27.0.12077973"
+    compileSdk 36
+    // ndkVersion "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId "com.stsj.sipsales"
         minSdk flutter.minSdkVersion
-        targetSdk flutter.targetSdkVersion
+        targetSdkVersion 36
         versionCode flutter.versionCode
         versionName flutter.versionName
     }
@@ -53,20 +53,13 @@ android {
     signingConfigs {
         release {
             // Use forward slashes and quotes for Windows paths with spaces
-            def keystorePath = "${System.properties['user.home']}/office_keystore/my-keystore.jks".replace('\\', '/')
+            def keystorePath = "${System.properties['user.home']}/my-keystore.jks".replace('\\', '/')
             storeFile file(keystorePath)
             storePassword 'josephangelus'
             keyAlias = 'meteor'
             keyPassword 'josephangelus'
         }
     }
-    
-    // Fix for Windows path issues with spaces
-    // tasks.withType(JavaCompile) {
-    //     options.fork = true
-    //     options.forkOptions.executable = 'javac'
-    //     options.forkOptions.jvmArgs = ['-Duser.home=' + System.getProperty('user.home').replace('\\', '/')]
-    // }
 
     buildTypes {
         release {
