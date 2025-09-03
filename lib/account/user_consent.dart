@@ -189,6 +189,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height * 0.055,
                         alignment: Alignment.center,
+                        margin: EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(40.0),
@@ -208,6 +209,7 @@ class _UserConsentPageState extends State<UserConsentPage> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height * 0.055,
                         alignment: Alignment.center,
+                        margin: EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           color: Colors.grey,
                           borderRadius: BorderRadius.circular(40.0),

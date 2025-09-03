@@ -10,6 +10,7 @@ PODS:
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
+    - FlutterMacOS
   - image_picker_ios (0.0.1):
     - Flutter
   - IOSSecuritySuite (1.9.11)
@@ -37,7 +38,7 @@ DEPENDENCIES:
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
-  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - jailbreak_root_detection (from `.symlinks/plugins/jailbreak_root_detection/ios`)
   - location (from `.symlinks/plugins/location/ios`)
@@ -63,7 +64,7 @@ EXTERNAL SOURCES:
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
-    :path: ".symlinks/plugins/geolocator_apple/ios"
+    :path: ".symlinks/plugins/geolocator_apple/darwin"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   jailbreak_root_detection:
@@ -82,22 +83,22 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
-  fluttertoast: 21eecd6935e7064cc1fcb733a4c5a428f3f24f0f
-  geocoding_ios: d7460f56e80e118d57678efe5c2cdc888739ff18
-  geolocator_apple: 9bcea1918ff7f0062d98345d238ae12718acfbc1
-  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
+  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
+  fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
+  geocoding_ios: 33776c9ebb98d037b5e025bb0e7537f6dd19646e
+  geolocator_apple: ab36aa0e8b7d7a2d7639b3b4e48308394e8cef5e
+  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
   IOSSecuritySuite: b51056d5411aee567153ca86ce7f6edfdc5d2654
-  jailbreak_root_detection: b95de80c3e51eec1fc7d0225784d2fc038fa95ed
-  location: d5cf8598915965547c3f36761ae9cc4f4e87d22e
-  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
+  jailbreak_root_detection: 9201e1dfd51dc23069cbfb8d4f4a2d18305170bf
+  location: 155caecf9da4f280ab5fe4a55f94ceccfab838f8
+  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
-PODFILE CHECKSUM: f702cb304f27a382899d07d5b9fa4e6814d74e32
+PODFILE CHECKSUM: b9f73597415b8756d0c9dd85f404443b02b53547
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

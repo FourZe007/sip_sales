@@ -115,7 +115,7 @@ class _SalesmanDashboardState extends State<SalesmanDashboard> {
                                           .format(now);
                                 } else {
                                   formattedDate =
-                                      '1 - ${DateFormat('dd MMMM yyyy', 'id_ID').format(now)}';
+                                      '01 - ${DateFormat('dd MMMM yyyy', 'id_ID').format(now)}';
                                 }
 
                                 return Text(

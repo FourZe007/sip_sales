@@ -106,22 +106,21 @@ class MenuPageState extends State<MenuPage> {
           log('Shop Head');
           return PopScope(
             canPop: false,
-            child: SlidingUpPanel(
-              controller: slidingPanelController,
-              backdropEnabled: true,
-              backdropColor: Colors.black.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(20.0),
-              minHeight: 0.0,
-              maxHeight: 150,
-              defaultPanelState: PanelState.CLOSED,
-              onPanelClosed: () =>
-                  context.read<DashboardSlidingUpCubit>().closePanel(),
-              panel: SafeArea(
-                top: false,
-                left: false,
-                right: false,
-                maintainBottomViewPadding: true,
-                child: Material(
+            child: SafeArea(
+              top: false,
+              bottom: false,
+              maintainBottomViewPadding: true,
+              child: SlidingUpPanel(
+                controller: slidingPanelController,
+                backdropEnabled: true,
+                backdropColor: Colors.black.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(20.0),
+                minHeight: 0.0,
+                maxHeight: 150,
+                defaultPanelState: PanelState.CLOSED,
+                onPanelClosed: () =>
+                    context.read<DashboardSlidingUpCubit>().closePanel(),
+                panel: Material(
                   color: Colors.transparent,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -290,50 +289,47 @@ class MenuPageState extends State<MenuPage> {
                     ),
                   ),
                 ),
-              ),
-              body: BlocListener<DashboardSlidingUpCubit,
-                  DashboardSlidingUpState>(
-                listener: (context, state) {
-                  if (state.type ==
-                      DashboardSlidingUpType.deleteManagerActivity) {
-                    log('Opening Sliding Up Panel - State: $state');
-                    slidingPanelController.open();
-                  } else {
-                    log('Closing Sliding Up Panel - State: $state');
-                    slidingPanelController.close();
-                  }
-                },
-                child: Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  appBar: AppBar(
-                    automaticallyImplyLeading: false,
-                    backgroundColor: Colors.blue,
-                    toolbarHeight: MediaQuery.of(context).size.height * 0.01,
-                    elevation: 0.0,
-                    scrolledUnderElevation: 0.0,
-                    shadowColor: Colors.blue,
-                  ),
-                  floatingActionButton: FloatingActionButton(
-                    onPressed: () async {
-                      isInserted = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const ManagerNewActivityPage(),
-                            ),
-                          ) ??
-                          false;
-                    },
-                    backgroundColor: Colors.blue[200],
-                    child: const Icon(
-                      Icons.add_rounded,
-                      size: 30.0,
-                      color: Colors.black,
+                body: BlocListener<DashboardSlidingUpCubit,
+                    DashboardSlidingUpState>(
+                  listener: (context, state) {
+                    if (state.type ==
+                        DashboardSlidingUpType.deleteManagerActivity) {
+                      log('Opening Sliding Up Panel - State: $state');
+                      slidingPanelController.open();
+                    } else {
+                      log('Closing Sliding Up Panel - State: $state');
+                      slidingPanelController.close();
+                    }
+                  },
+                  child: Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    appBar: AppBar(
+                      automaticallyImplyLeading: false,
+                      backgroundColor: Colors.blue,
+                      toolbarHeight: MediaQuery.of(context).size.height * 0.01,
+                      elevation: 0.0,
+                      scrolledUnderElevation: 0.0,
+                      shadowColor: Colors.blue,
                     ),
-                  ),
-                  body: SafeArea(
-                    maintainBottomViewPadding: true,
-                    child: Container(
+                    floatingActionButton: FloatingActionButton(
+                      onPressed: () async {
+                        isInserted = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const ManagerNewActivityPage(),
+                              ),
+                            ) ??
+                            false;
+                      },
+                      backgroundColor: Colors.blue[200],
+                      child: const Icon(
+                        Icons.add_rounded,
+                        size: 30.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                    body: Container(
                       color: Colors.blue,
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
@@ -342,7 +338,7 @@ class MenuPageState extends State<MenuPage> {
                           // ~:Header Section:~
                           Container(
                             width: MediaQuery.of(context).size.width,
-                            height: 92,
+                            height: 98,
                             alignment: Alignment.center,
                             margin: EdgeInsets.symmetric(
                               horizontal:
