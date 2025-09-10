@@ -2048,11 +2048,11 @@ class SipSalesState with ChangeNotifier {
     bool state = false,
     bool isLogin = false,
   }) async {
-    print('Is user manager state: $state');
+    log('Is user manager state: $state');
     try {
       // Read the existing ID only once
       String? existingStatus = await storage.read(key: 'isManager');
-      print('Existing Status: $existingStatus');
+      log('Existing Status: $existingStatus');
 
       if (existingStatus == null || existingStatus.isEmpty || isLogin) {
         // Generate a new ID if none exists
@@ -2060,21 +2060,21 @@ class SipSalesState with ChangeNotifier {
         await storage.write(key: 'isManager', value: state ? '0' : '1');
 
         // Log the action for debugging
-        print("Is User Manager status: $isManager");
+        log("Is User Manager status: $isManager");
 
         // Notify listeners as the state changed
         notifyListeners();
       } else {
         // Use the existing Password
         isManager = existingStatus == '0' ? true : false;
-        print("Is User Manager status: $isManager");
+        log("Is User Manager status: $isManager");
       }
     } catch (e) {
       // Handle decryption or secure storage errors
-      print("Error reading or writing secure storage: $e");
+      log("Error reading or writing secure storage: $e");
       isManager = await storage.read(key: 'isManager') == '0' ? true : false;
       await storage.write(key: 'isManager', value: state ? '0' : '1');
-      print("Is User Manager status due to error: $isManager");
+      log("Is User Manager status due to error: $isManager");
 
       // Notify listeners as the state changed
       notifyListeners();

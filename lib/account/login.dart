@@ -1,10 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/account/id_request.dart';
 import 'package:sip_sales/account/password_reset.dart';
@@ -12,8 +14,15 @@ import 'package:sip_sales/account/unbind_request.dart';
 import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
+import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
+import 'package:sip_sales/global/state/login/login_bloc.dart';
+import 'package:sip_sales/global/state/login/login_event.dart';
+import 'package:sip_sales/global/state/login/login_state.dart';
 import 'package:sip_sales/global/state/provider.dart';
+import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
 import 'package:sip_sales/widget/button/static_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/text/custom_text.dart';
@@ -136,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void login(SipSalesState state) async {
+  void oldLogin(SipSalesState state) async {
     // S2207/009097
     // 932518
     if (nip != '' && password != '') {
@@ -146,10 +155,10 @@ class _LoginPageState extends State<LoginPage> {
       await state.readAndWriteUserPass(pass: password, isLogin: true);
       await state.readAndWriteDeviceConfig();
 
-      print('Device Configuration: ${state.getDeviceConfiguration}');
+      log('Device Configuration: ${state.getDeviceConfiguration}');
 
       await state.generateUuid().then((String uuid) async {
-        print('UUID: $uuid');
+        log('UUID: $uuid');
         try {
           await GlobalAPI.fetchUserAccount(
             nip,
@@ -160,13 +169,13 @@ class _LoginPageState extends State<LoginPage> {
             state.setUserAccountList(res);
           });
         } catch (e) {
-          print('Error fetchUserAccount: $e');
+          log('Error fetchUserAccount: $e');
           state.setUserAccountList([]);
         }
       });
 
       if (state.getUserAccountList.isNotEmpty) {
-        print(state.getUserAccountList[0].employeeName);
+        log(state.getUserAccountList[0].employeeName);
         if (state.getUserAccountList[0].flag == 1) {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setBool('isLoggedIn', true);
@@ -176,23 +185,23 @@ class _LoginPageState extends State<LoginPage> {
                   isLogin: true)
               .then((value) {
             if (value) {
-              print('User is manager');
+              log('User is manager');
             } else {
-              print('User is sales');
+              log('User is sales');
             }
           });
 
           // ~:NEW:~
           if (await state.readAndWriteIsUserManager() ||
               state.getManagerActivityTypeList.isEmpty) {
-            print('Manager');
+            log('Manager');
             // Note -> get Activity Insertation dropdown for Manager
             await state.fetchManagerActivityData();
             await state.fetchManagerActivities().then((res) {
               state.setManagerActivities(res);
             });
           } else {
-            print('Sales');
+            log('Sales');
             // ~:Sales Old Activity Insertation:~
             // Note -> get Activity Insertation dropdown for Sales
             // await Provider.of<SipSalesState>(context, listen: false)
@@ -221,16 +230,16 @@ class _LoginPageState extends State<LoginPage> {
                       highResImg == 'error') {
                     state.setProfilePicturePreview('');
                     await prefs.setString('highResImage', '');
-                    print('High Res Image is not available.');
+                    log('High Res Image is not available.');
                   } else {
                     state.setProfilePicturePreview(highResImg);
                     await prefs.setString('highResImage', highResImg);
-                    print('High Res Image successfully loaded.');
-                    print('High Res Image: $highResImg');
+                    log('High Res Image successfully loaded.');
+                    log('High Res Image: $highResImg');
                   }
                 });
               } catch (e) {
-                print('Show HD Image Error: $e');
+                log('Show HD Image Error: $e');
                 state.setProfilePicturePreview('');
                 await prefs.setString('highResImage', '');
               }
@@ -248,16 +257,16 @@ class _LoginPageState extends State<LoginPage> {
                   highResImg == 'error') {
                 state.setProfilePicturePreview('');
                 await prefs.setString('highResImage', '');
-                print('High Res Image is not available.');
+                log('High Res Image is not available.');
               } else {
                 state.setProfilePicturePreview(highResImg);
                 await prefs.setString('highResImage', highResImg);
-                print('High Res Image successfully loaded.');
-                print('High Res Image: $highResImg');
+                log('High Res Image successfully loaded.');
+                log('High Res Image: $highResImg');
               }
             });
           } catch (e) {
-            print('Show HD Image Error: $e');
+            log('Show HD Image Error: $e');
             state.setProfilePicturePreview('');
             await prefs.setString('highResImage', '');
           }
@@ -379,7 +388,7 @@ class _LoginPageState extends State<LoginPage> {
           break;
       }
     } catch (e) {
-      print('Login Utilization Error: $e');
+      log('Login Utilization Error: $e');
       GlobalDialog.showCrossPlatformDialog(
         context,
         'Peringatan!',
@@ -433,7 +442,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<SipSalesState>(context);
+    final appState = Provider.of<SipSalesState>(context);
 
     return UpgradeAlert(
       showIgnore: false,
@@ -528,18 +537,52 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               shadowColor: Colors.black,
                               elevation: 7.5,
-                            ),
-                            onPressed: () => login(state),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              alignment: Alignment.center,
                               padding: EdgeInsets.symmetric(
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.01,
+                                vertical: 8,
                               ),
-                              child: Builder(
-                                builder: (context) {
-                                  if (isLoading) {
+                            ),
+                            // onPressed: () => oldLogin(state),
+                            onPressed: () => context.read<LoginBloc>().add(
+                                  LoginEvent(
+                                    context: context,
+                                    appState: context.read<SipSalesState>(),
+                                    id: nip,
+                                    pass: password,
+                                  ),
+                                ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: BlocConsumer<LoginBloc, LoginState>(
+                                listener: (context, state) async {
+                                  if (state is LoginFailed) {
+                                    Fluttertoast.showToast(
+                                      msg: state.message,
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.grey[300],
+                                      textColor: Colors.black,
+                                      fontSize: 16.0,
+                                    );
+                                  } else if (state is LoginSuccess) {
+                                    if (state.user[0].code == 2) {
+                                      Navigator.pushNamed(
+                                          context, '/salesDashboard');
+                                    } else {
+                                      final SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      if (prefs.getBool('isUserAgree') ??
+                                          false) {
+                                        Navigator.pushReplacementNamed(
+                                            context, '/location');
+                                      } else {
+                                        displayProminentDisclosure(appState);
+                                      }
+                                    }
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if (state is LoginLoading) {
                                     if (Platform.isIOS) {
                                       return const CupertinoActivityIndicator(
                                         radius: 12.5,
@@ -604,21 +647,21 @@ class _LoginPageState extends State<LoginPage> {
 
                             // ~:Unbind Button:~
                             StaticButton(
-                              () => loginUtilization(state, '0'),
+                              () => loginUtilization(appState, '0'),
                               Icons.person_off_rounded,
                               'Request Unbind',
                             ),
 
                             // ~:NIP Button:~
                             StaticButton(
-                              () => loginUtilization(state, '1'),
+                              () => loginUtilization(appState, '1'),
                               Icons.badge,
                               'Request NIP',
                             ),
 
                             // ~:Reset Button:~
                             StaticButton(
-                              () => loginUtilization(state, '2'),
+                              () => loginUtilization(appState, '2'),
                               Icons.lock_reset,
                               'Reset Password',
                             ),

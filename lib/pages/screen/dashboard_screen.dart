@@ -13,9 +13,13 @@ import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_event.dart';
 import 'package:sip_sales/global/state/fufiltercontrols_cubit.dart';
+import 'package:sip_sales/global/state/login/login_bloc.dart';
+import 'package:sip_sales/global/state/login/login_state.dart'
+    show LoginState, LoginSuccess;
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
+import 'package:sip_sales/pages/profile/profile.dart';
 import 'package:sip_sales/pages/screen/followup_dashboard.dart';
 import 'package:sip_sales/pages/screen/followup_deal_dashboard.dart';
 import 'package:sip_sales/pages/screen/salesman_dashboard.dart';
@@ -418,16 +422,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   style: GlobalFont.bigfontR,
                 ),
                 backgroundColor: Colors.blue,
-                leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Platform.isIOS
-                        ? Icons.arrow_back_ios_new_rounded
-                        : Icons.arrow_back_rounded,
-                    size:
-                        (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                    color: Colors.black,
-                  ),
+                leading: Material(
+                  color: Colors.transparent,
+                  child: BlocBuilder<LoginBloc, LoginState>(
+                      builder: (context, state) {
+                    if (state is LoginSuccess && state.user[0].code == 2) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ProfilePage(),
+                            ),
+                          ),
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: state.user[0].employeeName.isNotEmpty
+                                ? Text(
+                                    state.user[0].employeeName.substring(0, 2),
+                                    style: GlobalFont.bigfontRBold,
+                                    textAlign: TextAlign.center,
+                                  )
+                                : Icon(
+                                    Icons.person,
+                                    size: 20,
+                                    color: Colors.white,
+                                  ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(
+                          Platform.isIOS
+                              ? Icons.arrow_back_ios_new_rounded
+                              : Icons.arrow_back_rounded,
+                          size: (MediaQuery.of(context).size.width < 800)
+                              ? 20.0
+                              : 35.0,
+                          color: Colors.black,
+                        ),
+                      );
+                    }
+                  }),
                 ),
                 actions: [
                   BlocBuilder<DashboardTypeCubit, DashboardType>(
