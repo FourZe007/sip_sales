@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
+import 'package:sip_sales/global/formatter.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/pages/profile/change_password.dart';
@@ -263,6 +264,7 @@ class ProfilePageState extends State<ProfilePage> {
             horizontal: MediaQuery.of(context).size.width * 0.05,
           ),
           child: Row(
+            spacing: 12,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Picture
@@ -273,7 +275,11 @@ class ProfilePageState extends State<ProfilePage> {
                   if (state.getProfilePicture.isEmpty &&
                       state.getProfilePicturePreview.isEmpty) {
                     return GestureDetector(
-                      onTap: () => takePhoto(context, state),
+                      onTap: () {
+                        if (state.getUserAccountList[0].code == 0) {
+                          takePhoto(context, state);
+                        }
+                      },
                       child: Align(
                         alignment: Alignment.center,
                         child: Stack(
@@ -286,6 +292,7 @@ class ProfilePageState extends State<ProfilePage> {
                                   size: Size.fromRadius(33),
                                   child: Icon(
                                     Icons.person,
+                                    size: 32,
                                     color: Colors.white,
                                   ),
                                 ),
@@ -293,8 +300,9 @@ class ProfilePageState extends State<ProfilePage> {
                             ),
                             Builder(
                               builder: (context) {
-                                if (state.getUserAccountList[0].code == 0) {
-                                  return SizedBox();
+                                if (state.getUserAccountList[0].code == 0 ||
+                                    state.getUserAccountList[0].code == 2) {
+                                  return SizedBox.shrink();
                                 } else {
                                   return Positioned(
                                     top: 43,
@@ -372,7 +380,7 @@ class ProfilePageState extends State<ProfilePage> {
                         style: GlobalFont.mediumgiantfontRBold,
                       ),
                       Text(
-                        '${state.getUserAccountList[0].bsName}, ${state.getUserAccountList[0].locationName}',
+                        '${Formatter.toTitleCase(state.getUserAccountList[0].bsName)}, ${Formatter.toTitleCase(state.getUserAccountList[0].locationName)}',
                         style: GlobalFont.mediumgiantfontR,
                       ),
                     ],
@@ -386,10 +394,11 @@ class ProfilePageState extends State<ProfilePage> {
         // ~:Settings Section:~
         Container(
           width: MediaQuery.of(context).size.width,
-          height: (state.getUserAccountList[0].code == 0)
-              ? MediaQuery.of(context).size.height * 0.225
-              // : MediaQuery.of(context).size.height * 0.33,
-              : 250,
+          // height: (state.getUserAccountList[0].code == 0 ||
+          //         state.getUserAccountList[0].code == 2)
+          //     ? 175
+          //     // : MediaQuery.of(context).size.height * 0.33,
+          //     : 250,
           color: Colors.grey[100],
           margin: EdgeInsets.only(
             top: MediaQuery.of(context).size.height * 0.015,
@@ -398,13 +407,14 @@ class ProfilePageState extends State<ProfilePage> {
           padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height * 0.015,
           ),
-          child: Wrap(
-            runSpacing: 8,
+          child: Column(
+            spacing: 8,
             children: [
-              Padding(
+              Container(
+                alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05,
-                  vertical: MediaQuery.of(context).size.height * 0.005,
+                  horizontal: 20,
+                  vertical: 8,
                 ),
                 child: Text(
                   'Pengaturan',

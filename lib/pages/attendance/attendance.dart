@@ -435,160 +435,225 @@ class _AttendancePageState extends State<AttendancePage> {
           ),
 
           // ~:Sales Dashboard:~
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 180,
-            child: Column(
-              spacing: 4,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ~:Dashboard Title:~
-                Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Dashboard',
-                        style: GlobalFont.giantfontR,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          context
-                              .read<SalesDashboardBloc>()
-                              .add(LoadSalesDashboard(
-                                state.getUserAccountList.isNotEmpty
-                                    ? state.getUserAccountList[0].employeeID
-                                    : '',
-                                DateTime.now()
-                                    .toIso8601String()
-                                    .substring(0, 10),
-                              ));
+          InkWell(
+            onTap: () {
+              context.read<SalesDashboardBloc>().add(LoadSalesDashboard(
+                    state.getUserAccountList.isNotEmpty
+                        ? state.getUserAccountList[0].employeeID
+                        : '',
+                    DateTime.now().toIso8601String().substring(0, 10),
+                  ));
 
-                          context
-                              .read<DashboardTypeCubit>()
-                              .changeType(DashboardType.salesman);
+              context
+                  .read<DashboardTypeCubit>()
+                  .changeType(DashboardType.salesman);
 
-                          Navigator.pushNamed(context, '/salesDashboard');
-                        },
-                        style: TextButton.styleFrom(
-                          fixedSize: Size.fromHeight(20),
-                        ),
-                        child: Text(
-                          'More',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontFamily: GlobalFontFamily.fontRubik,
-                            fontSize: GlobalSize.mediumgiantfont,
-                          ),
-                        ),
-                      ),
-                    ],
+              Navigator.pushNamed(context, '/salesDashboard');
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Dashboard',
+                    style: GlobalFont.giantfontR,
                   ),
-                ),
 
-                // ~:Dashboard Body:~
-                Expanded(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    // height: 200,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // ~:SPK:~
-                        SalesDashboard(
-                          title: 'SPK',
-                          data1: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyLM.toString()
-                              : '',
-                          data2: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyTM.toString()
-                              : '',
-                          percentage: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].spk.toString()
-                              : '',
-                          trendIcon: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyLM <=
-                                      state.getSalesDashboardList[0].qtyTM
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward
-                              : CupertinoIcons.equal,
-                          trendColor: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyLM <=
-                                      state.getSalesDashboardList[0].qtyTM
-                                  ? Colors.green[700]!
-                                  : Colors.red
-                              : Colors.grey,
-                        ),
-
-                        // ~:Delivery:~
-                        SalesDashboard(
-                          title: 'Pengiriman',
-                          data1: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtySJLM
-                                  .toString()
-                              : '',
-                          data2: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtySJTM
-                                  .toString()
-                              : '',
-                          percentage: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].delivery
-                                  .toString()
-                              : '',
-                          trendIcon: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtySJLM <=
-                                      state.getSalesDashboardList[0].qtySJTM
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward
-                              : CupertinoIcons.equal,
-                          trendColor: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtySJLM <=
-                                      state.getSalesDashboardList[0].qtySJTM
-                                  ? Colors.green[700]!
-                                  : Colors.red
-                              : Colors.grey,
-                        ),
-
-                        // ~:Prospect:~
-                        SalesDashboard(
-                          title: 'Prospek',
-                          data1: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyLTM.toString()
-                              : '',
-                          data2: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyPTM.toString()
-                              : '',
-                          percentage: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].prospect
-                                  .toString()
-                              : '',
-                          trendIcon: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyLTM <=
-                                      state.getSalesDashboardList[0].qtyPTM
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward
-                              : CupertinoIcons.equal,
-                          trendColor: state.getSalesDashboardList.isNotEmpty
-                              ? state.getSalesDashboardList[0].qtyLTM <=
-                                      state.getSalesDashboardList[0].qtyPTM
-                                  ? Colors.green[700]!
-                                  : Colors.red
-                              : Colors.grey,
-                        ),
-                      ],
-                    ),
+                  // ~:Icon:~
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.grey[700],
+                    size: 16,
                   ),
-                ),
-              ],
+                  // TextButton(
+                  //   onPressed: () {
+                  //     context.read<SalesDashboardBloc>().add(LoadSalesDashboard(
+                  //           state.getUserAccountList.isNotEmpty
+                  //               ? state.getUserAccountList[0].employeeID
+                  //               : '',
+                  //           DateTime.now().toIso8601String().substring(0, 10),
+                  //         ));
+
+                  //     context
+                  //         .read<DashboardTypeCubit>()
+                  //         .changeType(DashboardType.salesman);
+
+                  //     Navigator.pushNamed(context, '/salesDashboard');
+                  //   },
+                  //   style: TextButton.styleFrom(
+                  //     fixedSize: Size.fromHeight(20),
+                  //   ),
+                  //   child: Text(
+                  //     'More',
+                  //     style: TextStyle(
+                  //       color: Colors.grey,
+                  //       fontFamily: GlobalFontFamily.fontRubik,
+                  //       fontSize: GlobalSize.mediumgiantfont,
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ),
+          // SizedBox(
+          //   width: MediaQuery.of(context).size.width,
+          //   height: 180,
+          //   child: Column(
+          //     spacing: 4,
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       // ~:Dashboard Title:~
+          //       Container(
+          //         height: 40,
+          //         padding: const EdgeInsets.symmetric(horizontal: 4),
+          //         child: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Text(
+          //               'Dashboard',
+          //               style: GlobalFont.giantfontR,
+          //             ),
+          //             TextButton(
+          //               onPressed: () {
+          //                 context
+          //                     .read<SalesDashboardBloc>()
+          //                     .add(LoadSalesDashboard(
+          //                       state.getUserAccountList.isNotEmpty
+          //                           ? state.getUserAccountList[0].employeeID
+          //                           : '',
+          //                       DateTime.now()
+          //                           .toIso8601String()
+          //                           .substring(0, 10),
+          //                     ));
+          //
+          //                 context
+          //                     .read<DashboardTypeCubit>()
+          //                     .changeType(DashboardType.salesman);
+          //
+          //                 Navigator.pushNamed(context, '/salesDashboard');
+          //               },
+          //               style: TextButton.styleFrom(
+          //                 fixedSize: Size.fromHeight(20),
+          //               ),
+          //               child: Text(
+          //                 'More',
+          //                 style: TextStyle(
+          //                   color: Colors.grey,
+          //                   fontFamily: GlobalFontFamily.fontRubik,
+          //                   fontSize: GlobalSize.mediumgiantfont,
+          //                 ),
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //
+          //       // ~:Dashboard Body:~
+          //       Expanded(
+          //         child: SizedBox(
+          //           width: MediaQuery.of(context).size.width,
+          //           // height: 200,
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //             children: [
+          //               // ~:SPK:~
+          //               SalesDashboard(
+          //                 title: 'SPK',
+          //                 data1: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyLM.toString()
+          //                     : '',
+          //                 data2: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyTM.toString()
+          //                     : '',
+          //                 percentage: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].spk.toString()
+          //                     : '',
+          //                 trendIcon: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyLM <=
+          //                             state.getSalesDashboardList[0].qtyTM
+          //                         ? Icons.arrow_upward
+          //                         : Icons.arrow_downward
+          //                     : CupertinoIcons.equal,
+          //                 trendColor: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyLM <=
+          //                             state.getSalesDashboardList[0].qtyTM
+          //                         ? Colors.green[700]!
+          //                         : Colors.red
+          //                     : Colors.grey,
+          //               ),
+          //
+          //               // ~:Delivery:~
+          //               SalesDashboard(
+          //                 title: 'Pengiriman',
+          //                 data1: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtySJLM
+          //                         .toString()
+          //                     : '',
+          //                 data2: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtySJTM
+          //                         .toString()
+          //                     : '',
+          //                 percentage: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].delivery
+          //                         .toString()
+          //                     : '',
+          //                 trendIcon: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtySJLM <=
+          //                             state.getSalesDashboardList[0].qtySJTM
+          //                         ? Icons.arrow_upward
+          //                         : Icons.arrow_downward
+          //                     : CupertinoIcons.equal,
+          //                 trendColor: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtySJLM <=
+          //                             state.getSalesDashboardList[0].qtySJTM
+          //                         ? Colors.green[700]!
+          //                         : Colors.red
+          //                     : Colors.grey,
+          //               ),
+          //
+          //               // ~:Prospect:~
+          //               SalesDashboard(
+          //                 title: 'Prospek',
+          //                 data1: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyLTM.toString()
+          //                     : '',
+          //                 data2: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyPTM.toString()
+          //                     : '',
+          //                 percentage: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].prospect
+          //                         .toString()
+          //                     : '',
+          //                 trendIcon: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyLTM <=
+          //                             state.getSalesDashboardList[0].qtyPTM
+          //                         ? Icons.arrow_upward
+          //                         : Icons.arrow_downward
+          //                     : CupertinoIcons.equal,
+          //                 trendColor: state.getSalesDashboardList.isNotEmpty
+          //                     ? state.getSalesDashboardList[0].qtyLTM <=
+          //                             state.getSalesDashboardList[0].qtyPTM
+          //                         ? Colors.green[700]!
+          //                         : Colors.red
+          //                     : Colors.grey,
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
 
           // ~:Attendance List:~
-          SizedBox(
+          Container(
             width: MediaQuery.of(context).size.width,
             height: 265,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Column(
               spacing: 8,
               children: [
