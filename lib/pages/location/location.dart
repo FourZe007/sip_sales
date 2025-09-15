@@ -87,9 +87,9 @@ class _LocationPageState extends State<LocationPage> {
   //       startDate,
   //       endDate,
   //     ));
-
+  //
   //     print('Absent History list length: ${temp.length}');
-
+  //
   //     setState(() {
   //       state.absentHistoryList = temp;
   //     });
@@ -97,7 +97,7 @@ class _LocationPageState extends State<LocationPage> {
   //     print('Fetch Attendance History failed: ${e.toString()}');
   //   }
   // }
-
+  //
   // Future<void> getSalesDashboard(
   //   SipSalesState state,
   // ) async {

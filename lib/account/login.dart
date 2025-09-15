@@ -14,15 +14,11 @@ import 'package:sip_sales/account/unbind_request.dart';
 import 'package:sip_sales/account/user_consent.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
-import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
-import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
 import 'package:sip_sales/global/state/login/login_bloc.dart';
 import 'package:sip_sales/global/state/login/login_event.dart';
 import 'package:sip_sales/global/state/login/login_state.dart';
 import 'package:sip_sales/global/state/provider.dart';
-import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
-import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
 import 'package:sip_sales/widget/button/static_button.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sip_sales/widget/text/custom_text.dart';
@@ -566,8 +562,7 @@ class _LoginPageState extends State<LoginPage> {
                                     );
                                   } else if (state is LoginSuccess) {
                                     if (state.user[0].code == 2) {
-                                      Navigator.pushNamed(
-                                          context, '/salesDashboard');
+                                      Navigator.pushNamed(context, '/menu');
                                     } else {
                                       final SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
