@@ -422,8 +422,133 @@ class MenuPageState extends State<MenuPage> {
     );
   }
 
-  Widget sales() {
-    return const SizedBox.shrink();
+  Widget sales(
+    SipSalesState appState,
+    ModelUser userModel,
+  ) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.blue,
+        toolbarHeight: MediaQuery.of(context).size.height * 0.01,
+        elevation: 0.0,
+        scrolledUnderElevation: 0.0,
+        shadowColor: Colors.blue,
+      ),
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: Container(
+          color: Colors.blue,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              // ~:Header Section:~
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 100,
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.025,
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                ),
+                margin: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.025,
+                ),
+                child: InkWell(
+                  onTap: openProfile,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // ~:Profile Icon:~
+                      CircleAvatar(
+                        radius: 30.0,
+                        backgroundColor: Colors.white,
+                        child: Builder(
+                          builder: (context) {
+                            if (appState.getProfilePicture.isNotEmpty &&
+                                appState.getProfilePicturePreview.isNotEmpty) {
+                              return ClipOval(
+                                child: SizedBox.fromSize(
+                                  size: Size.fromRadius(28),
+                                  child: Image.memory(
+                                    base64Decode(
+                                      appState.getProfilePicturePreview,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return const Icon(
+                                Icons.person,
+                                size: 25.0,
+                                color: Colors.black,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                      // ~:Devider:~
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.05,
+                      ),
+                      // ~:User Config:~
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Builder(
+                              builder: (context) {
+                                if (userModel.employeeName.isNotEmpty) {
+                                  return Text(
+                                    userModel.employeeName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GlobalFont.mediumgigafontRBold,
+                                  );
+                                } else {
+                                  return Text(
+                                    'GUEST',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GlobalFont.mediumgigafontRBold,
+                                  );
+                                }
+                              },
+                            ),
+                            Builder(
+                              builder: (context) {
+                                if (userModel.employeeID.isNotEmpty) {
+                                  return Text(
+                                    userModel.employeeID,
+                                    style: GlobalFont.bigfontR,
+                                  );
+                                } else {
+                                  return Text(
+                                    'XXXXX/XXXXXX',
+                                    style: GlobalFont.bigfontR,
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ~:Body Section:~
+              Expanded(
+                child: AttendancePage(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget shopCoordinator(
@@ -559,10 +684,11 @@ class MenuPageState extends State<MenuPage> {
         child: BlocBuilder<LoginBloc, LoginState>(
           builder: (context, state) {
             if (state is LoginSuccess) {
+              log('Login success with code: ${state.user[0].code}');
               if (state.user[0].code == 0) {
                 return shopHead(appState, state.user[0]);
               } else if (state.user[0].code == 1) {
-                return sales();
+                return sales(appState, state.user[0]);
               } else if (state.user[0].code == 2) {
                 return shopCoordinator(appState, state.user[0]);
               }
