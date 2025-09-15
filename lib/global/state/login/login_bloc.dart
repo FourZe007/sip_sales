@@ -16,7 +16,6 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
   }
 
   Future<void> login(AccountEvent event, Emitter<LoginState> emit) async {
-    emit(LoginLoading());
     try {
       emit(LoginLoading());
       if (event.id.isNotEmpty && event.pass.isNotEmpty) {
@@ -110,16 +109,16 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
             // ~:Shop Coordinator:~
             case 2:
               if (event.context.mounted) {
-                event.context.read<SalesDashboardBloc>().add(LoadSalesDashboard(
-                      event.appState.getUserAccountList.isNotEmpty
-                          ? event.appState.getUserAccountList[0].employeeID
-                          : '',
-                      DateTime.now().toIso8601String().substring(0, 10),
-                    ));
-
                 event.context
                     .read<DashboardTypeCubit>()
                     .changeType(DashboardType.salesman);
+
+                event.context
+                    .read<SalesDashboardBloc>()
+                    .add(LoadCoordinatorDashboard(
+                      await event.appState.readAndWriteUserId(),
+                      DateTime.now().toIso8601String().substring(0, 10),
+                    ));
               }
               break;
           }

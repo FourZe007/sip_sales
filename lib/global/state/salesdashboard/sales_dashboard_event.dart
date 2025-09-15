@@ -7,3 +7,10 @@ class LoadSalesDashboard extends SalesDashboardEvent {
 
   LoadSalesDashboard(this.salesmanId, this.date);
 }
+
+class LoadCoordinatorDashboard extends SalesDashboardEvent {
+  final String salesmanId;
+  final String date;
+
+  LoadCoordinatorDashboard(this.salesmanId, this.date);
+}

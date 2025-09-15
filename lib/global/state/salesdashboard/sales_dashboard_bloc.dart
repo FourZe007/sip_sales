@@ -8,6 +8,7 @@ class SalesDashboardBloc
     extends Bloc<SalesDashboardEvent, SalesDashboardState> {
   SalesDashboardBloc() : super(SalesDashboardInitial()) {
     on<LoadSalesDashboard>(loadSalesDashboard);
+    on<LoadCoordinatorDashboard>(loadCoordinatorDashboard);
   }
 
   Future<void> loadSalesDashboard(
@@ -19,6 +20,29 @@ class SalesDashboardBloc
       List<SalesmanDashboardModel> salesData = [];
 
       await GlobalAPI.fetchSalesmanDashboard(
+        event.salesmanId,
+        event.date,
+      ).then((response) {
+        if (response['status'] == 'sukses') {
+          salesData.addAll(response['data'] as List<SalesmanDashboardModel>);
+        }
+      });
+
+      emit(SalesDashboardLoaded(salesData));
+    } catch (e) {
+      emit(SalesDashboardError(e.toString()));
+    }
+  }
+
+  Future<void> loadCoordinatorDashboard(
+    LoadCoordinatorDashboard event,
+    Emitter<SalesDashboardState> emit,
+  ) async {
+    emit(SalesDashboardLoading());
+    try {
+      List<SalesmanDashboardModel> salesData = [];
+
+      await GlobalAPI.fetchCoordinatorDashboard(
         event.salesmanId,
         event.date,
       ).then((response) {

@@ -5,10 +5,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
+import 'package:sip_sales/global/state/login/login_bloc.dart';
+import 'package:sip_sales/global/state/login/login_event.dart';
+import 'package:sip_sales/global/state/login/login_state.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 
@@ -21,16 +25,25 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool isSignedIn = false;
+  int accessCode = 0;
 
-  Future<void> initializeApp(SipSalesState state) async {
+  Future<void> initializeApp(
+    BuildContext context,
+    SipSalesState state,
+  ) async {
     // state.saveCheckInStatus(true);
     // state.saveCheckOutStatus(false);
     try {
-      await loadUserData(state);
-      await initializeAppData(context, state);
+      // await loadUserData(context, state);
 
       if (isSignedIn) {
-        Navigator.pushReplacementNamed(context, '/location');
+        log('Access Code: $accessCode');
+        if (accessCode == 2) {
+          Navigator.pushReplacementNamed(context, '/menu');
+        } else {
+          await initializeAppData(context, state);
+          Navigator.pushReplacementNamed(context, '/location');
+        }
       } else {
         Navigator.pushReplacementNamed(context, '/login');
       }
@@ -52,32 +65,47 @@ class _SplashScreenState extends State<SplashScreen> {
     // });
   }
 
-  Future<void> loadUserData(SipSalesState state) async {
+  Future<void> loadUserData(
+    BuildContext context,
+    SipSalesState state,
+  ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     isSignedIn = prefs.getBool('isLoggedIn') ?? false;
+    accessCode = prefs.getInt('accessCode') ?? 0;
 
     if (isSignedIn) {
-      await GlobalAPI.fetchUserAccount(
-        await state.readAndWriteUserId(),
-        await state.readAndWriteUserPass(),
-        await state.generateUuid(),
-        await state.readAndWriteDeviceConfig(),
-      ).then((res) {
-        if (res[0].flag == 2 &&
-            res[0].memo ==
-                'Login by new device, please contact admin to unbind the old device') {
-          isSignedIn = false;
-          prefs.setBool('isLoggedIn', false);
-          log('User signed out');
-        } else {
-          state.setUserAccountList(res);
-        }
-      });
+      context.read<LoginBloc>().add(
+            LoginEvent(
+              context: context,
+              appState: context.read<SipSalesState>(),
+              id: await state.readAndWriteUserId(),
+              pass: await state.readAndWriteUserPass(),
+            ),
+          );
 
-      log('User info: ${state.getUserAccountList.length}');
-      log('Load Employee Id: ${state.getUserAccountList[0].employeeID}');
+      // await GlobalAPI.fetchUserAccount(
+      //   await state.readAndWriteUserId(),
+      //   await state.readAndWriteUserPass(),
+      //   await state.generateUuid(),
+      //   await state.readAndWriteDeviceConfig(),
+      // ).then((res) {
+      //   if (res[0].flag == 2 &&
+      //       res[0].memo ==
+      //           'Login by new device, please contact admin to unbind the old device') {
+      //     isSignedIn = false;
+      //     accessCode = res[0].code;
+      //     prefs.setBool('isLoggedIn', false);
+      //     log('User signed out');
+      //   } else {
+      //     state.setUserAccountList(res);
+      //   }
+      // });
+
+      // log('User info: ${state.getUserAccountList.length}');
+      // log('Load Employee Id: ${state.getUserAccountList[0].employeeID}');
     } else {
       log('User signed out');
+      Navigator.pushReplacementNamed(context, '/login');
     }
 
     // if (prefs.getString('highResImage') != null) {
@@ -162,7 +190,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    initializeApp(Provider.of<SipSalesState>(context, listen: false));
+    // initializeApp(
+    //   context,
+    //   Provider.of<SipSalesState>(context, listen: false),
+    // );
+    loadUserData(context, Provider.of<SipSalesState>(context, listen: false));
   }
 
   @override
@@ -180,36 +212,48 @@ class _SplashScreenState extends State<SplashScreen> {
           scrolledUnderElevation: 0.0,
           automaticallyImplyLeading: false,
         ),
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          color: Colors.white,
-          child: Column(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // ~:Logo:~
-              Image(
-                image: const AssetImage('assets/SIP.png'),
-                width: MediaQuery.of(context).size.width * 0.55,
-                fit: BoxFit.cover,
-              ),
+        body: BlocListener<LoginBloc, LoginState>(
+          listener: (context, state) async {
+            if (state is LoginSuccess) {
+              Provider.of<SipSalesState>(context, listen: false)
+                  .setUserAccountList(state.user);
+              await initializeApp(
+                context,
+                Provider.of<SipSalesState>(context, listen: false),
+              );
+            }
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            color: Colors.white,
+            child: Column(
+              spacing: 20,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // ~:Logo:~
+                Image(
+                  image: const AssetImage('assets/SIP.png'),
+                  width: MediaQuery.of(context).size.width * 0.55,
+                  fit: BoxFit.cover,
+                ),
 
-              // ~:Loading Indicator:~
-              Builder(
-                builder: (context) {
-                  if (Platform.isIOS) {
-                    return const CupertinoActivityIndicator(
-                      radius: 12,
-                    );
-                  } else {
-                    return const CircleLoading(
-                      strokeWidth: 3,
-                    );
-                  }
-                },
-              ),
-            ],
+                // ~:Loading Indicator:~
+                Builder(
+                  builder: (context) {
+                    if (Platform.isIOS) {
+                      return const CupertinoActivityIndicator(
+                        radius: 12,
+                      );
+                    } else {
+                      return const CircleLoading(
+                        strokeWidth: 3,
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

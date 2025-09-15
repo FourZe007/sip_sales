@@ -24,6 +24,7 @@ import 'package:sip_sales/pages/activity/manager_activity.dart';
 import 'package:sip_sales/pages/attendance/attendance.dart';
 import 'package:sip_sales/pages/location/manager_new_activity.dart';
 import 'package:sip_sales/pages/profile/profile.dart';
+import 'package:sip_sales/pages/screen/coordinator_report.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -666,6 +667,10 @@ class MenuPageState extends State<MenuPage> {
                 ),
               ),
             ),
+
+            Expanded(
+              child: CoordinatorReport(),
+            ),
           ],
         ),
       ),
@@ -680,6 +685,7 @@ class MenuPageState extends State<MenuPage> {
       canPop: false,
       child: SafeArea(
         top: false,
+        bottom: false,
         maintainBottomViewPadding: true,
         child: BlocBuilder<LoginBloc, LoginState>(
           builder: (context, state) {
