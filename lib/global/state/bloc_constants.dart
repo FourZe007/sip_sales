@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:sip_sales/global/state/coordinatordashboard/coord_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
@@ -18,6 +19,9 @@ class BlocConstants {
       ),
       BlocProvider<SalesDashboardBloc>(
         create: (context) => SalesDashboardBloc(),
+      ),
+      BlocProvider<CoordinatorDashboardBloc>(
+        create: (context) => CoordinatorDashboardBloc(),
       ),
       BlocProvider<FollowupDashboardBloc>(
         create: (context) => FollowupDashboardBloc(),

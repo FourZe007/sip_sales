@@ -1368,7 +1368,7 @@ class GlobalAPI {
     };
     log('Map Coordinator Dashboard: $mapCoordinatorDashboard');
 
-    List<SalesmanDashboardModel> coordinatorDashboardList = [];
+    List<CoordinatorDashboardModel> coordinatorDashboardList = [];
 
     try {
       final response = await http
@@ -1380,8 +1380,8 @@ class GlobalAPI {
         var jsonResult = jsonDecode(response.body);
         if (jsonResult['code'] == '100' && jsonResult['msg'] == 'Sukses') {
           coordinatorDashboardList.addAll((jsonResult['data'] as List)
-              .map<SalesmanDashboardModel>(
-                  (data) => SalesmanDashboardModel.fromJson(data))
+              .map<CoordinatorDashboardModel>(
+                  (data) => CoordinatorDashboardModel.fromJson(data))
               .toList());
           log('Success');
           return {

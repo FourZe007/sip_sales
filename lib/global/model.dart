@@ -548,6 +548,148 @@ class ModelManagerActivityDetails {
   }
 }
 
+class CoordinatorDashboardModel {
+  final int prospek;
+  final int spk;
+  final int spkTerbuka;
+  final int delivery;
+  final int stu;
+  final int prospekH;
+  final int spkh;
+  final int spkTerbukaH;
+  final int deliveryH;
+  final int stuh;
+  final List<SalesmanProspekModel> prospekList;
+  final List<SalesmanStuModel> stuList;
+  final List<CategoryModel> categoryList;
+  final List<LeasingModel> leasingList;
+  final List<DailyModel> dailyList;
+  final List<ProspekTypeModel> prospekTypeList;
+
+  CoordinatorDashboardModel({
+    required this.prospek,
+    required this.spk,
+    required this.spkTerbuka,
+    required this.delivery,
+    required this.stu,
+    required this.prospekH,
+    required this.spkh,
+    required this.spkTerbukaH,
+    required this.deliveryH,
+    required this.stuh,
+    required this.prospekList,
+    required this.stuList,
+    required this.categoryList,
+    required this.leasingList,
+    required this.dailyList,
+    required this.prospekTypeList,
+  });
+
+  factory CoordinatorDashboardModel.fromJson(Map<String, dynamic> json) {
+    return CoordinatorDashboardModel(
+      prospek: json['prospek'],
+      spk: json['spk'],
+      spkTerbuka: json['spkTerbuka'],
+      delivery: json['delivery'],
+      stu: json['stu'],
+      prospekH: json['prospekH'],
+      spkh: json['spkh'],
+      spkTerbukaH: json['spkTerbukaH'],
+      deliveryH: json['deliveryH'],
+      stuh: json['stuh'],
+      prospekList: json['salesmanP']
+          .map<SalesmanProspekModel>(
+              (data) => SalesmanProspekModel.fromJson(data))
+          .toList(),
+      stuList: json['salesmanSTU']
+          .map<SalesmanStuModel>((data) => SalesmanStuModel.fromJson(data))
+          .toList(),
+      categoryList: json['category']
+          .map<CategoryModel>((data) => CategoryModel.fromJson(data))
+          .toList(),
+      leasingList: json['leasing']
+          .map<LeasingModel>((data) => LeasingModel.fromJson(data))
+          .toList(),
+      dailyList: json['daily']
+          .map<DailyModel>((data) => DailyModel.fromJson(data))
+          .toList(),
+      prospekTypeList: json['prospekType']
+          .map<ProspekTypeModel>((data) => ProspekTypeModel.fromJson(data))
+          .toList(),
+    );
+  }
+}
+
+class SalesmanProspekModel {
+  final String employeeId;
+  final String employeeName;
+  final int targetP;
+  final int prospek;
+  final dynamic ratioP;
+  final int targetS;
+  final int spk;
+  final int ratioS;
+
+  SalesmanProspekModel({
+    required this.employeeId,
+    required this.employeeName,
+    required this.targetP,
+    required this.prospek,
+    required this.ratioP,
+    required this.targetS,
+    required this.spk,
+    required this.ratioS,
+  });
+
+  factory SalesmanProspekModel.fromJson(Map<String, dynamic> json) {
+    return SalesmanProspekModel(
+      employeeId: json['employeeID'],
+      employeeName: json['eName'],
+      targetP: json['targetP'],
+      prospek: json['prospek'],
+      ratioP: json['ratioP'],
+      targetS: json['targetS'],
+      spk: json['spk'],
+      ratioS: json['ratioS'],
+    );
+  }
+}
+
+class SalesmanStuModel {
+  final String employeeId;
+  final String employeeName;
+  final int target;
+  final int stu;
+  final int ratioSTU;
+  final int stulm;
+  final dynamic growth;
+  final dynamic cr;
+
+  SalesmanStuModel({
+    required this.employeeId,
+    required this.employeeName,
+    required this.target,
+    required this.stu,
+    required this.ratioSTU,
+    required this.stulm,
+    required this.growth,
+    required this.cr,
+  });
+
+  factory SalesmanStuModel.fromJson(Map<String, dynamic> json) {
+    return SalesmanStuModel(
+      employeeId: json['employeeID'],
+      employeeName: json['eName'],
+      target: json['target'],
+      stu: json['stu'],
+      ratioSTU: json['ratioSTU'],
+      stulm: json['stulm'],
+      growth: json['growth'],
+      cr: json['cr'],
+    );
+  }
+}
+
 class SalesmanDashboardModel {
   final int prospek;
   final int spk;

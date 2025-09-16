@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sip_sales/global/state/coordinatordashboard/coord_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/coordinatordashboard/coord_dashboard_event.dart';
 import 'package:sip_sales/global/state/provider.dart';
-import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
-import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
-import 'package:sip_sales/pages/screen/salesman_dashboard.dart';
+import 'package:sip_sales/pages/screen/coordinator_dashboard.dart';
 
 class CoordinatorReport extends StatefulWidget {
   const CoordinatorReport({super.key});
@@ -22,7 +22,7 @@ class _CoordinatorReportState extends State<CoordinatorReport> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
           topRight: Radius.circular(20.0),
@@ -41,32 +41,35 @@ class _CoordinatorReportState extends State<CoordinatorReport> {
           ? CustomScrollView(
               slivers: [
                 CupertinoSliverRefreshControl(
-                  onRefresh: () async => context.read<SalesDashboardBloc>().add(
-                        LoadCoordinatorDashboard(
-                          await Provider.of<SipSalesState>(context,
-                                  listen: false)
-                              .readAndWriteUserId(),
-                          DateTime.now().toIso8601String().split('T')[0],
-                        ),
-                      ),
+                  onRefresh: () async =>
+                      context.read<CoordinatorDashboardBloc>().add(
+                            LoadCoordinatorDashboard(
+                              await Provider.of<SipSalesState>(context,
+                                      listen: false)
+                                  .readAndWriteUserId(),
+                              DateTime.now().toIso8601String().split('T')[0],
+                            ),
+                          ),
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, _) => SalesmanDashboard(),
+                    (context, _) => CoordinatorDashboard(),
                     childCount: 1,
                   ),
                 ),
               ],
             )
           : RefreshIndicator(
-              onRefresh: () async => context.read<SalesDashboardBloc>().add(
+              onRefresh: () async => context
+                  .read<CoordinatorDashboardBloc>()
+                  .add(
                     LoadCoordinatorDashboard(
                       await Provider.of<SipSalesState>(context, listen: false)
                           .readAndWriteUserId(),
                       DateTime.now().toIso8601String().split('T')[0],
                     ),
                   ),
-              child: SalesmanDashboard(),
+              child: CoordinatorDashboard(),
             ),
     );
   }

@@ -424,53 +424,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 backgroundColor: Colors.blue,
                 leading: Material(
                   color: Colors.transparent,
-                  child: BlocBuilder<LoginBloc, LoginState>(
-                      builder: (context, state) {
-                    if (state is LoginSuccess && state.user[0].code == 2) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ProfilePage(),
-                            ),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: state.user[0].employeeName.isNotEmpty
-                                ? Text(
-                                    state.user[0].employeeName.substring(0, 2),
-                                    style: GlobalFont.bigfontRBold,
-                                    textAlign: TextAlign.center,
-                                  )
-                                : Icon(
-                                    Icons.person,
-                                    size: 20,
-                                    color: Colors.white,
-                                  ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(
-                          Platform.isIOS
-                              ? Icons.arrow_back_ios_new_rounded
-                              : Icons.arrow_back_rounded,
-                          size: (MediaQuery.of(context).size.width < 800)
-                              ? 20.0
-                              : 35.0,
-                          color: Colors.black,
-                        ),
-                      );
-                    }
-                  }),
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Platform.isIOS
+                          ? Icons.arrow_back_ios_new_rounded
+                          : Icons.arrow_back_rounded,
+                      size: (MediaQuery.of(context).size.width < 800)
+                          ? 20.0
+                          : 35.0,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
                 actions: [
                   BlocBuilder<DashboardTypeCubit, DashboardType>(

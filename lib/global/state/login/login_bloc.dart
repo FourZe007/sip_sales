@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/enum.dart';
+import 'package:sip_sales/global/state/coordinatordashboard/coord_dashboard_bloc.dart';
+import 'package:sip_sales/global/state/coordinatordashboard/coord_dashboard_event.dart';
 import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
 import 'package:sip_sales/global/state/login/login_event.dart';
 import 'package:sip_sales/global/state/login/login_state.dart';
-import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
-import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
 
 class LoginBloc extends Bloc<AccountEvent, LoginState> {
   LoginBloc() : super(LoginInit()) {
@@ -108,17 +108,18 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
               break;
             // ~:Shop Coordinator:~
             case 2:
+              log('Shop Coordinator');
               if (event.context.mounted) {
                 event.context
                     .read<DashboardTypeCubit>()
                     .changeType(DashboardType.salesman);
 
-                event.context
-                    .read<SalesDashboardBloc>()
-                    .add(LoadCoordinatorDashboard(
-                      await event.appState.readAndWriteUserId(),
-                      DateTime.now().toIso8601String().substring(0, 10),
-                    ));
+                event.context.read<CoordinatorDashboardBloc>().add(
+                      LoadCoordinatorDashboard(
+                        await event.appState.readAndWriteUserId(),
+                        DateTime.now().toIso8601String().substring(0, 10),
+                      ),
+                    );
               }
               break;
           }
