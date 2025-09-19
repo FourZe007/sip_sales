@@ -574,6 +574,7 @@ class _LoginPageState extends State<LoginPage> {
                               alignment: Alignment.center,
                               child: BlocConsumer<LoginBloc, LoginState>(
                                 listener: (context, state) async {
+                                  log('Login state: $state');
                                   if (state is LoginFailed) {
                                     Fluttertoast.showToast(
                                       msg: state.message,
@@ -666,7 +667,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       // ~:App Version:~
                       Text(
-                        'v1.1.12',
+                        'v1.1.13 beta',
                         style: GlobalFont.mediumbigfontR,
                       ),
 

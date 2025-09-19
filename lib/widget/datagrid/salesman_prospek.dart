@@ -63,7 +63,13 @@ class SalesmanProspekDataSource extends DataGridSource {
                         ));
 
                     if (context.mounted) {
-                      Navigator.pushNamed(context, '/salesDashboard');
+                      Navigator.pushNamed(
+                        context,
+                        '/salesDashboard',
+                        arguments: {
+                          'salesmanId': rowData.employeeId,
+                        },
+                      );
                     }
                   }
                 },

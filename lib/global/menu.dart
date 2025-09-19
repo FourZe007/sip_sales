@@ -6,7 +6,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -691,6 +690,7 @@ class MenuPageState extends State<MenuPage> {
           builder: (context, state) {
             if (state is LoginSuccess) {
               log('Login success with code: ${state.user[0].code}');
+              log('User info: ${state.user[0]}');
               if (state.user[0].code == 0) {
                 return shopHead(appState, state.user[0]);
               } else if (state.user[0].code == 1) {

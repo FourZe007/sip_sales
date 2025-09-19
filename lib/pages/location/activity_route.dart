@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/dialog.dart';
 import 'package:sip_sales/global/global.dart';
@@ -34,7 +33,6 @@ class _ActivityRoutePageState extends State<ActivityRoutePage> {
   String filterDate = DateTime.now().toString().substring(0, 10);
 
   // Location Service
-  Location location = Location();
   double? latitude = 0.0;
   double? longitude = 0.0;
   String time = '';

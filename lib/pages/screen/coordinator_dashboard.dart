@@ -113,7 +113,8 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
           return ListView.builder(
             itemCount: state.coordData.length,
             physics: BouncingScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: 8.0),
+            shrinkWrap: true,
+            padding: EdgeInsets.fromLTRB(4, 0, 4, 8),
             itemBuilder: (context, index) {
               final coordData = state.coordData[index];
               double salesProspectHeight =

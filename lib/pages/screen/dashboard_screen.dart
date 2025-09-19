@@ -14,12 +14,10 @@ import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_event.dart';
 import 'package:sip_sales/global/state/fufiltercontrols_cubit.dart';
 import 'package:sip_sales/global/state/login/login_bloc.dart';
-import 'package:sip_sales/global/state/login/login_state.dart'
-    show LoginState, LoginSuccess;
+import 'package:sip_sales/global/state/login/login_state.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart';
-import 'package:sip_sales/pages/profile/profile.dart';
 import 'package:sip_sales/pages/screen/followup_dashboard.dart';
 import 'package:sip_sales/pages/screen/followup_deal_dashboard.dart';
 import 'package:sip_sales/pages/screen/salesman_dashboard.dart';
@@ -40,12 +38,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void refreshDashboard(
     BuildContext context,
     SipSalesState appState,
+    LoginState loginState,
     DashboardType state, {
     bool sortByName = false,
   }) {
-    final salesmanId = appState.getUserAccountList.isNotEmpty
-        ? appState.getUserAccountList[0].employeeID
-        : '';
+    // appState.getUserAccountList.isNotEmpty
+    //     ? appState.getUserAccountList[0].employeeID
+    //     : ''
+    final salesmanId =
+        (loginState is LoginSuccess && loginState.user[0].code == 2)
+            ? (ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>)['salesmanId']
+            : appState.getUserAccountList.isNotEmpty
+                ? appState.userAccountList[0].employeeID
+                : '';
     final date = DateTime.now().toIso8601String().substring(0, 10);
 
     if (state.name == 'salesman') {
@@ -130,6 +136,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       refreshDashboard(
         context,
         appState,
+        context.read<LoginBloc>().state,
         DashboardType.followup,
         sortByName: sortByName,
       );
@@ -441,8 +448,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   BlocBuilder<DashboardTypeCubit, DashboardType>(
                       builder: (context, state) {
                     return IconButton(
-                      onPressed: () =>
-                          refreshDashboard(context, appState, state),
+                      onPressed: () => refreshDashboard(
+                        context,
+                        appState,
+                        context.read<LoginBloc>().state,
+                        state,
+                      ),
                       icon: Icon(
                         Icons.refresh_rounded,
                         size: (MediaQuery.of(context).size.width < 800)
@@ -484,6 +495,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 listener: (context, state) => refreshDashboard(
                   context,
                   appState,
+                  context.read<LoginBloc>().state,
                   state,
                 ),
                 child: DecoratedBox(

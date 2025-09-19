@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/dialog.dart';
@@ -82,7 +82,7 @@ class SipSalesState with ChangeNotifier {
       List<ModelAttendanceHistory> temp = [];
       temp.clear();
       temp.addAll(await GlobalAPI.fetchAttendanceHistory(
-        getUserAccountList[0].employeeID,
+        await readAndWriteUserId(),
         startDate,
         endDate,
       ));
@@ -913,7 +913,7 @@ class SipSalesState with ChangeNotifier {
 
   // Location
   List<ModelCoordinate> coordinateList = [];
-  Location location = Location();
+  // Location location = Location();
   bool locationPermission = false;
   bool isLocationEnable = false;
   // Note -> database usage
@@ -1726,14 +1726,14 @@ class SipSalesState with ChangeNotifier {
     eId = prefs.getString('nip')!;
 
     if (type != '' && desc != '' && filteredList.isNotEmpty && date != '') {
-      await location.getLocation().then((coordinate) async {
+      await Geolocator.getCurrentPosition().then((coordinate) async {
         newActivitiesList.clear();
         newActivitiesList = await GlobalAPI.fetchNewSalesActivity(
           eId,
           date,
           TimeOfDay.now().toString().substring(10, 15),
-          coordinate.latitude!,
-          coordinate.longitude!,
+          coordinate.latitude,
+          coordinate.longitude,
           aId,
           desc,
           name,
@@ -1862,7 +1862,7 @@ class SipSalesState with ChangeNotifier {
     if (type != '' && desc != '' && filteredList.isNotEmpty) {
       log('User Input is not empty');
       try {
-        await location.getLocation().then(
+        await Geolocator.getCurrentPosition().then(
           (coordinate) async {
             // print('Employee Id: $eId');
             // print('Date: ${DateTime.now().toString().split(' ')[0]}');
@@ -1883,8 +1883,8 @@ class SipSalesState with ChangeNotifier {
                 DateFormat('HH:mm').format(DateTime.now()),
                 getUserAccountList[0].branch,
                 getUserAccountList[0].shop,
-                coordinate.latitude!,
-                coordinate.longitude!,
+                coordinate.latitude,
+                coordinate.longitude,
                 aId,
                 desc,
                 filteredList,

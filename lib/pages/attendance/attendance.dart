@@ -16,7 +16,6 @@ import 'package:sip_sales/global/state/salesdashboard/sales_dashboard_event.dart
 import 'package:sip_sales/pages/attendance/attendance_history.dart';
 import 'package:sip_sales/pages/attendance/event.dart';
 import 'package:sip_sales/pages/map/map.dart';
-import 'package:sip_sales/widget/data/sales_dashboard.dart';
 import 'package:sip_sales/widget/date/custom_digital_clock.dart';
 import 'package:sip_sales/widget/dropdown/common_dropdown.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
@@ -452,7 +451,7 @@ class _AttendancePageState extends State<AttendancePage> {
             },
             child: Container(
               width: MediaQuery.of(context).size.width,
-              height: 40,
+              // height: 40,
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -476,11 +475,11 @@ class _AttendancePageState extends State<AttendancePage> {
                   //               : '',
                   //           DateTime.now().toIso8601String().substring(0, 10),
                   //         ));
-
+                  //
                   //     context
                   //         .read<DashboardTypeCubit>()
                   //         .changeType(DashboardType.salesman);
-
+                  //
                   //     Navigator.pushNamed(context, '/salesDashboard');
                   //   },
                   //   style: TextButton.styleFrom(
@@ -820,7 +819,6 @@ class _AttendancePageState extends State<AttendancePage> {
       ),
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.02,
-        vertical: MediaQuery.of(context).size.height * 0.02,
       ),
       child: Builder(
         builder: (context) {

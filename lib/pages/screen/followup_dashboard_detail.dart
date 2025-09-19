@@ -13,6 +13,8 @@ import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_event.dart';
 import 'package:sip_sales/global/state/followupdate_cubit.dart';
+import 'package:sip_sales/global/state/login/login_bloc.dart';
+import 'package:sip_sales/global/state/login/login_state.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_event.dart';
@@ -25,11 +27,13 @@ class FollowupDashboardDetail extends StatefulWidget {
   const FollowupDashboardDetail({
     required this.mobilePhone,
     required this.prospectDate,
+    this.salesmanId = '',
     super.key,
   });
 
   final String mobilePhone;
   final String prospectDate;
+  final String salesmanId;
 
   @override
   State<FollowupDashboardDetail> createState() =>
@@ -41,11 +45,15 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
 
   void refreshFollowupDashboard(
     BuildContext context,
+    LoginState loginState,
     SipSalesState appState,
   ) {
-    final salesmanId = appState.getUserAccountList.isNotEmpty
-        ? appState.getUserAccountList[0].employeeID
-        : '';
+    final salesmanId =
+        (loginState is LoginSuccess && loginState.user[0].code == 2)
+            ? widget.salesmanId
+            : appState.getUserAccountList.isNotEmpty
+                ? appState.userAccountList[0].employeeID
+                : '';
     final date = DateTime.now().toIso8601String().substring(0, 10);
 
     context.read<FollowupCubit>().resetFollowup();
@@ -68,27 +76,32 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
     UpdateFollowUpDashboardModel data,
     int currentIndex,
   ) {
-    // For the first follow-up date
-    if (currentIndex == -1) {
-      return data.firstFUDate.isEmpty; // Only editable if empty
-    }
-
-    // For follow-up cards
-    // Check if firstFUDate is set
-    if (data.firstFUDate.isEmpty) {
+    if (context.read<LoginBloc>().state is LoginSuccess &&
+        (context.read<LoginBloc>().state as LoginSuccess).user[0].code == 2) {
       return false;
-    }
+    } else {
+      // For the first follow-up date
+      if (currentIndex == -1) {
+        return data.firstFUDate.isEmpty; // Only editable if empty
+      }
 
-    // Check if all previous cards are filled
-    for (int i = 0; i < currentIndex; i++) {
-      if (i < data.followup.length && !_isCardFilled(data.followup[i])) {
+      // For follow-up cards
+      // Check if firstFUDate is set
+      if (data.firstFUDate.isEmpty) {
         return false;
       }
-    }
 
-    // Check if current card is not already filled
-    if (currentIndex < data.followup.length) {
-      return !_isCardFilled(data.followup[currentIndex]);
+      // Check if all previous cards are filled
+      for (int i = 0; i < currentIndex; i++) {
+        if (i < data.followup.length && !_isCardFilled(data.followup[i])) {
+          return false;
+        }
+      }
+
+      // Check if current card is not already filled
+      if (currentIndex < data.followup.length) {
+        return !_isCardFilled(data.followup[currentIndex]);
+      }
     }
 
     return false;
@@ -366,7 +379,11 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
         ),
         actions: [
           IconButton(
-            onPressed: () => refreshFollowupDashboard(context, appState),
+            onPressed: () => refreshFollowupDashboard(
+              context,
+              context.read<LoginBloc>().state,
+              appState,
+            ),
             icon: Icon(
               Icons.refresh_rounded,
               size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
@@ -473,74 +490,82 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                       'Data Konsumen',
                                       style: GlobalFont.bigfontRBold,
                                     ),
-                                    Builder(builder: (context) {
-                                      if (data.firstFUDate.isNotEmpty) {
-                                        return SizedBox.shrink();
-                                      } else {
-                                        return ElevatedButton(
-                                          onPressed: () => saveFollowup(
-                                            context,
-                                            data,
-                                            0,
-                                            updateFollowup,
-                                            followup,
-                                            appState,
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.black,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                20,
-                                              ),
+                                    BlocBuilder<LoginBloc, LoginState>(
+                                      builder: (context, state) {
+                                        if (data.firstFUDate.isNotEmpty ||
+                                            (state is LoginSuccess &&
+                                                state.user[0].code == 2)) {
+                                          return SizedBox.shrink();
+                                        } else {
+                                          return ElevatedButton(
+                                            onPressed: () => saveFollowup(
+                                              context,
+                                              data,
+                                              0,
+                                              updateFollowup,
+                                              followup,
+                                              appState,
                                             ),
-                                            minimumSize: const Size(52, 32),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                          ),
-                                          child: BlocConsumer<
-                                              UpdateFollowupDashboardBloc,
-                                              UpdateFollowupDashboardState>(
-                                            listener: (context, state) {
-                                              if (state
-                                                  is SaveFollowupSucceed) {
-                                                refreshFollowupDashboard(
-                                                  context,
-                                                  appState,
-                                                );
-                                              }
-                                            },
-                                            builder: (context, state) {
-                                              if (state
-                                                  is SaveFollowupLoading) {
-                                                if (Platform.isIOS) {
-                                                  return const CupertinoActivityIndicator(
-                                                    radius: 12.5,
-                                                    color: Colors.white,
-                                                  );
-                                                } else {
-                                                  return const CircleLoading(
-                                                    warna: Colors.white,
-                                                    customizedHeight: 20,
-                                                    customizedWidth: 20,
-                                                    strokeWidth: 3,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.black,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                  20,
+                                                ),
+                                              ),
+                                              minimumSize: const Size(52, 32),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8),
+                                            ),
+                                            child: BlocConsumer<
+                                                UpdateFollowupDashboardBloc,
+                                                UpdateFollowupDashboardState>(
+                                              listener: (context, state) {
+                                                if (state
+                                                    is SaveFollowupSucceed) {
+                                                  refreshFollowupDashboard(
+                                                    context,
+                                                    context
+                                                        .read<LoginBloc>()
+                                                        .state,
+                                                    appState,
                                                   );
                                                 }
-                                              } else {
-                                                return Text(
-                                                  'Save',
-                                                  style: GlobalFont.bigfontR
-                                                      .copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                          ),
-                                        );
-                                      }
-                                    }),
+                                              },
+                                              builder: (context, state) {
+                                                if (state
+                                                    is SaveFollowupLoading) {
+                                                  if (Platform.isIOS) {
+                                                    return const CupertinoActivityIndicator(
+                                                      radius: 12.5,
+                                                      color: Colors.white,
+                                                    );
+                                                  } else {
+                                                    return const CircleLoading(
+                                                      warna: Colors.white,
+                                                      customizedHeight: 20,
+                                                      customizedWidth: 20,
+                                                      strokeWidth: 3,
+                                                    );
+                                                  }
+                                                } else {
+                                                  return Text(
+                                                    'Save',
+                                                    style: GlobalFont.bigfontR
+                                                        .copyWith(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ],
                                 ),
 
@@ -714,21 +739,32 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                 ),
                                               );
                                             } else {
-                                              return Text(
-                                                DateFormat(
-                                                  'dd MMMM yyyy',
-                                                  'id_ID',
-                                                ).format(
-                                                  DateTime.parse(
-                                                    data.firstFUDate,
+                                              if (data.firstFUDate.isEmpty) {
+                                                return Text(
+                                                  '-',
+                                                  style: GlobalFont.bigfontR
+                                                      .copyWith(
+                                                    color: Colors.black,
+                                                    fontStyle: FontStyle.normal,
                                                   ),
-                                                ),
-                                                style: GlobalFont.bigfontR
-                                                    .copyWith(
-                                                  color: Colors.black,
-                                                  fontStyle: FontStyle.normal,
-                                                ),
-                                              );
+                                                );
+                                              } else {
+                                                return Text(
+                                                  DateFormat(
+                                                    'dd MMMM yyyy',
+                                                    'id_ID',
+                                                  ).format(
+                                                    DateTime.parse(
+                                                      data.firstFUDate,
+                                                    ),
+                                                  ),
+                                                  style: GlobalFont.bigfontR
+                                                      .copyWith(
+                                                    color: Colors.black,
+                                                    fontStyle: FontStyle.normal,
+                                                  ),
+                                                );
+                                              }
                                             }
                                           },
                                         )),
@@ -794,8 +830,8 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                               'Follow-Up #${index + 1}',
                                               style: GlobalFont.bigfontRBold,
                                             ),
-                                            Builder(
-                                              builder: (context) {
+                                            BlocBuilder<LoginBloc, LoginState>(
+                                              builder: (context, state) {
                                                 if (!isEditable &&
                                                     _isCardFilled(e)) {
                                                   return const Icon(
@@ -870,6 +906,9 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
 
                                                         refreshFollowupDashboard(
                                                           context,
+                                                          context
+                                                              .read<LoginBloc>()
+                                                              .state,
                                                           appState,
                                                         );
                                                       } else if (state

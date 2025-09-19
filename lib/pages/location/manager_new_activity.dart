@@ -8,7 +8,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,7 +46,6 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
   // Loading
   bool isLoading = false;
 
-  Location location = Location();
   bool isUserGranted = false;
 
   void setActivityType(String value, String value2) {
@@ -374,14 +372,14 @@ class _ManagerNewActivityPageState extends State<ManagerNewActivityPage> {
     state.setIsLocationGranted(prefs.getBool('isLocationGranted')!);
 
     if (!state.getIsLocationGranted) {
-      PermissionStatus permissionStatus;
+      handler.PermissionStatus permissionStatus;
 
-      permissionStatus = await location.hasPermission();
-      if (permissionStatus == PermissionStatus.denied ||
-          permissionStatus == PermissionStatus.deniedForever) {
-        permissionStatus = await location.requestPermission();
-        if (permissionStatus == PermissionStatus.denied ||
-            permissionStatus == PermissionStatus.deniedForever) {
+      permissionStatus = await handler.Permission.locationWhenInUse.status;
+      if (permissionStatus == handler.PermissionStatus.denied ||
+          permissionStatus == handler.PermissionStatus.permanentlyDenied) {
+        permissionStatus = await handler.Permission.locationWhenInUse.request();
+        if (permissionStatus == handler.PermissionStatus.denied ||
+            permissionStatus == handler.PermissionStatus.permanentlyDenied) {
           await prefs.setBool('isLocationGranted', false);
           return false;
         }

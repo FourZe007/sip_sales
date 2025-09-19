@@ -10,6 +10,8 @@ import 'package:sip_sales/global/state/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_state.dart';
 import 'package:sip_sales/global/state/followupdate_cubit.dart';
+import 'package:sip_sales/global/state/login/login_bloc.dart';
+import 'package:sip_sales/global/state/login/login_state.dart';
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_event.dart';
@@ -28,6 +30,8 @@ class FollowupDashboard extends StatelessWidget {
     final updateFollowupDashboardBloc =
         context.read<UpdateFollowupDashboardBloc>();
     final followupCubit = context.read<FollowupCubit>();
+    final salesmanIdArg = (ModalRoute.of(context)?.settings.arguments
+        as Map<String, dynamic>)['salesmanId'];
 
     return BlocBuilder<FollowupDashboardBloc, FollowupDashboardState>(
       builder: (context, state) {
@@ -333,10 +337,15 @@ class FollowupDashboard extends StatelessWidget {
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    final salesmanId =
-                                        appState.getUserAccountList.isNotEmpty
-                                            ? appState.getUserAccountList[0]
-                                                .employeeID
+                                    final loginState =
+                                        context.read<LoginBloc>().state;
+                                    final salesmanId = (loginState
+                                                is LoginSuccess &&
+                                            loginState.user[0].code == 2)
+                                        ? salesmanIdArg
+                                        : appState.getUserAccountList.isNotEmpty
+                                            ? appState
+                                                .userAccountList[0].employeeID
                                             : '';
 
                                     updateFollowupDashboardBloc.add(
@@ -363,6 +372,7 @@ class FollowupDashboard extends StatelessWidget {
                                             FollowupDashboardDetail(
                                           mobilePhone: e.mobilePhone,
                                           prospectDate: e.prospectDate,
+                                          salesmanId: salesmanId,
                                         ),
                                       ),
                                     );
@@ -374,13 +384,25 @@ class FollowupDashboard extends StatelessWidget {
                                     ),
                                     backgroundColor: Colors.black,
                                   ),
-                                  child: Text(
-                                    'Update',
-                                    style: GlobalFont.mediumfontRWhite
-                                        .copyWith(fontSize: 14),
-                                  ),
+                                  child: BlocBuilder<LoginBloc, LoginState>(
+                                      builder: (context, state) {
+                                    if (state is LoginSuccess &&
+                                        state.user[0].code == 2) {
+                                      return Text(
+                                        'Lihat detail',
+                                        style: GlobalFont.mediumfontRWhite
+                                            .copyWith(fontSize: 14),
+                                      );
+                                    } else {
+                                      return Text(
+                                        'Update',
+                                        style: GlobalFont.mediumfontRWhite
+                                            .copyWith(fontSize: 14),
+                                      );
+                                    }
+                                  }),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),

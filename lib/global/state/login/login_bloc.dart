@@ -1,9 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/enum.dart';
+import 'package:sip_sales/global/formatter.dart';
+import 'package:sip_sales/global/model.dart';
 import 'package:sip_sales/global/state/coordinatordashboard/coord_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/coordinatordashboard/coord_dashboard_event.dart';
 import 'package:sip_sales/global/state/dashboardtype_cubit.dart';
@@ -15,7 +18,10 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
     on<AccountEvent>(login);
   }
 
-  Future<void> login(AccountEvent event, Emitter<LoginState> emit) async {
+  Future<void> login(
+    AccountEvent event,
+    Emitter<LoginState> emit,
+  ) async {
     try {
       emit(LoginLoading());
       if (event.id.isNotEmpty && event.pass.isNotEmpty) {
@@ -30,8 +36,13 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
           event.pass,
           uuid,
           event.appState.getDeviceConfiguration,
-        ).then((res) {
-          event.appState.setUserAccountList(res);
+        ).then((List<ModelUser> res) {
+          if (res[0].flag == 1) {
+            event.appState.setUserAccountList(res);
+          } else {
+            emit(LoginFailed(Formatter.toTitleCase(res[0].memo)));
+            return;
+          }
         });
 
         if (event.appState.getUserAccountList.isNotEmpty) {
@@ -69,41 +80,28 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
                   event.appState.getUserAccountList[0].profilePicture,
                 );
 
-                await GlobalAPI.fetchShowImage(
-                  event.appState.getUserAccountList[0].employeeID,
-                ).then((String highResImg) async {
-                  if (highResImg == 'not available' ||
-                      highResImg == 'failed' ||
-                      highResImg == 'error') {
-                    event.appState.setProfilePicturePreview('');
-                    await prefs.setString('highResImage', '');
-                    log('High Res Image is not available.');
-                  } else {
-                    event.appState.setProfilePicturePreview(highResImg);
-                    await prefs.setString('highResImage', highResImg);
-                    log('High Res Image successfully loaded.');
-                    log('High Res Image: $highResImg');
-                  }
-                });
-
-                event.appState.setProfilePicture(
-                    event.appState.getUserAccountList[0].profilePicture);
-                await GlobalAPI.fetchShowImage(
-                  event.appState.getUserAccountList[0].employeeID,
-                ).then((String highResImg) async {
-                  if (highResImg == 'not available' ||
-                      highResImg == 'failed' ||
-                      highResImg == 'error') {
-                    event.appState.setProfilePicturePreview('');
-                    await prefs.setString('highResImage', '');
-                    log('High Res Image is not available.');
-                  } else {
-                    event.appState.setProfilePicturePreview(highResImg);
-                    await prefs.setString('highResImage', highResImg);
-                    log('High Res Image successfully loaded.');
-                    log('High Res Image: $highResImg');
-                  }
-                });
+                try {
+                  await GlobalAPI.fetchShowImage(
+                    event.appState.getUserAccountList[0].employeeID,
+                  ).then((String highResImg) async {
+                    if (highResImg == 'not available' ||
+                        highResImg == 'failed' ||
+                        highResImg == 'error') {
+                      event.appState.setProfilePicturePreview('');
+                      await prefs.setString('highResImage', '');
+                      log('High Res Image is not available.');
+                    } else {
+                      event.appState.setProfilePicturePreview(highResImg);
+                      await prefs.setString('highResImage', highResImg);
+                      log('High Res Image successfully loaded.');
+                      log('High Res Image: $highResImg');
+                    }
+                  });
+                } catch (e) {
+                  log('Show HD Image Error: $e');
+                  event.appState.setProfilePicturePreview('');
+                  await prefs.setString('highResImage', '');
+                }
               }
               break;
             // ~:Shop Coordinator:~

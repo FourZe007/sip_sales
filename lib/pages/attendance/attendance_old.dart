@@ -5,7 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
@@ -26,7 +26,6 @@ class OldAttendancePage extends StatefulWidget {
 class _OldAttendancePageState extends State<OldAttendancePage> {
   // Note -> moved to state management
   // GPS Location Detector
-  Location location = Location();
   bool locationPermission = false;
   bool isLocationEnable = false;
   double longitude = 0;
@@ -53,24 +52,24 @@ class _OldAttendancePageState extends State<OldAttendancePage> {
   }
 
   Future<bool> requestPermission() async {
-    bool serviceEnabled;
-    PermissionStatus permissionGranted;
+    handler.PermissionStatus serviceEnabled;
+    handler.PermissionStatus permissionGranted;
 
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
+    serviceEnabled = await handler.Permission.locationWhenInUse.status;
+    if (serviceEnabled != handler.PermissionStatus.granted) {
+      serviceEnabled = await handler.Permission.locationWhenInUse.request();
+      if (serviceEnabled != handler.PermissionStatus.granted) {
         return false;
       }
     }
 
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied ||
-        permissionGranted == PermissionStatus.deniedForever) {
+    permissionGranted = await handler.Permission.locationWhenInUse.status;
+    if (permissionGranted == handler.PermissionStatus.denied ||
+        permissionGranted == handler.PermissionStatus.permanentlyDenied) {
       // print('Permission Denied or Permission Denied Forever');
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted ||
-          permissionGranted != PermissionStatus.grantedLimited) {
+      permissionGranted = await handler.Permission.locationWhenInUse.request();
+      if (permissionGranted != handler.PermissionStatus.granted ||
+          permissionGranted != handler.PermissionStatus.permanentlyDenied) {
         // print('Permission Denied');
         return false;
       }

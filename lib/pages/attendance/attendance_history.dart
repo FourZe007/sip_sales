@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/api.dart';
 import 'package:sip_sales/global/global.dart';
@@ -32,7 +31,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   bool isOpened = false; // for Filter feature
 
   // Location Service
-  Location location = Location();
   double? latitude = 0.0;
   double? longitude = 0.0;
   String time = '';

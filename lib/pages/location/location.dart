@@ -5,10 +5,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/global.dart';
+import 'package:sip_sales/global/state/login/login_bloc.dart';
+import 'package:sip_sales/global/state/login/login_state.dart';
 import "dart:async";
 import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/widget/indicator/circleloading.dart';
@@ -24,7 +27,6 @@ class _LocationPageState extends State<LocationPage> {
   bool isFake = false;
   double? longitude = 0;
   double? latitude = 0;
-  Location location = Location();
   bool locationPermission = false;
 
   bool isLoading = false;
@@ -40,13 +42,13 @@ class _LocationPageState extends State<LocationPage> {
     state.setIsLocationGranted(prefs.getBool('isLocationGranted') ?? false);
 
     try {
-      PermissionStatus permissionStatus;
-      permissionStatus = await location.hasPermission();
-      if (permissionStatus == PermissionStatus.denied ||
-          permissionStatus == PermissionStatus.deniedForever) {
-        permissionStatus = await location.requestPermission();
-        if (permissionStatus == PermissionStatus.denied ||
-            permissionStatus == PermissionStatus.deniedForever) {
+      handler.PermissionStatus permissionStatus;
+      permissionStatus = await handler.Permission.locationWhenInUse.status;
+      if (permissionStatus == handler.PermissionStatus.denied ||
+          permissionStatus == handler.PermissionStatus.permanentlyDenied) {
+        permissionStatus = await handler.Permission.locationWhenInUse.request();
+        if (permissionStatus == handler.PermissionStatus.denied ||
+            permissionStatus == handler.PermissionStatus.permanentlyDenied) {
           await prefs.setBool('isLocationGranted', false);
           return false;
         }
@@ -63,10 +65,11 @@ class _LocationPageState extends State<LocationPage> {
   Future<bool> serviceRequest() async {
     bool serviceEnabled;
 
-    serviceEnabled = await location.serviceEnabled();
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
+      final permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.always &&
+          permission != LocationPermission.whileInUse) {
         return false;
       }
     }
@@ -143,7 +146,10 @@ class _LocationPageState extends State<LocationPage> {
       // if (!await state.readAndWriteIsUserManager()) {
       // }
 
-      if (prefs.getBool('isLoggedIn') ?? false) {
+      final loginState = context.read<LoginBloc>().state;
+      if ((prefs.getBool('isLoggedIn') ?? false) &&
+          loginState is LoginSuccess &&
+          loginState.user[0].code == 1) {
         // ~:Get user attendance history:~
         await state.getUserAttendanceHistory();
 

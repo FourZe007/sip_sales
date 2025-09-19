@@ -5,6 +5,25 @@ A new Flutter project.
 ## Update Notes
 ## Version History
 
+### 🚀 v1.1.13 - "Enhanced Access Control & Authentication"
+**What's New:**
+
+🔑 **New Access Rights Level**
+- Introduced Shop Coordinator role as a new access level
+- Expanded system access from 2 to 3 distinct user roles:
+  - Sales
+  - Shop Coordinator (New!)
+  - Head Store
+- Improved permission management for better role-based access control
+- Enhanced security with more granular access rights across the application
+
+🔒 **Login Process Improvements**
+- Completely refactored login flow for better maintainability and security
+- Streamlined authentication state management
+- Improved error handling and user feedback during login
+- Optimized token management and session handling
+- Added support for the new Shop Coordinator role in the authentication flow
+
 ### 🚀 v1.1.12 - "Sales Power Unleashed!"
 **What's New:**
 
