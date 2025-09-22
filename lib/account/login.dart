@@ -209,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
 
             // ~:Sales New Activity Insertation:~
             await state.getUserAttendanceHistory();
-            await state.getSalesDashboard();
+            // await state.getSalesDashboard();
 
             // ~:Reset dropdown default value to User's placement:~
             // state.setAbsentType(state.getUserAccountList[0].locationName);

@@ -154,7 +154,7 @@ class _LocationPageState extends State<LocationPage> {
         await state.getUserAttendanceHistory();
 
         // ~:Get sales dashboard:~
-        await state.getSalesDashboard();
+        // await state.getSalesDashboard();
       }
 
       // ~:Reset all variables:~

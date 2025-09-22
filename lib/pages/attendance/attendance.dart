@@ -198,7 +198,7 @@ class _AttendancePageState extends State<AttendancePage> {
     try {
       await getUserLatestData(state);
       await getUserAttendanceHistory(state);
-      await state.getSalesDashboard();
+      // await state.getSalesDashboard();
     } catch (e) {
       log('Refresh Page error: ${e.toString()}');
 

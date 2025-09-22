@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
         if (accessCode == 2) {
           Navigator.pushReplacementNamed(context, '/menu');
         } else {
-          await initializeAppData(context, state);
+          // await initializeAppData(context, state, accessCode);
           Navigator.pushReplacementNamed(context, '/location');
         }
       } else {
@@ -121,9 +121,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> initializeAppData(
     BuildContext context,
     SipSalesState state,
+    int accessCode,
   ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (await state.readAndWriteIsUserManager()) {
+    if (accessCode == 0) {
       log("It's Manager");
       // Note -> get Activity Insertation dropdown for Manager
       await state.fetchManagerActivityData().then((value) {
@@ -144,7 +145,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       // ~:Sales New Activity Insertation:~
       await state.getUserAttendanceHistory();
-      await state.getSalesDashboard();
+      // await state.getSalesDashboard();
 
       // ~:Reset dropdown default value to User's placement:~
       // state.setAbsentType(state.getUserAccountList[0].locationName);

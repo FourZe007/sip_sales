@@ -64,46 +64,54 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
               break;
             // ~:Sales:~
             case 1:
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              // ~:Sales New Activity Insertation:~
-              await event.appState.getUserAttendanceHistory();
-              await event.appState.getSalesDashboard();
+              try {
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                // ~:Sales New Activity Insertation:~
+                await event.appState.getUserAttendanceHistory();
+                // await event.appState.getSalesDashboard();
 
-              // ~:Reset dropdown default value to User's placement:~
-              // state.setAbsentType(state.getUserAccountList[0].locationName);
+                // ~:Reset dropdown default value to User's placement:~
+                // state.setAbsentType(state.getUserAccountList[0].locationName);
 
-              if (event.appState.getUserAccountList.isNotEmpty &&
-                  event.appState.getProfilePicture.isEmpty &&
-                  event.appState.getProfilePicturePreview.isEmpty) {
-                event.appState.setProfilePicture(
-                  event.appState.getUserAccountList[0].profilePicture,
-                );
+                if (event.appState.getUserAccountList.isNotEmpty &&
+                    event.appState.getProfilePicture.isEmpty &&
+                    event.appState.getProfilePicturePreview.isEmpty) {
+                  event.appState.setProfilePicture(
+                    event.appState.getUserAccountList[0].profilePicture,
+                  );
 
-                try {
-                  await GlobalAPI.fetchShowImage(
-                    event.appState.getUserAccountList[0].employeeID,
-                  ).then((String highResImg) async {
-                    if (highResImg == 'not available' ||
-                        highResImg == 'failed' ||
-                        highResImg == 'error') {
-                      event.appState.setProfilePicturePreview('');
-                      await prefs.setString('highResImage', '');
-                      log('High Res Image is not available.');
-                    } else {
-                      event.appState.setProfilePicturePreview(highResImg);
-                      await prefs.setString('highResImage', highResImg);
-                      log('High Res Image successfully loaded.');
-                      log('High Res Image: $highResImg');
-                    }
-                  });
-                } catch (e) {
-                  log('Show HD Image Error: $e');
-                  event.appState.setProfilePicturePreview('');
-                  await prefs.setString('highResImage', '');
+                  try {
+                    await GlobalAPI.fetchShowImage(
+                      event.appState.getUserAccountList[0].employeeID,
+                    ).then((String highResImg) async {
+                      if (highResImg == 'not available' ||
+                          highResImg == 'failed' ||
+                          highResImg == 'error') {
+                        event.appState.setProfilePicturePreview('');
+                        await prefs.setString('highResImage', '');
+                        log('High Res Image is not available.');
+                      } else {
+                        event.appState.setProfilePicturePreview(highResImg);
+                        await prefs.setString('highResImage', highResImg);
+                        log('High Res Image successfully loaded.');
+                        log('High Res Image: $highResImg');
+                      }
+                    });
+                  } catch (e) {
+                    log('Show HD Image Error: $e');
+                    event.appState.setProfilePicturePreview('');
+                    await prefs.setString('highResImage', '');
+                  }
                 }
+                break;
+              } catch (e, stackTrace) {
+                log('Error in login process: $e');
+                log('Stack trace: $stackTrace');
+                // Consider emitting an error state here
+                emit(LoginFailed('Failed to complete login process'));
+                return;
               }
-              break;
             // ~:Shop Coordinator:~
             case 2:
               log('Shop Coordinator');
