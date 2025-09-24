@@ -34,9 +34,6 @@ class _CoordinatorReportState extends State<CoordinatorReport> {
         MediaQuery.of(context).size.height * 0.02,
         MediaQuery.of(context).size.width * 0.025,
         0,
-        // (Platform.isIOS)
-        //     ? MediaQuery.of(context).size.height * 0.02
-        //     : MediaQuery.of(context).size.height * 0.05,
       ),
       child: (Platform.isIOS)
           ? CustomScrollView(

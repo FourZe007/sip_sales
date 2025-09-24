@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -64,7 +65,7 @@ class _OldManagerActivityPageState extends State<OldManagerActivityPage> {
         tgl = picked.toString().substring(0, 10);
       });
       handle(tgl);
-      print('Fetch Data');
+      log('Fetch Data');
       await fetchData(context, state, tgl);
       if (isInit == true) {
         toggleFunction();
@@ -81,7 +82,7 @@ class _OldManagerActivityPageState extends State<OldManagerActivityPage> {
     SipSalesState state,
     String date,
   ) async {
-    print('Refresh or Load Data');
+    log('Refresh or Load Data');
     try {
       managerController = StreamController<List<ModelManagerActivities>>();
       List<ModelManagerActivities> activities =
@@ -90,9 +91,9 @@ class _OldManagerActivityPageState extends State<OldManagerActivityPage> {
         state.managerActivitiesList = activities;
       });
       managerController.add(state.managerActivitiesList);
-      print('Manager Controller length: ${managerController.stream.length}');
+      log('Manager Controller length: ${managerController.stream.length}');
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       if (Platform.isIOS) {
         GlobalDialog.showCrossPlatformDialog(
           context,
@@ -124,7 +125,6 @@ class _OldManagerActivityPageState extends State<OldManagerActivityPage> {
     );
     toggleIsDateInit();
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -385,8 +385,8 @@ class _OldManagerActivityPageState extends State<OldManagerActivityPage> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        // print('Date: $date');
-                                        // print('ActId: ${data.activityId}');
+                                        // log('Date: $date');
+                                        // log('ActId: ${data.activityId}');
 
                                         Navigator.push(
                                           context,

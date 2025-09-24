@@ -66,11 +66,11 @@ class _EventDescPageState extends State<EventDescPage> {
   }
 
   void createEvent(SipSalesState state) async {
-    print('Create Event Function');
+    log('Create Event Function');
     setIsLoading(true);
     await state.eventCheckIn().then((value) async {
       setIsLoading(false);
-      print('Check In Result: $value');
+      log('Check In Result: $value');
       if (value == 'success') {
         Navigator.pushReplacement(
           context,
@@ -98,7 +98,6 @@ class _EventDescPageState extends State<EventDescPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     Provider.of<SipSalesState>(context, listen: false)

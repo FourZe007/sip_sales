@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
@@ -29,7 +31,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
   @override
   void initState() {
     value = widget.inputan;
-    print('list length: ${widget.listData.length}');
+    log('list length: ${widget.listData.length}');
     super.initState();
   }
 

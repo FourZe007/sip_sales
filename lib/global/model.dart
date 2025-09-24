@@ -565,6 +565,7 @@ class CoordinatorDashboardModel {
   final List<LeasingModel> leasingList;
   final List<DailyModel> dailyList;
   final List<ProspekTypeModel> prospekTypeList;
+  final List<SalesFUOverviewModel> salesFUOverviewList;
 
   CoordinatorDashboardModel({
     required this.prospek,
@@ -583,6 +584,7 @@ class CoordinatorDashboardModel {
     required this.leasingList,
     required this.dailyList,
     required this.prospekTypeList,
+    required this.salesFUOverviewList,
   });
 
   factory CoordinatorDashboardModel.fromJson(Map<String, dynamic> json) {
@@ -615,6 +617,10 @@ class CoordinatorDashboardModel {
           .toList(),
       prospekTypeList: (json['prospekType'] as List)
           .map<ProspekTypeModel>((data) => ProspekTypeModel.fromJson(data))
+          .toList(),
+      salesFUOverviewList: (json['salesmanProspek'] as List)
+          .map<SalesFUOverviewModel>(
+              (data) => SalesFUOverviewModel.fromJson(data))
           .toList(),
     );
   }
@@ -851,6 +857,41 @@ class ProspekTypeModel {
       prospekType: json['prospectType'],
       prospekT: json['prospekT'],
       stut: json['stut'],
+    );
+  }
+}
+
+class SalesFUOverviewModel {
+  final String employeeId;
+  final String employeeName;
+  final int totalProspect;
+  final int newProspect;
+  final int prosesFU;
+  final int closing;
+  final int batal;
+  final int belumFU;
+
+  SalesFUOverviewModel({
+    required this.employeeId,
+    required this.employeeName,
+    required this.totalProspect,
+    required this.newProspect,
+    required this.prosesFU,
+    required this.closing,
+    required this.batal,
+    required this.belumFU,
+  });
+
+  factory SalesFUOverviewModel.fromJson(Map<String, dynamic> json) {
+    return SalesFUOverviewModel(
+      employeeId: json['employeeID'],
+      employeeName: json['eName'],
+      totalProspect: json['totalProspect'],
+      newProspect: json['newProspect'],
+      prosesFU: json['prosesFU'],
+      closing: json['closing'],
+      batal: json['batal'],
+      belumFU: json['belumFU'],
     );
   }
 }

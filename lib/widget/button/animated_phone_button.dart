@@ -1,5 +1,7 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:sip_sales/global/global.dart';
 
@@ -35,10 +37,9 @@ class AnimatedPhoneButtonState extends State<AnimatedPhoneButton> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    print('Animated Phone Button');
+    log('Animated Phone Button');
   }
 
   @override

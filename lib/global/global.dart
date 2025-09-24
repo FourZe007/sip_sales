@@ -17,8 +17,11 @@ class GlobalFUIcon {
 }
 
 class GlobalFunction {
-  static tampilkanDialog(
-      BuildContext context, bool isDismissible, Widget widget) {
+  static void tampilkanDialog(
+    BuildContext context,
+    bool isDismissible,
+    Widget widget,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: isDismissible,
@@ -35,7 +38,7 @@ class GlobalFunction {
     );
   }
 
-  static displayProminentDisclosure(
+  static void displayProminentDisclosure(
     BuildContext context,
     Widget widget, {
     bool isDismissible = false,

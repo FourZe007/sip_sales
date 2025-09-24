@@ -73,7 +73,9 @@ class _RegisterPageState extends State<RegisterPage> {
         }
 
         Future.delayed(const Duration(seconds: 1)).then((value) {
-          Navigator.pop(context);
+          if (mounted) {
+            Navigator.pop(context);
+          }
         });
       }
     } else {

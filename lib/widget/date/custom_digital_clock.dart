@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:one_clock/one_clock.dart';
 import 'package:sip_sales/global/global.dart';
@@ -34,7 +36,7 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
 
     day = Format.dateFormat(date);
     month = Format.monthFormat(date);
-    print('Month: $month');
+    log('Month: $month');
     year = Format.yearFormat(date);
   }
 

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     String currentPass,
     String newPass,
   ) async {
-    print('Change Password');
+    log('Change Password');
     state.setCurrentPassword(currentPass);
     state.setNewPassword(newPass);
 

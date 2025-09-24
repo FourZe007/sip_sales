@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -102,7 +103,7 @@ class _IdRequestPageState extends State<IdRequestPage> {
           }
         });
       } catch (e) {
-        print('Error: $e');
+        log('Error: $e');
         state.setDisplayDescription(e.toString());
         if (mounted) {
           Navigator.push(

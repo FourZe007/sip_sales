@@ -68,7 +68,7 @@ class SipSalesState with ChangeNotifier {
   Future<void> setIsLoadingProgress() async {
     isLoadingProgress = !isLoadingProgress;
     notifyListeners();
-    print('isLoadingProgress: $isLoadingProgress');
+    log('isLoadingProgress: $isLoadingProgress');
   }
 
   // =================================================================
@@ -87,31 +87,31 @@ class SipSalesState with ChangeNotifier {
         endDate,
       ));
 
-      print('Absent History list length: ${temp.length}');
+      log('Absent History list length: ${temp.length}');
 
       absentHistoryList = temp;
       notifyListeners();
     } catch (e) {
-      print('Fetch Attendance History failed: ${e.toString()}');
+      log('Fetch Attendance History failed: ${e.toString()}');
     }
   }
 
   Future<void> getSalesDashboard() async {
-    print('Get Sales Dashboard');
+    log('Get Sales Dashboard');
     try {
-      print('Employee ID: ${getUserAccountList[0].employeeID}');
-      print('Branch: ${getUserAccountList[0].branch}');
-      print('Shop: ${getUserAccountList[0].shop}');
+      log('Employee ID: ${getUserAccountList[0].employeeID}');
+      log('Branch: ${getUserAccountList[0].branch}');
+      log('Shop: ${getUserAccountList[0].shop}');
       await GlobalAPI.fetchSalesDashboard(
         getUserAccountList[0].employeeID,
         getUserAccountList[0].branch,
         getUserAccountList[0].shop,
       ).then((res) {
-        print('Absent history: ${res.length}');
+        log('Absent history: ${res.length}');
         setSalesDashboardList(res);
       });
     } catch (e) {
-      print('Error: ${e.toString()}');
+      log('Error: ${e.toString()}');
     }
   }
 
@@ -165,7 +165,7 @@ class SipSalesState with ChangeNotifier {
           await storage.write(key: 'deviceConfig', value: deviceConfiguration);
 
           // Log the action for debugging
-          print("Device Configuration: $deviceConfiguration");
+          log("Device Configuration: $deviceConfiguration");
         } else if (Platform.isIOS) {
           // For iOS devices
           final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -176,7 +176,7 @@ class SipSalesState with ChangeNotifier {
           await storage.write(key: 'deviceConfig', value: deviceConfiguration);
 
           // Log the action for debugging
-          print("Device Configuration: $deviceConfiguration");
+          log("Device Configuration: $deviceConfiguration");
         } else {
           // add handler for non-Android and non-iOS devices (upcoming v1.1.11)
         }
@@ -186,10 +186,10 @@ class SipSalesState with ChangeNotifier {
       } else {
         // Use the existing ID
         deviceConfiguration = deviceConfig;
-        print("Device Configuration: $deviceConfiguration");
+        log("Device Configuration: $deviceConfiguration");
       }
     } catch (e) {
-      print('Error retrieving device info: $e');
+      log('Error retrieving device info: $e');
       deviceConfiguration = 'error';
       notifyListeners();
     }
@@ -211,21 +211,21 @@ class SipSalesState with ChangeNotifier {
         await storage.write(key: 'employeeId', value: id);
 
         // Log the action for debugging
-        print("Employee Id: $employeeId");
+        log("Employee Id: $employeeId");
 
         // Notify listeners as the state changed
         notifyListeners();
       } else {
         // Use the existing ID
         employeeId = existingId;
-        print("Employee Id: $employeeId");
+        log("Employee Id: $employeeId");
       }
     } catch (e) {
       // Handle decryption or secure storage errors
-      print("Error reading or writing secure storage: $e");
+      log("Error reading or writing secure storage: $e");
       employeeId = id;
       await storage.write(key: 'employeeId', value: id);
-      print("Input and saved new ID due to error: $employeeId");
+      log("Input and saved new ID due to error: $employeeId");
 
       // Notify listeners as the state changed
       notifyListeners();
@@ -256,22 +256,22 @@ class SipSalesState with ChangeNotifier {
         await storage.write(key: 'pass', value: pass);
 
         // Log the action for debugging
-        print("Input and saved Password: $password");
+        log("Input and saved Password: $password");
 
         // Notify listeners as the state changed
         notifyListeners();
       } else {
         // Use the existing Password
         password = existingPass;
-        print("Input and saved Password: $password");
+        log("Input and saved Password: $password");
       }
     } catch (e) {
       // Handle decryption or secure storage errors
-      print("Error reading or writing secure storage: $e");
+      log("Error reading or writing secure storage: $e");
 
       password = pass;
       await storage.write(key: 'pass', value: pass);
-      print("Input and saved new Password due to error: $password");
+      log("Input and saved new Password due to error: $password");
 
       // Notify listeners as the state changed
       notifyListeners();
@@ -318,21 +318,21 @@ class SipSalesState with ChangeNotifier {
         await storage.write(key: 'uuid', value: uuid);
 
         // Log the action for debugging
-        print("Generated and saved new UUID: $uuid");
+        log("Generated and saved new UUID: $uuid");
 
         // Notify listeners as the state changed
         notifyListeners();
       } else {
         // Use the existing UUID
         uuid = existingUuid;
-        print("Using existing UUID: $uuid");
+        log("Using existing UUID: $uuid");
       }
     } catch (e) {
       // Handle decryption or secure storage errors
-      print("Error reading or writing secure storage: $e");
+      log("Error reading or writing secure storage: $e");
       uuid = Uuid().v4();
       await storage.write(key: 'uuid', value: uuid);
-      print("Generated and saved new UUID due to error: $uuid");
+      log("Generated and saved new UUID due to error: $uuid");
 
       // Notify listeners as the state changed
       notifyListeners();
@@ -362,7 +362,7 @@ class SipSalesState with ChangeNotifier {
       ));
 
       if (unbindRequestList.isNotEmpty) {
-        print('Unbind Request: ${unbindRequestList[0].resultMessage}');
+        log('Unbind Request: ${unbindRequestList[0].resultMessage}');
         if (unbindRequestList[0].resultMessage.split(':')[0] == 'https') {
           // if (unbindRequestList[0].resultMessage == 'SUKSES') {
           displayDescription =
@@ -393,7 +393,7 @@ class SipSalesState with ChangeNotifier {
       );
 
       if (employeeIdRequestList.isNotEmpty) {
-        print('Unbind Request: ${employeeIdRequestList[0].resultMessage}');
+        log('Unbind Request: ${employeeIdRequestList[0].resultMessage}');
         if (employeeIdRequestList[0].resultMessage == 'https: ') {
           displayDescription =
               'Permintaan NIP berhasil dikirim. Mohon cek Whatsapp secara berkala.';
@@ -421,7 +421,7 @@ class SipSalesState with ChangeNotifier {
       passwordResetList.addAll(await GlobalAPI.fetchResetPassword(id));
 
       if (passwordResetList.isNotEmpty) {
-        print('Unbind Request: ${passwordResetList[0].resultMessage}');
+        log('Unbind Request: ${passwordResetList[0].resultMessage}');
         if (passwordResetList[0].resultMessage == 'https: ') {
           displayDescription =
               'Permintaan reset berhasil dikirim. Mohon cek Whatsapp secara berkala untuk mendapatkan link reset.';
@@ -463,9 +463,9 @@ class SipSalesState with ChangeNotifier {
       // Check if image was picked
       if (pickedPpList.isEmpty) {
         // do something
-        print('Picked image is empty');
+        log('Picked image is empty');
       } else {
-        print('Read picked image as bytes');
+        log('Read picked image as bytes');
         // Read image bytes
         if (pickedPpList.isNotEmpty) {
           ppBytesList.add(await pickedPpList[0]!.readAsBytes());
@@ -474,28 +474,28 @@ class SipSalesState with ChangeNotifier {
         }
 
         if (ppBytesList.isNotEmpty) {
-          print('Profile picture is not empty');
+          log('Profile picture is not empty');
           ppList.addAll(
               ppBytesList.map((imageByte) => images.decodeImage(imageByte)!));
 
           // Encode image to base64
-          print('Encode image to base64');
+          log('Encode image to base64');
           base64PpList.addAll(
               ppList.map((image) => base64Encode(images.encodePng(image))));
-          print('Base 64 Image: ${base64PpList.length}');
+          log('Base 64 Image: ${base64PpList.length}');
         }
       }
 
       notifyListeners();
 
       if (base64PpList.isNotEmpty) {
-        print('Image available');
+        log('Image available');
         return true;
       }
-      print('Image not available');
+      log('Image not available');
       return false;
     } catch (e) {
-      print('Error taking profile picture: $e');
+      log('Error taking profile picture: $e');
       return false;
     }
   }
@@ -511,7 +511,7 @@ class SipSalesState with ChangeNotifier {
     ));
 
     if (uploadProfileState.isNotEmpty) {
-      print('result message: ${uploadProfileState[0].resultMessage}');
+      log('result message: ${uploadProfileState[0].resultMessage}');
       if (uploadProfileState[0].resultMessage == 'SUKSES') {
         await GlobalAPI.fetchUserAccount(
           await readAndWriteUserId(),
@@ -525,22 +525,22 @@ class SipSalesState with ChangeNotifier {
               (String highResImg) async {
                 if (highResImg == 'not available') {
                   setProfilePicture(highResImg);
-                  print('High Res Image is not available.');
+                  log('High Res Image is not available.');
                 } else if (highResImg == 'failed') {
                   setProfilePicture(highResImg);
-                  print('High Res Image failed to load.');
+                  log('High Res Image failed to load.');
                 } else if (highResImg == 'error') {
                   setProfilePicture(highResImg);
-                  print('An error occured, please try again.');
+                  log('An error occured, please try again.');
                 } else {
                   setProfilePicture(highResImg);
-                  print('High Res Image successfully loaded.');
-                  print('High Res Image: $highResImg');
+                  log('High Res Image successfully loaded.');
+                  log('High Res Image: $highResImg');
                 }
               },
             );
           } catch (e) {
-            print('Show HD Image Error: $e');
+            log('Show HD Image Error: $e');
           }
         });
 
@@ -553,7 +553,7 @@ class SipSalesState with ChangeNotifier {
         return 'failed';
       }
     } else {
-      print('Profile image is empty');
+      log('Profile image is empty');
       displayDescription =
           'Terjadi kesalahan saat mengunggah, silakan coba lagi.';
 
@@ -655,7 +655,7 @@ class SipSalesState with ChangeNotifier {
         };
       }
     } catch (e) {
-      print('Error: ${e.toString()}');
+      log('Error: ${e.toString()}');
       displayDescription = e.toString();
 
       return {
@@ -847,13 +847,13 @@ class SipSalesState with ChangeNotifier {
   }
 
   Future<String> eventCheckIn() async {
-    print('Event Check In');
+    log('Event Check In');
     try {
       Position coordinate = await Geolocator.getCurrentPosition();
 
       if (getEventPhoto.isEmpty || getEventTextController.text.isEmpty) {
         displayDescription = 'Mohon periksa input anda lagi.';
-        print(displayDescription);
+        log(displayDescription);
         return 'warn';
       } else {
         List<ModelResultMessage> res = [];
@@ -872,7 +872,7 @@ class SipSalesState with ChangeNotifier {
 
         // ~:Check In List is not empty:~
         if (res.isNotEmpty) {
-          print('Check In Event: ${res[0].resultMessage}');
+          log('Check In Event: ${res[0].resultMessage}');
           // ~:Check Out Success:~
           if (res[0].resultMessage == 'SUKSES') {
             absentHistoryList.clear();
@@ -886,27 +886,27 @@ class SipSalesState with ChangeNotifier {
             notifyListeners();
 
             displayDescription = 'Clock In Event berhasil.';
-            print('Success: $displayDescription');
+            log('Success: $displayDescription');
             return 'success';
           }
           // ~:Check In Failed:~
           else {
             displayDescription = res[0].resultMessage;
-            print('Warning: $displayDescription');
+            log('Warning: $displayDescription');
             return 'warn';
           }
         }
         // ~:Check In List is empty:~
         else {
-          print('Event Check In is empty');
+          log('Event Check In is empty');
           displayDescription = 'Clock In gagal.';
-          print('Failed: $displayDescription');
+          log('Failed: $displayDescription');
           return 'failed';
         }
       }
     } catch (e) {
       displayDescription = '${e.toString()}.';
-      print('Failed: $displayDescription');
+      log('Failed: $displayDescription');
       return 'failed';
     }
   }
@@ -941,7 +941,7 @@ class SipSalesState with ChangeNotifier {
   //
   //   checkInStatus = state;
   //   notifyListeners();
-  //   print('CheckInStatus: $checkInStatus');
+  //   log('CheckInStatus: $checkInStatus');
   // }
   //
   // bool checkOutStatus = false;
@@ -1041,17 +1041,17 @@ class SipSalesState with ChangeNotifier {
   }
 
   void openMap(BuildContext context) async {
-    print('Open Map function');
+    log('Open Map function');
     try {
       await Geolocator.getCurrentPosition().then((coordinate) {
-        print('get user coordinate');
-        print('Latitude: ${coordinate.latitude}');
-        print('Longitude: ${coordinate.longitude}');
+        log('get user coordinate');
+        log('Latitude: ${coordinate.latitude}');
+        log('Longitude: ${coordinate.longitude}');
         setLngDisplay(coordinate.longitude);
         setLatDisplay(coordinate.latitude);
       });
     } catch (e) {
-      print('Error: $e');
+      log('Error: $e');
     }
   }
 
@@ -1142,19 +1142,19 @@ class SipSalesState with ChangeNotifier {
 
   Future<bool> checkMockGPS() async {
     if (Platform.isAndroid) {
-      print('Android device');
+      log('Android device');
       Position position = await Geolocator.getCurrentPosition();
 
       if (position.isMocked) {
-        print("Fake GPS detected!");
+        log("Fake GPS detected!");
         return true;
         // Show an alert or restrict functionality
       } else {
-        print("Real GPS location.");
+        log("Real GPS location.");
         return false;
       }
     } else {
-      print('iOS device');
+      log('iOS device');
       return false;
     }
   }
@@ -1168,13 +1168,13 @@ class SipSalesState with ChangeNotifier {
     //   isDeveloperMode = await JailbreakRootDetection.instance.isDevMode;
     // }
 
-    print('isJailbroken: $isJailBroken, isDeveloperMode: $isDeveloperMode');
+    log('isJailbroken: $isJailBroken, isDeveloperMode: $isDeveloperMode');
     if (isJailBroken || isDeveloperMode) {
-      print("Device integrity compromised: Jailbroken.");
+      log("Device integrity compromised: Jailbroken.");
       // Handle compromised device (e.g., restrict functionality or show alert)
       return true;
     } else {
-      print("Device integrity is intact.");
+      log("Device integrity is intact.");
       return false;
     }
     // return false;
@@ -1183,20 +1183,20 @@ class SipSalesState with ChangeNotifier {
   Future<bool> checkDeviceModification() async {
     bool isMocked = await checkMockGPS();
     bool isCompromised = await checkDeviceIntegrity();
-    print('isMocked: $isMocked, isCompromised: $isCompromised');
+    log('isMocked: $isMocked, isCompromised: $isCompromised');
 
     if (isMocked && isCompromised) {
       displayDescription =
           'Perangkat anda terdeteksi menggunakan Fake GPS & Jailbreak.';
-      print('Perangkat anda terdeteksi menggunakan Fake GPS & Jailbreak.');
+      log('Perangkat anda terdeteksi menggunakan Fake GPS & Jailbreak.');
       return true;
     } else if (isMocked) {
       displayDescription = 'Perangkat anda terdeteksi menggunakan Fake GPS.';
-      print('Perangkat anda terdeteksi menggunakan Fake GPS.');
+      log('Perangkat anda terdeteksi menggunakan Fake GPS.');
       return true;
     } else if (isCompromised) {
       displayDescription = 'Perangkat anda terdeteksi Jailbreak.';
-      print('Perangkat anda terdeteksi Jailbroken.');
+      log('Perangkat anda terdeteksi Jailbroken.');
       return true;
     } else {
       return false;
@@ -1209,10 +1209,10 @@ class SipSalesState with ChangeNotifier {
   ) async {
     // ~:Profile Picture is uploaded:~
     if (profilePicturePreview.isNotEmpty) {
-      debugPrint('Profile Picture is uploaded');
+      log('Profile Picture is uploaded');
       // ~:Location Service activated:~
       if (await Geolocator.isLocationServiceEnabled()) {
-        debugPrint('Location Service is activated');
+        log('Location Service is activated');
         // ~:Mock Location & Device Integrity Detection:~
         bool isDeviceModified = await checkDeviceModification();
 
@@ -1222,16 +1222,16 @@ class SipSalesState with ChangeNotifier {
             'FAKE GPS',
           ).then((value) {
             if (value[0].resultMessage == 'SUKSES') {
-              print('Insert Violation succeed');
+              log('Insert Violation succeed');
             } else {
-              print('Insert Violation failed');
+              log('Insert Violation failed');
             }
           });
 
-          print('Device Modification detected');
+          log('Device Modification detected');
           return 'warn';
         } else {
-          print('Device Modification passed');
+          log('Device Modification passed');
           // ~:Check if User within branch radius or not:~
           try {
             await Geolocator.getCurrentPosition().then((coordinate) async {
@@ -1249,22 +1249,22 @@ class SipSalesState with ChangeNotifier {
                 else {
                   isWithinRadius = true;
                 }
-                // print('IsWithinRadius: $isWithinRadius');
+                // log('IsWithinRadius: $isWithinRadius');
               });
             });
           } catch (e) {
-            print('Error: $e');
+            log('Error: $e');
           }
 
           // ~:User is not within branch radius:~
           if (!isWithinRadius) {
-            debugPrint('User is not within branch radius');
+            log('User is not within branch radius');
             displayDescription = 'Lokasi Tidak Valid';
             return 'warn';
           }
           // ~:User is within branch radius:~
           else {
-            debugPrint('User is within branch radius');
+            log('User is within branch radius');
             // ~:Check In Process via API:~
             checkInList.clear();
             await Geolocator.getCurrentPosition().then((coordinate) async {
@@ -1287,7 +1287,7 @@ class SipSalesState with ChangeNotifier {
 
             // ~:Check In List is not empty:~
             if (checkInList.isNotEmpty) {
-              debugPrint('Check In List is not empty');
+              log('Check In List is not empty');
               // ~:Check In Success:~
               if (checkInList[0].resultMessage == 'SUKSES') {
                 absentHistoryList.clear();
@@ -1300,20 +1300,20 @@ class SipSalesState with ChangeNotifier {
                 );
                 notifyListeners();
 
-                debugPrint('Check In Success');
+                log('Check In Success');
                 displayDescription = 'Clock In berhasil';
                 return 'success';
               }
               // ~:Check In Failed:~
               else {
-                debugPrint('Check In Failed');
+                log('Check In Failed');
                 displayDescription = checkInList[0].resultMessage;
                 return 'warn';
               }
             }
             // ~:Check In List is empty:~
             else {
-              debugPrint('Check In List is empty');
+              log('Check In List is empty');
               displayDescription = 'Clock In gagal';
               return 'failed';
             }
@@ -1326,11 +1326,11 @@ class SipSalesState with ChangeNotifier {
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever ||
             permission == LocationPermission.unableToDetermine) {
-          debugPrint('Location Permission is denied or unable to determine');
+          log('Location Permission is denied or unable to determine');
           displayDescription = 'Mohon ubah layanan izin lokasi.';
           return 'warn';
         } else {
-          debugPrint('Location Service is deactivated');
+          log('Location Service is deactivated');
           displayDescription = 'Mohon aktifkan layanan lokasi.';
           return 'warn';
         }
@@ -1338,7 +1338,7 @@ class SipSalesState with ChangeNotifier {
     }
     // ~:Profile Picture is not uploaded yet:~
     else {
-      debugPrint('Profile Picture is not uploaded yet');
+      log('Profile Picture is not uploaded yet');
       displayDescription = 'Mohon upload foto profil terlebih dahulu.';
       return 'warn';
     }
@@ -1368,7 +1368,7 @@ class SipSalesState with ChangeNotifier {
             else {
               isWithinRadius = true;
             }
-            // print('IsWithinRadius: $isWithinRadius');
+            // log('IsWithinRadius: $isWithinRadius');
           });
         });
 
@@ -1401,7 +1401,7 @@ class SipSalesState with ChangeNotifier {
 
           // ~:Check Out List is not empty:~
           if (checkOutList.isNotEmpty) {
-            print('Check Out: ${checkOutList[0].resultMessage}');
+            log('Check Out: ${checkOutList[0].resultMessage}');
             // ~:Check Out Success:~
             if (checkOutList[0].resultMessage == 'SUKSES') {
               displayDescription = 'Clock Out berhasil.';
@@ -1415,7 +1415,7 @@ class SipSalesState with ChangeNotifier {
           }
           // ~:Check Out List is empty:~
           else {
-            print('Check Out is empty');
+            log('Check Out is empty');
             displayDescription = 'Clock Out gagal.';
             return 'failed';
           }
@@ -1525,11 +1525,11 @@ class SipSalesState with ChangeNotifier {
   Future<List<ModelActivities>> fetchManagerActivityData() async {
     setManagerActivityTypeList(await GlobalAPI.fetchManagerActivityTypes());
 
-    print(
+    log(
       'Manager Activity Type List length: ${managerActivityTypeList.length}',
     );
     // for (var data in managerActivityTypeList) {
-    //   print(data.activityName);
+    //   log(data.activityName);
     // }
 
     for (var data in managerActivityTypeList) {
@@ -1625,9 +1625,9 @@ class SipSalesState with ChangeNotifier {
     //   File imageFile = File('');
     //   if (image != null) {
     //     imageFile = File(image.path);
-    //     print('Image Size: ${getFileSizeString((imageFile.lengthSync()))}');
+    //     log('Image Size: ${getFileSizeString((imageFile.lengthSync()))}');
     //   } else {
-    //     print('No image selected.');
+    //     log('No image selected.');
     //   }
     //   return image;
     // }));
@@ -1864,16 +1864,16 @@ class SipSalesState with ChangeNotifier {
       try {
         await Geolocator.getCurrentPosition().then(
           (coordinate) async {
-            // print('Employee Id: $eId');
-            // print('Date: ${DateTime.now().toString().split(' ')[0]}');
-            // print('Time: ${DateFormat('HH:mm').format(DateTime.now())}');
-            // print('branch: $branchId');
-            // print('shop: $shopId');
-            // print('Current lat: ${coordinate.latitude}');
-            // print('Current lng: ${coordinate.longitude}');
-            // print('Activity Id: $aId');
-            // print('Desc: $desc');
-            // print('${filteredList.length}');
+            // log('Employee Id: $eId');
+            // log('Date: ${DateTime.now().toString().split(' ')[0]}');
+            // log('Time: ${DateFormat('HH:mm').format(DateTime.now())}');
+            // log('branch: $branchId');
+            // log('shop: $shopId');
+            // log('Current lat: ${coordinate.latitude}');
+            // log('Current lng: ${coordinate.longitude}');
+            // log('Activity Id: $aId');
+            // log('Desc: $desc');
+            // log('${filteredList.length}');
             newActivitiesList.clear();
             try {
               newActivitiesList.addAll(await GlobalAPI.fetchNewManagerActivity(

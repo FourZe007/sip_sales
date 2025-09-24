@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/widget/format.dart';
@@ -29,7 +31,7 @@ class _CustomAnalogClockState extends State<CustomAnalogClock> {
 
     day = Format.dateFormat(date);
     month = Format.monthFormat(date);
-    print('Month: $month');
+    log('Month: $month');
     year = Format.yearFormat(date);
   }
 
