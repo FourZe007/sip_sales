@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales/global/api.dart';
@@ -56,7 +55,7 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   void toggleLogOutPage() {
-    print('Toggle LogOut Page pressed!!');
+    log('Toggle LogOut Page pressed!!');
     setState(() {
       isLoggedOut = !isLoggedOut;
       if (isLoggedOut == true) {
@@ -101,7 +100,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   void takePhoto(BuildContext context, SipSalesState state) async {
     if (!(await state.readAndWriteIsUserManager())) {
-      print('Take Photo pressed!');
+      log('Take Photo pressed!');
       await state
           .takeProfilePictureFromCamera(context)
           .then((bool isAvailable) {
@@ -138,13 +137,13 @@ class ProfilePageState extends State<ProfilePage> {
     SipSalesState state,
   ) {
     try {
-      print('High Res Image: ${state.getProfilePicturePreview}');
+      log('High Res Image: ${state.getProfilePicturePreview}');
       GlobalDialog.previewProfileImage(
         context,
         state.getProfilePicturePreview,
       );
     } catch (e) {
-      print('Error: $e');
+      log('Error: $e');
     }
   }
 
@@ -190,7 +189,7 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getUserLatestData(SipSalesState state) async {
-    print('Refresh User Data');
+    log('Refresh User Data');
     final prefs = await SharedPreferences.getInstance();
 
     // setIsLoading();
@@ -215,17 +214,17 @@ class ProfilePageState extends State<ProfilePage> {
               highResImg == 'error') {
             state.setProfilePicturePreview('');
             await prefs.setString('highResImage', '');
-            print('High Res Image is not available.');
+            log('High Res Image is not available.');
           } else {
             state.setProfilePicturePreview(highResImg);
             await prefs.setString('highResImage', highResImg);
-            print('High Res Image successfully loaded.');
-            print('High Res Image: $highResImg');
+            log('High Res Image successfully loaded.');
+            log('High Res Image: $highResImg');
           }
         });
       }
     } catch (e) {
-      print('Fetch User Latest Data failed: ${e.toString()}');
+      log('Fetch User Latest Data failed: ${e.toString()}');
       state.setProfilePicturePreview('');
       await prefs.setString('highResImage', '');
 
@@ -614,7 +613,7 @@ class ProfilePageState extends State<ProfilePage> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.1.13 beta',
+                'Version 1.1.13',
                 style: GlobalFont.bigfontR,
               ),
             ),

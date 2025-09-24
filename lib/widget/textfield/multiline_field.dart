@@ -9,11 +9,11 @@ class MultilineTextField extends StatefulWidget {
   final Function(String) onChanged;
 
   const MultilineTextField({
-    Key? key,
+    super.key,
     required this.initialText,
     required this.hintText,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   MultilineTextFieldState createState() => MultilineTextFieldState();

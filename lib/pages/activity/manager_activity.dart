@@ -66,7 +66,7 @@ class _ManagerActivityPageState extends State<ManagerActivityPage> {
         tgl = picked.toString().substring(0, 10);
       });
       handle(tgl);
-      print('Fetch Data');
+      log('Fetch Data');
 
       await refreshPage(context, state, tgl);
 

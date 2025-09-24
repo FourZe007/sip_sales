@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +37,7 @@ class LoadingAnimationPage extends StatefulWidget {
 
 class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
   Future<void> processing(BuildContext context) async {
-    print('Loading Animation Process');
+    log('Loading Animation Process');
     final state = Provider.of<SipSalesState>(context, listen: false);
     // ~:Event Photo:~
     if (widget.isEventPhotoUploaded) {
@@ -62,7 +64,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
 
     // ~:Profile Picture:~
     if (widget.isProfileUploaded) {
-      print('Upload Profile Picture Process');
+      log('Upload Profile Picture Process');
       await state.uploadProfilePicture(context).then((status) {
         if (status == 'success') {
           Navigator.pushReplacement(
@@ -88,12 +90,12 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
         }
       });
     } else {
-      print('Skip Profile Picture Upload Process');
+      log('Skip Profile Picture Upload Process');
     }
 
     // ~:User Absent - Clock In:~
     if (widget.isClockIn) {
-      print('Clock In Process');
+      log('Clock In Process');
       await state.checkIn(context).then((status) {
         if (status == 'success') {
           Navigator.pushReplacement(
@@ -119,12 +121,12 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
         }
       });
     } else {
-      print('Skip Clock In Process');
+      log('Skip Clock In Process');
     }
 
     // ~:User Absent - Clock Out:~
     if (widget.isClockOut) {
-      print('Clock Out Process');
+      log('Clock Out Process');
       await state.checkOut(context).then((status) {
         if (status == 'success') {
           Navigator.pushReplacement(
@@ -150,14 +152,14 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
         }
       });
     } else {
-      print('Skip Clock Out Process');
+      log('Skip Clock Out Process');
     }
 
     // ~:Event Clock In:~
     if (widget.isEventClockIn) {
       await Future.delayed(Duration(seconds: 3)).then((_) {
         if (widget.stateMessage == 'success') {
-          print('Event clock in succeed');
+          log('Event clock in succeed');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -165,7 +167,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
             ),
           );
         } else if (widget.stateMessage == 'failed') {
-          print('Event clock in failed');
+          log('Event clock in failed');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -173,7 +175,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
             ),
           );
         } else {
-          print('Something wrong with event clock in');
+          log('Something wrong with event clock in');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -183,15 +185,15 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
         }
       });
     } else {
-      print('Skip Event Clock In Process');
+      log('Skip Event Clock In Process');
     }
 
     // ~:Change Password:~
     if (widget.isChangePassword) {
-      print('Change Password');
+      log('Change Password');
       await Future.delayed(Duration(seconds: 3)).then((_) {
         if (widget.stateMessage == 'success') {
-          print('Change succeed');
+          log('Change succeed');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -199,7 +201,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
             ),
           );
         } else if (widget.stateMessage == 'failed') {
-          print('Change failed');
+          log('Change failed');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -207,7 +209,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
             ),
           );
         } else {
-          print('Something wrong with Change');
+          log('Something wrong with Change');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -217,7 +219,7 @@ class _LoadingAnimationPageState extends State<LoadingAnimationPage> {
         }
       });
     } else {
-      print('Skip Change Password Process');
+      log('Skip Change Password Process');
     }
   }
 

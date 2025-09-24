@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -69,7 +70,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     String startDate = '',
     String endDate = '',
   }) async {
-    print('Refresh');
+    log('Refresh');
     historyList.clear();
     historyList.addAll(await GlobalAPI.fetchAttendanceHistory(
       await state.readAndWriteUserId(),

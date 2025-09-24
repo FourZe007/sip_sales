@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -154,6 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       maintainBottomViewPadding: true,
       child: DefaultTabController(
         length: 2,
+        initialIndex: context.read<DashboardTypeCubit>().state.index,
         animationDuration: Duration(milliseconds: 500),
         child: SlidingUpPanel(
           controller: slidingPanelController,

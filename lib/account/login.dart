@@ -422,7 +422,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     loginState();
 
     super.initState();
@@ -430,7 +429,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
 
     nip = '';
@@ -667,7 +665,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       // ~:App Version:~
                       Text(
-                        'v1.1.13 beta',
+                        'v1.1.13',
                         style: GlobalFont.mediumbigfontR,
                       ),
 

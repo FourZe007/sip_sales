@@ -4,38 +4,39 @@ import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/model.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class SalesmanProspekDataSource extends DataGridSource {
+class SalesFUOverviewDataSource extends DataGridSource {
   final BuildContext context;
-  final List<SalesmanProspekModel> _salesmanProspekData;
+  final List<SalesFUOverviewModel> _salesFUOverviewData;
 
-  SalesmanProspekDataSource({
+  SalesFUOverviewDataSource({
     required this.context,
-    required List<SalesmanProspekModel> salesmanProspekData,
-  }) : _salesmanProspekData = salesmanProspekData {
+    required List<SalesFUOverviewModel> salesFUOverviewData,
+  }) : _salesFUOverviewData = salesFUOverviewData {
     buildDataGridRows();
     notifyListeners();
   }
-  late List<DataGridRow> _salesmanProspekDataGrid;
+  late List<DataGridRow> _salesFUOverviewDataGrid;
 
   void buildDataGridRows() {
-    _salesmanProspekDataGrid = _salesmanProspekData
+    _salesFUOverviewDataGrid = _salesFUOverviewData
         .map<DataGridRow>(
           (e) => DataGridRow(cells: [
             DataGridCell<String>(columnName: 'salesman', value: e.employeeName),
             DataGridCell<String>(
-                columnName: 'targetProspek', value: e.targetP.toString()),
+                columnName: 'prosesFU', value: e.prosesFU.toString()),
             DataGridCell<String>(
-                columnName: 'prospek', value: e.prospek.toString()),
+                columnName: 'closing', value: e.closing.toString()),
             DataGridCell<String>(
-                columnName: 'targetSPK', value: e.targetS.toString()),
-            DataGridCell<String>(columnName: 'spk', value: e.spk.toString()),
+                columnName: 'cancel', value: e.batal.toString()),
+            DataGridCell<String>(
+                columnName: 'blmFU', value: e.belumFU.toString()),
           ]),
         )
         .toList();
   }
 
   @override
-  List<DataGridRow> get rows => _salesmanProspekDataGrid;
+  List<DataGridRow> get rows => _salesFUOverviewDataGrid;
 
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
@@ -56,16 +57,19 @@ class SalesmanProspekDataSource extends DataGridSource {
               )
             // ? GestureDetector(
             //     onTap: () async {
-            //       final rowIndex = _salesmanProspekDataGrid.indexOf(row);
+            //       final rowIndex = _salesFUOverviewDataGrid.indexOf(row);
             //       if (rowIndex != -1 &&
-            //           rowIndex < _salesmanProspekData.length) {
-            //         final rowData = _salesmanProspekData[rowIndex];
+            //           rowIndex < _salesFUOverviewData.length) {
+            //         final rowData = _salesFUOverviewData[rowIndex];
             //         context
             //             .read<DashboardTypeCubit>()
-            //             .changeType(DashboardType.salesman);
-            //         context.read<SalesDashboardBloc>().add(LoadSalesDashboard(
+            //             .changeType(DashboardType.followup);
+            //         context
+            //             .read<FollowupDashboardBloc>()
+            //             .add(LoadFollowupDashboard(
             //               rowData.employeeId,
             //               date,
+            //               false,
             //             ));
             //
             //         if (context.mounted) {
@@ -82,8 +86,10 @@ class SalesmanProspekDataSource extends DataGridSource {
             //     child: Text(
             //       Formatter.toTitleCase(dataGridCell.value.toString()),
             //       textAlign: TextAlign.center,
-            //       style:
-            //           GlobalFont.bigfontRUnderlinedBlue.copyWith(fontSize: 13),
+            //       style: GlobalFont.bigfontRUnderlinedBlue.copyWith(
+            //         fontSize: 13,
+            //         decoration: TextDecoration.none,
+            //       ),
             //     ),
             //   )
             : Text(

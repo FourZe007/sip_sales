@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class CustomImage extends StatelessWidget {
   const CustomImage({
-    Key? key,
+    super.key,
     required this.image,
     this.width,
     this.height,
     this.borderRadius = 0.0,
     this.borderColor = Colors.black,
     this.isIcon = false,
-  }) : super(key: key);
+  });
 
   final Image? image;
   final double? width;

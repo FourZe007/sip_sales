@@ -179,7 +179,7 @@ class _MapPageState extends State<MapPage> {
                         state.getUserAccountList[0].longitude,
                       ),
                       radius: radius, // Radius in meters
-                      color: Colors.blue.withOpacity(0.2), // Fill color
+                      color: Colors.blue.withAlpha(51), // Fill color
                       borderColor: Colors.blue, // Border color
                       borderStrokeWidth: 2.0, // Border thickness
                       useRadiusInMeter: true,

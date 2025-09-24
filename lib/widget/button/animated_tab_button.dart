@@ -1,5 +1,7 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales/global/global.dart';
@@ -39,16 +41,13 @@ class AnimatedTabButtonState extends State<AnimatedTabButton> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    print('Animated Tab Button');
+    log('Animated Tab Button');
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<SipSalesState>(context);
-
     if (widget.isIcon == true) {
       return InkWell(
         onTap: () => widget.handle(),

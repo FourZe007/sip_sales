@@ -17,8 +17,6 @@ PODS:
   - jailbreak_root_detection (1.0.1):
     - Flutter
     - IOSSecuritySuite (~> 1.9.10)
-  - location (0.0.1):
-    - Flutter
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -41,7 +39,6 @@ DEPENDENCIES:
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - jailbreak_root_detection (from `.symlinks/plugins/jailbreak_root_detection/ios`)
-  - location (from `.symlinks/plugins/location/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -69,8 +66,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   jailbreak_root_detection:
     :path: ".symlinks/plugins/jailbreak_root_detection/ios"
-  location:
-    :path: ".symlinks/plugins/location/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -92,7 +87,6 @@ SPEC CHECKSUMS:
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
   IOSSecuritySuite: b51056d5411aee567153ca86ce7f6edfdc5d2654
   jailbreak_root_detection: 9201e1dfd51dc23069cbfb8d4f4a2d18305170bf
-  location: 155caecf9da4f280ab5fe4a55f94ceccfab838f8
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d

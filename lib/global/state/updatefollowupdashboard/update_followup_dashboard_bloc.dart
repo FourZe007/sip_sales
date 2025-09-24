@@ -96,6 +96,9 @@ class UpdateFollowupDashboardBloc
           case 'cancel':
             finalFuResult = 'CL';
             break;
+          default:
+            finalFuResult = '';
+            break;
         }
       }
 
