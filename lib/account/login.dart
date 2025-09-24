@@ -549,6 +549,15 @@ class _LoginPageState extends State<LoginPage> {
                                 await appState.readAndWriteUserPass(
                                     pass: password, isLogin: true);
                                 await appState.readAndWriteDeviceConfig();
+
+                                context.read<LoginBloc>().add(
+                                      LoginEvent(
+                                        context: context,
+                                        appState: context.read<SipSalesState>(),
+                                        id: nip,
+                                        pass: password,
+                                      ),
+                                    );
                               } else {
                                 Fluttertoast.showToast(
                                   msg: 'NIP dan Password tidak boleh kosong',
@@ -560,15 +569,6 @@ class _LoginPageState extends State<LoginPage> {
                                   fontSize: 16.0,
                                 );
                               }
-
-                              context.read<LoginBloc>().add(
-                                    LoginEvent(
-                                      context: context,
-                                      appState: context.read<SipSalesState>(),
-                                      id: nip,
-                                      pass: password,
-                                    ),
-                                  );
                             },
                             child: Align(
                               alignment: Alignment.center,

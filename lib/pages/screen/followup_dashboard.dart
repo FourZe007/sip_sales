@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:sip_sales/global/enum.dart';
 import 'package:sip_sales/global/global.dart';
 import 'package:sip_sales/global/state/dashboard_slidingup_cubit.dart';
@@ -12,7 +11,6 @@ import 'package:sip_sales/global/state/followupdashboard/followup_dashboard_stat
 import 'package:sip_sales/global/state/followupdate_cubit.dart';
 import 'package:sip_sales/global/state/login/login_bloc.dart';
 import 'package:sip_sales/global/state/login/login_state.dart';
-import 'package:sip_sales/global/state/provider.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_bloc.dart';
 import 'package:sip_sales/global/state/updatefollowupdashboard/update_followup_dashboard_event.dart';
 import 'package:sip_sales/pages/screen/followup_dashboard_detail.dart';
@@ -26,12 +24,10 @@ class FollowupDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<SipSalesState>(context);
+    // final appState = Provider.of<SipSalesState>(context);
     final updateFollowupDashboardBloc =
         context.read<UpdateFollowupDashboardBloc>();
     final followupCubit = context.read<FollowupCubit>();
-    final salesmanIdArg = (ModalRoute.of(context)?.settings.arguments
-        as Map<String, dynamic>)['salesmanId'];
 
     return BlocBuilder<FollowupDashboardBloc, FollowupDashboardState>(
       builder: (context, state) {
@@ -339,14 +335,17 @@ class FollowupDashboard extends StatelessWidget {
                                   onPressed: () {
                                     final loginState =
                                         context.read<LoginBloc>().state;
-                                    final salesmanId = (loginState
-                                                is LoginSuccess &&
-                                            loginState.user[0].code == 2)
-                                        ? salesmanIdArg
-                                        : appState.getUserAccountList.isNotEmpty
-                                            ? appState
-                                                .userAccountList[0].employeeID
-                                            : '';
+                                    final salesmanId =
+                                        (loginState is LoginSuccess &&
+                                                loginState.user[0].code == 2)
+                                            ? (ModalRoute.of(context)
+                                                    ?.settings
+                                                    .arguments
+                                                as Map<String,
+                                                    dynamic>)['salesmanId']
+                                            : (loginState as LoginSuccess)
+                                                .user[0]
+                                                .employeeID;
 
                                     updateFollowupDashboardBloc.add(
                                       InitUpdateFollowupResults(),

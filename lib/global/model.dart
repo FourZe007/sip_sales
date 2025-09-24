@@ -597,23 +597,23 @@ class CoordinatorDashboardModel {
       spkTerbukaH: json['spkTerbukaH'],
       deliveryH: json['deliveryH'],
       stuh: json['stuh'],
-      prospekList: json['salesmanP']
+      prospekList: (json['salesmanP'] as List)
           .map<SalesmanProspekModel>(
               (data) => SalesmanProspekModel.fromJson(data))
           .toList(),
-      stuList: json['salesmanSTU']
+      stuList: (json['salesmanSTU'] as List)
           .map<SalesmanStuModel>((data) => SalesmanStuModel.fromJson(data))
           .toList(),
-      categoryList: json['category']
+      categoryList: (json['category'] as List)
           .map<CategoryModel>((data) => CategoryModel.fromJson(data))
           .toList(),
-      leasingList: json['leasing']
+      leasingList: (json['leasing'] as List)
           .map<LeasingModel>((data) => LeasingModel.fromJson(data))
           .toList(),
-      dailyList: json['daily']
+      dailyList: (json['daily'] as List)
           .map<DailyModel>((data) => DailyModel.fromJson(data))
           .toList(),
-      prospekTypeList: json['prospekType']
+      prospekTypeList: (json['prospekType'] as List)
           .map<ProspekTypeModel>((data) => ProspekTypeModel.fromJson(data))
           .toList(),
     );
@@ -735,16 +735,16 @@ class SalesmanDashboardModel {
       spkTerbukaH: json['spkTerbukaH'],
       deliveryH: json['deliveryH'],
       stuh: json['stuh'],
-      categoryList: json['category']
+      categoryList: (json['category'] as List)
           .map<CategoryModel>((data) => CategoryModel.fromJson(data))
           .toList(),
-      leasingList: json['leasing']
+      leasingList: (json['leasing'] as List)
           .map<LeasingModel>((data) => LeasingModel.fromJson(data))
           .toList(),
-      dailyList: json['daily']
+      dailyList: (json['daily'] as List)
           .map<DailyModel>((data) => DailyModel.fromJson(data))
           .toList(),
-      prospekTypeList: json['prospekType']
+      prospekTypeList: (json['prospekType'] as List)
           .map<ProspekTypeModel>((data) => ProspekTypeModel.fromJson(data))
           .toList(),
     );
@@ -887,7 +887,7 @@ class FollowUpDashboardModel {
       persenNew: json['persenNew'] is double
           ? (json['persenNew'] as double)
           : (json['persenNew'] as int).toDouble(),
-      detail: json['detail']
+      detail: (json['detail'] as List)
           .map<FollowUpDashboardDetailModel>(
               (data) => FollowUpDashboardDetailModel.fromJson(data))
           .toList(),
@@ -905,6 +905,7 @@ class FollowUpDashboardDetailModel {
   final String lastFUDate;
   final String lastFUMemo;
   final String nextFUDate;
+  final int lineNo;
 
   FollowUpDashboardDetailModel({
     required this.prospectDate,
@@ -916,6 +917,7 @@ class FollowUpDashboardDetailModel {
     required this.lastFUDate,
     required this.lastFUMemo,
     required this.nextFUDate,
+    required this.lineNo,
   });
 
   factory FollowUpDashboardDetailModel.fromJson(Map<String, dynamic> json) {
@@ -929,6 +931,7 @@ class FollowUpDashboardDetailModel {
       lastFUDate: json['lastFUDate'],
       lastFUMemo: json['lastFUMemo'],
       nextFUDate: json['nextFUDate'],
+      lineNo: json['urutan'],
     );
   }
 }
@@ -965,7 +968,7 @@ class FollowUpDealDashboardModel {
       persenNew: json['persenNew'] is double
           ? (json['persenNew'] as double)
           : (json['persenNew'] as int).toDouble(),
-      detail: json['detail']
+      detail: (json['detail'] as List)
           .map<FollowUpDealDashboardDetailModel>(
               (data) => FollowUpDealDashboardDetailModel.fromJson(data))
           .toList(),
@@ -1044,7 +1047,7 @@ class UpdateFollowUpDashboardModel {
       mobilePhone: json['mobilePhone'],
       prospectStatus: json['prospectStatus'],
       firstFUDate: json['firstFUDate'],
-      followup: json['followUp']
+      followup: (json['followUp'] as List)
           .map<UpdateFollowupDashboardDetails>(
               (data) => UpdateFollowupDashboardDetails.fromJson(data))
           .toList(),

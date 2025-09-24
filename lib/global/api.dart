@@ -1476,7 +1476,7 @@ class GlobalAPI {
       "EmployeeID": employeeID,
       "EndDate": date,
     };
-    log('Map Followup Dashboard: $mapFollowupDashboard');
+    print('Map Followup Dashboard: $mapFollowupDashboard');
 
     List<FollowUpDashboardModel> followupDashboardList = [];
 

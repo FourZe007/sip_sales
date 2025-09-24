@@ -37,6 +37,7 @@ class LoginBloc extends Bloc<AccountEvent, LoginState> {
           uuid,
           event.appState.getDeviceConfiguration,
         ).then((List<ModelUser> res) {
+          log('Flag: ${res[0].flag}');
           if (res[0].flag == 1) {
             event.appState.setUserAccountList(res);
           } else {

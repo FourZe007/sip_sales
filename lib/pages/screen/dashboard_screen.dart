@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -49,30 +51,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
         (loginState is LoginSuccess && loginState.user[0].code == 2)
             ? (ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>)['salesmanId']
-            : appState.getUserAccountList.isNotEmpty
-                ? appState.userAccountList[0].employeeID
-                : '';
+            : (loginState as LoginSuccess).user[0].employeeID;
     final date = DateTime.now().toIso8601String().substring(0, 10);
 
     if (state.name == 'salesman') {
-      log('Dashboard type: salesman');
+      print('Dashboard type: salesman');
       context
           .read<SalesDashboardBloc>()
           .add(LoadSalesDashboard(salesmanId, date));
     } else if (state.name == 'followup') {
-      log('Dashboard type: followup');
+      print('Dashboard type: followup');
       // context.read<FuFilterControlsCubit>().resetFilters();
       context.read<FuFilterControlsCubit>().toggleFilter('sortByName', false);
 
       final activeFilters =
           context.read<FuFilterControlsCubit>().state.activeFilters;
       if (activeFilters['notFollowedUp'] == true) {
-        log('notFollowedUp');
+        print('notFollowedUp');
         context.read<FollowupDashboardBloc>().add(
               LoadFollowupDashboard(salesmanId, date, sortByName),
             );
       } else if (activeFilters['deal'] == true) {
-        log('deal');
+        print('deal');
         context.read<FollowupDashboardBloc>().add(
               LoadFollowupDealDashboard(salesmanId, date, sortByName),
             );
@@ -88,7 +88,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      log('Tidak dapat membuka tautan.');
+      print('Tidak dapat membuka tautan.');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -331,7 +331,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               FuFilterControlsCubit,
                                               FuFilterControlsState>(
                                             builder: (context, state) {
-                                              log('isSortByName active: ${state.activeFilters['sortByName']!}');
+                                              print(
+                                                  'isSortByName active: ${state.activeFilters['sortByName']!}');
                                               return CupertinoSwitch(
                                                 value: state.activeFilters[
                                                         'sortByName'] ??
@@ -413,10 +414,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             listener: (context, state) {
               if (state.type == DashboardSlidingUpType.followupfilter ||
                   state.type == DashboardSlidingUpType.moreoption) {
-                log('Opening Sliding Up Panel - State: $state');
+                print('Opening Sliding Up Panel - State: $state');
                 slidingPanelController.open();
               } else {
-                log('Closing Sliding Up Panel - State: $state');
+                print('Closing Sliding Up Panel - State: $state');
                 slidingPanelController.close();
               }
             },
@@ -466,8 +467,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
                 bottom: TabBar(
                   onTap: (index) {
-                    log('Index: ${index.toString()}');
-                    log(context
+                    print('Index: ${index.toString()}');
+                    print(context
                         .read<FuFilterControlsCubit>()
                         .state
                         .activeFilters
