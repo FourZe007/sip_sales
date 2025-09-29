@@ -275,7 +275,7 @@ class ProfilePageState extends State<ProfilePage> {
                       state.getProfilePicturePreview.isEmpty) {
                     return GestureDetector(
                       onTap: () {
-                        if (state.getUserAccountList[0].code == 0) {
+                        if (state.getUserAccountList[0].code == 1) {
                           takePhoto(context, state);
                         }
                       },
