@@ -608,6 +608,10 @@ class _LoginPageState extends State<LoginPage> {
 
                                       Navigator.pushNamed(context, '/menu');
                                     } else {
+                                      appState.setProfilePicturePreview(
+                                        state.user[0].profilePicture,
+                                      );
+
                                       final SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
                                       if (prefs.getBool('isUserAgree') ??
