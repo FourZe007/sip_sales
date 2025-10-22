@@ -2,32 +2,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-import 'package:sip_sales/account/login.dart';
-import 'package:sip_sales/global/state/bloc_constants.dart';
-import 'package:sip_sales/global/state/provider.dart';
-import 'package:sip_sales/pages/location/location.dart';
-import 'package:sip_sales/global/menu.dart';
-import 'package:sip_sales/pages/profile/profile.dart';
-import 'package:sip_sales/pages/screen/dashboard_screen.dart';
-import 'package:sip_sales/pages/screen/splash_screen.dart';
+import 'package:sip_sales_clean/core/constant/state_manager.dart';
+import 'package:sip_sales_clean/routes.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-//091188
-void main() async {
-  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-  //   statusBarColor: Colors.blue,
-  //   // Adjust for icon visibility
-  //   statusBarBrightness: Brightness.light,
-  // ));
-
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => SipSalesState(),
-      child: const MyApp(),
-    ),
-  );
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -37,24 +18,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: const TextScaler.linear(1.0),
-      ),
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: const TextScaler.linear(1.0)),
       child: MultiBlocProvider(
-        providers: BlocConstants.getBlocProviders(),
+        providers: StateManager.getBlocProviders(),
         child: MaterialApp(
           title: 'SIP Sales',
           scrollBehavior: MyCustomScrollBehavior(),
           debugShowCheckedModeBanner: false,
           navigatorKey: navigatorKey,
-          home: const SplashScreen(),
-          routes: {
-            '/login': (context) => const LoginPage(),
-            '/location': (context) => const LocationPage(),
-            '/menu': (context) => const MenuPage(),
-            '/profile': (context) => const ProfilePage(),
-            '/salesDashboard': (context) => const DashboardScreen(),
-          },
+          initialRoute: ConstantRoutes.init,
+          routes: ConstantRoutes.maps,
         ),
       ),
     );
@@ -63,7 +38,5 @@ class MyApp extends StatelessWidget {
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-      };
+  Set<PointerDeviceKind> get dragDevices => {PointerDeviceKind.touch};
 }
