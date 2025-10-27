@@ -30,6 +30,7 @@ import 'package:sip_sales_clean/presentation/widgets/buttons/attendance_list.dar
 import 'package:sip_sales_clean/presentation/widgets/date_time/digital_clock.dart';
 import 'package:sip_sales_clean/presentation/widgets/dropdown/salesman_attandance_type.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:device_type/device_type.dart';
 
 class SalesmanAttendanceScreen extends StatefulWidget {
   const SalesmanAttendanceScreen({required this.salesmanId, super.key});
@@ -42,12 +43,6 @@ class SalesmanAttendanceScreen extends StatefulWidget {
 }
 
 class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
-  String displayDate = '';
-
-  void setDisplayDate(String value) {
-    displayDate = value;
-  }
-
   void openMap(BuildContext context) async {
     final loginState = (context.read<LoginBloc>().state as LoginSuccess);
     final position = await Geolocator.getCurrentPosition();
@@ -131,10 +126,8 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
         children: [
           // ~:Date and Time:~
           CustomDigitalClock(
-            displayDate,
-            setDisplayDate,
-            false,
-            isIpad: (MediaQuery.of(context).size.width < 800) ? false : true,
+            // isIpad: (MediaQuery.of(context).size.width < 800) ? false : true,
+            deviceType: DeviceType.getDeviceType(context).toLowerCase(),
           ),
 
           // ~:Attendance Box:~

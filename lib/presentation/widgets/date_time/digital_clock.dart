@@ -1,73 +1,32 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:one_clock/one_clock.dart';
-import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 
 class CustomDigitalClock extends StatefulWidget {
-  const CustomDigitalClock(
-    this.tgl,
-    this.handle,
-    this.isDisable, {
-    this.isIpad = false,
+  const CustomDigitalClock({
+    /// This is a string that represents the type of device. It can be one of the
+    /// following:
+    /// - 'Phone': A small device with a narrow screen.
+    /// - 'Phablet': A device with a wide screen, but not as large as a tablet.
+    /// - 'Tablet': A device with a large screen, typically between 7 inches and
+    ///   10 inches.
+    /// - 'Larger Device': A device with a screen size larger than 10 inches.
+    required this.deviceType,
     super.key,
   });
 
-  final String tgl;
-  final Function handle;
-  final bool isDisable;
-  final bool isIpad;
+  final String deviceType;
 
   @override
   State<CustomDigitalClock> createState() => _CustomDigitalClockState();
 }
 
 class _CustomDigitalClockState extends State<CustomDigitalClock> {
-  String date = '';
-  String day = '';
-  String month = '';
-  String year = '';
-
-  void customize() {
-    date = widget.tgl == ''
-        ? DateTime.now().toString().substring(0, 10)
-        : widget.tgl;
-
-    day = Formatter.dayFormat(date);
-    month = Formatter.monthFormat(date);
-    log('Month: $month');
-    year = Formatter.yearFormat(date);
-  }
-
-  final List<String> weekdaysOptions = [
-    'Senin',
-    'Selasa',
-    'Rabu',
-    'Kamis',
-    'Jumat',
-    'Sabtu',
-    'Minggu',
-  ];
-
-  final List<String> monthOptions = [
-    'Januari',
-    'Februari',
-    'Maret',
-    'April',
-    'Mei',
-    'Juni',
-    'Juli',
-    'Agustus',
-    'September',
-    'Oktober',
-    'November',
-    'Desember',
-  ];
-
   @override
   void initState() {
-    customize();
+    initializeDateFormatting('id_ID', null);
 
     super.initState();
   }
@@ -99,44 +58,20 @@ class _CustomDigitalClockState extends State<CustomDigitalClock> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '${weekdaysOptions[DateTime.now().weekday - 1]}, ',
+                '${DateFormat('EEEE', 'id_ID').format(DateTime.now())}, ',
                 textAlign: TextAlign.center,
-                style: widget.isIpad == true
-                    ? TextThemes.normal.copyWith(fontSize: 28)
-                    : TextThemes.normal.copyWith(fontSize: 24),
-              ),
-              Builder(
-                builder: (context) {
-                  if (day[0] == '0') {
-                    return Text(
-                      '${day[1]} ',
-                      textAlign: TextAlign.center,
-                      style: widget.isIpad == true
-                          ? TextThemes.normal.copyWith(fontSize: 28)
-                          : TextThemes.normal.copyWith(fontSize: 24),
-                    );
-                  } else {
-                    return Text(
-                      '$day ',
-                      textAlign: TextAlign.center,
-                      style: widget.isIpad == true
-                          ? TextThemes.normal.copyWith(fontSize: 28)
-                          : TextThemes.normal.copyWith(fontSize: 24),
-                    );
-                  }
-                },
-              ),
-              Text(
-                '${monthOptions[int.parse(month) - 1]} ',
-                textAlign: TextAlign.center,
-                style: widget.isIpad == true
+                style:
+                    widget.deviceType == 'tablet' ||
+                        widget.deviceType == 'larger device'
                     ? TextThemes.normal.copyWith(fontSize: 28)
                     : TextThemes.normal.copyWith(fontSize: 24),
               ),
               Text(
-                year,
+                DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.now()),
                 textAlign: TextAlign.center,
-                style: widget.isIpad == true
+                style:
+                    widget.deviceType == 'tablet' ||
+                        widget.deviceType == 'larger device'
                     ? TextThemes.normal.copyWith(fontSize: 28)
                     : TextThemes.normal.copyWith(fontSize: 24),
               ),

@@ -6,21 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:sip_sales_clean/core/constant/enum.dart';
-import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_state.dart';
-import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
-import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
-import 'package:sip_sales_clean/presentation/screens/sales_report_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/leasing_condition.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/sales_category.dart';
-import 'package:sip_sales_clean/presentation/widgets/datagrids/salesman_followup.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/salesman_prospek.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/salesman_stu.dart';
 import 'package:sip_sales_clean/presentation/widgets/graphs/db_stu.dart';
@@ -364,43 +355,10 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                                 context: context,
                                 salesmanProspekData:
                                     state.coordData[0].prospekList,
+                                // date: DateFormat(
+                                //   'yyyy-MM-dd',
+                                // ).format(DateTime.now()),
                               ),
-                              onCellTap: (details) {
-                                if (details.rowColumnIndex.rowIndex > 0) {
-                                  int selectedIndex =
-                                      details.rowColumnIndex.rowIndex - 1;
-                                  var rowData = state
-                                      .coordData[0]
-                                      .prospekList[selectedIndex];
-                                  context.read<DashboardTypeCubit>().changeType(
-                                    DashboardType.salesman,
-                                  );
-
-                                  context
-                                      .read<FuFilterControlsCubit>()
-                                      .resetFilters();
-
-                                  context.read<SalesmanBloc>().add(
-                                    SalesmanDashboardButtonPressed(
-                                      salesmanId: rowData.employeeId,
-                                      endDate: DateFormat(
-                                        'yyyy-MM-dd',
-                                      ).format(DateTime.now()),
-                                    ),
-                                  );
-
-                                  if (context.mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SalesReportScreen(
-                                          salesmanId: rowData.employeeId,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
                               columnWidthMode: ColumnWidthMode.fill,
                               horizontalScrollPhysics:
                                   NeverScrollableScrollPhysics(),
@@ -451,138 +409,6 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                                   label: Container(
                                     alignment: Alignment.center,
                                     child: Text('SPK'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // ~:Salesman Follow-Up:~
-                  Card(
-                    elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        spacing: 8,
-                        children: [
-                          // ~:Title:~
-                          Text(
-                            'Follow-Up Salesman',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          // ~:Table:~
-                          Container(
-                            height: salesFUOverviewHeight,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: SfDataGrid(
-                              source: SalesFUOverviewDataSource(
-                                context: context,
-                                salesFUOverviewData:
-                                    state.coordData[0].salesFUOverviewList,
-                              ),
-                              onCellTap: (details) {
-                                if (details.rowColumnIndex.rowIndex > 0) {
-                                  int selectedIndex =
-                                      details.rowColumnIndex.rowIndex - 1;
-                                  var rowData = state
-                                      .coordData[0]
-                                      .salesFUOverviewList[selectedIndex];
-                                  // You can now use tappedRowData to perform actions,
-                                  // like navigating to a new screen.
-                                  context.read<DashboardTypeCubit>().changeType(
-                                    DashboardType.followup,
-                                  );
-
-                                  context
-                                      .read<FuFilterControlsCubit>()
-                                      .resetFilters();
-
-                                  context.read<FollowupDashboardBloc>().add(
-                                    LoadFollowupDashboard(
-                                      rowData.employeeId,
-                                      DateFormat(
-                                        'yyyy-MM-dd',
-                                      ).format(DateTime.now()),
-                                      false,
-                                    ),
-                                  );
-
-                                  if (context.mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SalesReportScreen(
-                                          salesmanId: rowData.employeeId,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
-                              columnWidthMode: ColumnWidthMode.fill,
-                              horizontalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              verticalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              columns: [
-                                GridColumn(
-                                  columnName: 'salesman',
-                                  minimumWidth: 80,
-                                  label: const Align(
-                                    alignment: Alignment.center,
-                                    child: Text('Nama'),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'prosesFU',
-                                  minimumWidth: 56,
-                                  label: Container(
-                                    alignment: Alignment.center,
-                                    child: const Text(
-                                      'Proses FU',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'closing',
-                                  minimumWidth: 32,
-                                  label: Container(
-                                    alignment: Alignment.center,
-                                    child: const Text('Closing'),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'cancel',
-                                  minimumWidth: 24,
-                                  label: Container(
-                                    alignment: Alignment.center,
-                                    child: const Text(
-                                      'Batal',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'blmFU',
-                                  minimumWidth: 40,
-                                  label: Container(
-                                    alignment: Alignment.center,
-                                    child: const Text(
-                                      'Belum FU',
-                                      textAlign: TextAlign.center,
-                                    ),
                                   ),
                                 ),
                               ],

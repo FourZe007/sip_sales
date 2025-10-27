@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: depend_on_referenced_packages
 import 'package:provider/single_child_widget.dart';
 import 'package:sip_sales_clean/data/repositories/attendance_data.dart';
 import 'package:sip_sales_clean/data/repositories/followup_data.dart';
