@@ -1,6 +1,8 @@
 enum DashboardType {
+  none,
   salesman,
   followup,
+  spk, // accessible only for head store
 }
 
 enum FollowUpStatus {
@@ -22,6 +24,7 @@ enum DashboardSlidingUpType {
   moreoption, // for each cards if needed in the future
   deleteManagerActivity, // for delete manager activity
   logout, // for logout
+  leasing, // for SPK leasing filter
 }
 
 enum StatusCode {

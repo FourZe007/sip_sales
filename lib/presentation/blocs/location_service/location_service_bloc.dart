@@ -12,6 +12,7 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_event.dart';
 import 'package:sip_sales_clean/presentation/cubit/attendance_type_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 
 class LocationServiceBloc
@@ -39,6 +40,9 @@ class LocationServiceBloc
           // ~:Head Store:~
           if (loginState.user.code == 0) {
             log('Fetch Head Acts');
+            // ~:Retrieve any needed master data:~
+            event.context.read<SpkLeasingFilterCubit>().loadFilterData();
+
             event.context.read<HeadStoreBloc>().add(
               LoadHeadActs(
                 employeeID: loginState.user.employeeID,

@@ -225,8 +225,17 @@ class HeadStoreDataImp implements HeadStoreRepo {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
-      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+      if ((res['msg'] == 'Sukses' || res['msg'] == 'No Data') &&
+          res['code'] == '100') {
         log('Fetch succeed');
+        if (res['msg'] == 'No Data') {
+          return {
+            'status': 'no data',
+            'code': res['code'],
+            'data': [],
+          };
+        }
+
         return {
           'status': 'success',
           'code': res['code'],

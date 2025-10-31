@@ -114,7 +114,8 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
       maintainBottomViewPadding: true,
       child: DefaultTabController(
         length: 2,
-        initialIndex: context.read<DashboardTypeCubit>().state.index,
+        // initialIndex: context.read<DashboardTypeCubit>().state.index,
+        initialIndex: 0,
         animationDuration: Duration(milliseconds: 500),
         child: SlidingUpPanel(
           controller: slidingPanelController,
@@ -493,6 +494,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                   ),
                 ],
                 bottom: TabBar(
+                  controller: DefaultTabController.of(context)..index = 0,
                   onTap: (index) {
                     log('Index: ${index.toString()}');
                     log(

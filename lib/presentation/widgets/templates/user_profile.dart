@@ -148,7 +148,7 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
       return Container(
         width: MediaQuery.of(context).size.width,
         height: (context.read<LoginBloc>().state as LoginSuccess).user.code == 0
-            ? 114
+            ? 116
             : 98,
         alignment: Alignment.center,
         margin: EdgeInsets.symmetric(
@@ -301,11 +301,13 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                           return Text(
                             widget.employee.employeeID,
                             style: TextThemes.subtitle.copyWith(fontSize: 18),
+                            overflow: TextOverflow.ellipsis,
                           );
                         } else {
                           return Text(
                             'XXXXX/XXXXXX',
                             style: TextThemes.subtitle.copyWith(fontSize: 18),
+                            overflow: TextOverflow.ellipsis,
                           );
                         }
                       },
@@ -316,6 +318,7 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                           return Text(
                             '${Formatter.toTitleCase(widget.employee.bsName)}, ${Formatter.toTitleCase(widget.employee.locationName)}',
                             style: TextThemes.subtitle.copyWith(fontSize: 18),
+                            overflow: TextOverflow.ellipsis,
                           );
                         } else {
                           return SizedBox.shrink();

@@ -41,8 +41,8 @@ class FuDashboardHeader extends StatelessWidget {
                 context: context,
                 label: 'Prospek',
                 value: isFuDeal
-                    ? fuDealData!.totalProspect
-                    : fuData!.totalProspect,
+                    ? '${fuDealData!.totalProspect}'
+                    : '${fuData!.totalProspect}',
                 boxWidth: 64,
                 boxHeight: 90,
                 labelHeight: 28,
@@ -56,7 +56,9 @@ class FuDashboardHeader extends StatelessWidget {
               child: Widgets.buildStatBox(
                 context: context,
                 label: 'Belum FU',
-                value: isFuDeal ? fuDealData!.belumFU : fuData!.belumFU,
+                value: isFuDeal
+                    ? '${fuDealData!.belumFU}'
+                    : '${fuData!.belumFU}',
                 boxWidth: 64,
                 boxHeight: 90,
                 labelHeight: 28,
@@ -70,7 +72,9 @@ class FuDashboardHeader extends StatelessWidget {
               child: Widgets.buildStatBox(
                 context: context,
                 label: 'Proses FU',
-                value: isFuDeal ? fuDealData!.prosesFU : fuData!.prosesFU,
+                value: isFuDeal
+                    ? '${fuDealData!.prosesFU}'
+                    : '${fuData!.prosesFU}',
                 boxWidth: 64,
                 boxHeight: 90,
                 labelHeight: 28,
@@ -84,7 +88,9 @@ class FuDashboardHeader extends StatelessWidget {
               child: Widgets.buildStatBox(
                 context: context,
                 label: 'Deal',
-                value: isFuDeal ? fuDealData!.closing : fuData!.closing,
+                value: isFuDeal
+                    ? '${fuDealData!.closing}'
+                    : '${fuData!.closing}',
                 boxWidth: 64,
                 boxHeight: 90,
                 labelHeight: 28,
@@ -98,7 +104,7 @@ class FuDashboardHeader extends StatelessWidget {
               child: Widgets.buildStatBox(
                 context: context,
                 label: 'Batal',
-                value: isFuDeal ? fuDealData!.batal : fuData!.batal,
+                value: isFuDeal ? '${fuDealData!.batal}' : '${fuData!.batal}',
                 boxWidth: 64,
                 boxHeight: 90,
                 labelHeight: 28,

@@ -106,6 +106,9 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
       if (res['status'] == 'success') {
         log('Success');
         emit(HeadStoreDashboardLoaded(res['data']));
+      } else if (res['status'].toString().toLowerCase() == 'no data') {
+        log('Empty');
+        emit(HeadStoreDashboardFailed('Data tidak tersedia.'));
       } else {
         log('Failed');
         emit(HeadStoreDashboardFailed(res['msg']));

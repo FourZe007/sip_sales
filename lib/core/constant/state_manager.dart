@@ -8,6 +8,7 @@ import 'package:sip_sales_clean/data/repositories/image_data.dart';
 import 'package:sip_sales_clean/data/repositories/login_data.dart';
 import 'package:sip_sales_clean/data/repositories/radius_checker_data.dart';
 import 'package:sip_sales_clean/data/repositories/salesman_data.dart';
+import 'package:sip_sales_clean/data/repositories/spk_leasing_filter_data.dart';
 import 'package:sip_sales_clean/data/repositories/update_followup_data.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_bloc.dart';
@@ -27,6 +28,8 @@ import 'package:sip_sales_clean/presentation/cubit/head_act.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
 import 'package:sip_sales_clean/presentation/cubit/navbar_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
 
 class StateManager {
   static List<SingleChildWidget> getBlocProviders() {
@@ -65,6 +68,16 @@ class StateManager {
         create: (context) => HeadStoreBloc(
           headStoreRepo: HeadStoreDataImp(),
           followupRepo: FollowupDataImp(),
+        ),
+      ),
+      BlocProvider<SpkLeasingFilterCubit>(
+        create: (context) => SpkLeasingFilterCubit(
+          spkLeasingFilterRepo: SpkLeasingFilterDataImp(),
+        ),
+      ),
+      BlocProvider<SpkLeasingDataCubit>(
+        create: (context) => SpkLeasingDataCubit(
+          spkLeasingFilterDataImp: SpkLeasingFilterDataImp(),
         ),
       ),
       BlocProvider<RadiusCheckerBloc>(

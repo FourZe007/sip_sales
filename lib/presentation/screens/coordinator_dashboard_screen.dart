@@ -6,9 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:sip_sales_clean/core/constant/enum.dart';
+import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
+import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
+import 'package:sip_sales_clean/presentation/screens/sales_report_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/leasing_condition.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/sales_category.dart';
@@ -47,6 +55,81 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
   ///
   /// The screen also includes a button that, when clicked, displays a
   /// dialog box with additional information about the sales data.
+
+  void onProspectCellTap(
+    BuildContext context,
+    ShopCoordinatorState state,
+    DataGridCellTapDetails details,
+  ) {
+    if (details.rowColumnIndex.rowIndex > 0) {
+      int selectedIndex = details.rowColumnIndex.rowIndex - 1;
+      var rowData = (state as CoordinatorDashboardLoaded)
+          .coordData[0]
+          .prospekList[selectedIndex];
+
+      context.read<DashboardTypeCubit>().changeType(DashboardType.salesman);
+
+      context.read<FuFilterControlsCubit>().resetFilters();
+
+      context.read<SalesmanBloc>().add(
+        SalesmanDashboardButtonPressed(
+          salesmanId: rowData.employeeId,
+          endDate: DateFormat(
+            'yyyy-MM-dd',
+          ).format(DateTime.now()),
+        ),
+      );
+
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SalesReportScreen(
+              salesmanId: rowData.employeeId,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  void onFUCellTap(
+    BuildContext context,
+    ShopCoordinatorState state,
+    DataGridCellTapDetails details,
+  ) {
+    if (details.rowColumnIndex.rowIndex > 0) {
+      int selectedIndex = details.rowColumnIndex.rowIndex - 1;
+      var rowData = (state as CoordinatorDashboardLoaded)
+          .coordData[0]
+          .salesFUOverviewList[selectedIndex];
+
+      context.read<DashboardTypeCubit>().changeType(DashboardType.followup);
+
+      context.read<FuFilterControlsCubit>().resetFilters();
+
+      context.read<FollowupDashboardBloc>().add(
+        LoadFollowupDashboard(
+          rowData.employeeId,
+          DateFormat(
+            'yyyy-MM-dd',
+          ).format(DateTime.now()),
+          false,
+        ),
+      );
+
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SalesReportScreen(
+              salesmanId: rowData.employeeId,
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -119,8 +202,8 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
               final coordData = state.coordData[index];
               double salesProspectHeight =
                   52 + coordData.prospekList.length * 50;
-              double salesFUOverviewHeight =
-                  52 + coordData.salesFUOverviewList.length * 50;
+              // double salesFUOverviewHeight =
+              //     52 + coordData.salesFUOverviewList.length * 50;
               double salesStuHeight = 52 + coordData.stuList.length * 50;
               double categoryHeight = 52 + coordData.categoryList.length * 50;
               double leasingHeight = 52 + coordData.leasingList.length * 50;
@@ -182,7 +265,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'Prospek',
-                                value: coordData.prospek,
+                                value: '${coordData.prospek}',
                                 labelSize: 12,
                               ),
                             ),
@@ -192,7 +275,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'SPK',
-                                value: coordData.spk,
+                                value: '${coordData.spk}',
                                 labelSize: 12,
                               ),
                             ),
@@ -202,7 +285,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'Terbuka',
-                                value: coordData.spkTerbuka,
+                                value: '${coordData.spkTerbuka}',
                                 labelSize: 12,
                               ),
                             ),
@@ -212,7 +295,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'STU',
-                                value: coordData.stu,
+                                value: '${coordData.stu}',
                                 labelSize: 12,
                               ),
                             ),
@@ -274,7 +357,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'Prospek',
-                                value: coordData.prospekH,
+                                value: '${coordData.prospekH}',
                                 boxWidth: 80,
                                 boxHeight: 75,
                                 labelSize: 12,
@@ -287,7 +370,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'SPK',
-                                value: coordData.spkh,
+                                value: '${coordData.spkh}',
                                 boxWidth: 80,
                                 boxHeight: 75,
                                 labelSize: 12,
@@ -300,7 +383,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'Terbuka',
-                                value: coordData.spkTerbukaH,
+                                value: '${coordData.spkTerbukaH}',
                                 boxWidth: 80,
                                 boxHeight: 75,
                                 labelSize: 12,
@@ -313,7 +396,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                               child: Widgets.buildStatBox(
                                 context: context,
                                 label: 'STU',
-                                value: coordData.stuh,
+                                value: '${coordData.stuh}',
                                 boxWidth: 80,
                                 boxHeight: 75,
                                 labelSize: 12,
@@ -358,6 +441,11 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                                 // date: DateFormat(
                                 //   'yyyy-MM-dd',
                                 // ).format(DateTime.now()),
+                              ),
+                              onCellTap: (details) => onProspectCellTap(
+                                context,
+                                state,
+                                details,
                               ),
                               columnWidthMode: ColumnWidthMode.fill,
                               horizontalScrollPhysics:
@@ -446,6 +534,11 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
                             child: SfDataGrid(
                               source: SalesmanSTUDataSource(
                                 salesmanSTUData: state.coordData[0].stuList,
+                              ),
+                              onCellTap: (details) => onFUCellTap(
+                                context,
+                                state,
+                                details,
                               ),
                               columnWidthMode: ColumnWidthMode.fill,
                               horizontalScrollPhysics:

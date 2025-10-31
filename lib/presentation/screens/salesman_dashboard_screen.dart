@@ -151,7 +151,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'Prospek',
-                                  value: salesData.prospek,
+                                  value: '${salesData.prospek}',
                                   labelSize: 12,
                                 ),
                               ),
@@ -161,7 +161,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'SPK',
-                                  value: salesData.spk,
+                                  value: '${salesData.spk}',
                                   labelSize: 12,
                                 ),
                               ),
@@ -171,7 +171,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'Terbuka',
-                                  value: salesData.spkTerbuka,
+                                  value: '${salesData.spkTerbuka}',
                                   labelSize: 12,
                                 ),
                               ),
@@ -181,7 +181,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'STU',
-                                  value: salesData.stu,
+                                  value: '${salesData.stu}',
                                   labelSize: 12,
                                 ),
                               ),
@@ -245,7 +245,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'Prospek',
-                                  value: salesData.prospekH,
+                                  value: '${salesData.prospekH}',
                                   boxWidth: 80,
                                   boxHeight: 75,
                                   labelSize: 12,
@@ -258,7 +258,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'SPK',
-                                  value: salesData.spkh,
+                                  value: '${salesData.spkh}',
                                   boxWidth: 80,
                                   boxHeight: 75,
                                   labelSize: 12,
@@ -271,7 +271,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'Terbuka',
-                                  value: salesData.spkTerbukaH,
+                                  value: '${salesData.spkTerbukaH}',
                                   boxWidth: 80,
                                   boxHeight: 75,
                                   labelSize: 12,
@@ -284,7 +284,7 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
                                 child: Widgets.buildStatBox(
                                   context: context,
                                   label: 'STU',
-                                  value: salesData.stuh,
+                                  value: '${salesData.stuh}',
                                   boxWidth: 80,
                                   boxHeight: 75,
                                   labelSize: 12,

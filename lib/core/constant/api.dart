@@ -8,6 +8,15 @@ class APIConstants {
       '/api/SIPSales/EmployeeActivitySMHeader';
   static const String headActsDetailEndpoint =
       '/api/SIPSales/EmployeeActivitySMDetail';
+  static const String spkLeasingDataEndpoint = '/DBapi/DBSPKLeasing';
+  static const String spkLeasingFilterGroupDealerEndpoint =
+      '/DBapi/DBSPKLeasing/MGroupDealer';
+  static const String spkLeasingFilterDealerEndpoint =
+      '/DBapi/DBSPKLeasing/MBranchShop';
+  static const String spkLeasingFilterLeasingEndpoint =
+      '/DBapi/DBSPKLeasing/MLeasing';
+  static const String spkLeasingFilterCategoryEndpoint =
+      '/DBapi/DBSPKLeasing/MMotorCategory';
   static const String insertProfilePictureEndpoint =
       '/api/SIPSales/UploadPhoto';
   static const String salesmanAttendanceEndpoint =

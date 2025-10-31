@@ -66,12 +66,15 @@ class Widgets {
   static Widget buildStatBox({
     required BuildContext context,
     required String label,
-    required int value,
+    required String value,
+    double valueFontSize = 30,
     double boxWidth = 64,
     double boxHeight = 75,
     double labelHeight = 20,
     double labelSize = 16,
     Color boxColor = Colors.amber,
+    List<BoxShadow>? boxShadow,
+    Border? border,
   }) {
     return Container(
       width: boxWidth,
@@ -79,6 +82,8 @@ class Widgets {
       decoration: BoxDecoration(
         color: boxColor,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: boxShadow,
+        border: border,
       ),
       padding: const EdgeInsets.all(4),
       child: Column(
@@ -99,15 +104,37 @@ class Widgets {
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center,
               child: Text(
-                value.toString(),
+                value,
                 style: TextThemes.normal.copyWith(
-                  fontSize: 30,
+                  fontSize: valueFontSize.toDouble(),
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  static Widget buildFilterChip({
+    required BuildContext context,
+    required String label,
+    required int value,
+    required Function onTap,
+  }) {
+    return InkWell(
+      onTap: () => onTap(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.grey,
+        ),
+        child: Text(
+          '$label: $value',
+          style: TextThemes.normal,
+        ),
       ),
     );
   }

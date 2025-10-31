@@ -292,7 +292,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'Prospek',
-                                    value: headDashboardData.prospek,
+                                    value: '${headDashboardData.prospek}',
                                     labelSize: 12,
                                   ),
                                 ),
@@ -302,7 +302,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'SPK',
-                                    value: headDashboardData.spk,
+                                    value: '${headDashboardData.spk}',
                                     labelSize: 12,
                                   ),
                                 ),
@@ -312,7 +312,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'Terbuka',
-                                    value: headDashboardData.spkTerbuka,
+                                    value: '${headDashboardData.spkTerbuka}',
                                     labelSize: 12,
                                   ),
                                 ),
@@ -322,7 +322,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'STU',
-                                    value: headDashboardData.stu,
+                                    value: '${headDashboardData.stu}',
                                     labelSize: 12,
                                   ),
                                 ),
@@ -376,7 +376,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'Prospek',
-                                    value: headDashboardData.prospekH,
+                                    value: '${headDashboardData.prospekH}',
                                     boxWidth: 80,
                                     boxHeight: 75,
                                     labelSize: 12,
@@ -389,7 +389,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'SPK',
-                                    value: headDashboardData.spkh,
+                                    value: '${headDashboardData.spkh}',
                                     boxWidth: 80,
                                     boxHeight: 75,
                                     labelSize: 12,
@@ -402,7 +402,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'Terbuka',
-                                    value: headDashboardData.spkTerbukaH,
+                                    value: '${headDashboardData.spkTerbukaH}',
                                     boxWidth: 80,
                                     boxHeight: 75,
                                     labelSize: 12,
@@ -415,7 +415,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                   child: Widgets.buildStatBox(
                                     context: context,
                                     label: 'STU',
-                                    value: headDashboardData.stuh,
+                                    value: '${headDashboardData.stuh}',
                                     boxWidth: 80,
                                     boxHeight: 75,
                                     labelSize: 12,

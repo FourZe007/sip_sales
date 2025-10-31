@@ -23,11 +23,13 @@ import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/navbar_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/screens/coordinator_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_new_acts.dart';
 import 'package:sip_sales_clean/presentation/screens/head_dashboard_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/head_spk_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/profile_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/sales_report_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/salesman_attendance_screen.dart';
@@ -73,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void refreshDashboard(
     BuildContext context,
     EmployeeModel employee,
-    DashboardType state, {
+    DashboardType dashboardState, {
     NavbarType navbarType = NavbarType.home,
     bool sortByName = false,
   }) {
@@ -96,13 +98,25 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       } else if (navbarType == NavbarType.report) {
-        log('Refresh head store report page');
-        context.read<HeadStoreBloc>().add(
-          LoadHeadDashboard(
-            employeeID: salesmanId,
-            date: date,
-          ),
-        );
+        if (dashboardState == DashboardType.spk) {
+          log('Refresh head store SPK Report page');
+          context.read<SpkLeasingDataCubit>().loadData(
+            salesmanId,
+            date,
+            "${employee.branch}${employee.shop}",
+            '',
+            '',
+            '',
+          );
+        } else {
+          log('Refresh head store Dashboard Report page');
+          context.read<HeadStoreBloc>().add(
+            LoadHeadDashboard(
+              employeeID: salesmanId,
+              date: date,
+            ),
+          );
+        }
       }
     }
     // ~:Salesman:~
@@ -126,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //     ),
         //   );
         // }
-        if (state.name == 'salesman') {
+        if (dashboardState.name == 'salesman') {
           log('Dashboard type: salesman');
           context.read<SalesmanBloc>().add(
             SalesmanDashboardButtonPressed(
@@ -134,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
               endDate: date,
             ),
           );
-        } else if (state.name == 'followup') {
+        } else if (dashboardState.name == 'followup') {
           log('Dashboard type: followup');
           context.read<FuFilterControlsCubit>().toggleFilter(
             'sortByName',
@@ -1151,57 +1165,194 @@ class _HomeScreenState extends State<HomeScreen> {
               } else if (state.type ==
                   DashboardSlidingUpType.deleteManagerActivity) {
                 return deleteActs(state.optionalData);
+              } else if (state.type == DashboardSlidingUpType.leasing) {
+                return Center(
+                  child: Text('Leasing Panel'),
+                );
               }
               return const SizedBox.shrink();
             },
           ),
         ),
-        body: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
-          listener: (context, state) {
-            if (state.type == DashboardSlidingUpType.deleteManagerActivity ||
-                state.type == DashboardSlidingUpType.logout) {
-              log('Opening Sliding Up Panel - State: ${state.type}');
-              slidingPanelController.open();
-            } else {
-              log('Closing Sliding Up Panel - State: ${state.type}');
-              slidingPanelController.close();
-            }
-          },
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.blue,
-              toolbarHeight:
+        body: DefaultTabController(
+          length: 2,
+          // initialIndex: context.read<DashboardTypeCubit>().state.index,
+          initialIndex: 0,
+          animationDuration: Duration(milliseconds: 500),
+          child: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
+            listener: (context, state) {
+              if (state.type == DashboardSlidingUpType.deleteManagerActivity ||
+                  state.type == DashboardSlidingUpType.logout ||
+                  state.type == DashboardSlidingUpType.leasing) {
+                log('Opening Sliding Up Panel - State: ${state.type}');
+                slidingPanelController.open();
+              } else {
+                log('Closing Sliding Up Panel - State: ${state.type}');
+                slidingPanelController.close();
+              }
+            },
+            child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.blue,
+                // toolbarHeight:
+                //     context.read<NavbarCubit>().state == NavbarType.profile
+                //     ? 100
+                //     : 60,
+                toolbarHeight:
+                    context.read<NavbarCubit>().state == NavbarType.profile
+                    ? 0
+                    : 60,
+                elevation: 0.0,
+                scrolledUnderElevation: 0.0,
+                shadowColor: Colors.blue,
+                centerTitle: false,
+                titleSpacing:
+                    context.read<NavbarCubit>().state == NavbarType.profile
+                    ? 0
+                    : 16,
+                title: BlocBuilder<NavbarCubit, NavbarType>(
+                  builder: (context, state) {
+                    if (state == NavbarType.profile) {
+                      return UserProfileTemplate(employee: employee);
+                    } else if (state == NavbarType.home) {
+                      return Text(
+                        'Daftar Kegiatan',
+                        style: TextThemes.normal.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    } else if (state == NavbarType.report) {
+                      return Text(
+                        'Laporan Penjualan',
+                        style: TextThemes.normal.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
+                actions: [
                   context.read<NavbarCubit>().state == NavbarType.profile
-                  ? 100
-                  : 60,
-              elevation: 0.0,
-              scrolledUnderElevation: 0.0,
-              shadowColor: Colors.blue,
-              centerTitle: false,
-              titleSpacing:
-                  context.read<NavbarCubit>().state == NavbarType.profile
-                  ? 0
-                  : 16,
-              title: BlocBuilder<NavbarCubit, NavbarType>(
+                      ? IconButton(
+                          onPressed: () => context
+                              .read<DashboardSlidingUpCubit>()
+                              .changeType(
+                                DashboardSlidingUpType.logout,
+                              ),
+                          tooltip: 'Keluar',
+                          icon: Icon(
+                            Icons.logout_rounded,
+                            size: 28,
+                            color: Colors.black,
+                          ),
+                        )
+                      : BlocBuilder<DashboardTypeCubit, DashboardType>(
+                          builder: (context, state) {
+                            if (state == DashboardType.spk) {
+                              return IconButton(
+                                onPressed: () => context
+                                    .read<DashboardSlidingUpCubit>()
+                                    .changeType(DashboardSlidingUpType.leasing),
+                                icon: Icon(
+                                  Icons.filter_alt_rounded,
+                                  size:
+                                      (MediaQuery.of(context).size.width < 800)
+                                      ? 24.0
+                                      : 40.0,
+                                  color: Colors.black,
+                                ),
+                              );
+                            } else {
+                              return IconButton(
+                                onPressed: () => refreshDashboard(
+                                  context,
+                                  employee,
+                                  context.read<DashboardTypeCubit>().state,
+                                  navbarType: context.read<NavbarCubit>().state,
+                                ),
+                                icon: Icon(
+                                  Icons.refresh_rounded,
+                                  size:
+                                      (MediaQuery.of(context).size.width < 800)
+                                      ? 20.0
+                                      : 36.0,
+                                  color: Colors.black,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                ],
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(
+                    context.read<NavbarCubit>().state == NavbarType.report
+                        ? 40
+                        : 0,
+                  ),
+                  child: BlocBuilder<NavbarCubit, NavbarType>(
+                    builder: (context, state) {
+                      if (state == NavbarType.report) {
+                        return TabBar(
+                          controller: DefaultTabController.of(context)
+                            ..index = 0,
+                          onTap: (index) {
+                            log('Index: ${index.toString()}');
+
+                            context.read<DashboardTypeCubit>().changeType(
+                              index == 0
+                                  ? DashboardType.salesman
+                                  : DashboardType.spk,
+                            );
+                          },
+                          indicatorColor: Colors.black,
+                          indicatorWeight: 2,
+                          labelColor: Colors.black,
+                          unselectedLabelColor: Colors.black,
+                          unselectedLabelStyle: TextThemes.normal.copyWith(
+                            fontSize: 16,
+                          ),
+                          labelStyle: TextThemes.normal.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          dividerColor: Colors.transparent,
+                          tabs: [
+                            Tab(text: 'Dashboard'),
+                            Tab(text: 'SPK Leasing'),
+                          ],
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    },
+                  ),
+                ),
+              ),
+              floatingActionButton: BlocBuilder<NavbarCubit, NavbarType>(
                 builder: (context, state) {
-                  if (state == NavbarType.profile) {
-                    return UserProfileTemplate(employee: employee);
-                  } else if (state == NavbarType.home) {
-                    return Text(
-                      'Daftar Kegiatan',
-                      style: TextThemes.normal.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    );
-                  } else if (state == NavbarType.report) {
-                    return Text(
-                      'Laporan Penjualan',
-                      style: TextThemes.normal.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                  if (state == NavbarType.home) {
+                    return FloatingActionButton(
+                      onPressed: () async {
+                        context.read<ImageCubit>().clearImage();
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HeadNewActsScreen(),
+                          ),
+                        );
+                      },
+                      backgroundColor: Colors.blue[200],
+                      child: const Icon(
+                        Icons.add_rounded,
+                        size: 30.0,
+                        color: Colors.black,
                       ),
                     );
                   } else {
@@ -1209,122 +1360,93 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
-              actions: [
-                context.read<NavbarCubit>().state == NavbarType.profile
-                    ? IconButton(
-                        onPressed: () =>
-                            context.read<DashboardSlidingUpCubit>().changeType(
-                              DashboardSlidingUpType.logout,
-                            ),
-                        tooltip: 'Keluar',
-                        icon: Icon(
-                          Icons.logout_rounded,
-                          size: 28,
-                          color: Colors.black,
-                        ),
-                      )
-                    : IconButton(
-                        onPressed: () => refreshDashboard(
-                          context,
-                          employee,
-                          context.read<DashboardTypeCubit>().state,
-                          navbarType: context.read<NavbarCubit>().state,
-                        ),
-                        icon: Icon(
-                          Icons.refresh_rounded,
-                          size: (MediaQuery.of(context).size.width < 800)
-                              ? 20.0
-                              : 35.0,
-                          color: Colors.black,
-                        ),
+              bottomNavigationBar: BottomNavigationBar(
+                currentIndex: context.read<NavbarCubit>().state.index,
+                onTap: (index) {
+                  context.read<NavbarCubit>().changeNavbarType(index);
+                  setPreferredTabHeight(index == 1 ? 20 : 0);
+
+                  if (index == 0) {
+                    setPanelMaxHeight(150);
+
+                    context.read<DashboardTypeCubit>().changeType(
+                      DashboardType.none,
+                    );
+
+                    context.read<HeadStoreBloc>().add(
+                      LoadHeadActs(
+                        employeeID: employee.employeeID,
+                        date: DateTime.now().toIso8601String().split('T')[0],
                       ),
-              ],
-            ),
-            floatingActionButton: BlocBuilder<NavbarCubit, NavbarType>(
-              builder: (context, state) {
-                if (state == NavbarType.home) {
-                  return FloatingActionButton(
-                    onPressed: () async {
-                      context.read<ImageCubit>().clearImage();
+                    );
+                  } else if (index == 1) {
+                    // Reset dashboard type to salesman
+                    // just in case user is in spk screen
+                    context.read<DashboardTypeCubit>().changeType(
+                      DashboardType.salesman,
+                    );
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HeadNewActsScreen(),
-                        ),
-                      );
-                    },
-                    backgroundColor: Colors.blue[200],
-                    child: const Icon(
-                      Icons.add_rounded,
-                      size: 30.0,
-                      color: Colors.black,
-                    ),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: context.read<NavbarCubit>().state.index,
-              onTap: (index) {
-                context.read<NavbarCubit>().changeNavbarType(index);
-                setPreferredTabHeight(index == 1 ? 20 : 0);
-
-                if (index == 0) {
-                  setPanelMaxHeight(150);
-
-                  context.read<HeadStoreBloc>().add(
-                    LoadHeadActs(
-                      employeeID: employee.employeeID,
-                      date: DateTime.now().toIso8601String().split('T')[0],
-                    ),
-                  );
-                } else if (index == 1) {
-                  refreshDashboard(
-                    context,
-                    employee,
-                    context.read<DashboardTypeCubit>().state,
-                    navbarType: NavbarType.report,
-                  );
-                } else if (index == 2) {
-                  setPanelMaxHeight(325);
-                }
-              },
-              backgroundColor: Colors.white,
-              selectedItemColor: Colors.blue,
-              unselectedItemColor: Colors.grey,
-              elevation: 8.0,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart_rounded),
-                  label: 'Report',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-              ],
-            ),
-            body: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.blue,
-              child: BlocBuilder<NavbarCubit, NavbarType>(
-                builder: (context, state) {
-                  if (state == NavbarType.report) {
-                    return const HeadDashboardScreen();
-                  } else if (state == NavbarType.profile) {
-                    return profileTemplate();
-                  } else {
-                    return HeadActivityPage(employeeModel: employee);
+                    refreshDashboard(
+                      context,
+                      employee,
+                      context.read<DashboardTypeCubit>().state,
+                      navbarType: NavbarType.report,
+                    );
+                  } else if (index == 2) {
+                    setPanelMaxHeight(325);
                   }
                 },
+                backgroundColor: Colors.white,
+                selectedItemColor: Colors.blue,
+                unselectedItemColor: Colors.grey,
+                elevation: 8.0,
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.bar_chart_rounded),
+                    label: 'Report',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Profile',
+                  ),
+                ],
+              ),
+              body: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.blue,
+                child: BlocBuilder<NavbarCubit, NavbarType>(
+                  builder: (context, state) {
+                    if (state == NavbarType.report) {
+                      return BlocListener<DashboardTypeCubit, DashboardType>(
+                        listener: (context, state) {
+                          log("Body state: ${state.toString()}");
+                          refreshDashboard(
+                            context,
+                            employee,
+                            state,
+                            navbarType: NavbarType.report,
+                          );
+                        },
+                        child: TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            const HeadDashboardScreen(),
+                            const HeadSpkScreen(),
+                          ],
+                        ),
+                      );
+                    } else if (state == NavbarType.profile) {
+                      return profileTemplate();
+                    } else {
+                      return HeadActivityPage(employeeModel: employee);
+                    }
+                  },
+                ),
               ),
             ),
           ),
