@@ -221,7 +221,8 @@ class SpkLeasingFilterDataImp implements SpkLeasingFilterRepo {
 
     Map body = {
       "EmployeeID": employeeId,
-      "TransDate": date,
+      // "TransDate": date,
+      "TransDate": '2025-10-31',
       "BranchShop": branch,
       "Category": category,
       "LeasingID": leasing,
@@ -242,10 +243,18 @@ class SpkLeasingFilterDataImp implements SpkLeasingFilterRepo {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
-      if (res['code'] == '100') {
+      if ((res['msg'] == 'Sukses' || res['msg'] == 'No Data') &&
+          res['code'] == '100') {
         log('loadSpkLeasingData Fetch succeed');
+        if (res['msg'] == 'No Data') {
+          return {
+            'status': 'no data',
+            'code': res['code'],
+            'data': [],
+          };
+        }
         return {
-          'status': res['msg'],
+          'status': 'success',
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => SpkDataModel.fromJson(e))
@@ -256,7 +265,7 @@ class SpkLeasingFilterDataImp implements SpkLeasingFilterRepo {
         return {
           'status': 'fail',
           'code': res['code'],
-          'data': ([]).map((e) => SpkDataModel.fromJson(e)).toList(),
+          'data': [],
         };
       }
     } else {
@@ -264,7 +273,7 @@ class SpkLeasingFilterDataImp implements SpkLeasingFilterRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([]).map((e) => SpkDataModel.fromJson(e)).toList(),
+        'data': [],
       };
     }
   }

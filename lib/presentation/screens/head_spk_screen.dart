@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -8,8 +9,12 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
+import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_category.dart';
+import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_leasing.dart';
+import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_reject.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/widgets.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class HeadSpkScreen extends StatefulWidget {
   const HeadSpkScreen({super.key});
@@ -23,12 +28,13 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
     BuildContext context,
     EmployeeModel employee,
   ) async {
+    log('Refresh SPK Leasing');
     final date = DateTime.now().toIso8601String().substring(0, 10);
 
     context.read<SpkLeasingDataCubit>().loadData(
       employee.employeeID,
       date,
-      "${employee.branch}${employee.shop}",
+      '${employee.branch}${employee.shop}',
       '',
       '',
       '',
@@ -166,6 +172,13 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
               ],
             );
           } else if (state is SpkLeasingDataLoaded) {
+            final double detailPerLeasingHeight =
+                52 + state.result.detail1.length * 50;
+            final double detailPerCategoryHeight =
+                52 + state.result.detail2.length * 50;
+            final double detailRejectHeight =
+                52 + state.result.detail3.length * 50;
+
             return SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: Column(
@@ -450,51 +463,359 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                   ),
 
                   // ~:"Detail per Leasing" Table:~
-                  Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Detail per Leasing',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                  Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        spacing: 8,
+                        children: [
+                          // ~:Title:~
+                          Text(
+                            'Detail per Leasing',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+
+                          // ~:Table:~
+                          Container(
+                            height: detailPerLeasingHeight,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: SfDataGrid(
+                              source: DetailPerLeasingDataSource(
+                                context: context,
+                                detailPerLeasingData: state.result.detail1,
+                              ),
+                              // onCellTap: (details) =>
+                              //     onFUCellTap(context, state, details),
+                              columnWidthMode: ColumnWidthMode.fill,
+                              horizontalScrollPhysics:
+                                  const NeverScrollableScrollPhysics(),
+                              verticalScrollPhysics:
+                                  const NeverScrollableScrollPhysics(),
+                              columns: [
+                                GridColumn(
+                                  columnName: 'leasing',
+                                  minimumWidth: 80,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Leasing',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'total',
+                                  minimumWidth: 36,
+                                  label: Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'TTL',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'opened',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'P',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'approved',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'A',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'rejectedPercent',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'A%',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'con',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'CON',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'rejected',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'R',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
 
                   // ~:"Detail per Kategori" Table:~
-                  Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Detail per Kategori',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                  Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        spacing: 8,
+                        children: [
+                          // ~:Title:~
+                          Text(
+                            'Detail per Kategori',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+
+                          // ~:Table:~
+                          Container(
+                            height: detailPerCategoryHeight,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: SfDataGrid(
+                              source: DetailPerCategoryDataSource(
+                                context: context,
+                                detailPerCategoryData: state.result.detail2,
+                              ),
+                              columnWidthMode: ColumnWidthMode.fill,
+                              horizontalScrollPhysics:
+                                  const NeverScrollableScrollPhysics(),
+                              verticalScrollPhysics:
+                                  const NeverScrollableScrollPhysics(),
+                              columns: [
+                                GridColumn(
+                                  columnName: 'category',
+                                  minimumWidth: 80,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Kategori',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'total',
+                                  minimumWidth: 36,
+                                  label: Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'TTL',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'opened',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'P',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'approved',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'A',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'rejected',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'R',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
 
                   // ~:"Detail Reject" Table:~
-                  Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Detail Reject',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                  Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        spacing: 8,
+                        children: [
+                          // ~:Title:~
+                          Text(
+                            'Detail Reject',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+
+                          // ~:Table:~
+                          Container(
+                            height: detailRejectHeight,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: SfDataGrid(
+                              source: DetailRejectDataSource(
+                                context: context,
+                                detailRejectData: state.result.detail3,
+                              ),
+                              columnWidthMode: ColumnWidthMode.fill,
+                              horizontalScrollPhysics:
+                                  const NeverScrollableScrollPhysics(),
+                              verticalScrollPhysics:
+                                  const NeverScrollableScrollPhysics(),
+                              columns: [
+                                GridColumn(
+                                  columnName: 'reason',
+                                  minimumWidth: 200,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Alasan',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'total',
+                                  minimumWidth: 16,
+                                  label: Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'TTL',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'con',
+                                  minimumWidth: 16,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'CON',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),

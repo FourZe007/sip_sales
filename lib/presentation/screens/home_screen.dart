@@ -1177,7 +1177,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: DefaultTabController(
           length: 2,
           // initialIndex: context.read<DashboardTypeCubit>().state.index,
-          initialIndex: 0,
+          initialIndex: 1,
           animationDuration: Duration(milliseconds: 500),
           child: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
             listener: (context, state) {

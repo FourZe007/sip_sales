@@ -42,17 +42,15 @@ class SpkLeasingDataCubit extends Cubit<SpkLeasingDataState> {
       );
       log('$res');
 
-      if (res['status'].toString().toLowerCase() == 'sukses' &&
-          res['code'] == '100') {
+      if (res['status'] == 'success' && res['code'] == '100') {
         log('SPK Leasing data loaded successfully');
         emit(SpkLeasingDataLoaded(result: res['data']));
-      } else if (res['status'].toString().toLowerCase() == 'no data' &&
-          res['code'] == '100') {
+      } else if (res['status'] == 'no data' && res['code'] == '100') {
         log('SPK Leasing data has no data');
         emit(SpkLeasingDataFailed(message: 'No Data'));
       } else {
         log('SPK Leasing data loaded failed');
-        emit(SpkLeasingDataFailed(message: res['msg']));
+        emit(SpkLeasingDataFailed(message: res['status']));
       }
     } catch (e) {
       log('Error: $e');
