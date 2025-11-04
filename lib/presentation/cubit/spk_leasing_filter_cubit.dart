@@ -9,8 +9,6 @@ class SpkLeasingFilterCubit extends Cubit<SpkLeasingFilterState> {
   SpkLeasingFilterCubit({required this.spkLeasingFilterRepo})
     : super(SpkLeasingFilterState());
 
-  void changeFilter(SpkLeasingFilterState state) => emit(state);
-
   Future<void> loadFilterData() async {
     final employeeId = await Functions.readAndWriteEmployeeId();
     final groupDealer = await spkLeasingFilterRepo.loadGroupDealer(employeeId);
@@ -19,7 +17,7 @@ class SpkLeasingFilterCubit extends Cubit<SpkLeasingFilterState> {
     final category = await spkLeasingFilterRepo.loadCategory();
 
     emit(
-      SpkLeasingFilterState(
+      SpkLeasingFilterLoaded(
         groupDealerList: groupDealer['data'] ?? [],
         dealerList: dealer['data'] ?? [],
         leasingList: leasing['data'] ?? [],
@@ -27,32 +25,72 @@ class SpkLeasingFilterCubit extends Cubit<SpkLeasingFilterState> {
       ),
     );
   }
+
+  void resetFilter() => emit(SpkLeasingFilterState());
+
+  Future<void> changeFilter({
+    final String date = '',
+    final String branchShop = '',
+    final String category = '',
+    final String leasingId = '',
+    final String dealerType = '',
+  }) async {
+    emit(
+      SpkLeasingFilterApplied(
+        date: date,
+        branchShop: branchShop,
+        category: category,
+        leasingId: leasingId,
+        dealerType: dealerType,
+      ),
+    );
+  }
 }
 
 class SpkLeasingFilterState {
+  SpkLeasingFilterState();
+}
+
+class SpkLeasingFilterLoaded extends SpkLeasingFilterState {
   final List<SpkGrouDealerModel> groupDealerList;
   final List<SpkDealerModel> dealerList;
   final List<SpkLeasingModel> leasingList;
   final List<SpkCategoryModel> categoryList;
 
-  SpkLeasingFilterState({
+  SpkLeasingFilterLoaded({
     this.groupDealerList = const [],
     this.dealerList = const [],
     this.leasingList = const [],
     this.categoryList = const [],
   });
 
-  SpkLeasingFilterState copyWith({
+  SpkLeasingFilterLoaded copyWith({
     List<SpkGrouDealerModel>? groupDealerList,
     List<SpkDealerModel>? dealerList,
     List<SpkLeasingModel>? leasingList,
     List<SpkCategoryModel>? categoryList,
   }) {
-    return SpkLeasingFilterState(
+    return SpkLeasingFilterLoaded(
       groupDealerList: groupDealerList ?? this.groupDealerList,
       dealerList: dealerList ?? this.dealerList,
       leasingList: leasingList ?? this.leasingList,
       categoryList: categoryList ?? this.categoryList,
     );
   }
+}
+
+class SpkLeasingFilterApplied extends SpkLeasingFilterState {
+  final String date;
+  final String branchShop;
+  final String category;
+  final String leasingId;
+  final String dealerType;
+
+  SpkLeasingFilterApplied({
+    this.date = '',
+    this.branchShop = '',
+    this.category = '',
+    this.leasingId = '',
+    this.dealerType = '',
+  });
 }

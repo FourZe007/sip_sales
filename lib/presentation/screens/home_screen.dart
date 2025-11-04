@@ -24,6 +24,7 @@ import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/navbar_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/screens/coordinator_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_screen.dart';
@@ -36,6 +37,7 @@ import 'package:sip_sales_clean/presentation/screens/salesman_attendance_screen.
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/panels/spk_leasing_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/user_profile.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -1166,9 +1168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   DashboardSlidingUpType.deleteManagerActivity) {
                 return deleteActs(state.optionalData);
               } else if (state.type == DashboardSlidingUpType.leasing) {
-                return Center(
-                  child: Text('Leasing Panel'),
-                );
+                return SpkLeasingPanel();
               }
               return const SizedBox.shrink();
             },
@@ -1252,6 +1252,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.black,
                           ),
                         )
+                      // : IconButton(
+                      //     onPressed: () => refreshDashboard(
+                      //       context,
+                      //       employee,
+                      //       context.read<DashboardTypeCubit>().state,
+                      //       navbarType: context.read<NavbarCubit>().state,
+                      //     ),
+                      //     icon: Icon(
+                      //       Icons.refresh_rounded,
+                      //       size: (MediaQuery.of(context).size.width < 800)
+                      //           ? 20.0
+                      //           : 36.0,
+                      //       color: Colors.black,
+                      //     ),
+                      //   ),
                       : BlocBuilder<DashboardTypeCubit, DashboardType>(
                           builder: (context, state) {
                             if (state == DashboardType.spk) {
@@ -1309,6 +1324,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ? DashboardType.salesman
                                   : DashboardType.spk,
                             );
+
+                            if (index == 1) {
+                              context
+                                  .read<SpkLeasingFilterCubit>()
+                                  .resetFilter();
+                            }
                           },
                           indicatorColor: Colors.black,
                           indicatorWeight: 2,

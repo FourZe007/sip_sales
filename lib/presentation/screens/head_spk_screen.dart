@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
@@ -24,12 +25,19 @@ class HeadSpkScreen extends StatefulWidget {
 }
 
 class _HeadSpkScreenState extends State<HeadSpkScreen> {
+  String date = DateTime.now().toIso8601String().substring(0, 10);
+
+  void setDate(String x) {
+    setState(() {
+      date = x;
+    });
+  }
+
   void refreshSpkLeasingDashboard(
     BuildContext context,
     EmployeeModel employee,
   ) async {
     log('Refresh SPK Leasing');
-    final date = DateTime.now().toIso8601String().substring(0, 10);
 
     context.read<SpkLeasingDataCubit>().loadData(
       employee.employeeID,
@@ -43,6 +51,65 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // // ~:Filter:~
+    //     SizedBox(
+    //       width: MediaQuery.of(context).size.width,
+    //       height: 40,
+    //       child: Row(
+    //         spacing: 8,
+    //         children: [
+    //           // ~:Icon:~
+    //           ElevatedButton(
+    //             onPressed: null,
+    //             style: ElevatedButton.styleFrom(
+    //               minimumSize: const Size(32, 32),
+    //               padding: EdgeInsets.all(4),
+    //               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    //               backgroundColor: Colors.grey[400],
+    //               shape: RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.circular(12),
+    //               ),
+    //             ),
+    //             child: const Icon(
+    //               Icons.filter_alt_rounded,
+    //               size: 30.0,
+    //               color: Colors.black,
+    //             ),
+    //           ),
+    //
+    //           // ~:Body:~
+    //           Expanded(
+    //             child: SingleChildScrollView(
+    //               scrollDirection: Axis.horizontal,
+    //               physics: BouncingScrollPhysics(),
+    //               child: Row(
+    //                 spacing: 4,
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 children: [
+    //                   ElevatedButton(
+    //                     onPressed: () async {
+    //                       final DateTime? picked = await showDatePicker(
+    //                         context: context,
+    //                         initialDate: DateTime.now(),
+    //                         firstDate: DateTime(1990),
+    //                         lastDate: DateTime.now(),
+    //                       );
+    //                       if (picked != null && context.mounted) {
+    //                         setDate(picked.toString().substring(0, 10));
+    //                       }
+    //                     },
+    //                     child: Text(
+    //                       Formatter.dateFormat(date),
+    //                       style: TextThemes.normal.copyWith(fontSize: 16),
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -480,12 +547,8 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                           ),
 
                           // ~:Table:~
-                          Container(
+                          SizedBox(
                             height: detailPerLeasingHeight,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
                             child: SfDataGrid(
                               source: DetailPerLeasingDataSource(
                                 context: context,
@@ -630,12 +693,8 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                           ),
 
                           // ~:Table:~
-                          Container(
+                          SizedBox(
                             height: detailPerCategoryHeight,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
                             child: SfDataGrid(
                               source: DetailPerCategoryDataSource(
                                 context: context,
@@ -708,6 +767,36 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                   ),
                                 ),
                                 GridColumn(
+                                  columnName: 'approvedPercent',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'A%',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
+                                  columnName: 'con',
+                                  minimumWidth: 36,
+                                  label: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'CON',
+                                      textAlign: TextAlign.center,
+                                      style: TextThemes.normal.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GridColumn(
                                   columnName: 'rejected',
                                   minimumWidth: 36,
                                   label: Align(
@@ -748,12 +837,8 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                           ),
 
                           // ~:Table:~
-                          Container(
+                          SizedBox(
                             height: detailRejectHeight,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
                             child: SfDataGrid(
                               source: DetailRejectDataSource(
                                 context: context,

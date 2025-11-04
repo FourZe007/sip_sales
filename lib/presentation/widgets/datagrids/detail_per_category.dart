@@ -39,6 +39,15 @@ class DetailPerCategoryDataSource extends DataGridSource {
                 value: e.spkApprove.toString(),
               ),
               DataGridCell<String>(
+                columnName: 'approvedPercent',
+                value:
+                    '${(e.spkApprove * 100 / (e.spkApprove + e.spkReject)).round()}%',
+              ),
+              DataGridCell<String>(
+                columnName: 'con',
+                value: '${(e.spkApprove * 100 / e.totalSPK).truncate()}%',
+              ),
+              DataGridCell<String>(
                 columnName: 'rejected',
                 value: e.spkReject.toString(),
               ),
