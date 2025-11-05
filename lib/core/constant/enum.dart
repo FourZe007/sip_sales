@@ -24,7 +24,11 @@ enum DashboardSlidingUpType {
   moreoption, // for each cards if needed in the future
   deleteManagerActivity, // for delete manager activity
   logout, // for logout
-  leasing, // for SPK leasing filter
+  // leasing, // for SPK leasing filter
+  groupDealer,
+  dealer,
+  leasing,
+  category,
 }
 
 enum StatusCode {

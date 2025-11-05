@@ -9,47 +9,82 @@ class SpkLeasingFilterCubit extends Cubit<SpkLeasingFilterState> {
   SpkLeasingFilterCubit({required this.spkLeasingFilterRepo})
     : super(SpkLeasingFilterState());
 
-  Future<void> loadFilterData() async {
+  Future<void> loadFilterData({String selectedGroupDealer = ''}) async {
+    emit(SpkLeasingFilterLoading());
+
     final employeeId = await Functions.readAndWriteEmployeeId();
     final groupDealer = await spkLeasingFilterRepo.loadGroupDealer(employeeId);
-    final dealer = await spkLeasingFilterRepo.loadDealer(employeeId, '');
+    final dealer = await spkLeasingFilterRepo.loadDealer(
+      employeeId,
+      selectedGroupDealer,
+    );
     final leasing = await spkLeasingFilterRepo.loadLeasing();
     final category = await spkLeasingFilterRepo.loadCategory();
 
     emit(
       SpkLeasingFilterLoaded(
-        groupDealerList: groupDealer['data'] ?? [],
-        dealerList: dealer['data'] ?? [],
-        leasingList: leasing['data'] ?? [],
-        categoryList: category['data'] ?? [],
+        groupDealerList: [
+          SpkGrouDealerModel(
+            order: 0,
+            groupName: 'Semua',
+          ),
+          ...(groupDealer['data'] ?? []),
+        ],
+        dealerList: [
+          SpkDealerModel(
+            branch: '',
+            shop: '',
+            bsName: 'Semua',
+            serverName: '',
+            dbName: '',
+            password: '',
+            pt: '',
+            groupName: '',
+          ),
+          ...(dealer['data'] ?? []),
+        ],
+        leasingList: [
+          SpkLeasingModel(
+            leasingId: 'Semua',
+          ),
+          ...(leasing['data'] ?? []),
+        ],
+        categoryList: [
+          SpkCategoryModel(
+            category: 'Semua',
+          ),
+          ...(category['data'] ?? []),
+        ],
       ),
     );
   }
 
   void resetFilter() => emit(SpkLeasingFilterState());
 
-  Future<void> changeFilter({
-    final String date = '',
-    final String branchShop = '',
-    final String category = '',
-    final String leasingId = '',
-    final String dealerType = '',
-  }) async {
-    emit(
-      SpkLeasingFilterApplied(
-        date: date,
-        branchShop: branchShop,
-        category: category,
-        leasingId: leasingId,
-        dealerType: dealerType,
-      ),
-    );
-  }
+  // Future<void> changeFilter({
+  //   final String date = '',
+  //   final String branchShop = '',
+  //   final String category = '',
+  //   final String leasingId = '',
+  //   final String dealerType = '',
+  // }) async {
+  //   emit(
+  //     SpkLeasingFilterApplied(
+  //       date: date,
+  //       branchShop: branchShop,
+  //       category: category,
+  //       leasingId: leasingId,
+  //       dealerType: dealerType,
+  //     ),
+  //   );
+  // }
 }
 
 class SpkLeasingFilterState {
   SpkLeasingFilterState();
 }
+
+class SpkLeasingFilterLoading extends SpkLeasingFilterState {}
 
 class SpkLeasingFilterLoaded extends SpkLeasingFilterState {
   final List<SpkGrouDealerModel> groupDealerList;

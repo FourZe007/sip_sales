@@ -40,9 +40,6 @@ class LocationServiceBloc
           // ~:Head Store:~
           if (loginState.user.code == 0) {
             log('Fetch Head Acts');
-            // ~:Retrieve any needed master data:~
-            event.context.read<SpkLeasingFilterCubit>().loadFilterData();
-
             event.context.read<HeadStoreBloc>().add(
               LoadHeadActs(
                 employeeID: loginState.user.employeeID,

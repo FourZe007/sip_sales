@@ -66,9 +66,9 @@ class _SpkLeasingPanelState extends State<SpkLeasingPanel> {
 
                   if (picked != null && context.mounted) {
                     log('Selected date: ${picked.toString()}');
-                    context.read<SpkLeasingFilterCubit>().changeFilter(
-                      date: date,
-                    );
+                    // context.read<SpkLeasingFilterCubit>().changeFilter(
+                    //   date: date,
+                    // );
                   }
                 },
                 child: Text(

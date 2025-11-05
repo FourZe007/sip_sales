@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_category.dart';
@@ -188,727 +190,917 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
       //     ],
       //   ),
       // ),
-      child: BlocBuilder<SpkLeasingDataCubit, SpkLeasingDataState>(
-        builder: (context, state) {
-          if (state is SpkLeasingDataLoading) {
-            if (Platform.isIOS) {
-              return const CupertinoActivityIndicator(
-                radius: 12.5,
-                color: Colors.black,
-              );
-            } else {
-              return const AndroidLoading(
-                warna: Colors.black,
-                strokeWidth: 3,
-              );
-            }
-          } else if (state is SpkLeasingDataFailed) {
-            return Column(
+      child: Column(
+        spacing: 12,
+        children: [
+          // ~:Filter:~
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 40,
+            child: Row(
               spacing: 8,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // ~:Error Text:~
-                Text(
-                  state.message == 'No Data'
-                      ? 'Data Tidak Ditemukan'
-                      : 'Error: ${state.message}',
-                  textAlign: TextAlign.center,
-                  style: TextThemes.normal.copyWith(
-                    fontSize: 16,
-                    backgroundColor: Colors.transparent,
+                // ~:Body:~
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(),
+                    child: SizedBox(
+                      height: 32,
+                      child: Row(
+                        spacing: 4,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // ~:Date:~
+                          // ElevatedButton(
+                          //   onPressed: () async {
+                          //     final DateTime? picked = await showDatePicker(
+                          //       context: context,
+                          //       initialDate: DateTime.now(),
+                          //       firstDate: DateTime(1990),
+                          //       lastDate: DateTime.now(),
+                          //     );
+                          //     if (picked != null && context.mounted) {
+                          //       setDate(picked.toString().substring(0, 10));
+                          //     }
+                          //   },
+                          //   style: ElevatedButton.styleFrom(
+                          //     padding: EdgeInsets.all(8),
+                          //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          //     backgroundColor: Colors.grey[400],
+                          //     shape: RoundedRectangleBorder(
+                          //       borderRadius: BorderRadius.circular(12),
+                          //     ),
+                          //   ),
+                          //   child: Text(
+                          //     Formatter.dateFormat(date),
+                          //     style: TextThemes.normal.copyWith(fontSize: 16),
+                          //   ),
+                          // ),
+
+                          // ~:Group Dealer:~
+                          ElevatedButton.icon(
+                            onPressed: () => context
+                                .read<DashboardSlidingUpCubit>()
+                                .changeType(DashboardSlidingUpType.groupDealer),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              backgroundColor: Colors.grey[400],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 20,
+                              color: Colors.black,
+                            ),
+                            iconAlignment: IconAlignment.end,
+                            label: Text(
+                              "Semua grup dealer",
+                              style: TextThemes.normal,
+                            ),
+                          ),
+
+                          // ~:Dealer:~
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              backgroundColor: Colors.grey[400],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 20,
+                              color: Colors.black,
+                            ),
+                            iconAlignment: IconAlignment.end,
+                            label: Text(
+                              "Semua dealer",
+                              style: TextThemes.normal,
+                            ),
+                          ),
+
+                          // ~:Leasing:~
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              backgroundColor: Colors.grey[400],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 20,
+                              color: Colors.black,
+                            ),
+                            iconAlignment: IconAlignment.end,
+                            label: Text(
+                              "Semua leasing",
+                              style: TextThemes.normal,
+                            ),
+                          ),
+
+                          // ~:Category:~
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              backgroundColor: Colors.grey[400],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 20,
+                              color: Colors.black,
+                            ),
+                            iconAlignment: IconAlignment.end,
+                            label: Text(
+                              "Semua kategori",
+                              style: TextThemes.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
 
-                // ~:Reload Button:~
+                // ~:Header:~
                 ElevatedButton(
-                  onPressed: () => refreshSpkLeasingDashboard(
-                    context,
-                    (context.read<LoginBloc>().state as LoginSuccess).user,
-                  ),
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(120, 40),
-                  ),
-                  child: Text(
-                    'Refresh',
-                    style: TextThemes.normalTextButton.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
+                    minimumSize: const Size(24, 24),
+                    padding: EdgeInsets.all(4),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    backgroundColor: Colors.grey[400],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                  ),
+                  child: const Icon(
+                    Icons.filter_alt_rounded,
+                    size: 24.0,
+                    color: Colors.black,
                   ),
                 ),
               ],
-            );
-          } else if (state is SpkLeasingDataLoaded) {
-            final double detailPerLeasingHeight =
-                52 + state.result.detail1.length * 50;
-            final double detailPerCategoryHeight =
-                52 + state.result.detail2.length * 50;
-            final double detailRejectHeight =
-                52 + state.result.detail3.length * 50;
+            ),
+          ),
 
-            return SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                spacing: 8,
-                children: [
-                  Row(
-                    spacing: 4,
+          // ~:Body:~
+          Expanded(
+            child: BlocBuilder<SpkLeasingDataCubit, SpkLeasingDataState>(
+              builder: (context, state) {
+                if (state is SpkLeasingDataLoading) {
+                  if (Platform.isIOS) {
+                    return const CupertinoActivityIndicator(
+                      radius: 12.5,
+                      color: Colors.black,
+                    );
+                  } else {
+                    return const AndroidLoading(
+                      warna: Colors.black,
+                      strokeWidth: 3,
+                    );
+                  }
+                } else if (state is SpkLeasingDataFailed) {
+                  return Column(
+                    spacing: 8,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Widgets.buildStatBox(
-                          context: context,
-                          label: 'Total SPK',
-                          value: state.result.totalSPK.toString(),
-                          labelSize: 12,
-                          boxColor: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                            ),
-                          ],
+                      // ~:Error Text:~
+                      Text(
+                        state.message == 'No Data'
+                            ? 'Data Tidak Ditemukan'
+                            : 'Error: ${state.message}',
+                        textAlign: TextAlign.center,
+                        style: TextThemes.normal.copyWith(
+                          fontSize: 16,
+                          backgroundColor: Colors.transparent,
                         ),
                       ),
-                      Expanded(
-                        child: Widgets.buildStatBox(
-                          context: context,
-                          label: 'SPK Terbuka',
-                          value: state.result.spkTerbuka.toString(),
-                          labelSize: 12,
-                          boxColor: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
+
+                      // ~:Reload Button:~
+                      ElevatedButton(
+                        onPressed: () => refreshSpkLeasingDashboard(
+                          context,
+                          (context.read<LoginBloc>().state as LoginSuccess)
+                              .user,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: const Size(120, 40),
+                        ),
+                        child: Text(
+                          'Refresh',
+                          style: TextThemes.normalTextButton.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                            ),
-                          ],
                         ),
                       ),
                     ],
-                  ),
+                  );
+                } else if (state is SpkLeasingDataLoaded) {
+                  final double detailPerLeasingHeight =
+                      52 + state.result.detail1.length * 50;
+                  final double detailPerCategoryHeight =
+                      52 + state.result.detail2.length * 50;
+                  final double detailRejectHeight =
+                      52 + state.result.detail3.length * 50;
 
-                  Row(
-                    spacing: 4,
-                    children: [
-                      Expanded(
-                        child: Widgets.buildStatBox(
-                          context: context,
-                          label: 'Approval',
-                          value: state.result.spkApprove.toString(),
-                          labelSize: 12,
-                          boxColor: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Widgets.buildStatBox(
-                          context: context,
-                          label: '% Approval',
-                          value:
-                              '${((state.result.spkApprove * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%',
-                          valueFontSize: 28,
-                          labelSize: 12,
-                          boxColor: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Widgets.buildStatBox(
-                          context: context,
-                          label: 'Reject',
-                          value: state.result.spkReject.toString(),
-                          labelSize: 12,
-                          boxColor: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Widgets.buildStatBox(
-                          context: context,
-                          label: '% Reject',
-                          value:
-                              '${((state.result.spkReject * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%',
-                          valueFontSize: 28,
-                          labelSize: 12,
-                          boxColor: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // ~:Jumlah SPK:~
-                  Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: const BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    shadowColor: Colors.grey,
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        spacing: 12,
-                        children: [
-                          // ~:Title:~
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Jumlah SPK',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-
-                          // ~:Data:~
-                          Row(
-                            spacing: 4,
-                            children: [
-                              Expanded(
-                                child: Widgets.buildStatBox(
-                                  context: context,
-                                  label: '1 HARI',
-                                  value:
-                                      state.result.satuHari
-                                              .toString()
-                                              .isNotEmpty &&
-                                          state.result.satuHari.toString() !=
-                                              '0'
-                                      ? state.result.satuHari.toString()
-                                      : '-',
-                                  valueFontSize: 28,
-                                  labelSize: 12,
-                                  boxColor: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: 2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Widgets.buildStatBox(
-                                  context: context,
-                                  label: '2 HARI',
-                                  value:
-                                      state.result.duaHari
-                                              .toString()
-                                              .isNotEmpty &&
-                                          state.result.duaHari.toString() != '0'
-                                      ? state.result.duaHari.toString()
-                                      : '-',
-                                  valueFontSize: 28,
-                                  labelSize: 12,
-                                  boxColor: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: 2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Widgets.buildStatBox(
-                                  context: context,
-                                  label: '3 HARI',
-                                  value:
-                                      state.result.tigaHari
-                                              .toString()
-                                              .isNotEmpty &&
-                                          state.result.tigaHari.toString() !=
-                                              '0'
-                                      ? state.result.tigaHari.toString()
-                                      : '-',
-                                  valueFontSize: 28,
-                                  labelSize: 12,
-                                  boxColor: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: 2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Widgets.buildStatBox(
-                                  context: context,
-                                  label: '> 3 HARI',
-                                  value:
-                                      state.result.lebihTigaHari
-                                              .toString()
-                                              .isNotEmpty &&
-                                          state.result.lebihTigaHari
-                                                  .toString() !=
-                                              '0'
-                                      ? state.result.lebihTigaHari.toString()
-                                      : '-',
-                                  valueFontSize: 28,
-                                  labelSize: 12,
-                                  boxColor: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: 2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // ~:"Detail per Leasing" Table:~
-                  Card(
-                    elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        spacing: 8,
-                        children: [
-                          // ~:Title:~
-                          Text(
-                            'Detail per Leasing',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          // ~:Table:~
-                          SizedBox(
-                            height: detailPerLeasingHeight,
-                            child: SfDataGrid(
-                              source: DetailPerLeasingDataSource(
+                  return SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      spacing: 8,
+                      children: [
+                        Row(
+                          spacing: 4,
+                          children: [
+                            Expanded(
+                              child: Widgets.buildStatBox(
                                 context: context,
-                                detailPerLeasingData: state.result.detail1,
+                                label: 'Total SPK',
+                                value: state.result.totalSPK.toString(),
+                                labelSize: 12,
+                                boxColor: Colors.white,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 2,
+                                  ),
+                                ],
                               ),
-                              // onCellTap: (details) =>
-                              //     onFUCellTap(context, state, details),
-                              columnWidthMode: ColumnWidthMode.fill,
-                              horizontalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              verticalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              columns: [
-                                GridColumn(
-                                  columnName: 'leasing',
-                                  minimumWidth: 80,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Leasing',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                            ),
+                            Expanded(
+                              child: Widgets.buildStatBox(
+                                context: context,
+                                label: 'SPK Terbuka',
+                                value: state.result.spkTerbuka.toString(),
+                                labelSize: 12,
+                                boxColor: Colors.white,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Row(
+                          spacing: 4,
+                          children: [
+                            Expanded(
+                              child: Widgets.buildStatBox(
+                                context: context,
+                                label: 'Approval',
+                                value: state.result.spkApprove.toString(),
+                                labelSize: 12,
+                                boxColor: Colors.white,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Widgets.buildStatBox(
+                                context: context,
+                                label: '% Approval',
+                                value:
+                                    '${((state.result.spkApprove * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%',
+                                valueFontSize: 28,
+                                labelSize: 12,
+                                boxColor: Colors.white,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Widgets.buildStatBox(
+                                context: context,
+                                label: 'Reject',
+                                value: state.result.spkReject.toString(),
+                                labelSize: 12,
+                                boxColor: Colors.white,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Widgets.buildStatBox(
+                                context: context,
+                                label: '% Reject',
+                                value:
+                                    '${((state.result.spkReject * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%',
+                                valueFontSize: 28,
+                                labelSize: 12,
+                                boxColor: Colors.white,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // ~:Jumlah SPK:~
+                        Card(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          shadowColor: Colors.grey,
+                          elevation: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              spacing: 12,
+                              children: [
+                                // ~:Title:~
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Jumlah SPK',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                GridColumn(
-                                  columnName: 'total',
-                                  minimumWidth: 36,
-                                  label: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'TTL',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+
+                                // ~:Data:~
+                                Row(
+                                  spacing: 4,
+                                  children: [
+                                    Expanded(
+                                      child: Widgets.buildStatBox(
+                                        context: context,
+                                        label: '1 HARI',
+                                        value:
+                                            state.result.satuHari
+                                                    .toString()
+                                                    .isNotEmpty &&
+                                                state.result.satuHari
+                                                        .toString() !=
+                                                    '0'
+                                            ? state.result.satuHari.toString()
+                                            : '-',
+                                        valueFontSize: 28,
+                                        labelSize: 12,
+                                        boxColor: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 2,
+                                          ),
+                                        ],
                                       ),
                                     ),
+                                    Expanded(
+                                      child: Widgets.buildStatBox(
+                                        context: context,
+                                        label: '2 HARI',
+                                        value:
+                                            state.result.duaHari
+                                                    .toString()
+                                                    .isNotEmpty &&
+                                                state.result.duaHari
+                                                        .toString() !=
+                                                    '0'
+                                            ? state.result.duaHari.toString()
+                                            : '-',
+                                        valueFontSize: 28,
+                                        labelSize: 12,
+                                        boxColor: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Widgets.buildStatBox(
+                                        context: context,
+                                        label: '3 HARI',
+                                        value:
+                                            state.result.tigaHari
+                                                    .toString()
+                                                    .isNotEmpty &&
+                                                state.result.tigaHari
+                                                        .toString() !=
+                                                    '0'
+                                            ? state.result.tigaHari.toString()
+                                            : '-',
+                                        valueFontSize: 28,
+                                        labelSize: 12,
+                                        boxColor: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Widgets.buildStatBox(
+                                        context: context,
+                                        label: '> 3 HARI',
+                                        value:
+                                            state.result.lebihTigaHari
+                                                    .toString()
+                                                    .isNotEmpty &&
+                                                state.result.lebihTigaHari
+                                                        .toString() !=
+                                                    '0'
+                                            ? state.result.lebihTigaHari
+                                                  .toString()
+                                            : '-',
+                                        valueFontSize: 28,
+                                        labelSize: 12,
+                                        boxColor: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // ~:"Detail per Leasing" Table:~
+                        Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              spacing: 8,
+                              children: [
+                                // ~:Title:~
+                                Text(
+                                  'Detail per Leasing',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                GridColumn(
-                                  columnName: 'opened',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'P',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+
+                                // ~:Table:~
+                                SizedBox(
+                                  height: detailPerLeasingHeight,
+                                  child: SfDataGrid(
+                                    source: DetailPerLeasingDataSource(
+                                      context: context,
+                                      detailPerLeasingData:
+                                          state.result.detail1,
                                     ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'approved',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'A',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                    // onCellTap: (details) =>
+                                    //     onFUCellTap(context, state, details),
+                                    columnWidthMode: ColumnWidthMode.fill,
+                                    horizontalScrollPhysics:
+                                        const NeverScrollableScrollPhysics(),
+                                    verticalScrollPhysics:
+                                        const NeverScrollableScrollPhysics(),
+                                    columns: [
+                                      GridColumn(
+                                        columnName: 'leasing',
+                                        minimumWidth: 80,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Leasing',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'rejectedPercent',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'A%',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'total',
+                                        minimumWidth: 36,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'TTL',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'con',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'CON',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'opened',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'P',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'rejected',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'R',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'approved',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'A',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      GridColumn(
+                                        columnName: 'rejectedPercent',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'A%',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'con',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'CON',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'rejected',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'R',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
 
-                  // ~:"Detail per Kategori" Table:~
-                  Card(
-                    elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        spacing: 8,
-                        children: [
-                          // ~:Title:~
-                          Text(
-                            'Detail per Kategori',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        // ~:"Detail per Kategori" Table:~
+                        Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              spacing: 8,
+                              children: [
+                                // ~:Title:~
+                                Text(
+                                  'Detail per Kategori',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
 
-                          // ~:Table:~
-                          SizedBox(
-                            height: detailPerCategoryHeight,
-                            child: SfDataGrid(
-                              source: DetailPerCategoryDataSource(
-                                context: context,
-                                detailPerCategoryData: state.result.detail2,
-                              ),
-                              columnWidthMode: ColumnWidthMode.fill,
-                              horizontalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              verticalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              columns: [
-                                GridColumn(
-                                  columnName: 'category',
-                                  minimumWidth: 80,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Kategori',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                // ~:Table:~
+                                SizedBox(
+                                  height: detailPerCategoryHeight,
+                                  child: SfDataGrid(
+                                    source: DetailPerCategoryDataSource(
+                                      context: context,
+                                      detailPerCategoryData:
+                                          state.result.detail2,
                                     ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'total',
-                                  minimumWidth: 36,
-                                  label: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'TTL',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                    columnWidthMode: ColumnWidthMode.fill,
+                                    horizontalScrollPhysics:
+                                        const NeverScrollableScrollPhysics(),
+                                    verticalScrollPhysics:
+                                        const NeverScrollableScrollPhysics(),
+                                    columns: [
+                                      GridColumn(
+                                        columnName: 'category',
+                                        minimumWidth: 80,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Kategori',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'opened',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'P',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'total',
+                                        minimumWidth: 36,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'TTL',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'approved',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'A',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'opened',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'P',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'approvedPercent',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'A%',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'approved',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'A',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'con',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'CON',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'approvedPercent',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'A%',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'rejected',
-                                  minimumWidth: 36,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'R',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                      GridColumn(
+                                        columnName: 'con',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'CON',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      GridColumn(
+                                        columnName: 'rejected',
+                                        minimumWidth: 36,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'R',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
 
-                  // ~:"Detail Reject" Table:~
-                  Card(
-                    elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        spacing: 8,
-                        children: [
-                          // ~:Title:~
-                          Text(
-                            'Detail Reject',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          // ~:Table:~
-                          SizedBox(
-                            height: detailRejectHeight,
-                            child: SfDataGrid(
-                              source: DetailRejectDataSource(
-                                context: context,
-                                detailRejectData: state.result.detail3,
-                              ),
-                              columnWidthMode: ColumnWidthMode.fill,
-                              horizontalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              verticalScrollPhysics:
-                                  const NeverScrollableScrollPhysics(),
-                              columns: [
-                                GridColumn(
-                                  columnName: 'reason',
-                                  minimumWidth: 200,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Alasan',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                        // ~:"Detail Reject" Table:~
+                        Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              spacing: 8,
+                              children: [
+                                // ~:Title:~
+                                Text(
+                                  'Detail Reject',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                GridColumn(
-                                  columnName: 'total',
-                                  minimumWidth: 16,
-                                  label: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'TTL',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+
+                                // ~:Table:~
+                                SizedBox(
+                                  height: detailRejectHeight,
+                                  child: SfDataGrid(
+                                    source: DetailRejectDataSource(
+                                      context: context,
+                                      detailRejectData: state.result.detail3,
                                     ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  columnName: 'con',
-                                  minimumWidth: 16,
-                                  label: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'CON',
-                                      textAlign: TextAlign.center,
-                                      style: TextThemes.normal.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                    columnWidthMode: ColumnWidthMode.fill,
+                                    horizontalScrollPhysics:
+                                        const NeverScrollableScrollPhysics(),
+                                    verticalScrollPhysics:
+                                        const NeverScrollableScrollPhysics(),
+                                    columns: [
+                                      GridColumn(
+                                        columnName: 'reason',
+                                        minimumWidth: 200,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Alasan',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      GridColumn(
+                                        columnName: 'total',
+                                        minimumWidth: 16,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'TTL',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'con',
+                                        minimumWidth: 16,
+                                        label: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'CON',
+                                            textAlign: TextAlign.center,
+                                            style: TextThemes.normal.copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
-        },
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -37,7 +37,10 @@ import 'package:sip_sales_clean/presentation/screens/salesman_attendance_screen.
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
-import 'package:sip_sales_clean/presentation/widgets/panels/spk_leasing_panel.dart';
+import 'package:sip_sales_clean/presentation/widgets/panels/category_filter_panel.dart';
+import 'package:sip_sales_clean/presentation/widgets/panels/dealer_filter_panel.dart';
+import 'package:sip_sales_clean/presentation/widgets/panels/group_dealer_filter_panel.dart';
+import 'package:sip_sales_clean/presentation/widgets/panels/leasing_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/user_profile.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -102,6 +105,10 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (navbarType == NavbarType.report) {
         if (dashboardState == DashboardType.spk) {
           log('Refresh head store SPK Report page');
+          // ~:Load SPK Leasing Filter Data:~
+          context.read<SpkLeasingFilterCubit>().loadFilterData();
+
+          // ~:Load SPK Leasing Data:~
           context.read<SpkLeasingDataCubit>().loadData(
             salesmanId,
             date,
@@ -1167,8 +1174,14 @@ class _HomeScreenState extends State<HomeScreen> {
               } else if (state.type ==
                   DashboardSlidingUpType.deleteManagerActivity) {
                 return deleteActs(state.optionalData);
+              } else if (state.type == DashboardSlidingUpType.groupDealer) {
+                return GroupDealerFilterPanel();
+              } else if (state.type == DashboardSlidingUpType.dealer) {
+                return DealerFilterPanel();
               } else if (state.type == DashboardSlidingUpType.leasing) {
-                return SpkLeasingPanel();
+                return LeasingFilterPanel();
+              } else if (state.type == DashboardSlidingUpType.category) {
+                return CategoryFilterPanel();
               }
               return const SizedBox.shrink();
             },
@@ -1183,7 +1196,10 @@ class _HomeScreenState extends State<HomeScreen> {
             listener: (context, state) {
               if (state.type == DashboardSlidingUpType.deleteManagerActivity ||
                   state.type == DashboardSlidingUpType.logout ||
-                  state.type == DashboardSlidingUpType.leasing) {
+                  state.type == DashboardSlidingUpType.groupDealer ||
+                  state.type == DashboardSlidingUpType.dealer ||
+                  state.type == DashboardSlidingUpType.leasing ||
+                  state.type == DashboardSlidingUpType.category) {
                 log('Opening Sliding Up Panel - State: ${state.type}');
                 slidingPanelController.open();
               } else {
@@ -1252,57 +1268,57 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.black,
                           ),
                         )
-                      // : IconButton(
-                      //     onPressed: () => refreshDashboard(
-                      //       context,
-                      //       employee,
-                      //       context.read<DashboardTypeCubit>().state,
-                      //       navbarType: context.read<NavbarCubit>().state,
-                      //     ),
-                      //     icon: Icon(
-                      //       Icons.refresh_rounded,
-                      //       size: (MediaQuery.of(context).size.width < 800)
-                      //           ? 20.0
-                      //           : 36.0,
-                      //       color: Colors.black,
-                      //     ),
-                      //   ),
-                      : BlocBuilder<DashboardTypeCubit, DashboardType>(
-                          builder: (context, state) {
-                            if (state == DashboardType.spk) {
-                              return IconButton(
-                                onPressed: () => context
-                                    .read<DashboardSlidingUpCubit>()
-                                    .changeType(DashboardSlidingUpType.leasing),
-                                icon: Icon(
-                                  Icons.filter_alt_rounded,
-                                  size:
-                                      (MediaQuery.of(context).size.width < 800)
-                                      ? 24.0
-                                      : 40.0,
-                                  color: Colors.black,
-                                ),
-                              );
-                            } else {
-                              return IconButton(
-                                onPressed: () => refreshDashboard(
-                                  context,
-                                  employee,
-                                  context.read<DashboardTypeCubit>().state,
-                                  navbarType: context.read<NavbarCubit>().state,
-                                ),
-                                icon: Icon(
-                                  Icons.refresh_rounded,
-                                  size:
-                                      (MediaQuery.of(context).size.width < 800)
-                                      ? 20.0
-                                      : 36.0,
-                                  color: Colors.black,
-                                ),
-                              );
-                            }
-                          },
+                      : IconButton(
+                          onPressed: () => refreshDashboard(
+                            context,
+                            employee,
+                            context.read<DashboardTypeCubit>().state,
+                            navbarType: context.read<NavbarCubit>().state,
+                          ),
+                          icon: Icon(
+                            Icons.refresh_rounded,
+                            size: (MediaQuery.of(context).size.width < 800)
+                                ? 20.0
+                                : 36.0,
+                            color: Colors.black,
+                          ),
                         ),
+                  // : BlocBuilder<DashboardTypeCubit, DashboardType>(
+                  //     builder: (context, state) {
+                  //       if (state == DashboardType.spk) {
+                  //         return IconButton(
+                  //           onPressed: () => context
+                  //               .read<DashboardSlidingUpCubit>()
+                  //               .changeType(DashboardSlidingUpType.leasing),
+                  //           icon: Icon(
+                  //             Icons.filter_alt_rounded,
+                  //             size:
+                  //                 (MediaQuery.of(context).size.width < 800)
+                  //                 ? 24.0
+                  //                 : 40.0,
+                  //             color: Colors.black,
+                  //           ),
+                  //         );
+                  //       } else {
+                  //         return IconButton(
+                  //           onPressed: () => refreshDashboard(
+                  //             context,
+                  //             employee,
+                  //             context.read<DashboardTypeCubit>().state,
+                  //             navbarType: context.read<NavbarCubit>().state,
+                  //           ),
+                  //           icon: Icon(
+                  //             Icons.refresh_rounded,
+                  //             size:
+                  //                 (MediaQuery.of(context).size.width < 800)
+                  //                 ? 20.0
+                  //                 : 36.0,
+                  //             color: Colors.black,
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
                 ],
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(
@@ -1326,9 +1342,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
 
                             if (index == 1) {
+                              // ~:Load SPK Leasing Filter Data:~
                               context
                                   .read<SpkLeasingFilterCubit>()
-                                  .resetFilter();
+                                  .loadFilterData();
                             }
                           },
                           indicatorColor: Colors.black,
