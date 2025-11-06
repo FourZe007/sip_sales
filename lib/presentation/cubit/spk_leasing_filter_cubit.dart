@@ -41,13 +41,19 @@ class SpkLeasingFilterCubit extends Cubit<SpkLeasingFilterState> {
             pt: '',
             groupName: '',
           ),
-          ...(dealer['data'] ?? []),
+          ...(dealer['data']?.where(
+                (SpkDealerModel e) =>
+                    e.branch.isNotEmpty &&
+                    e.shop.isNotEmpty &&
+                    e.bsName.isNotEmpty,
+              ) ??
+              []),
         ],
         leasingList: [
           SpkLeasingModel(
             leasingId: 'Semua',
           ),
-          ...(leasing['data'] ?? []),
+          ...?leasing['data'] ?? [],
         ],
         categoryList: [
           SpkCategoryModel(

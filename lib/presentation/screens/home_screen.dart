@@ -56,6 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
   double panelMaxHeight = 150;
   final PanelController slidingPanelController = PanelController();
 
+  double get getPanelMaxHeight => panelMaxHeight;
+
   void setPreferredTabHeight(int height) {
     setState(() {
       preferredTabHeight = height;
@@ -66,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       panelMaxHeight = height;
     });
+    // panelMaxHeight = height;
   }
 
   void openProfile() {
@@ -1160,7 +1163,11 @@ class _HomeScreenState extends State<HomeScreen> {
         backdropColor: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20.0),
         minHeight: 0.0,
-        maxHeight: panelMaxHeight,
+        maxHeight: getPanelMaxHeight,
+        // maxHeight: context.select<DashboardSlidingUpCubit, double>(
+        //   (cubit) => cubit.state.panelHeight,
+        // ),
+        // maxHeight: context.read<DashboardSlidingUpCubit>().state.panelHeight,
         defaultPanelState: PanelState.CLOSED,
         onPanelClosed: () =>
             context.read<DashboardSlidingUpCubit>().closePanel(),
@@ -1330,8 +1337,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context, state) {
                       if (state == NavbarType.report) {
                         return TabBar(
-                          controller: DefaultTabController.of(context)
-                            ..index = 0,
+                          // controller: DefaultTabController.of(context)
+                          //   ..index = 0,
                           onTap: (index) {
                             log('Index: ${index.toString()}');
 
@@ -1347,6 +1354,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .read<SpkLeasingFilterCubit>()
                                   .loadFilterData();
                             }
+
+                            log(
+                              'Current DashboardSlidingupCubit state: ${context.read<DashboardSlidingUpCubit>().state.type}',
+                            );
                           },
                           indicatorColor: Colors.black,
                           indicatorWeight: 2,
@@ -1398,61 +1409,89 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
-              bottomNavigationBar: BottomNavigationBar(
-                currentIndex: context.read<NavbarCubit>().state.index,
-                onTap: (index) {
-                  context.read<NavbarCubit>().changeNavbarType(index);
-                  setPreferredTabHeight(index == 1 ? 20 : 0);
+              bottomNavigationBar:
+                  BlocListener<
+                    DashboardSlidingUpCubit,
+                    DashboardSlidingUpState
+                  >(
+                    listener: (context, state) {
+                      log('Listening DashboardSlidingUpCubit: ${state.type}');
+                      if (state.type == DashboardSlidingUpType.groupDealer) {
+                        setPanelMaxHeight(160);
+                      } else if (state.type == DashboardSlidingUpType.dealer) {
+                        setPanelMaxHeight(200);
+                      } else if (state.type == DashboardSlidingUpType.leasing) {
+                        setPanelMaxHeight(260);
+                      } else if (state.type ==
+                          DashboardSlidingUpType.category) {
+                        setPanelMaxHeight(360);
+                      }
+                    },
+                    child: BottomNavigationBar(
+                      currentIndex: context.read<NavbarCubit>().state.index,
+                      onTap: (index) {
+                        context.read<NavbarCubit>().changeNavbarType(index);
+                        setPreferredTabHeight(index == 1 ? 20 : 0);
 
-                  if (index == 0) {
-                    setPanelMaxHeight(150);
+                        if (index == 0) {
+                          setPanelMaxHeight(150);
 
-                    context.read<DashboardTypeCubit>().changeType(
-                      DashboardType.none,
-                    );
+                          context.read<DashboardTypeCubit>().changeType(
+                            DashboardType.none,
+                          );
 
-                    context.read<HeadStoreBloc>().add(
-                      LoadHeadActs(
-                        employeeID: employee.employeeID,
-                        date: DateTime.now().toIso8601String().split('T')[0],
-                      ),
-                    );
-                  } else if (index == 1) {
-                    // Reset dashboard type to salesman
-                    // just in case user is in spk screen
-                    context.read<DashboardTypeCubit>().changeType(
-                      DashboardType.salesman,
-                    );
+                          context.read<HeadStoreBloc>().add(
+                            LoadHeadActs(
+                              employeeID: employee.employeeID,
+                              date: DateTime.now().toIso8601String().split(
+                                'T',
+                              )[0],
+                            ),
+                          );
+                        } else if (index == 1) {
+                          log(
+                            'Bottom NavBar Sliding Up State: ${context.read<DashboardSlidingUpCubit>().state.type}',
+                          );
 
-                    refreshDashboard(
-                      context,
-                      employee,
-                      context.read<DashboardTypeCubit>().state,
-                      navbarType: NavbarType.report,
-                    );
-                  } else if (index == 2) {
-                    setPanelMaxHeight(325);
-                  }
-                },
-                backgroundColor: Colors.white,
-                selectedItemColor: Colors.blue,
-                unselectedItemColor: Colors.grey,
-                elevation: 8.0,
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 'Home',
+                          // Reset dashboard type to salesman
+                          // just in case user is in spk screen
+                          context.read<DashboardTypeCubit>().changeType(
+                            DashboardType.salesman,
+                          );
+
+                          refreshDashboard(
+                            context,
+                            employee,
+                            context.read<DashboardTypeCubit>().state,
+                            navbarType: NavbarType.report,
+                          );
+                        } else if (index == 2) {
+                          setPanelMaxHeight(325);
+                          // context.read<DashboardSlidingUpCubit>().changeType(
+                          //   DashboardSlidingUpType.logout,
+                          // );
+                        }
+                      },
+                      backgroundColor: Colors.white,
+                      selectedItemColor: Colors.blue,
+                      unselectedItemColor: Colors.grey,
+                      elevation: 8.0,
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.home),
+                          label: 'Home',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.bar_chart_rounded),
+                          label: 'Report',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.person),
+                          label: 'Profile',
+                        ),
+                      ],
+                    ),
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.bar_chart_rounded),
-                    label: 'Report',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Profile',
-                  ),
-                ],
-              ),
               body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,

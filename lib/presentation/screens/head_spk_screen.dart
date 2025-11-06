@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
-import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
@@ -267,7 +266,9 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
 
                           // ~:Dealer:~
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () => context
+                                .read<DashboardSlidingUpCubit>()
+                                .changeType(DashboardSlidingUpType.dealer),
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -292,7 +293,9 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
 
                           // ~:Leasing:~
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () => context
+                                .read<DashboardSlidingUpCubit>()
+                                .changeType(DashboardSlidingUpType.leasing),
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -317,7 +320,9 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
 
                           // ~:Category:~
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () => context
+                                .read<DashboardSlidingUpCubit>()
+                                .changeType(DashboardSlidingUpType.category),
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 8,

@@ -494,7 +494,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                   ),
                 ],
                 bottom: TabBar(
-                  controller: DefaultTabController.of(context)..index = 0,
+                  // controller: DefaultTabController.of(context)..index = 0,
                   onTap: (index) {
                     log('Index: ${index.toString()}');
                     log(

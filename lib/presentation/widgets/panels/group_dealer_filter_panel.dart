@@ -27,7 +27,7 @@ class _GroupDealerFilterPanelState extends State<GroupDealerFilterPanel> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 150,
+      // height: 150,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -53,40 +53,82 @@ class _GroupDealerFilterPanelState extends State<GroupDealerFilterPanel> {
             }
           } else if (state is SpkLeasingFilterLoaded) {
             return Column(
-              spacing: 8,
+              spacing: 12,
               children: [
-                Text(
-                  'Grup Dealer',
-                  style: TextThemes.normal.copyWith(
-                    fontWeight: FontWeight.bold,
+                // ~:Filter Options:~
+                Expanded(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Grup Dealer',
+                          style: TextThemes.normal.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: BouncingScrollPhysics(),
+                            child: Wrap(
+                              spacing: 4,
+                              runSpacing: 4,
+                              alignment: WrapAlignment.start,
+                              children: state.groupDealerList.map((e) {
+                                // context.read<SpkLeasingFilterCubit>().loadFilterData(
+                                //   selectedGroupDealer: e.groupName,
+                                // );
+                                return FilterChip(
+                                  label: Text(e.groupName),
+                                  backgroundColor: isActive == e.groupName
+                                      ? Colors.blue[50]
+                                      : Colors.grey[400],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  side: BorderSide(
+                                    color: isActive == e.groupName
+                                        ? Colors.blue
+                                        : Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                  onSelected: (value) =>
+                                      setIsActive(e.groupName),
+                                  onDeleted: () => setIsActive(''),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
-                Wrap(
-                  spacing: 4,
-                  runSpacing: 4,
-                  children: state.groupDealerList.map((e) {
-                    // context.read<SpkLeasingFilterCubit>().loadFilterData(
-                    //   selectedGroupDealer: e.groupName,
-                    // );
-                    return FilterChip(
-                      label: Text(e.groupName),
-                      backgroundColor: isActive == e.groupName
-                          ? Colors.blue[50]
-                          : Colors.grey[400],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      side: BorderSide(
-                        color: isActive == e.groupName
-                            ? Colors.blue
-                            : Colors.transparent,
-                        width: 1.5,
-                      ),
-                      onSelected: (value) => setIsActive(e.groupName),
-                      onDeleted: () => setIsActive(''),
-                    );
-                  }).toList(),
+                // ~:Apply Filter Button:~
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size.fromWidth(
+                      MediaQuery.of(context).size.width,
+                    ),
+                    padding: EdgeInsets.all(4),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    'Simpan',
+                    style: TextThemes.normal.copyWith(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ],
             );
