@@ -5,11 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
+import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
+import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_category.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_leasing.dart';
@@ -26,14 +28,6 @@ class HeadSpkScreen extends StatefulWidget {
 }
 
 class _HeadSpkScreenState extends State<HeadSpkScreen> {
-  String date = DateTime.now().toIso8601String().substring(0, 10);
-
-  void setDate(String x) {
-    setState(() {
-      date = x;
-    });
-  }
-
   void refreshSpkLeasingDashboard(
     BuildContext context,
     EmployeeModel employee,
@@ -42,10 +36,10 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
 
     context.read<SpkLeasingDataCubit>().loadData(
       employee.employeeID,
-      date,
+      context.read<FilterStateProvider>().selectedDate.value,
       '${employee.branch}${employee.shop}',
-      '',
-      '',
+      context.read<FilterStateProvider>().selectedCategory.value,
+      context.read<FilterStateProvider>().selectedLeasing.value,
       '',
     );
   }
@@ -211,85 +205,141 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           // ~:Date:~
-                          // ElevatedButton(
-                          //   onPressed: () async {
-                          //     final DateTime? picked = await showDatePicker(
-                          //       context: context,
-                          //       initialDate: DateTime.now(),
-                          //       firstDate: DateTime(1990),
-                          //       lastDate: DateTime.now(),
-                          //     );
-                          //     if (picked != null && context.mounted) {
-                          //       setDate(picked.toString().substring(0, 10));
-                          //     }
-                          //   },
+                          ElevatedButton(
+                            onPressed: () async {
+                              final savedDate =
+                                  context
+                                      .read<FilterStateProvider>()
+                                      .selectedDate
+                                      .value
+                                      .isEmpty
+                                  ? DateTime.now().toIso8601String().substring(
+                                      0,
+                                      10,
+                                    )
+                                  : context
+                                        .read<FilterStateProvider>()
+                                        .selectedDate
+                                        .value;
+
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.parse(savedDate),
+                                currentDate: DateTime.parse(savedDate),
+                                firstDate: DateTime(1990),
+                                lastDate: DateTime.now().add(
+                                  Duration(days: 365 * 10),
+                                ),
+                              );
+                              if (picked != null && context.mounted) {
+                                context
+                                    .read<FilterStateProvider>()
+                                    .setSelectedDate(
+                                      picked.toString().substring(0, 10),
+                                    );
+
+                                // ~:Load Employee Data:~
+                                final employee =
+                                    (context.read<LoginBloc>().state
+                                            as LoginSuccess)
+                                        .user;
+
+                                // ~:Load data with current active filters:~
+                                context.read<SpkLeasingDataCubit>().loadData(
+                                  employee.employeeID,
+                                  savedDate,
+                                  "${employee.branch}${employee.shop}", // employee data
+                                  context
+                                      .read<FilterStateProvider>()
+                                      .selectedCategory
+                                      .value, // category name
+                                  context
+                                      .read<FilterStateProvider>()
+                                      .selectedLeasing
+                                      .value, // leasing name
+                                  '',
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              backgroundColor: Colors.grey[400],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: ValueListenableBuilder<String>(
+                              valueListenable: context
+                                  .read<FilterStateProvider>()
+                                  .selectedDate,
+                              builder: (context, selectedDate, _) {
+                                log('Displaying selected date: $selectedDate');
+                                return Text(
+                                  'Tgl ${Formatter.dateFormat(selectedDate)}',
+                                  style: TextThemes.normal.copyWith(
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              },
+                            ),
+                          ),
+
+                          // // ~:Group Dealer:~
+                          // ElevatedButton.icon(
+                          //   onPressed: () => context
+                          //       .read<DashboardSlidingUpCubit>()
+                          //       .changeType(DashboardSlidingUpType.groupDealer),
                           //   style: ElevatedButton.styleFrom(
-                          //     padding: EdgeInsets.all(8),
+                          //     padding: EdgeInsets.symmetric(
+                          //       horizontal: 8,
+                          //     ),
                           //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           //     backgroundColor: Colors.grey[400],
                           //     shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(12),
+                          //       borderRadius: BorderRadius.circular(16),
                           //     ),
                           //   ),
-                          //   child: Text(
-                          //     Formatter.dateFormat(date),
-                          //     style: TextThemes.normal.copyWith(fontSize: 16),
+                          //   icon: Icon(
+                          //     Icons.keyboard_arrow_down_rounded,
+                          //     size: 20,
+                          //     color: Colors.black,
+                          //   ),
+                          //   iconAlignment: IconAlignment.end,
+                          //   label: Text(
+                          //     "Semua grup dealer",
+                          //     style: TextThemes.normal,
                           //   ),
                           // ),
-
-                          // ~:Group Dealer:~
-                          ElevatedButton.icon(
-                            onPressed: () => context
-                                .read<DashboardSlidingUpCubit>()
-                                .changeType(DashboardSlidingUpType.groupDealer),
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              backgroundColor: Colors.grey[400],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: 20,
-                              color: Colors.black,
-                            ),
-                            iconAlignment: IconAlignment.end,
-                            label: Text(
-                              "Semua grup dealer",
-                              style: TextThemes.normal,
-                            ),
-                          ),
-
-                          // ~:Dealer:~
-                          ElevatedButton.icon(
-                            onPressed: () => context
-                                .read<DashboardSlidingUpCubit>()
-                                .changeType(DashboardSlidingUpType.dealer),
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              backgroundColor: Colors.grey[400],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: 20,
-                              color: Colors.black,
-                            ),
-                            iconAlignment: IconAlignment.end,
-                            label: Text(
-                              "Semua dealer",
-                              style: TextThemes.normal,
-                            ),
-                          ),
+                          //
+                          // // ~:Dealer:~
+                          // ElevatedButton.icon(
+                          //   onPressed: () => context
+                          //       .read<DashboardSlidingUpCubit>()
+                          //       .changeType(DashboardSlidingUpType.dealer),
+                          //   style: ElevatedButton.styleFrom(
+                          //     padding: EdgeInsets.symmetric(
+                          //       horizontal: 8,
+                          //     ),
+                          //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          //     backgroundColor: Colors.grey[400],
+                          //     shape: RoundedRectangleBorder(
+                          //       borderRadius: BorderRadius.circular(16),
+                          //     ),
+                          //   ),
+                          //   icon: Icon(
+                          //     Icons.keyboard_arrow_down_rounded,
+                          //     size: 20,
+                          //     color: Colors.black,
+                          //   ),
+                          //   iconAlignment: IconAlignment.end,
+                          //   label: Text(
+                          //     "Semua dealer",
+                          //     style: TextThemes.normal,
+                          //   ),
+                          // ),
 
                           // ~:Leasing:~
                           ElevatedButton.icon(
@@ -297,9 +347,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                 .read<DashboardSlidingUpCubit>()
                                 .changeType(DashboardSlidingUpType.leasing),
                             style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 8),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               backgroundColor: Colors.grey[400],
                               shape: RoundedRectangleBorder(
@@ -312,9 +360,21 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                               color: Colors.black,
                             ),
                             iconAlignment: IconAlignment.end,
-                            label: Text(
-                              "Semua leasing",
-                              style: TextThemes.normal,
+                            label: ValueListenableBuilder<String>(
+                              valueListenable: context
+                                  .read<FilterStateProvider>()
+                                  .selectedLeasing,
+                              builder: (context, selectedLeasing, _) {
+                                return Text(
+                                  // This line is not reactive, it won't change if the filter value changes.
+                                  // To make it reactive, you need to use a state management solution like provider or riverpod.
+                                  selectedLeasing.isEmpty ||
+                                          selectedLeasing == 'Semua'
+                                      ? "Semua leasing"
+                                      : selectedLeasing,
+                                  style: TextThemes.normal,
+                                );
+                              },
                             ),
                           ),
 
@@ -322,7 +382,9 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                           ElevatedButton.icon(
                             onPressed: () => context
                                 .read<DashboardSlidingUpCubit>()
-                                .changeType(DashboardSlidingUpType.category),
+                                .changeType(
+                                  DashboardSlidingUpType.category,
+                                ),
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -339,9 +401,19 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                               color: Colors.black,
                             ),
                             iconAlignment: IconAlignment.end,
-                            label: Text(
-                              "Semua kategori",
-                              style: TextThemes.normal,
+                            label: ValueListenableBuilder<String>(
+                              valueListenable: context
+                                  .read<FilterStateProvider>()
+                                  .selectedCategory,
+                              builder: (context, selectedCategory, _) {
+                                return Text(
+                                  selectedCategory.isEmpty ||
+                                          selectedCategory == 'Semua'
+                                      ? "Semua kategori"
+                                      : selectedCategory,
+                                  style: TextThemes.normal,
+                                );
+                              },
                             ),
                           ),
                         ],

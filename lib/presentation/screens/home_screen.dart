@@ -26,6 +26,7 @@ import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
+import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/presentation/screens/coordinator_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_new_acts.dart';
@@ -38,8 +39,6 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/category_filter_panel.dart';
-import 'package:sip_sales_clean/presentation/widgets/panels/dealer_filter_panel.dart';
-import 'package:sip_sales_clean/presentation/widgets/panels/group_dealer_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/leasing_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/user_profile.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -108,16 +107,18 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (navbarType == NavbarType.report) {
         if (dashboardState == DashboardType.spk) {
           log('Refresh head store SPK Report page');
+          context.read<FilterStateProvider>().clearFilters();
+
           // ~:Load SPK Leasing Filter Data:~
           context.read<SpkLeasingFilterCubit>().loadFilterData();
 
           // ~:Load SPK Leasing Data:~
           context.read<SpkLeasingDataCubit>().loadData(
             salesmanId,
-            date,
+            context.read<FilterStateProvider>().selectedDate.value,
             "${employee.branch}${employee.shop}",
-            '',
-            '',
+            context.read<FilterStateProvider>().selectedCategory.value,
+            context.read<FilterStateProvider>().selectedLeasing.value,
             '',
           );
         } else {
@@ -1181,14 +1182,16 @@ class _HomeScreenState extends State<HomeScreen> {
               } else if (state.type ==
                   DashboardSlidingUpType.deleteManagerActivity) {
                 return deleteActs(state.optionalData);
-              } else if (state.type == DashboardSlidingUpType.groupDealer) {
-                return GroupDealerFilterPanel();
-              } else if (state.type == DashboardSlidingUpType.dealer) {
-                return DealerFilterPanel();
-              } else if (state.type == DashboardSlidingUpType.leasing) {
-                return LeasingFilterPanel();
+              }
+              // else if (state.type == DashboardSlidingUpType.groupDealer) {
+              //   return GroupDealerFilterPanel();
+              // } else if (state.type == DashboardSlidingUpType.dealer) {
+              //   return DealerFilterPanel();
+              // }
+              else if (state.type == DashboardSlidingUpType.leasing) {
+                return LeasingFilterPanel(date: state.optionalData);
               } else if (state.type == DashboardSlidingUpType.category) {
-                return CategoryFilterPanel();
+                return CategoryFilterPanel(date: state.optionalData);
               }
               return const SizedBox.shrink();
             },
@@ -1353,6 +1356,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               context
                                   .read<SpkLeasingFilterCubit>()
                                   .loadFilterData();
+
+                              // ~:Clear saved filters (leasing & category):~
+                              context
+                                  .read<FilterStateProvider>()
+                                  .clearFilters();
                             }
 
                             log(

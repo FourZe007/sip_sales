@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/data/models/spk_leasing.dart';
 import 'package:sip_sales_clean/domain/repositories/spk_leasing_filter_domain.dart';
-import 'package:sip_sales_clean/presentation/functions.dart';
 
 class SpkLeasingFilterCubit extends Cubit<SpkLeasingFilterState> {
   final SpkLeasingFilterRepo spkLeasingFilterRepo;
@@ -12,43 +11,43 @@ class SpkLeasingFilterCubit extends Cubit<SpkLeasingFilterState> {
   Future<void> loadFilterData({String selectedGroupDealer = ''}) async {
     emit(SpkLeasingFilterLoading());
 
-    final employeeId = await Functions.readAndWriteEmployeeId();
-    final groupDealer = await spkLeasingFilterRepo.loadGroupDealer(employeeId);
-    final dealer = await spkLeasingFilterRepo.loadDealer(
-      employeeId,
-      selectedGroupDealer,
-    );
+    // final employeeId = await Functions.readAndWriteEmployeeId();
+    // final groupDealer = await spkLeasingFilterRepo.loadGroupDealer(employeeId);
+    // final dealer = await spkLeasingFilterRepo.loadDealer(
+    //   employeeId,
+    //   selectedGroupDealer,
+    // );
     final leasing = await spkLeasingFilterRepo.loadLeasing();
     final category = await spkLeasingFilterRepo.loadCategory();
 
     emit(
       SpkLeasingFilterLoaded(
-        groupDealerList: [
-          SpkGrouDealerModel(
-            order: 0,
-            groupName: 'Semua',
-          ),
-          ...(groupDealer['data'] ?? []),
-        ],
-        dealerList: [
-          SpkDealerModel(
-            branch: '',
-            shop: '',
-            bsName: 'Semua',
-            serverName: '',
-            dbName: '',
-            password: '',
-            pt: '',
-            groupName: '',
-          ),
-          ...(dealer['data']?.where(
-                (SpkDealerModel e) =>
-                    e.branch.isNotEmpty &&
-                    e.shop.isNotEmpty &&
-                    e.bsName.isNotEmpty,
-              ) ??
-              []),
-        ],
+        // groupDealerList: [
+        //   SpkGrouDealerModel(
+        //     order: 0,
+        //     groupName: 'Semua',
+        //   ),
+        //   ...(groupDealer['data'] ?? []),
+        // ],
+        // dealerList: [
+        //   SpkDealerModel(
+        //     branch: '',
+        //     shop: '',
+        //     bsName: 'Semua',
+        //     serverName: '',
+        //     dbName: '',
+        //     password: '',
+        //     pt: '',
+        //     groupName: '',
+        //   ),
+        //   ...(dealer['data']?.where(
+        //         (SpkDealerModel e) =>
+        //             e.branch.isNotEmpty &&
+        //             e.shop.isNotEmpty &&
+        //             e.bsName.isNotEmpty,
+        //       ) ??
+        //       []),
+        // ],
         leasingList: [
           SpkLeasingModel(
             leasingId: 'Semua',

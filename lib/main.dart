@@ -2,7 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/constant/state_manager.dart';
+import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/routes.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -23,13 +25,16 @@ class MyApp extends StatelessWidget {
       ).copyWith(textScaler: const TextScaler.linear(1.0)),
       child: MultiBlocProvider(
         providers: StateManager.getBlocProviders(),
-        child: MaterialApp(
-          title: 'SIP Sales',
-          scrollBehavior: MyCustomScrollBehavior(),
-          debugShowCheckedModeBanner: false,
-          navigatorKey: navigatorKey,
-          initialRoute: ConstantRoutes.init,
-          routes: ConstantRoutes.maps,
+        child: ChangeNotifierProvider(
+          create: (context) => FilterStateProvider(),
+          child: MaterialApp(
+            title: 'SIP Sales',
+            scrollBehavior: MyCustomScrollBehavior(),
+            debugShowCheckedModeBanner: false,
+            navigatorKey: navigatorKey,
+            initialRoute: ConstantRoutes.init,
+            routes: ConstantRoutes.maps,
+          ),
         ),
       ),
     );

@@ -221,8 +221,8 @@ class SpkLeasingFilterDataImp implements SpkLeasingFilterRepo {
 
     Map body = {
       "EmployeeID": employeeId,
-      // "TransDate": date,
-      "TransDate": '2025-10-31',
+      "TransDate": date,
+      // "TransDate": '2025-10-31',
       "BranchShop": branch,
       "Category": category,
       "LeasingID": leasing,

@@ -1,8 +1,13 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
@@ -109,26 +114,59 @@ class _GroupDealerFilterPanelState extends State<GroupDealerFilterPanel> {
                 ),
 
                 // ~:Apply Filter Button:~
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size.fromWidth(
-                      MediaQuery.of(context).size.width,
-                    ),
-                    padding: EdgeInsets.all(4),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Text(
-                    'Simpan',
-                    style: TextThemes.normal.copyWith(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
+                ValueListenableBuilder(
+                  valueListenable: ValueNotifier(isActive),
+                  builder: (context, value, _) {
+                    log('Value Notifier: $value');
+                    if (value.isNotEmpty) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          // ~:Close Sliding Panel:~
+                          context.read<DashboardSlidingUpCubit>().closePanel();
+
+                          // ~:Get Employee Data:~
+                          final employee =
+                              (context.read<LoginBloc>().state as LoginSuccess)
+                                  .user;
+
+                          // ~:load new filter with a selected Group Dealer:~
+                          context.read<SpkLeasingFilterCubit>().loadFilterData(
+                            selectedGroupDealer: value,
+                          );
+
+                          // ~:load new data with a selected Group Dealer:~
+                          context.read<SpkLeasingDataCubit>().loadData(
+                            employee.employeeID,
+                            DateTime.now().toIso8601String().substring(0, 10),
+                            "${employee.branch}${employee.shop}",
+                            '',
+                            '',
+                            isActive == 'Semua' ? '' : isActive,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size.fromWidth(
+                            MediaQuery.of(context).size.width,
+                          ),
+                          padding: EdgeInsets.all(4),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: Text(
+                          'Simpan',
+                          style: TextThemes.normal.copyWith(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
                 ),
               ],
             );

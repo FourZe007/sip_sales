@@ -59,6 +59,7 @@ dependencies:
   latlong2: ^0.9.1
   device_type: ^0.0.6
   syncfusion_flutter_datepicker: ^31.2.5
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:
