@@ -7,10 +7,12 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 class DetailRejectDataSource extends DataGridSource {
   final BuildContext context;
   final List<SpkDataDetail3Model> _detailRejectData;
+  final int rejectedSpk;
 
   DetailRejectDataSource({
     required this.context,
     required List<SpkDataDetail3Model> detailRejectData,
+    required this.rejectedSpk,
   }) : _detailRejectData = detailRejectData {
     buildDataGridRows();
     notifyListeners();
@@ -32,7 +34,9 @@ class DetailRejectDataSource extends DataGridSource {
               ),
               DataGridCell<String>(
                 columnName: 'con',
-                value: '%',
+                value: rejectedSpk > 0
+                    ? '${(e.qty * 100 / rejectedSpk).round()}%'
+                    : '-',
               ),
             ],
           ),

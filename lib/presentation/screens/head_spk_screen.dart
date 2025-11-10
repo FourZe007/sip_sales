@@ -4,8 +4,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
-import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
@@ -36,12 +37,21 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
 
     context.read<SpkLeasingDataCubit>().loadData(
       employee.employeeID,
-      context.read<FilterStateProvider>().selectedDate.value,
+      context.read<FilterStateProvider>().selectedDate.value.isEmpty
+          ? DateFormat('yyyy-MM-dd').format(DateTime.now())
+          : context.read<FilterStateProvider>().selectedDate.value,
       '${employee.branch}${employee.shop}',
       context.read<FilterStateProvider>().selectedCategory.value,
       context.read<FilterStateProvider>().selectedLeasing.value,
       '',
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    initializeDateFormatting('id_ID', null);
   }
 
   @override
@@ -207,7 +217,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                           // ~:Date:~
                           ElevatedButton(
                             onPressed: () async {
-                              final savedDate =
+                              final displayDate =
                                   context
                                       .read<FilterStateProvider>()
                                       .selectedDate
@@ -220,22 +230,29 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                   : context
                                         .read<FilterStateProvider>()
                                         .selectedDate
-                                        .value;
+                                        .value
+                                        .substring(0, 10);
 
                               final DateTime? picked = await showDatePicker(
                                 context: context,
-                                initialDate: DateTime.parse(savedDate),
-                                currentDate: DateTime.parse(savedDate),
+                                initialDate: DateTime.parse(displayDate),
+                                currentDate: DateTime.parse(displayDate),
                                 firstDate: DateTime(1990),
                                 lastDate: DateTime.now().add(
                                   Duration(days: 365 * 10),
                                 ),
                               );
+
                               if (picked != null && context.mounted) {
+                                final savedDate =
+                                    picked.toIso8601String().isEmpty
+                                    ? DateTime.now().toIso8601String()
+                                    : picked.toIso8601String();
+
                                 context
                                     .read<FilterStateProvider>()
                                     .setSelectedDate(
-                                      picked.toString().substring(0, 10),
+                                      savedDate.substring(0, 10),
                                     );
 
                                 // ~:Load Employee Data:~
@@ -247,7 +264,11 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                 // ~:Load data with current active filters:~
                                 context.read<SpkLeasingDataCubit>().loadData(
                                   employee.employeeID,
-                                  savedDate,
+                                  (context
+                                          .read<FilterStateProvider>()
+                                          .selectedDate
+                                          .value)
+                                      .substring(0, 10),
                                   "${employee.branch}${employee.shop}", // employee data
                                   context
                                       .read<FilterStateProvider>()
@@ -276,13 +297,23 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                   .selectedDate,
                               builder: (context, selectedDate, _) {
                                 log('Displaying selected date: $selectedDate');
-                                return Text(
-                                  'Tgl ${Formatter.dateFormat(selectedDate)}',
-                                  style: TextThemes.normal.copyWith(
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                );
+                                if (selectedDate.isEmpty) {
+                                  return Text(
+                                    'Tgl ${(DateFormat('dd-MM-yyyy', 'id_ID').format(DateTime.now()))}',
+                                    style: TextThemes.normal.copyWith(
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  );
+                                } else {
+                                  return Text(
+                                    'Tgl ${(DateFormat('dd-MM-yyyy', 'id_ID').format(DateTime.parse(selectedDate)))}',
+                                    style: TextThemes.normal.copyWith(
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -370,7 +401,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                   // To make it reactive, you need to use a state management solution like provider or riverpod.
                                   selectedLeasing.isEmpty ||
                                           selectedLeasing == 'Semua'
-                                      ? "Semua leasing"
+                                      ? "Semua Leasing"
                                       : selectedLeasing,
                                   style: TextThemes.normal,
                                 );
@@ -409,7 +440,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                 return Text(
                                   selectedCategory.isEmpty ||
                                           selectedCategory == 'Semua'
-                                      ? "Semua kategori"
+                                      ? "Semua Kategori"
                                       : selectedCategory,
                                   style: TextThemes.normal,
                                 );
@@ -581,7 +612,11 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                 context: context,
                                 label: '% Approval',
                                 value:
-                                    '${((state.result.spkApprove * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%',
+                                    (state.result.spkApprove +
+                                            state.result.spkReject) >
+                                        0
+                                    ? '${((state.result.spkApprove * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%'
+                                    : '-',
                                 valueFontSize: 28,
                                 labelSize: 12,
                                 boxColor: Colors.white,
@@ -621,7 +656,11 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                 context: context,
                                 label: '% Reject',
                                 value:
-                                    '${((state.result.spkReject * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%',
+                                    (state.result.spkReject +
+                                            state.result.spkApprove) >
+                                        0
+                                    ? '${((state.result.spkReject * 100 / (state.result.spkReject + state.result.spkApprove)).round())}%'
+                                    : '-',
                                 valueFontSize: 28,
                                 labelSize: 12,
                                 boxColor: Colors.white,
@@ -1109,6 +1148,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                     source: DetailRejectDataSource(
                                       context: context,
                                       detailRejectData: state.result.detail3,
+                                      rejectedSpk: state.result.spkReject,
                                     ),
                                     columnWidthMode: ColumnWidthMode.fill,
                                     horizontalScrollPhysics:

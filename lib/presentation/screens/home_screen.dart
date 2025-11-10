@@ -107,15 +107,22 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (navbarType == NavbarType.report) {
         if (dashboardState == DashboardType.spk) {
           log('Refresh head store SPK Report page');
-          context.read<FilterStateProvider>().clearFilters();
+          // context.read<FilterStateProvider>().clearFilters();
 
-          // ~:Load SPK Leasing Filter Data:~
-          context.read<SpkLeasingFilterCubit>().loadFilterData();
+          // // ~:Load SPK Leasing Filter Data:~
+          // context.read<SpkLeasingFilterCubit>().loadFilterData();
+
+          // context.read<FilterStateProvider>().setSelectedDate(date);
+          // log(
+          //   'Saved Date: ${context.read<FilterStateProvider>().selectedDate.value}',
+          // );
 
           // ~:Load SPK Leasing Data:~
           context.read<SpkLeasingDataCubit>().loadData(
             salesmanId,
-            context.read<FilterStateProvider>().selectedDate.value,
+            context.read<FilterStateProvider>().selectedDate.value.isEmpty
+                ? DateFormat('yyyy-MM-dd').format(DateTime.now())
+                : context.read<FilterStateProvider>().selectedDate.value,
             "${employee.branch}${employee.shop}",
             context.read<FilterStateProvider>().selectedCategory.value,
             context.read<FilterStateProvider>().selectedLeasing.value,
@@ -1189,9 +1196,9 @@ class _HomeScreenState extends State<HomeScreen> {
               //   return DealerFilterPanel();
               // }
               else if (state.type == DashboardSlidingUpType.leasing) {
-                return LeasingFilterPanel(date: state.optionalData);
+                return LeasingFilterPanel();
               } else if (state.type == DashboardSlidingUpType.category) {
-                return CategoryFilterPanel(date: state.optionalData);
+                return CategoryFilterPanel();
               }
               return const SizedBox.shrink();
             },
@@ -1340,8 +1347,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context, state) {
                       if (state == NavbarType.report) {
                         return TabBar(
-                          // controller: DefaultTabController.of(context)
-                          //   ..index = 0,
+                          controller: DefaultTabController.of(context)
+                            ..index = 0,
                           onTap: (index) {
                             log('Index: ${index.toString()}');
 

@@ -13,10 +13,7 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 
 class CategoryFilterPanel extends StatefulWidget {
-  const CategoryFilterPanel({this.date = '', this.leasing = '', super.key});
-
-  final String date;
-  final String leasing;
+  const CategoryFilterPanel({super.key});
 
   @override
   State<CategoryFilterPanel> createState() => _CategoryFilterPanelState();
@@ -29,6 +26,16 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
     setState(() {
       isActive = value;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (context.read<FilterStateProvider>().selectedCategory.value.isNotEmpty &&
+        context.read<FilterStateProvider>().selectedCategory.value != '') {
+      setIsActive(context.read<FilterStateProvider>().selectedCategory.value);
+    }
   }
 
   @override
@@ -137,12 +144,10 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                           // ~:load new data with a selected Group Dealer:~
                           context.read<SpkLeasingDataCubit>().loadData(
                             employee.employeeID,
-                            widget.date.isEmpty
-                                ? DateTime.now().toIso8601String().substring(
-                                    0,
-                                    10,
-                                  )
-                                : widget.date,
+                            context
+                                .read<FilterStateProvider>()
+                                .selectedDate
+                                .value,
                             "${employee.branch}${employee.shop}", // employee data
                             value, // category name
                             context

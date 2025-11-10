@@ -82,7 +82,7 @@ class UpdateFollowupDataImp implements UpdateFollowupRepo {
     // Simulate a network call
     Uri uri = Uri.https(
       APIConstants.baseUrl,
-      APIConstants.fetchFuDetailEndpoint,
+      APIConstants.saveFuDetailEndpoint,
     );
 
     Map body = {
@@ -102,13 +102,16 @@ class UpdateFollowupDataImp implements UpdateFollowupRepo {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(body),
     );
-    log('Response: $response');
+    log('Response: ${response.body}');
 
     if (response.statusCode <= 200) {
       var jsonResult = jsonDecode(response.body);
       if (jsonResult['code'] == '100' && jsonResult['msg'] == 'Sukses') {
         if (jsonResult['data'] != null &&
-            jsonResult['data'][0]['resultMessage'].toString().toLowerCase() ==
+            (jsonResult['data'] as List).isNotEmpty &&
+            (jsonResult['data'] as List)[0]['resultMessage']
+                    .toString()
+                    .toLowerCase() ==
                 'sukses') {
           log('Success');
           return {
@@ -116,23 +119,23 @@ class UpdateFollowupDataImp implements UpdateFollowupRepo {
             'data': 'success',
           };
         } else {
-          log('Failed');
+          log('API not success');
           return {
             'status': 'gagal',
-            'data': jsonResult['data'][0]['resultMessage']
+            'data': (jsonResult['data'] as List)[0]['resultMessage']
                 .toString()
                 .toLowerCase(),
           };
         }
       } else {
-        log('Failed');
+        log('API Failed');
         return {
           'status': 'gagal',
           'data': 'Error ${jsonResult['code']}, ${jsonResult['msg']}',
         };
       }
     } else {
-      log('Failed');
+      log(response.statusCode.toString());
       return {
         'status': 'gagal',
         'data': 'Status code ${response.statusCode}, coba lagi.',

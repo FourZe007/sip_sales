@@ -13,10 +13,7 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 
 class LeasingFilterPanel extends StatefulWidget {
-  const LeasingFilterPanel({this.date = '', this.category = '', super.key});
-
-  final String date;
-  final String category;
+  const LeasingFilterPanel({super.key});
 
   @override
   State<LeasingFilterPanel> createState() => _LeasingFilterPanelState();
@@ -29,6 +26,17 @@ class _LeasingFilterPanelState extends State<LeasingFilterPanel> {
     setState(() {
       isActive = value;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if (context.read<FilterStateProvider>().selectedLeasing.value.isNotEmpty &&
+        context.read<FilterStateProvider>().selectedLeasing.value != '') {
+      setIsActive(context.read<FilterStateProvider>().selectedLeasing.value);
+    }
   }
 
   @override
@@ -99,8 +107,7 @@ class _LeasingFilterPanelState extends State<LeasingFilterPanel> {
                                         : Colors.transparent,
                                     width: 1.5,
                                   ),
-                                  onSelected: (value) =>
-                                      setIsActive(e.leasingId),
+                                  onSelected: (_) => setIsActive(e.leasingId),
                                   onDeleted: () => setIsActive(''),
                                 );
                               }).toList(),
@@ -139,12 +146,10 @@ class _LeasingFilterPanelState extends State<LeasingFilterPanel> {
                           // ~:load new data with a selected Group Dealer:~
                           context.read<SpkLeasingDataCubit>().loadData(
                             employee.employeeID,
-                            widget.date.isEmpty
-                                ? DateTime.now().toIso8601String().substring(
-                                    0,
-                                    10,
-                                  )
-                                : widget.date,
+                            context
+                                .read<FilterStateProvider>()
+                                .selectedDate
+                                .value,
                             "${employee.branch}${employee.shop}", // employee data
                             context
                                 .read<FilterStateProvider>()

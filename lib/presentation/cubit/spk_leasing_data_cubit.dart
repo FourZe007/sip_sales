@@ -40,7 +40,7 @@ class SpkLeasingDataCubit extends Cubit<SpkLeasingDataState> {
         leasingId,
         jenisDealer,
       );
-      log('$res');
+      log('Refresh SPK Leasing Data: $res');
 
       if (res['status'] == 'success' && res['code'] == '100') {
         log('SPK Leasing data loaded successfully');
