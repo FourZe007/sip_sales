@@ -26,6 +26,8 @@ class APIConstants {
       '/api/SIPSales/InsertAttendance';
   static const String eventAttendanceEndpoint =
       '/api/SIPSales/InsertAttendanceEvent';
+  static const String attendanceDetailsEndpoint =
+      '/api/SIPSales/AttendanceHistory';
   static const String salesmanDashboardEndpoint = '/DBSales/DBSales01';
   static const String fetchFuEndpoint = '/DBSales/DBSales02';
   static const String fetchFuDetailEndpoint =

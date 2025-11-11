@@ -285,7 +285,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                     ),
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      Formatter.dateFormat(date),
+                      'Tgl ${Formatter.dateFormat(date)}',
                       style: TextThemes.normal.copyWith(fontSize: 16),
                     ),
                   ),

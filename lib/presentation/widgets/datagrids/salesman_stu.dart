@@ -49,34 +49,17 @@ class SalesmanSTUDataSource extends DataGridSource {
         return Container(
           alignment: Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 4.0),
-          // child: Text(
-          //   dataGridCell.value.toString() == '0'
-          //       ? '-'
-          //       : dataGridCell.columnName == '%'
-          //       ? '${dataGridCell.value.toString()}%'
-          //       : Formatter.toTitleCase(dataGridCell.value.toString()),
-          //   textAlign: TextAlign.center,
-          // ),
-          child: dataGridCell.columnName == 'salesman'
-              ? Text(
-                  Formatter.toTitleCase(dataGridCell.value.toString()),
-                  textAlign: TextAlign.center,
-                  style: TextThemes.styledTextButton.copyWith(
-                    backgroundColor: Colors.transparent,
-                  ),
-                )
-              : Text(
-                  dataGridCell.value.toString() == '0'
-                      ? '-'
-                      : dataGridCell.columnName == '%'
-                      ? '${dataGridCell.value.toString()}%'
-                      : Formatter.toTitleCase(dataGridCell.value.toString()),
-                  textAlign: TextAlign.center,
-                  style: TextThemes.normal.copyWith(
-                    color: Colors.blue[700],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          child: Text(
+            dataGridCell.columnName == 'salesman'
+                ? Formatter.toTitleCase(dataGridCell.value.toString())
+                : dataGridCell.value.toString() == '0'
+                ? '-'
+                : dataGridCell.columnName == '%'
+                ? '${dataGridCell.value.toString()}%'
+                : Formatter.toTitleCase(dataGridCell.value.toString()),
+            textAlign: TextAlign.center,
+            style: TextThemes.normal,
+          ),
         );
       }).toList(),
     );

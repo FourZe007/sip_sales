@@ -12,18 +12,18 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/attendance_list.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 
-class SalesmanAttendanceDetailsScreen extends StatefulWidget {
-  const SalesmanAttendanceDetailsScreen({required this.salesmanId, super.key});
+class SalesmanAttendanceMoreScreen extends StatefulWidget {
+  const SalesmanAttendanceMoreScreen({required this.salesmanId, super.key});
 
   final String salesmanId;
 
   @override
-  State<SalesmanAttendanceDetailsScreen> createState() =>
-      _SalesmanAttendanceDetailsScreenState();
+  State<SalesmanAttendanceMoreScreen> createState() =>
+      _SalesmanAttendanceMoreScreenState();
 }
 
-class _SalesmanAttendanceDetailsScreenState
-    extends State<SalesmanAttendanceDetailsScreen> {
+class _SalesmanAttendanceMoreScreenState
+    extends State<SalesmanAttendanceMoreScreen> {
   // String date =
   //     '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 7)))} - ${DateFormat('yyyy-MM-dd').format(DateTime.now())}';
   // String startDate = DateFormat(
@@ -150,6 +150,16 @@ class _SalesmanAttendanceDetailsScreenState
             'Daftar Absensi',
             style: TextThemes.normal.copyWith(fontSize: 16),
           ),
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              Platform.isIOS
+                  ? Icons.arrow_back_ios_new_rounded
+                  : Icons.arrow_back_rounded,
+              size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+              color: Colors.black,
+            ),
+          ),
           actions: [
             IconButton(
               onPressed: () => refreshDashboard(context, widget.salesmanId),
@@ -175,7 +185,7 @@ class _SalesmanAttendanceDetailsScreenState
                 topRight: Radius.circular(20),
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
             child: BlocBuilder<SalesmanBloc, SalesmanState>(
               buildWhen: (previous, current) =>
                   current is SalesmanLoading ||
@@ -214,7 +224,7 @@ class _SalesmanAttendanceDetailsScreenState
                           scrollDirection: Axis.horizontal,
                           physics: BouncingScrollPhysics(),
                           child: Row(
-                            spacing: 12,
+                            spacing: 4,
                             children: [
                               // ~:Filter Icon:~
                               InkWell(
@@ -223,9 +233,9 @@ class _SalesmanAttendanceDetailsScreenState
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.grey[400],
-                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderRadius: BorderRadius.circular(16.0),
                                   ),
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
                                   child: const Icon(
                                     Icons.filter_alt_rounded,
                                     size: 30.0,
@@ -241,7 +251,7 @@ class _SalesmanAttendanceDetailsScreenState
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.grey[400],
-                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderRadius: BorderRadius.circular(16.0),
                                   ),
                                   padding: EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
@@ -263,7 +273,7 @@ class _SalesmanAttendanceDetailsScreenState
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.grey[400],
-                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderRadius: BorderRadius.circular(16.0),
                                   ),
                                   padding: EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
@@ -286,7 +296,7 @@ class _SalesmanAttendanceDetailsScreenState
                       Expanded(
                         child: ListView.builder(
                           itemCount: state.data.length,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: BouncingScrollPhysics(),
                           itemBuilder: (context, index) {
                             return AttendanceList(
                               attendanceData: state.data[index],

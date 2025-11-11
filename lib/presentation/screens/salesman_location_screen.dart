@@ -46,10 +46,14 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
             statusBarIconBrightness: Brightness.dark,
           ),
           leading: IconButton(
-            icon: (Platform.isIOS)
-                ? Icon(Icons.arrow_back_ios)
-                : Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.black,
+              shape: const CircleBorder(),
+            ),
+            icon: (Platform.isIOS)
+                ? Icon(Icons.arrow_back_ios, color: Colors.white)
+                : Icon(Icons.arrow_back, color: Colors.white),
           ),
         ),
         body: Stack(

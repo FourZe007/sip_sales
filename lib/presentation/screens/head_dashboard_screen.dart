@@ -694,7 +694,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
                                     ),
                                     GridColumn(
                                       columnName: '%',
-                                      minimumWidth: 40,
+                                      minimumWidth: 60,
                                       label: Container(
                                         alignment: Alignment.center,
                                         child: Text('%'),

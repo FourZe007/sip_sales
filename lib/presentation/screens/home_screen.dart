@@ -50,10 +50,11 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int preferredTabHeight = 0;
   double panelMaxHeight = 150;
   final PanelController slidingPanelController = PanelController();
+  late TabController tabController;
 
   double get getPanelMaxHeight => panelMaxHeight;
 
@@ -88,11 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     final salesmanId = employee.employeeID;
     final date = DateTime.now().toIso8601String().substring(0, 10);
-    log('Salesman Id: $salesmanId');
-    log('Employee Code: ${employee.code}');
-    log('Date: $date');
-    log('Navbar Type: $navbarType');
-    log('Dashboard Type: ${context.read<DashboardSlidingUpCubit>().state}');
+    // ~:Debug Purposes:~
+    // log('Salesman Id: $salesmanId');
+    // log('Employee Code: ${employee.code}');
+    // log('Date: $date');
+    // log('Navbar Type: $navbarType');
+    // log('Dashboard Type: $dashboardType');
+    // log('Dashboard Sliding Up Type: $dashboardSlidingUpType');
 
     // ~:Head Store:~
     if (employee.code == 0) {
@@ -111,11 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // // ~:Load SPK Leasing Filter Data:~
           // context.read<SpkLeasingFilterCubit>().loadFilterData();
-
-          // context.read<FilterStateProvider>().setSelectedDate(date);
-          // log(
-          //   'Saved Date: ${context.read<FilterStateProvider>().selectedDate.value}',
-          // );
 
           // ~:Load SPK Leasing Data:~
           context.read<SpkLeasingDataCubit>().loadData(
@@ -151,15 +149,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       } else if (navbarType == NavbarType.report) {
-        // if (state.name == 'salesman') {
-        //   log('Dashboard type: salesman');
-        //   context.read<SalesmanBloc>().add(
-        //     SalesmanDashboardButtonPressed(
-        //       salesmanId: salesmanId,
-        //       endDate: date,
-        //     ),
-        //   );
-        // }
         if (dashboardState.name == 'salesman') {
           log('Dashboard type: salesman');
           context.read<SalesmanBloc>().add(
@@ -1172,10 +1161,6 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(20.0),
         minHeight: 0.0,
         maxHeight: getPanelMaxHeight,
-        // maxHeight: context.select<DashboardSlidingUpCubit, double>(
-        //   (cubit) => cubit.state.panelHeight,
-        // ),
-        // maxHeight: context.read<DashboardSlidingUpCubit>().state.panelHeight,
         defaultPanelState: PanelState.CLOSED,
         onPanelClosed: () =>
             context.read<DashboardSlidingUpCubit>().closePanel(),
@@ -1347,8 +1332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context, state) {
                       if (state == NavbarType.report) {
                         return TabBar(
-                          controller: DefaultTabController.of(context)
-                            ..index = 0,
+                          controller: tabController,
                           onTap: (index) {
                             log('Index: ${index.toString()}');
 
@@ -1464,6 +1448,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         } else if (index == 1) {
+                          tabController.animateTo(0);
                           log(
                             'Bottom NavBar Sliding Up State: ${context.read<DashboardSlidingUpCubit>().state.type}',
                           );
@@ -1515,16 +1500,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, state) {
                     if (state == NavbarType.report) {
                       return BlocListener<DashboardTypeCubit, DashboardType>(
-                        listener: (context, state) {
-                          log("Body state: ${state.toString()}");
-                          refreshDashboard(
-                            context,
-                            employee,
-                            state,
-                            navbarType: NavbarType.report,
-                          );
-                        },
+                        listener: (context, state) => refreshDashboard(
+                          context,
+                          employee,
+                          state,
+                          navbarType: NavbarType.report,
+                        ),
                         child: TabBarView(
+                          controller: tabController,
                           physics: NeverScrollableScrollPhysics(),
                           children: [
                             const HeadDashboardScreen(),
@@ -1582,12 +1565,6 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Colors.blue,
-            // toolbarHeight:
-            //     context.read<NavbarCubit>().state == NavbarType.profile
-            //     ? 100
-            //     : context.read<NavbarCubit>().state == NavbarType.report
-            //     ? 0
-            //     : 60,
             toolbarHeight: context.read<NavbarCubit>().state != NavbarType.home
                 ? 0
                 : 60,
@@ -1600,9 +1577,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 : 16,
             title: BlocBuilder<NavbarCubit, NavbarType>(
               builder: (context, state) {
-                // if (state == NavbarType.profile) {
-                //   return UserProfileTemplate(employee: employee);
-                // } else
                 if (state == NavbarType.home) {
                   return Text(
                     'Absensi',
@@ -1733,6 +1707,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    tabController.dispose();
   }
 
   @override

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/salesman.dart';
+import 'package:sip_sales_clean/presentation/screens/salesman_attandance_details_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 
 class AttendanceList extends StatelessWidget {
@@ -13,43 +14,51 @@ class AttendanceList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // final now = DateTime.now();
-        // final todayDate = DateTime(now.year, now.month, now.day);
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SalesmanAttandanceDetailsScreen(
+            photo: attendanceData.eventThumbnail,
+            lat: attendanceData.userLat,
+            lng: attendanceData.userLng,
+          ),
+        ),
+      ),
+      // final now = DateTime.now();
+      // final todayDate = DateTime(now.year, now.month, now.day);
 
-        // if (checkIn.isNotEmpty) {
-        //   state.absentHistoryDetail = state.getAbsentHistoryList
-        //       .where((e) => e.date == date)
-        //       .first;
-        //
-        //   Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => AbsentDetailsPage(),
-        //     ),
-        //   );
-        // } else {
-        //   if (todayDate.toString().split(' ')[0] == date) {
-        //     GlobalDialog.showCrossPlatformDialog(
-        //       context,
-        //       'Peringatan!',
-        //       'Anda belum absen hari ini. ',
-        //       () => Navigator.pop(context),
-        //       'Tutup',
-        //       isIOS: Platform.isIOS ? true : false,
-        //     );
-        //   } else {
-        //     GlobalDialog.showCrossPlatformDialog(
-        //       context,
-        //       'Peringatan!',
-        //       'Anda tidak absen pada ${Format.tanggalFormat(date)}',
-        //       () => Navigator.pop(context),
-        //       'Tutup',
-        //       isIOS: Platform.isIOS ? true : false,
-        //     );
-        //   }
-        // }
-      },
+      // if (checkIn.isNotEmpty) {
+      //   state.absentHistoryDetail = state.getAbsentHistoryList
+      //       .where((e) => e.date == date)
+      //       .first;
+      //
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) => AbsentDetailsPage(),
+      //     ),
+      //   );
+      // } else {
+      //   if (todayDate.toString().split(' ')[0] == date) {
+      //     GlobalDialog.showCrossPlatformDialog(
+      //       context,
+      //       'Peringatan!',
+      //       'Anda belum absen hari ini. ',
+      //       () => Navigator.pop(context),
+      //       'Tutup',
+      //       isIOS: Platform.isIOS ? true : false,
+      //     );
+      //   } else {
+      //     GlobalDialog.showCrossPlatformDialog(
+      //       context,
+      //       'Peringatan!',
+      //       'Anda tidak absen pada ${Format.tanggalFormat(date)}',
+      //       () => Navigator.pop(context),
+      //       'Tutup',
+      //       isIOS: Platform.isIOS ? true : false,
+      //     );
+      //   }
+      // }
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(

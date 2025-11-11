@@ -44,6 +44,7 @@ class SalesmanDataImp implements SalesmanRepo {
           'code': res['Code'],
           'data': (res['Data'] as List)
               .map((e) => SalesmanAttendanceModel.fromJson(e))
+              .where((e) => e.checkIn.isNotEmpty)
               .toList(),
         };
       } else {

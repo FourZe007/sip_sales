@@ -22,7 +22,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_state.dart'
 import 'package:sip_sales_clean/presentation/cubit/attendance_type_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
-import 'package:sip_sales_clean/presentation/screens/salesman_attendance_details_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/salesman_attendance_more_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/salesman_attendance_event_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/salesman_location_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
@@ -370,7 +370,7 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SalesmanAttendanceDetailsScreen(
+                          builder: (context) => SalesmanAttendanceMoreScreen(
                             salesmanId: widget.salesmanId,
                           ),
                         ),
