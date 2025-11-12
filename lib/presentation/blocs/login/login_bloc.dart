@@ -60,6 +60,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         );
 
         log(loginRes.toString());
+        log('Flag: ${loginRes['data'].flag}');
 
         if (loginRes['status'] == 'success') {
           log('Login Success');

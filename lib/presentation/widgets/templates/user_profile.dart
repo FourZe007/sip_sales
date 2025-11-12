@@ -29,127 +29,129 @@ class UserProfileTemplate extends StatefulWidget {
 class _UserProfileTemplateState extends State<UserProfileTemplate> {
   @override
   Widget build(BuildContext context) {
-    if (widget.openProfile != null) {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        height: (context.read<LoginBloc>().state as LoginSuccess).user.code == 0
-            ? 114
-            : 98,
-        alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.025,
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.025,
-            vertical: MediaQuery.of(context).size.height * 0.02,
-          ),
-          child: InkWell(
-            onTap: widget.openProfile,
-            child: Row(
-              spacing: 20,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // ~:Avatar Section:~
-                CircleAvatar(
-                  radius: 30.0,
-                  backgroundColor: Colors.white,
-                  child: Builder(
-                    builder: (context) {
-                      if (widget.employee.code == 1 &&
-                          widget.employee.profilePicture != '') {
-                        return ClipOval(
-                          child: SizedBox.fromSize(
-                            size: Size.fromRadius(28),
-                            child: Image.memory(
-                              base64Decode(
-                                widget.employee.profilePicture,
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      } else {
-                        return const Icon(
-                          Icons.person,
-                          size: 25.0,
-                          color: Colors.black,
-                        );
-                      }
-                    },
-                  ),
-                ),
+    // if (widget.openProfile != null) {
+    //   return Container(
+    //     width: MediaQuery.of(context).size.width,
+    //     height: (context.read<LoginBloc>().state as LoginSuccess).user.code == 0
+    //         ? 114
+    //         : 98,
+    //     alignment: Alignment.center,
+    //     margin: EdgeInsets.symmetric(
+    //       horizontal: MediaQuery.of(context).size.width * 0.025,
+    //     ),
+    //     child: Padding(
+    //       padding: EdgeInsets.symmetric(
+    //         horizontal: MediaQuery.of(context).size.width * 0.025,
+    //         vertical: MediaQuery.of(context).size.height * 0.02,
+    //       ),
+    //       child: InkWell(
+    //         onTap: widget.openProfile ?? () {},
+    //         child: Row(
+    //           spacing: 20,
+    //           crossAxisAlignment: CrossAxisAlignment.center,
+    //           children: [
+    //             // ~:Avatar Section:~
+    //             CircleAvatar(
+    //               radius: 30.0,
+    //               backgroundColor: Colors.white,
+    //               child: Builder(
+    //                 builder: (context) {
+    //                   if (widget.employee.code == 1 &&
+    //                       widget.employee.profilePicture != '') {
+    //                     return ClipOval(
+    //                       child: SizedBox.fromSize(
+    //                         size: Size.fromRadius(28),
+    //                         child: Image.memory(
+    //                           base64Decode(
+    //                             widget.employee.profilePicture,
+    //                           ),
+    //                           fit: BoxFit.cover,
+    //                         ),
+    //                       ),
+    //                     );
+    //                   } else {
+    //                     return const Icon(
+    //                       Icons.person,
+    //                       size: 25.0,
+    //                       color: Colors.black,
+    //                     );
+    //                   }
+    //                 },
+    //               ),
+    //             ),
+    //
+    //             // ~:Profile Section:~
+    //             Expanded(
+    //               child: Column(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 crossAxisAlignment: CrossAxisAlignment.start,
+    //                 children: [
+    //                   Builder(
+    //                     builder: (context) {
+    //                       if (widget.employee.employeeName.isNotEmpty) {
+    //                         return Text(
+    //                           widget.employee.employeeName,
+    //                           overflow: TextOverflow.ellipsis,
+    //                           style: TextThemes.subtitle.copyWith(
+    //                             fontSize: 24,
+    //                             fontWeight: FontWeight.bold,
+    //                           ),
+    //                         );
+    //                       } else {
+    //                         return Text(
+    //                           'GUEST',
+    //                           overflow: TextOverflow.ellipsis,
+    //                           style: TextThemes.subtitle.copyWith(
+    //                             fontSize: 24,
+    //                             fontWeight: FontWeight.bold,
+    //                           ),
+    //                         );
+    //                       }
+    //                     },
+    //                   ),
+    //                   Builder(
+    //                     builder: (context) {
+    //                       if (widget.employee.employeeID.isNotEmpty) {
+    //                         return Text(
+    //                           widget.employee.employeeID,
+    //                           style: TextThemes.subtitle.copyWith(fontSize: 18),
+    //                         );
+    //                       } else {
+    //                         return Text(
+    //                           'XXXXX/XXXXXX',
+    //                           style: TextThemes.subtitle.copyWith(fontSize: 18),
+    //                         );
+    //                       }
+    //                     },
+    //                   ),
+    //                   BlocBuilder<LoginBloc, LoginState>(
+    //                     builder: (context, state) {
+    //                       if (state is LoginSuccess && state.user.code == 0) {
+    //                         return Text(
+    //                           '${Formatter.toTitleCase(widget.employee.bsName)}, ${Formatter.toTitleCase(widget.employee.locationName)}',
+    //                           style: TextThemes.subtitle.copyWith(fontSize: 18),
+    //                         );
+    //                       } else {
+    //                         return SizedBox.shrink();
+    //                       }
+    //                     },
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // } else {
+    //
+    // }
 
-                // ~:Profile Section:~
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Builder(
-                        builder: (context) {
-                          if (widget.employee.employeeName.isNotEmpty) {
-                            return Text(
-                              widget.employee.employeeName,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextThemes.subtitle.copyWith(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          } else {
-                            return Text(
-                              'GUEST',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextThemes.subtitle.copyWith(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                      Builder(
-                        builder: (context) {
-                          if (widget.employee.employeeID.isNotEmpty) {
-                            return Text(
-                              widget.employee.employeeID,
-                              style: TextThemes.subtitle.copyWith(fontSize: 18),
-                            );
-                          } else {
-                            return Text(
-                              'XXXXX/XXXXXX',
-                              style: TextThemes.subtitle.copyWith(fontSize: 18),
-                            );
-                          }
-                        },
-                      ),
-                      BlocBuilder<LoginBloc, LoginState>(
-                        builder: (context, state) {
-                          if (state is LoginSuccess && state.user.code == 0) {
-                            return Text(
-                              '${Formatter.toTitleCase(widget.employee.bsName)}, ${Formatter.toTitleCase(widget.employee.locationName)}',
-                              style: TextThemes.subtitle.copyWith(fontSize: 18),
-                            );
-                          } else {
-                            return SizedBox.shrink();
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    } else {
+    if (widget.employee.code == 1) {
       return Container(
         width: MediaQuery.of(context).size.width,
-        height: (context.read<LoginBloc>().state as LoginSuccess).user.code == 0
-            ? 116
-            : 98,
+        height: 98,
         alignment: Alignment.center,
         margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.025,
@@ -157,7 +159,7 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.025,
-            vertical: MediaQuery.of(context).size.height * 0.02,
+            // vertical: MediaQuery.of(context).size.height * 0.02,
           ),
           child: Row(
             spacing: 20,
@@ -329,6 +331,105 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                 ),
               ),
             ],
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        height: (context.read<LoginBloc>().state as LoginSuccess).user.code == 0
+            ? 116
+            : 98,
+        alignment: Alignment.center,
+        margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.025,
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.025,
+            // vertical: MediaQuery.of(context).size.height * 0.02,
+          ),
+          child: InkWell(
+            onTap: widget.openProfile ?? () {},
+            child: Row(
+              spacing: 20,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // ~:Avatar Section:~
+                CircleAvatar(
+                  radius: 30.0,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.person,
+                    size: 25.0,
+                    color: Colors.black,
+                  ),
+                ),
+
+                // ~:Profile Section:~
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          if (widget.employee.employeeName.isNotEmpty) {
+                            return Text(
+                              widget.employee.employeeName,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextThemes.subtitle.copyWith(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          } else {
+                            return Text(
+                              'GUEST',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextThemes.subtitle.copyWith(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      Builder(
+                        builder: (context) {
+                          if (widget.employee.employeeID.isNotEmpty) {
+                            return Text(
+                              widget.employee.employeeID,
+                              style: TextThemes.subtitle.copyWith(fontSize: 18),
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          } else {
+                            return Text(
+                              'XXXXX/XXXXXX',
+                              style: TextThemes.subtitle.copyWith(fontSize: 18),
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          }
+                        },
+                      ),
+                      BlocBuilder<LoginBloc, LoginState>(
+                        builder: (context, state) {
+                          if (state is LoginSuccess && state.user.code == 0) {
+                            return Text(
+                              '${Formatter.toTitleCase(widget.employee.bsName)}, ${Formatter.toTitleCase(widget.employee.locationName)}',
+                              style: TextThemes.subtitle.copyWith(fontSize: 18),
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          } else {
+                            return SizedBox.shrink();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

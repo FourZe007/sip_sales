@@ -2,6 +2,9 @@ class APIConstants {
   static const String baseUrl = 'wsip.yamaha-jatim.co.id:2448';
 
   static const String loginEndpoint = '/api/Login/LoginSalesman';
+  static const String forgotPasswordEndpoint = '/api/SIPSales/ChangePassword';
+  static const String resetPasswordEndpoint =
+      '/api/SIPSales/RequestResetPassword';
   static const String headActTypesEndpoint =
       '/api/SIPSales/MEmployeeActivitySM';
   static const String headActsEndpoint =

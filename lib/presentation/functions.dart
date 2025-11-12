@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/presentation/screens/login_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/reset_password_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/tnc_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:uuid/uuid.dart';
@@ -149,20 +150,11 @@ class Functions {
           Navigator.push(
             context,
             MaterialPageRoute(
-              // builder: (context) => PasswordResetPage(),
-              builder: (context) => LoginScreen(),
+              builder: (context) => ResetPasswordScreen(),
             ),
           );
           break;
         default:
-          // GlobalDialog.showCrossPlatformDialog(
-          //   context,
-          //   'Peringatan!',
-          //   'Halaman tujuan tidak ditemukan. Mohon coba lagi.',
-          //   () => Navigator.pop(context),
-          //   'Tutup',
-          //   isIOS: Platform.isIOS ? true : false,
-          // );
           if (context.mounted) {
             customSnackBar(
               context,

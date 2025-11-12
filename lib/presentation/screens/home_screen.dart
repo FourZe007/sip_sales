@@ -28,6 +28,7 @@ import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/presentation/screens/coordinator_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/forgot_password_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_new_acts.dart';
 import 'package:sip_sales_clean/presentation/screens/head_dashboard_screen.dart';
@@ -42,6 +43,7 @@ import 'package:sip_sales_clean/presentation/widgets/panels/category_filter_pane
 import 'package:sip_sales_clean/presentation/widgets/panels/leasing_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/user_profile.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -184,6 +186,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
+  void launchLink(String link) async {
+    try {
+      if (await canLaunchUrl(Uri.parse(link))) {
+        await launchUrl(Uri.parse(link));
+      } else {
+        Functions.customFlutterToast('Tidak dapat membuka link');
+      }
+    } catch (e) {
+      log(e.toString());
+      Functions.customFlutterToast(e.toString());
+    }
+  }
+
   Widget profileTemplateBody(
     BuildContext context,
     EmployeeModel employee,
@@ -221,11 +236,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   topRight: Radius.circular(20),
                 ),
               ),
-              margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.005,
-              ),
-              padding: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height * 0.015,
+              padding: EdgeInsets.only(
+                // vertical: MediaQuery.of(context).size.height * 0.015,
+                top: MediaQuery.of(context).size.height * 0.015,
               ),
               child: Column(
                 spacing: 8,
@@ -248,8 +261,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                   // ~:Privacy Policy Section:~
                   InkWell(
-                    // onTap: () => launchLink(context),
-                    onTap: () {},
+                    onTap: () => launchLink(
+                      'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                    ),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Row(
@@ -297,8 +311,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                   // ~:Change Password Section:~
                   InkWell(
-                    // onTap: () => changePassword(state),
-                    onTap: () {},
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordScreen(),
+                      ),
+                    ),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Row(
@@ -348,63 +366,72 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
 
                   // ~:User Guideline:~
-                  Builder(
-                    builder: (context) {
-                      if (employee.code == 1) {
-                        return InkWell(
-                          // onTap: () => openUserGuideline(),
-                          onTap: () {},
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: const Icon(
-                                    Icons.menu_book_rounded,
-                                    size: 30.0,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 5,
-                                  child: Container(
-                                    // width: MediaQuery.of(context).size.width * 0.75,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(
-                                            context,
-                                          ).size.width *
-                                          0.025,
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Manual Book',
-                                          style: TextThemes.normal.copyWith(
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Cara menggunakan setiap fitur aplikasi',
-                                          style: TextThemes.normal.copyWith(
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                  InkWell(
+                    // onTap: () => openUserGuideline(),
+                    onTap: () {
+                      log('Access rights: ${employee.code}');
+                      if (employee.code == 0) {
+                        launchLink(
+                          'https://www.canva.com/design/DAG4dHLK334/E6wuxXY9Cp4jm5uAqMg81A/edit?utm_content=DAG4dHLK334&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                        );
+                      } else if (employee.code == 1) {
+                        launchLink(
+                          'https://www.canva.com/design/DAGfnPUa7_Q/nE2tAQYp5NGFOTKE_SrzvQ/edit?utm_content=DAGfnPUa7_Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                        );
+                      } else if (employee.code == 2) {
+                        launchLink(
+                          'https://www.canva.com/design/DAG4dDoYceE/daSw9Etw8rUdfbbVFeZ4xw/edit?utm_content=DAG4dDoYceE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
                         );
                       } else {
-                        return SizedBox();
+                        Functions.customFlutterToast(
+                          'Hak akses tidak ditemukan',
+                        );
                       }
                     },
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: const Icon(
+                              Icons.menu_book_rounded,
+                              size: 30.0,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 5,
+                            child: Container(
+                              // width: MediaQuery.of(context).size.width * 0.75,
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(
+                                      context,
+                                    ).size.width *
+                                    0.025,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Manual Book',
+                                    style: TextThemes.normal.copyWith(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Cara menggunakan setiap fitur aplikasi',
+                                    style: TextThemes.normal.copyWith(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
                   // ~:App Version Section:~
@@ -453,7 +480,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             delegate: SliverChildBuilderDelegate(
               (context, _) => Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
+                height:
+                    MediaQuery.of(context).size.height -
+                    kBottomNavigationBarHeight -
+                    28,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -537,7 +567,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height:
-                MediaQuery.of(context).size.height - kBottomNavigationBarHeight,
+                MediaQuery.of(context).size.height -
+                kBottomNavigationBarHeight -
+                28,
             child: BlocBuilder<LoginBloc, LoginState>(
               buildWhen: (previous, current) =>
                   (current is LoginLoading && current.isRefresh) ||
@@ -1214,10 +1246,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 backgroundColor: Colors.blue,
-                // toolbarHeight:
-                //     context.read<NavbarCubit>().state == NavbarType.profile
-                //     ? 100
-                //     : 60,
                 toolbarHeight:
                     context.read<NavbarCubit>().state == NavbarType.profile
                     ? 0

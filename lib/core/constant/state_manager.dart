@@ -22,6 +22,7 @@ import 'package:sip_sales_clean/presentation/blocs/update_followup/update_fu_das
 import 'package:sip_sales_clean/presentation/cubit/attendance_type_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
+import 'package:sip_sales_clean/presentation/cubit/forgot_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act.dart';
@@ -57,6 +58,9 @@ class StateManager {
       ),
       BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(loginRepo: LoginRepoImp()),
+      ),
+      BlocProvider<ForgotCubit>(
+        create: (context) => ForgotCubit(loginRepository: LoginRepoImp()),
       ),
       BlocProvider<LocationServiceBloc>(
         create: (context) => LocationServiceBloc(),
