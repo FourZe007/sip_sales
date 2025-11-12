@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
-import 'package:sip_sales_clean/presentation/cubit/forgot_cubit.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 import 'package:sip_sales_clean/routes.dart';
 
@@ -30,8 +29,6 @@ class _SplashScreenState extends State<SplashScreen> {
           pass: '',
         ),
       );
-
-      context.read<ForgotCubit>().resetState();
     });
   }
 

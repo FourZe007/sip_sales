@@ -226,6 +226,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         );
 
                         if (context.mounted) {
+                          context.read<ForgotCubit>().resetState();
                           Navigator.pop(context);
                         }
                       }
