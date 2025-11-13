@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -30,7 +31,6 @@ class _LeasingFilterPanelState extends State<LeasingFilterPanel> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     if (context.read<FilterStateProvider>().selectedLeasing.value.isNotEmpty &&
@@ -126,12 +126,15 @@ class _LeasingFilterPanelState extends State<LeasingFilterPanel> {
                     if (value.isNotEmpty) {
                       return ElevatedButton(
                         onPressed: () {
+                          log('Leasing Value: $value');
                           // ~:Close Sliding Panel:~
                           context.read<DashboardSlidingUpCubit>().closePanel();
 
                           context
                               .read<FilterStateProvider>()
-                              .setSelectedLeasing(value);
+                              .setSelectedLeasing(
+                                value.toLowerCase() == 'semua' ? '' : value,
+                              );
 
                           // ~:Get Employee Data:~
                           final employee =
@@ -155,7 +158,10 @@ class _LeasingFilterPanelState extends State<LeasingFilterPanel> {
                                 .read<FilterStateProvider>()
                                 .selectedCategory
                                 .value, // category name
-                            value, // leasing name
+                            context
+                                .read<FilterStateProvider>()
+                                .selectedLeasing
+                                .value, // leasing name
                             '',
                           );
                         },

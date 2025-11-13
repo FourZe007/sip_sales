@@ -234,7 +234,7 @@ class HeadStoreScreen extends StatelessWidget {
                 child: BlocBuilder<NavbarCubit, NavbarType>(
                   builder: (context, state) {
                     if (state == NavbarType.report) {
-                      return const HeadDashboardScreen();
+                      return HeadDashboardScreen();
                     } else if (state == NavbarType.profile) {
                       return ProfileBodyScreen();
                     } else {

@@ -5,6 +5,7 @@ class APIConstants {
   static const String forgotPasswordEndpoint = '/api/SIPSales/ChangePassword';
   static const String resetPasswordEndpoint =
       '/api/SIPSales/RequestResetPassword';
+  static const String requestIdEndpoint = '/api/SIPSales/RequestEmployeeID';
   static const String headActTypesEndpoint =
       '/api/SIPSales/MEmployeeActivitySM';
   static const String headActsEndpoint =

@@ -530,7 +530,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                   );
                 } else if (state is SpkLeasingDataLoaded) {
                   final double detailPerLeasingHeight =
-                      52 + state.result.detail1.length * 50;
+                      56 + state.result.detail1.length * 50;
                   final double detailPerCategoryHeight =
                       52 + state.result.detail2.length * 50;
                   final double detailRejectHeight =
@@ -868,7 +868,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                     columns: [
                                       GridColumn(
                                         columnName: 'leasing',
-                                        minimumWidth: 80,
+                                        minimumWidth: 68,
                                         label: Align(
                                           alignment: Alignment.center,
                                           child: Text(
@@ -913,7 +913,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                       ),
                                       GridColumn(
                                         columnName: 'approved',
-                                        minimumWidth: 36,
+                                        minimumWidth: 32,
                                         label: Align(
                                           alignment: Alignment.center,
                                           child: Text(
@@ -928,7 +928,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                       ),
                                       GridColumn(
                                         columnName: 'rejectedPercent',
-                                        minimumWidth: 36,
+                                        minimumWidth: 48,
                                         label: Align(
                                           alignment: Alignment.center,
                                           child: Text(
@@ -943,7 +943,7 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                                       ),
                                       GridColumn(
                                         columnName: 'con',
-                                        minimumWidth: 36,
+                                        minimumWidth: 48,
                                         label: Align(
                                           alignment: Alignment.center,
                                           child: Text(

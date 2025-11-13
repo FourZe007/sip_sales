@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -124,12 +125,15 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                     if (value.isNotEmpty) {
                       return ElevatedButton(
                         onPressed: () {
+                          log('Category Value: $value');
                           // ~:Close Sliding Panel:~
                           context.read<DashboardSlidingUpCubit>().closePanel();
 
                           context
                               .read<FilterStateProvider>()
-                              .setSelectedCategory(value);
+                              .setSelectedCategory(
+                                value.toLowerCase() == 'semua' ? '' : value,
+                              );
 
                           // ~:Get Employee Data:~
                           final employee =
@@ -149,7 +153,10 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                                 .selectedDate
                                 .value,
                             "${employee.branch}${employee.shop}", // employee data
-                            value, // category name
+                            context
+                                .read<FilterStateProvider>()
+                                .selectedCategory
+                                .value, // category name
                             context
                                 .read<FilterStateProvider>()
                                 .selectedLeasing

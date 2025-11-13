@@ -66,7 +66,7 @@ class FollowupDashboardBloc
         emit(FollowupDealDashboardLoaded(followupDealData['data']));
       } else if (followupDealData['status'] == 'sukses' &&
           (followupDealData['data'] as List).isEmpty) {
-        emit(FollowupDealDashboardError('empty'));
+        emit(FollowupDealDashboardLoaded([]));
       } else {
         emit(FollowupDealDashboardError(followupDealData['data'].toString()));
       }

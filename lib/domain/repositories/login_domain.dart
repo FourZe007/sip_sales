@@ -12,4 +12,5 @@ abstract class LoginRepo {
     String newPassword,
   );
   Future<Map<String, dynamic>> resetPassword(String employeeId);
+  Future<Map<String, dynamic>> requestId(String phoneNumber);
 }

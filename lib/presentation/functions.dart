@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/presentation/screens/login_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/request_id_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/reset_password_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/tnc_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
@@ -19,16 +20,55 @@ import 'package:geolocator/geolocator.dart';
 class Functions {
   static FlutterSecureStorage storage = const FlutterSecureStorage();
 
-  static void viewPhoto(BuildContext context, String img) {
+  static void viewPhoto(
+    BuildContext context,
+    String img, {
+    bool isCircular = false,
+  }) {
     try {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return CircleAvatar(foregroundImage: MemoryImage(base64Decode(img)));
-        },
-      );
+      if (isCircular) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CircleAvatar(
+              foregroundImage: MemoryImage(base64Decode(img)),
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.memory(
+                  base64Decode(img),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
+          },
+        );
+      }
     } catch (e) {
       log('Error: $e');
+    }
+  }
+
+  static void openMap(
+    double lat,
+    double lng,
+  ) async {
+    Uri url = Uri.parse('https://maps.google.com/?q=$lat,$lng');
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      Functions.customFlutterToast(
+        'Tidak dapat membuka tautan. Silakan periksa URL dan coba lagi.',
+      );
     }
   }
 
@@ -128,6 +168,7 @@ class Functions {
   ) {
     try {
       switch (option) {
+        // ~:Disabled:~
         case '0':
           Navigator.push(
             context,
@@ -142,7 +183,7 @@ class Functions {
             context,
             MaterialPageRoute(
               // builder: (context) => IdRequestPage(),
-              builder: (context) => LoginScreen(),
+              builder: (context) => RequestIdScreen(),
             ),
           );
           break;

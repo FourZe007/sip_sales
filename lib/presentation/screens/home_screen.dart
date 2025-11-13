@@ -89,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     NavbarType navbarType = NavbarType.home,
     bool sortByName = false,
   }) {
+    log('Home Screen Refresh Dashboard');
     final salesmanId = employee.employeeID;
     final date = DateTime.now().toIso8601String().substring(0, 10);
     // ~:Debug Purposes:~
@@ -779,6 +780,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     FollowUpStatus? newValue, {
     bool sortByName = false,
   }) async {
+    log('Home Screen valueOnChanged');
     if (newValue != null) {
       context.read<DashboardSlidingUpCubit>().closePanel();
       if (newValue == FollowUpStatus.notYet) {
@@ -802,6 +804,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         context,
         (context.read<LoginBloc>().state as LoginSuccess).user,
         DashboardType.followup,
+        navbarType: NavbarType.report,
         sortByName: sortByName,
       );
     }
@@ -809,6 +812,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget logout() {
     return Container(
+      width: MediaQuery.of(context).size.width,
       height: 350,
       alignment: Alignment.center,
       decoration: const BoxDecoration(
@@ -1718,7 +1722,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: BlocBuilder<NavbarCubit, NavbarType>(
               builder: (context, state) {
                 if (state == NavbarType.report) {
-                  return const SalesReportScreen();
+                  return SalesReportScreen();
                 } else if (state == NavbarType.profile) {
                   return profileTemplate();
                 } else {

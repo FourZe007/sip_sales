@@ -406,11 +406,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
 
                               // ~:Unbind Button:~
-                              StaticButton(
-                                () => Functions.loginUtilization(context, '0'),
-                                Icons.person_off_rounded,
-                                'Request Unbind',
-                              ),
+                              // StaticButton(
+                              //   () => Functions.loginUtilization(context, '0'),
+                              //   Icons.person_off_rounded,
+                              //   'Request Unbind',
+                              // ),
 
                               // ~:NIP Button:~
                               StaticButton(

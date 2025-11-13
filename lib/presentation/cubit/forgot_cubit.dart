@@ -41,17 +41,43 @@ class ForgotCubit extends Cubit<ForgotState> {
   Future<void> resetPassword(
     String employeeId,
   ) async {
-    emit(ForgotLoading());
-    try {
-      final res = await loginRepository.resetPassword(employeeId);
+    if (employeeId.isEmpty) {
+      emit(PasswordResetFailed(message: 'Employee ID harus diisi!'));
+    } else {
+      try {
+        emit(ForgotLoading());
 
-      if (res['status'] == 'success') {
-        emit(PasswordResetSucceed());
-      } else {
-        emit(PasswordResetFailed(message: res['data']));
+        final res = await loginRepository.resetPassword(employeeId);
+
+        if (res['status'] == 'success') {
+          emit(PasswordResetSucceed());
+        } else {
+          emit(PasswordResetFailed(message: res['data']));
+        }
+      } catch (e) {
+        emit(PasswordResetFailed(message: e.toString()));
       }
-    } catch (e) {
-      emit(PasswordResetFailed(message: e.toString()));
+    }
+  }
+
+  Future<void> requestId(
+    String phoneNumber,
+  ) async {
+    if (phoneNumber.isEmpty) {
+      emit(RequestIdFailed(message: 'Nomor telepon harus diisi!'));
+    } else {
+      emit(ForgotLoading());
+      try {
+        final res = await loginRepository.requestId(phoneNumber);
+
+        if (res['status'] == 'success') {
+          emit(RequestIdSucceed());
+        } else {
+          emit(RequestIdFailed(message: res['data']));
+        }
+      } catch (e) {
+        emit(RequestIdFailed(message: e.toString()));
+      }
     }
   }
 }
@@ -80,4 +106,12 @@ class PasswordResetFailed extends ForgotState {
   final String message;
 
   PasswordResetFailed({required this.message});
+}
+
+class RequestIdSucceed extends ForgotState {}
+
+class RequestIdFailed extends ForgotState {
+  final String message;
+
+  RequestIdFailed({required this.message});
 }

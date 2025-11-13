@@ -225,4 +225,64 @@ class LoginRepoImp implements LoginRepo {
       };
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> requestId(
+    String phoneNumber,
+  ) async {
+    // Simulate a network call
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.requestIdEndpoint,
+    );
+
+    Map body = {"PhoneNo": phoneNumber};
+    log('Map Body: $body');
+
+    final response = await http.post(
+      uri,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(body),
+    );
+    log('Response: $response');
+
+    // return LoginModel.fromJson(jsonDecode(res.body));
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'].toLowerCase() == 'sukses' && res['code'] == '100') {
+        final message = (res['data'] as List)
+            .map((e) => ResultMessageModel.fromJson(e))
+            .toList();
+
+        if (message.isNotEmpty) {
+          log('Change Password Succeed');
+          return {
+            'status': 'success',
+            'data': message[0].resultMessage,
+          };
+        } else {
+          log('Change Password Failed');
+          return {
+            'status': 'fail',
+            'data': message[0].resultMessage,
+          };
+        }
+      } else {
+        log('Change Password Failed');
+        return {
+          'status': 'fail',
+          'data': res['msg'],
+        };
+      }
+    } else {
+      log('Change Password Failed');
+      return {
+        'status': 'fail',
+        'data': response.statusCode.toString(),
+      };
+    }
+  }
 }

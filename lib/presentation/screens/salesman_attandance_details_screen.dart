@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 
 class SalesmanAttandanceDetailsScreen extends StatefulWidget {
@@ -96,6 +97,7 @@ class _SalesmanAttandanceDetailsScreenState
                           // ~:Body:~
                           Stack(
                             children: [
+                              // ~:Photo:~
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
                                 child: DecoratedBox(
@@ -112,11 +114,16 @@ class _SalesmanAttandanceDetailsScreenState
                                   ),
                                 ),
                               ),
+
+                              // ~:Enlarge Photo Icon:~
                               Positioned(
                                 top: MediaQuery.of(context).size.height * 0.185,
                                 left: MediaQuery.of(context).size.width * 0.75,
                                 child: GestureDetector(
-                                  // onTap: () => openEventPhoto(state),
+                                  onTap: () => Functions.viewPhoto(
+                                    context,
+                                    widget.photo,
+                                  ),
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     child: Icon(
@@ -183,7 +190,10 @@ class _SalesmanAttandanceDetailsScreenState
                               top: MediaQuery.of(context).size.height * 0.185,
                               left: MediaQuery.of(context).size.width * 0.75,
                               child: GestureDetector(
-                                // onTap: () => openMap(state),
+                                onTap: () => Functions.openMap(
+                                  widget.lat,
+                                  widget.lng,
+                                ),
                                 child: CircleAvatar(
                                   backgroundColor: Colors.white,
                                   child: Icon(

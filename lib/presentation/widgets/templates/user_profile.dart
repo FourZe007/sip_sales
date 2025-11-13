@@ -174,6 +174,7 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                       onTap: () => Functions.viewPhoto(
                         context,
                         state.user.profilePicture,
+                        isCircular: true,
                       ),
                       child: CircleAvatar(
                         radius: 30.0,

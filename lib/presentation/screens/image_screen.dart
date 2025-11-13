@@ -9,7 +9,6 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ImageScreen extends StatelessWidget {
   const ImageScreen({this.headActs, this.salesActs, super.key});
@@ -19,20 +18,20 @@ class ImageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void openMap(
-      double lat,
-      double lng,
-    ) async {
-      Uri url = Uri.parse('https://maps.google.com/?q=$lat,$lng');
+    // void openMap(
+    //   double lat,
+    //   double lng,
+    // ) async {
+    //   Uri url = Uri.parse('https://maps.google.com/?q=$lat,$lng');
 
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url);
-      } else {
-        Functions.customFlutterToast(
-          'Tidak dapat membuka tautan. Silakan periksa URL dan coba lagi.',
-        );
-      }
-    }
+    //   if (await canLaunchUrl(url)) {
+    //     await launchUrl(url);
+    //   } else {
+    //     Functions.customFlutterToast(
+    //       'Tidak dapat membuka tautan. Silakan periksa URL dan coba lagi.',
+    //     );
+    //   }
+    // }
 
     return SafeArea(
       top: false,
@@ -113,7 +112,7 @@ class ImageScreen extends StatelessWidget {
 
                                       // ~:Map:~
                                       GestureDetector(
-                                        onTap: () => openMap(
+                                        onTap: () => Functions.openMap(
                                           headActs!.lat,
                                           headActs!.lng,
                                         ),

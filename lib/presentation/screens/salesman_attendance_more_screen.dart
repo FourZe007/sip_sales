@@ -120,7 +120,7 @@ class _SalesmanAttendanceMoreScreenState
     log('Salesman Id: $salesmanId');
     log('Date: $date');
 
-    log('Refresh Salesman Home Screen');
+    log('Refresh salesman attendance details');
     context.read<SalesmanBloc>().add(
       SalesmanButtonPressed(
         salesmanId: salesmanId,

@@ -41,7 +41,7 @@ class FuDashboardHeader extends StatelessWidget {
                 context: context,
                 label: 'Prospek',
                 value: isFuDeal
-                    ? '${fuDealData!.totalProspect}'
+                    ? '${fuDealData != null ? fuDealData!.totalProspect : 0}'
                     : '${fuData!.totalProspect}',
                 boxWidth: 64,
                 boxHeight: 90,
@@ -57,7 +57,7 @@ class FuDashboardHeader extends StatelessWidget {
                 context: context,
                 label: 'Belum FU',
                 value: isFuDeal
-                    ? '${fuDealData!.belumFU}'
+                    ? '${fuDealData != null ? fuDealData!.belumFU : 0}'
                     : '${fuData!.belumFU}',
                 boxWidth: 64,
                 boxHeight: 90,
@@ -73,7 +73,7 @@ class FuDashboardHeader extends StatelessWidget {
                 context: context,
                 label: 'Proses FU',
                 value: isFuDeal
-                    ? '${fuDealData!.prosesFU}'
+                    ? '${fuDealData != null ? fuDealData!.prosesFU : 0}'
                     : '${fuData!.prosesFU}',
                 boxWidth: 64,
                 boxHeight: 90,
@@ -89,7 +89,7 @@ class FuDashboardHeader extends StatelessWidget {
                 context: context,
                 label: 'Deal',
                 value: isFuDeal
-                    ? '${fuDealData!.closing}'
+                    ? '${fuDealData != null ? fuDealData!.closing : 0}'
                     : '${fuData!.closing}',
                 boxWidth: 64,
                 boxHeight: 90,
@@ -104,7 +104,9 @@ class FuDashboardHeader extends StatelessWidget {
               child: Widgets.buildStatBox(
                 context: context,
                 label: 'Batal',
-                value: isFuDeal ? '${fuDealData!.batal}' : '${fuData!.batal}',
+                value: isFuDeal
+                    ? '${fuDealData != null ? fuDealData!.batal : 0}'
+                    : '${fuData!.batal}',
                 boxWidth: 64,
                 boxHeight: 90,
                 labelHeight: 28,
@@ -132,8 +134,10 @@ class FuDashboardHeader extends StatelessWidget {
                       height: 40,
                       child: LinearProgressIndicator(
                         value: isFuDeal
-                            ? fuDealData!.newProspect.toDouble() /
-                                  fuDealData!.totalProspect.toDouble()
+                            ? fuDealData != null
+                                  ? fuDealData!.newProspect.toDouble() /
+                                        fuDealData!.totalProspect.toDouble()
+                                  : 0
                             : fuData!.newProspect.toDouble() /
                                   fuData!.totalProspect.toDouble(),
                         backgroundColor: Colors.grey[300],
@@ -144,7 +148,11 @@ class FuDashboardHeader extends StatelessWidget {
                     ),
                     Center(
                       child: Text(
-                        'Prospek Baru: ${isFuDeal ? fuDealData!.newProspect.toString() : fuData!.newProspect.toString()} orang (${isFuDeal ? fuDealData!.persenNew.toString() : fuData!.persenNew.toString()}%)',
+                        isFuDeal
+                            ? fuDealData != null
+                                  ? 'Prospek Baru: ${fuDealData!.newProspect.toString()} orang (${fuDealData!.persenNew.toString()}%)'
+                                  : 'Prospek Baru: 0 orang (0%)'
+                            : 'Prospek Baru: ${fuData!.newProspect.toString()} orang (${fuData!.persenNew.toString()}%)',
                         style: TextThemes.normal,
                         textAlign: TextAlign.center,
                       ),

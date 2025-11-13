@@ -29,7 +29,10 @@ import 'package:sip_sales_clean/presentation/widgets/templates/widgets.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class CoordinatorDashboard extends StatefulWidget {
-  const CoordinatorDashboard({required this.employeeId, super.key});
+  const CoordinatorDashboard({
+    required this.employeeId,
+    super.key,
+  });
 
   final String employeeId;
 
