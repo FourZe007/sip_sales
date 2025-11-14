@@ -22,19 +22,20 @@ class LocationScreen extends StatefulWidget {
 class _LocationScreenState extends State<LocationScreen> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Functions.requestPermission(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData == true) {
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-            ),
-            child: Scaffold(
-              backgroundColor: Colors.grey[300],
-              body: SafeArea(
-                maintainBottomViewPadding: true,
-                child: Container(
+    return SafeArea(
+      top: false,
+      maintainBottomViewPadding: true,
+      child: FutureBuilder(
+        future: Functions.requestPermission(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData == true) {
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+              ),
+              child: Scaffold(
+                backgroundColor: Colors.grey[300],
+                body: Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
                   alignment: Alignment.center,
@@ -168,16 +169,16 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                 ),
               ),
-            ),
-          );
-        } else {
-          return Container(
-            color: Colors.black,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          );
-        }
-      },
+            );
+          } else {
+            return Container(
+              color: Colors.black,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            );
+          }
+        },
+      ),
     );
   }
 }

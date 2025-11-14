@@ -33,7 +33,6 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      bottom: false,
       maintainBottomViewPadding: true,
       child: Scaffold(
         resizeToAvoidBottomInset: false,

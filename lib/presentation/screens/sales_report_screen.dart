@@ -272,7 +272,6 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      bottom: false,
       maintainBottomViewPadding: true,
       child: DefaultTabController(
         length: 2,

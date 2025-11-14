@@ -153,6 +153,16 @@ class _LeasingFilterPanelState extends State<LeasingFilterPanel> {
                                 .read<FilterStateProvider>()
                                 .selectedDate
                                 .value,
+                            // context
+                            //         .read<FilterStateProvider>()
+                            //         .selectedCategory
+                            //         .value
+                            //         .isEmpty
+                            //     ? "${employee.branch}${employee.shop}"
+                            //     : context
+                            //           .read<FilterStateProvider>()
+                            //           .selectedCategory
+                            //           .value,
                             "${employee.branch}${employee.shop}", // employee data
                             context
                                 .read<FilterStateProvider>()
