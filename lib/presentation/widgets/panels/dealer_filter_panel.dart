@@ -32,6 +32,16 @@ class DealerFilterPanelState extends State<DealerFilterPanel> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    if (context.read<FilterStateProvider>().selectedDealer.value.isNotEmpty &&
+        context.read<FilterStateProvider>().selectedDealer.value != '') {
+      setIsActive(context.read<FilterStateProvider>().selectedDealer.value);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -71,8 +81,9 @@ class DealerFilterPanelState extends State<DealerFilterPanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Dealer',
+                          'Pilih salah satu jenis dealer',
                           style: TextThemes.normal.copyWith(
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -130,6 +141,26 @@ class DealerFilterPanelState extends State<DealerFilterPanel> {
                             (context.read<LoginBloc>().state as LoginSuccess)
                                 .user;
 
+                        String branchShop = context
+                            .read<FilterStateProvider>()
+                            .selectedDealer
+                            .value;
+                        if (branchShop != '' && branchShop != 'Semua') {
+                          for (var e
+                              in (context.read<SpkLeasingFilterCubit>().state
+                                      as SpkLeasingFilterLoaded)
+                                  .dealerList) {
+                            log('Dealer name: ${e.bsName}');
+                            log('Selected dealer: $value');
+                            if (e.bsName.toLowerCase() == value.toLowerCase()) {
+                              branchShop = '${e.branch}${e.shop}';
+                              break;
+                            }
+                          }
+                        } else {
+                          branchShop = '${employee.branch}${employee.shop}';
+                        }
+
                         // ~:load new data with a selected Group Dealer:~
                         context.read<SpkLeasingDataCubit>().loadData(
                           employee.employeeID,
@@ -137,17 +168,7 @@ class DealerFilterPanelState extends State<DealerFilterPanel> {
                               .read<FilterStateProvider>()
                               .selectedDate
                               .value,
-                          // context
-                          //         .read<FilterStateProvider>()
-                          //         .selectedCategory
-                          //         .value
-                          //         .isEmpty
-                          //     ? "${employee.branch}${employee.shop}"
-                          //     : context
-                          //           .read<FilterStateProvider>()
-                          //           .selectedCategory
-                          //           .value,
-                          "${employee.branch}${employee.shop}", // employee data
+                          branchShop,
                           context
                               .read<FilterStateProvider>()
                               .selectedCategory

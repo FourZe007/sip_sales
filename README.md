@@ -20,9 +20,9 @@ A new Flutter project.
 - Improved permission management for better role-based access control
 - Enhanced security with more granular access rights across the application
 
-🔒 **Login Process Improvements**
+🔒 **App Process Improvements**
 
-- Completely refactored login flow for better maintainability and security
+- Completely refactored app flow for better maintainability and security
 - Streamlined authentication state management
 - Improved error handling and user feedback during login
 - Optimized token management and session handling

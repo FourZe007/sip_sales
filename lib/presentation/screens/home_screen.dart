@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +25,6 @@ import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/navbar_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
-import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/presentation/screens/coordinator_screen.dart';
@@ -448,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         bottom: 20,
                       ),
                       child: Text(
-                        'Versi 1.2.0 beta',
+                        'Versi 1.2.0',
                         style: TextThemes.normal.copyWith(
                           fontSize: 16,
                         ),
@@ -1371,9 +1371,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                           if (index == 1) {
                             // ~:Load SPK Leasing Filter Data:~
-                            context
-                                .read<SpkLeasingFilterCubit>()
-                                .loadFilterData();
+                            // context
+                            //     .read<SpkLeasingFilterCubit>()
+                            //     .loadFilterData();
 
                             // ~:Clear saved filters (leasing & category):~
                             context.read<FilterStateProvider>().clearFilters();
@@ -1554,7 +1554,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return SafeArea(
       top: false,
       bottom: false,
-      maintainBottomViewPadding: true,
       child: SlidingUpPanel(
         controller: slidingPanelController,
         backdropEnabled: true,
@@ -1737,9 +1736,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
-
     tabController.dispose();
+
+    super.dispose();
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -202,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // ~:Header & Body:~
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.79,
+                  height: MediaQuery.of(context).size.height * 0.825,
                   padding: EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 40,
@@ -379,7 +378,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       // ~:App Version:~
                       Text(
-                        'v1.2.0 beta',
+                        'v1.2.0',
                         style: TextThemes.normal,
                       ),
 

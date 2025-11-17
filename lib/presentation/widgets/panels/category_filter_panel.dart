@@ -78,8 +78,9 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Kategori',
+                          'Pilih salah satu jenis kategori',
                           style: TextThemes.normal.copyWith(
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -140,6 +141,27 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                               (context.read<LoginBloc>().state as LoginSuccess)
                                   .user;
 
+                          String branchShop = context
+                              .read<FilterStateProvider>()
+                              .selectedDealer
+                              .value;
+                          if (branchShop != '' && branchShop != 'Semua') {
+                            for (var e
+                                in (context.read<SpkLeasingFilterCubit>().state
+                                        as SpkLeasingFilterLoaded)
+                                    .dealerList) {
+                              log('Dealer name: ${e.bsName}');
+                              log('Selected dealer: $branchShop');
+                              if (e.bsName.toLowerCase() ==
+                                  branchShop.toLowerCase()) {
+                                branchShop = '${e.branch}${e.shop}';
+                                break;
+                              }
+                            }
+                          } else {
+                            branchShop = '${employee.branch}${employee.shop}';
+                          }
+
                           // ~:load new filter with a selected Group Dealer:~
                           // context.read<SpkLeasingFilterCubit>().loadFilterData(
                           //   selectedGroupDealer: value,
@@ -152,17 +174,7 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                                 .read<FilterStateProvider>()
                                 .selectedDate
                                 .value,
-                            // context
-                            //         .read<FilterStateProvider>()
-                            //         .selectedCategory
-                            //         .value
-                            //         .isEmpty
-                            //     ? "${employee.branch}${employee.shop}"
-                            //     : context
-                            //           .read<FilterStateProvider>()
-                            //           .selectedCategory
-                            //           .value,
-                            "${employee.branch}${employee.shop}", // employee data
+                            branchShop,
                             context
                                 .read<FilterStateProvider>()
                                 .selectedCategory

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/domain/repositories/login_domain.dart';
@@ -11,6 +11,7 @@ import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordin
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_event.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -71,6 +72,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               case 0:
                 log('Head Store');
                 if (event.context.mounted) {
+                  event.context.read<SpkLeasingFilterCubit>().loadFilterData();
                   event.context.read<HeadActTypesCubit>().fetchActTypes();
                 }
                 break;
@@ -181,6 +183,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginUnauthenticated());
       }
     } catch (e) {
+      if (e is PlatformException && e.code == 'BadPaddingException') {
+        log('Clearing all data');
+        await Functions.clearAllData();
+      }
       log('Login Error: $e');
       emit(LoginFailed(message: e.toString(), isRefresh: event.isRefresh));
     }
@@ -192,7 +198,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     try {
       emit(LogoutLoading());
-      await FlutterSecureStorage().deleteAll();
+      await Functions.clearAllData();
       emit(LogoutSuccess());
     } catch (e) {
       emit(LogoutFailed(e.toString()));

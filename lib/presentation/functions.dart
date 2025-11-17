@@ -18,7 +18,11 @@ import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:geolocator/geolocator.dart';
 
 class Functions {
-  static FlutterSecureStorage storage = const FlutterSecureStorage();
+  static FlutterSecureStorage storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  );
 
   static void viewPhoto(
     BuildContext context,
@@ -148,7 +152,7 @@ class Functions {
     );
 
     if (result) {
-      await storage.write(key: 'isUserAgree', value: '1');
+      // await storage.write(key: 'isUserAgree', value: '1');
 
       if (context.mounted) {
         Navigator.pushReplacementNamed(
@@ -157,7 +161,7 @@ class Functions {
         );
       }
     } else {
-      await storage.write(key: 'isUserAgree', value: '0');
+      // await storage.write(key: 'isUserAgree', value: '0');
     }
   }
 
@@ -251,6 +255,10 @@ class Functions {
     }
 
     return uuid;
+  }
+
+  static Future<void> clearAllData() async {
+    await storage.deleteAll();
   }
 
   static Future<String> readAndWriteEmployeeId({

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/data/models/spk_leasing.dart';
 import 'package:sip_sales_clean/data/repositories/spk_leasing_filter_data.dart';
 
@@ -34,7 +35,9 @@ class SpkLeasingDataCubit extends Cubit<SpkLeasingDataState> {
 
       final res = await spkLeasingFilterDataImp.loadSpkLeasingData(
         employeeId,
-        transDate,
+        transDate.isEmpty
+            ? DateFormat('yyyy-MM-dd').format(DateTime.now())
+            : transDate,
         branchShop,
         category,
         leasingId,

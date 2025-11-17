@@ -12,7 +12,7 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
-import 'package:sip_sales_clean/presentation/functions.dart';
+import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_category.dart';
@@ -347,30 +347,55 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
                           // ),
 
                           // ~:Dealer:~
-                          ElevatedButton.icon(
-                            onPressed: () async => context
-                                .read<DashboardSlidingUpCubit>()
-                                .changeType(DashboardSlidingUpType.dealer),
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              backgroundColor: Colors.grey[400],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: 20,
-                              color: Colors.black,
-                            ),
-                            iconAlignment: IconAlignment.end,
-                            label: Text(
-                              "Semua dealer",
-                              style: TextThemes.normal,
-                            ),
+                          BlocBuilder<
+                            SpkLeasingFilterCubit,
+                            SpkLeasingFilterState
+                          >(
+                            builder: (context, state) {
+                              if (state is SpkLeasingFilterLoaded &&
+                                  state.dealerList.length > 2) {
+                                return ElevatedButton.icon(
+                                  onPressed: () async => context
+                                      .read<DashboardSlidingUpCubit>()
+                                      .changeType(
+                                        DashboardSlidingUpType.dealer,
+                                      ),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    backgroundColor: Colors.grey[400],
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+                                  iconAlignment: IconAlignment.end,
+                                  label: ValueListenableBuilder<String>(
+                                    valueListenable: context
+                                        .read<FilterStateProvider>()
+                                        .selectedDealer,
+                                    builder: (context, selectedDealer, _) {
+                                      return Text(
+                                        selectedDealer.isEmpty ||
+                                                selectedDealer == 'Semua'
+                                            ? "Semua Dealer"
+                                            : selectedDealer,
+                                        style: TextThemes.normal,
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else {
+                                return SizedBox.shrink();
+                              }
+                            },
                           ),
 
                           // ~:Leasing:~
