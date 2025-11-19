@@ -418,47 +418,103 @@ class Functions {
   //   return true;
   // }
 
-  static Future<bool> serviceRequest() async {
+  static Future<Map<String, dynamic>> serviceRequest() async {
     try {
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      log('Location service enabled: $serviceEnabled');
+      // ~:New Version:~
+      bool serviceEnabled;
+      LocationPermission permission;
 
-      // If service is disabled, try to enable it
-      if (!serviceEnabled) {
-        Position? position = await Geolocator.getCurrentPosition();
-        log('Position: $position');
-
-        if (position != null) {
-          log('Location service enabled');
-          return true;
-        }
-      }
-
-      // Check and request location permissions
-      final permissionStatus = await handler.Permission.location.request();
-      log('Location permission status: ${permissionStatus.name}');
-
-      if (permissionStatus.isDenied) {
-        // Request permission
-        final requestedStatus = await handler.Permission.location.request();
-        if (requestedStatus.isDenied || requestedStatus.isPermanentlyDenied) {
-          log('Location permission denied');
-          return false;
-        }
-      }
-
-      // Verify location services are still enabled after permission check
+      // 1. Check if Location Services are enabled (The Simulator GPS switch)
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        log('Location services were disabled during permission check');
-        return false;
+        // This usually means the Simulator "Features -> Location" is set to "None"
+        // return Future.error('Location services are disabled.');
+        return {
+          'isServiceEnabled': false,
+          'message': 'Location services are disabled.',
+        };
       }
 
-      return true;
+      // 2. Check current permission status
+      permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        // 3. FORCE THE REQUEST
+        // If you don't call this, the popup never shows, and the app isn't in Settings
+        permission = await Geolocator.requestPermission();
+
+        if (permission == LocationPermission.denied) {
+          // return Future.error('Location permissions are denied');
+          return {
+            'isServiceEnabled': false,
+            'message': 'Location permissions are denied.',
+          };
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are denied forever, handle appropriately.
+        // return Future.error('Location permissions are permanently denied.');
+        return {
+          'isServiceEnabled': false,
+          'message': 'Location permissions are permanently denied.',
+        };
+      }
+
+      // 4. If we get here, we can get the location
+      Position position = await Geolocator.getCurrentPosition();
+      print("Clock In Success at: ${position.latitude}, ${position.longitude}");
+      return {
+        'isServiceEnabled': true,
+        'message': 'Location services are enabled.',
+      };
+
+      // ~:Old Version:~
+      // Check if location services are enabled
+      // bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      // log('Location service enabled: $serviceEnabled');
+      //
+      // final reqLoc = await Geolocator.requestPermission();
+      // log('Location permission status after request: $reqLoc');
+
+      // // If service is disabled, try to enable it
+      // if (!serviceEnabled) {
+      //   Position? position = await Geolocator.getCurrentPosition();
+      //   log('Position: $position');
+      //
+      //   if (position != null) {
+      //     log('Location service enabled');
+      //     return true;
+      //   }
+      // }
+      //
+      // // Check and request location permissions
+      // final permissionStatus = await handler.Permission.location.request();
+      // log('Location permission status: ${permissionStatus.name}');
+      //
+      // if (permissionStatus.isDenied || permissionStatus.isPermanentlyDenied) {
+      //   // Request permission
+      //   final requestedStatus = await handler.Permission.location.request();
+      //   if (requestedStatus.isDenied || requestedStatus.isPermanentlyDenied) {
+      //     log('Location permission denied');
+      //     return false;
+      //   }
+      // }
+      //
+      // // Verify location services are still enabled after permission check
+      // serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      // if (!serviceEnabled) {
+      //   log('Location services were disabled during permission check');
+      //   return false;
+      // }
+      //
+      // return true;
     } catch (e) {
       log('Error in serviceRequest: $e');
-      return false;
+      return {
+        'isServiceEnabled': false,
+        'message': 'Error: ${e.toString()}',
+      };
     }
   }
 }

@@ -878,38 +878,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // ~:Cancel Button:~
-                    ColoredButton(
-                      () =>
-                          context.read<DashboardSlidingUpCubit>().closePanel(),
-                      'Cancel',
+                    Expanded(
+                      child: ColoredButton(
+                        () => context
+                            .read<DashboardSlidingUpCubit>()
+                            .closePanel(),
+                        'Cancel',
+                      ),
                     ),
 
                     // ~:Logout Button:~
-                    BlocListener<LoginBloc, LoginState>(
-                      listenWhen: (previous, current) =>
-                          current is LogoutLoading ||
-                          current is LogoutSuccess ||
-                          current is LogoutFailed,
-                      listener: (context, state) {
-                        if (state is LogoutFailed) {
-                          Functions.customFlutterToast(state.message);
-                        } else if (state is LogoutSuccess) {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            '/login',
-                            (route) => false,
-                          );
-                        }
-                      },
-                      child: ColoredButton(
-                        () => context.read<LoginBloc>().add(
-                          LogoutButtonPressed(
-                            context: context,
+                    Expanded(
+                      child: BlocListener<LoginBloc, LoginState>(
+                        listenWhen: (previous, current) =>
+                            current is LogoutLoading ||
+                            current is LogoutSuccess ||
+                            current is LogoutFailed,
+                        listener: (context, state) {
+                          if (state is LogoutFailed) {
+                            Functions.customFlutterToast(state.message);
+                          } else if (state is LogoutSuccess) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/login',
+                              (route) => false,
+                            );
+                          }
+                        },
+                        child: ColoredButton(
+                          () => context.read<LoginBloc>().add(
+                            LogoutButtonPressed(
+                              context: context,
+                            ),
                           ),
+                          'SIGN OUT',
+                          isCancel: true,
+                          isLoading: true,
                         ),
-                        'SIGN OUT',
-                        isCancel: true,
-                        isLoading: true,
                       ),
                     ),
                   ],
@@ -1551,176 +1556,171 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget salesman(EmployeeModel employee) {
-    return SafeArea(
-      top: false,
-      bottom: false,
-      child: SlidingUpPanel(
-        controller: slidingPanelController,
-        backdropEnabled: true,
-        backdropColor: Colors.black.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(20.0),
-        minHeight: 0.0,
-        maxHeight: panelMaxHeight,
-        defaultPanelState: PanelState.CLOSED,
-        onPanelClosed: () =>
-            context.read<DashboardSlidingUpCubit>().closePanel(),
-        panel: Material(
-          color: Colors.transparent,
-          child: BlocBuilder<DashboardSlidingUpCubit, DashboardSlidingUpState>(
-            builder: (context, state) {
-              log('Salesman Sliding Panel State: ${state.type}');
-              if (state.type == DashboardSlidingUpType.logout) {
-                return logout();
-              } else if (state.type == DashboardSlidingUpType.followupfilter ||
-                  state.type == DashboardSlidingUpType.moreoption) {
-                return salesReport(state.type);
-              }
-              return const SizedBox.shrink();
-            },
-          ),
+    return SlidingUpPanel(
+      controller: slidingPanelController,
+      backdropEnabled: true,
+      backdropColor: Colors.black.withValues(alpha: 0.5),
+      borderRadius: BorderRadius.circular(20.0),
+      minHeight: 0.0,
+      maxHeight: panelMaxHeight,
+      defaultPanelState: PanelState.CLOSED,
+      onPanelClosed: () => context.read<DashboardSlidingUpCubit>().closePanel(),
+      panel: Material(
+        color: Colors.transparent,
+        child: BlocBuilder<DashboardSlidingUpCubit, DashboardSlidingUpState>(
+          builder: (context, state) {
+            log('Salesman Sliding Panel State: ${state.type}');
+            if (state.type == DashboardSlidingUpType.logout) {
+              return logout();
+            } else if (state.type == DashboardSlidingUpType.followupfilter ||
+                state.type == DashboardSlidingUpType.moreoption) {
+              return salesReport(state.type);
+            }
+            return const SizedBox.shrink();
+          },
         ),
-        body: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.blue,
-            toolbarHeight: context.read<NavbarCubit>().state != NavbarType.home
-                ? 0
-                : 60,
-            elevation: 0.0,
-            scrolledUnderElevation: 0.0,
-            shadowColor: Colors.blue,
-            centerTitle: false,
-            titleSpacing: context.read<NavbarCubit>().state != NavbarType.home
-                ? 0
-                : 16,
-            title: BlocBuilder<NavbarCubit, NavbarType>(
-              builder: (context, state) {
-                if (state == NavbarType.home) {
-                  return Text(
-                    'Absensi',
-                    style: TextThemes.normal.copyWith(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ),
-            actions: [
-              context.read<NavbarCubit>().state == NavbarType.profile
-                  ? IconButton(
-                      onPressed: () =>
-                          context.read<DashboardSlidingUpCubit>().changeType(
-                            DashboardSlidingUpType.logout,
-                          ),
-                      tooltip: 'Keluar',
-                      icon: Icon(
-                        Icons.logout_rounded,
-                        size: 28,
-                        color: Colors.black,
-                      ),
-                    )
-                  : context.read<NavbarCubit>().state == NavbarType.home
-                  ? IconButton(
-                      onPressed: () => refreshDashboard(
-                        context,
-                        employee,
-                        context.read<DashboardTypeCubit>().state,
-                        navbarType: context.read<NavbarCubit>().state,
-                      ),
-                      icon: Icon(
-                        Icons.refresh_rounded,
-                        size: (MediaQuery.of(context).size.width < 800)
-                            ? 20.0
-                            : 35.0,
-                        color: Colors.black,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ],
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: context.read<NavbarCubit>().state.index,
-            onTap: (index) {
-              context.read<NavbarCubit>().changeNavbarType(index);
-              setPreferredTabHeight(index == 1 ? 20 : 0);
-
-              if (index == 0) {
-                setPanelMaxHeight(150);
-
-                refreshDashboard(
-                  context,
-                  employee,
-                  context.read<DashboardTypeCubit>().state,
-                  navbarType: NavbarType.home,
+      ),
+      body: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.blue,
+          toolbarHeight: context.read<NavbarCubit>().state != NavbarType.home
+              ? 0
+              : 60,
+          elevation: 0.0,
+          scrolledUnderElevation: 0.0,
+          shadowColor: Colors.blue,
+          centerTitle: false,
+          titleSpacing: context.read<NavbarCubit>().state != NavbarType.home
+              ? 0
+              : 16,
+          title: BlocBuilder<NavbarCubit, NavbarType>(
+            builder: (context, state) {
+              if (state == NavbarType.home) {
+                return Text(
+                  'Absensi',
+                  style: TextThemes.normal.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
                 );
-              } else if (index == 1) {
-                setPanelMaxHeight(200);
-
-                context.read<DashboardTypeCubit>().changeType(
-                  DashboardType.salesman,
-                );
-
-                refreshDashboard(
-                  context,
-                  employee,
-                  context.read<DashboardTypeCubit>().state,
-                  navbarType: NavbarType.report,
-                );
-              } else if (index == 2) {
-                setPanelMaxHeight(325);
-              }
-            },
-            backgroundColor: Colors.white,
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.grey,
-            elevation: 8.0,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart_rounded),
-                label: 'Report',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
-              ),
-            ],
-          ),
-          body: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
-            listener: (context, state) {
-              if (state.type == DashboardSlidingUpType.deleteManagerActivity ||
-                  state.type == DashboardSlidingUpType.followupfilter ||
-                  state.type == DashboardSlidingUpType.moreoption ||
-                  state.type == DashboardSlidingUpType.logout) {
-                log('Opening Sliding Up Panel - State: ${state.type}');
-                slidingPanelController.open();
               } else {
-                log('Closing Sliding Up Panel - State: ${state.type}');
-                slidingPanelController.close();
+                return const SizedBox.shrink();
               }
             },
-            child: BlocBuilder<NavbarCubit, NavbarType>(
-              builder: (context, state) {
-                if (state == NavbarType.report) {
-                  return SalesReportScreen();
-                } else if (state == NavbarType.profile) {
-                  return profileTemplate();
-                } else {
-                  return DecoratedBox(
-                    decoration: BoxDecoration(color: Colors.blue),
-                    child: SalesmanAttendanceScreen(
-                      salesmanId: employee.employeeID,
+          ),
+          actions: [
+            context.read<NavbarCubit>().state == NavbarType.profile
+                ? IconButton(
+                    onPressed: () =>
+                        context.read<DashboardSlidingUpCubit>().changeType(
+                          DashboardSlidingUpType.logout,
+                        ),
+                    tooltip: 'Keluar',
+                    icon: Icon(
+                      Icons.logout_rounded,
+                      size: 28,
+                      color: Colors.black,
                     ),
-                  );
-                }
-              },
+                  )
+                : context.read<NavbarCubit>().state == NavbarType.home
+                ? IconButton(
+                    onPressed: () => refreshDashboard(
+                      context,
+                      employee,
+                      context.read<DashboardTypeCubit>().state,
+                      navbarType: context.read<NavbarCubit>().state,
+                    ),
+                    icon: Icon(
+                      Icons.refresh_rounded,
+                      size: (MediaQuery.of(context).size.width < 800)
+                          ? 20.0
+                          : 35.0,
+                      color: Colors.black,
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: context.read<NavbarCubit>().state.index,
+          onTap: (index) {
+            context.read<NavbarCubit>().changeNavbarType(index);
+            setPreferredTabHeight(index == 1 ? 20 : 0);
+
+            if (index == 0) {
+              setPanelMaxHeight(150);
+
+              refreshDashboard(
+                context,
+                employee,
+                context.read<DashboardTypeCubit>().state,
+                navbarType: NavbarType.home,
+              );
+            } else if (index == 1) {
+              setPanelMaxHeight(200);
+
+              context.read<DashboardTypeCubit>().changeType(
+                DashboardType.salesman,
+              );
+
+              refreshDashboard(
+                context,
+                employee,
+                context.read<DashboardTypeCubit>().state,
+                navbarType: NavbarType.report,
+              );
+            } else if (index == 2) {
+              setPanelMaxHeight(325);
+            }
+          },
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Colors.grey,
+          elevation: 8.0,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
             ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart_rounded),
+              label: 'Report',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
+        body: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
+          listener: (context, state) {
+            if (state.type == DashboardSlidingUpType.deleteManagerActivity ||
+                state.type == DashboardSlidingUpType.followupfilter ||
+                state.type == DashboardSlidingUpType.moreoption ||
+                state.type == DashboardSlidingUpType.logout) {
+              log('Opening Sliding Up Panel - State: ${state.type}');
+              slidingPanelController.open();
+            } else {
+              log('Closing Sliding Up Panel - State: ${state.type}');
+              slidingPanelController.close();
+            }
+          },
+          child: BlocBuilder<NavbarCubit, NavbarType>(
+            builder: (context, state) {
+              if (state == NavbarType.report) {
+                return SalesReportScreen();
+              } else if (state == NavbarType.profile) {
+                return profileTemplate();
+              } else {
+                return DecoratedBox(
+                  decoration: BoxDecoration(color: Colors.blue),
+                  child: SalesmanAttendanceScreen(
+                    salesmanId: employee.employeeID,
+                  ),
+                );
+              }
+            },
           ),
         ),
       ),
@@ -1732,6 +1732,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
 
     tabController = TabController(length: 2, vsync: this);
+
+    if (Platform.isIOS) {
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: SystemUiOverlay.values,
+      );
+    }
   }
 
   @override

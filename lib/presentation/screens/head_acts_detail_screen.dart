@@ -64,7 +64,7 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                     !state.isInsert) {
                   if (Platform.isIOS) {
                     return const CupertinoActivityIndicator(
-                      radius: 8,
+                      radius: 12,
                       color: Colors.black,
                     );
                   } else {

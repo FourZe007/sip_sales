@@ -27,10 +27,11 @@ class LocationServiceBloc
     try {
       emit(LocationServiceLoading());
 
-      final serviceEnabled = await Functions.serviceRequest();
-      log('Service enabled: $serviceEnabled');
+      final Map<String, dynamic> locationServiceMap =
+          await Functions.serviceRequest();
+      log('Service enabled: ${locationServiceMap['isServiceEnabled']}');
 
-      if (serviceEnabled) {
+      if (locationServiceMap['isServiceEnabled']) {
         final loginState = (event.context.mounted)
             ? event.context.read<LoginBloc>().state
             : null;
@@ -76,8 +77,8 @@ class LocationServiceBloc
           emit(LocationServiceFailed('Login failed'));
         }
       } else {
-        log('Location service is disabled');
-        emit(LocationServiceFailed('Location service is disabled'));
+        log(locationServiceMap['message']);
+        emit(LocationServiceFailed(locationServiceMap['message']));
       }
     } catch (e) {
       log('Error: ${e.toString()}');

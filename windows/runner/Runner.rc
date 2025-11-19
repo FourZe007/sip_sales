@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "sip_sales" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "sip_sales" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.stsj.sipsales All rights reserved." "\0"
             VALUE "OriginalFilename", "sip_sales.exe" "\0"
             VALUE "ProductName", "sip_sales" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

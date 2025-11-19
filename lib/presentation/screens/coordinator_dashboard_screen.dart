@@ -205,14 +205,13 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
               final coordData = state.coordData[index];
               double salesProspectHeight =
                   52 + coordData.prospekList.length * 50;
-              // double salesFUOverviewHeight =
-              //     52 + coordData.salesFUOverviewList.length * 50;
               double salesStuHeight = 52 + coordData.stuList.length * 50;
               double categoryHeight = 52 + coordData.categoryList.length * 50;
               double leasingHeight = 52 + coordData.leasingList.length * 50;
 
               return Column(
                 spacing: 12,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // ~:Hasil Akumulasi:~
                   SizedBox(

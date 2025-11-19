@@ -7,6 +7,7 @@ import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
 
+// ~:NOT USED:~
 class LogoutScreen extends StatelessWidget {
   const LogoutScreen({required this.toggleLogOutPage, super.key});
 

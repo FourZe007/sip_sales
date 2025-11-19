@@ -603,19 +603,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           // ~:Cancel Button:~
-                          ColoredButton(
-                            toggleLogOutPage,
-                            'Cancel',
+                          Expanded(
+                            child: ColoredButton(
+                              toggleLogOutPage,
+                              'Cancel',
+                            ),
                           ),
 
                           // ~:Logout Button:~
-                          ColoredButton(
-                            () => context.read<LoginBloc>().add(
-                              LogoutButtonPressed(context: context),
+                          Expanded(
+                            child: BlocListener<LoginBloc, LoginState>(
+                              listenWhen: (previous, current) =>
+                                  current is LogoutLoading ||
+                                  current is LogoutSuccess ||
+                                  current is LogoutFailed,
+                              listener: (context, state) {
+                                if (state is LogoutFailed) {
+                                  Functions.customFlutterToast(state.message);
+                                } else if (state is LogoutSuccess) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/login',
+                                    (route) => false,
+                                  );
+                                }
+                              },
+                              child: ColoredButton(
+                                () => context.read<LoginBloc>().add(
+                                  LogoutButtonPressed(context: context),
+                                ),
+                                'SIGN OUT',
+                                isCancel: true,
+                                isLoading: true,
+                              ),
                             ),
-                            'SIGN OUT',
-                            isCancel: true,
-                            isLoading: true,
                           ),
                         ],
                       ),
@@ -698,10 +719,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return CustomScrollView(
                       slivers: [
                         CupertinoSliverRefreshControl(
-                          // onRefresh: () => getUserLatestData(profileState),
-                          onRefresh: () {
-                            return Future.delayed(const Duration(seconds: 1));
-                          },
+                          onRefresh: () async => context.read<LoginBloc>().add(
+                            LoginButtonPressed(
+                              context: (context.mounted) ? context : context,
+                              id: await Functions.readAndWriteEmployeeId(),
+                              pass: await Functions.readAndWriteUserPass(),
+                              isRefresh: true,
+                            ),
+                          ),
                         ),
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
@@ -717,10 +742,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   } else {
                     return RefreshIndicator(
-                      // onRefresh: () => getUserLatestData(profileState),
-                      onRefresh: () {
-                        return Future.delayed(const Duration(seconds: 1));
-                      },
+                      onRefresh: () async => context.read<LoginBloc>().add(
+                        LoginButtonPressed(
+                          context: (context.mounted) ? context : context,
+                          id: await Functions.readAndWriteEmployeeId(),
+                          pass: await Functions.readAndWriteUserPass(),
+                          isRefresh: true,
+                        ),
+                      ),
                       child: SingleChildScrollView(
                         physics: AlwaysScrollableScrollPhysics(),
                         child: SizedBox(

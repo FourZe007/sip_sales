@@ -294,11 +294,15 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
 
                               if (state is RadiusCheckerError &&
                                   !state.isRefresh) {
-                                log('isRefresh: ${state.isRefresh.toString()}');
+                                log(
+                                  'isRefresh: ${state.isRefresh.toString()}',
+                                );
                                 Functions.customFlutterToast(state.message);
                               } else if (state is RadiusCheckerSuccess &&
                                   !state.isRefresh) {
-                                log('isRefresh: ${state.isRefresh.toString()}');
+                                log(
+                                  'isRefresh: ${state.isRefresh.toString()}',
+                                );
                                 final position =
                                     await Geolocator.getCurrentPosition();
 

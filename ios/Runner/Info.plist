@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -24,6 +26,18 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>SIP Sales would like to uses your camera to take a photo for your employee profile, which is required for clocking in and out. This photo will be used to verify your identity and ensure accurate timekeeping records.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>SIP Sales would like to access to your photo gallery to allow you to select and upload images for your daily reports. These images will be used to provide visual documentation and support for your sales activities.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -41,19 +55,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>SIP Sales would like to uses your camera to take a photo for your employee profile, which is required for clocking in and out. This photo will be used to verify your identity and ensure accurate timekeeping records.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>SIP Sales would like to access to your photo gallery to allow you to select and upload images for your daily reports. These images will be used to provide visual documentation and support for your sales activities.</string>
 </dict>
 </plist>

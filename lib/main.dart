@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemChrome, SystemUiMode;
+import 'package:flutter/services.dart'
+    show SystemChrome, SystemUiMode, SystemUiOverlay, SystemUiOverlayStyle;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/constant/state_manager.dart';
@@ -13,22 +14,18 @@ final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: [SystemUiOverlay.top],
+  );
 
-  // Set up system UI
-  // SystemChrome.setSystemUIOverlayStyle(
-  //   const SystemUiOverlayStyle(
-  //     statusBarColor: Colors.black,
-  //     statusBarBrightness: Brightness.light,
-  //     systemNavigationBarColor: Colors.white,
-  //     systemNavigationBarDividerColor: Colors.transparent,
-  //   ),
-  // );
-
-  // Only show the top overlay (the status bar)."
-  // SystemChrome.setEnabledSystemUIMode(
-  //   SystemUiMode.,
-  // );
+  // Optional: customize status bar look (transparent background, dark icons)
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
 
   runApp(const MyApp());
 }
