@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/presentation/screens/login_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/request_id_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/reset_password_screen.dart';
@@ -18,11 +17,25 @@ import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:geolocator/geolocator.dart';
 
 class Functions {
-  static FlutterSecureStorage storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+  static AndroidOptions getAndroidOptions() => const AndroidOptions(
+    encryptedSharedPreferences: true,
   );
+
+  static IOSOptions getIOSOptions() => const IOSOptions(
+    accessibility: KeychainAccessibility.first_unlock,
+  );
+
+  static FlutterSecureStorage storage = FlutterSecureStorage(
+    aOptions: getAndroidOptions(),
+    iOptions: getIOSOptions(),
+  );
+
+  static Future<void> clearAllData() async {
+    await storage.deleteAll(
+      aOptions: getAndroidOptions(),
+      iOptions: getIOSOptions(),
+    );
+  }
 
   static void viewPhoto(
     BuildContext context,
@@ -142,8 +155,6 @@ class Functions {
   }
 
   static void displayProminentDisclosure(BuildContext context) async {
-    final FlutterSecureStorage storage = const FlutterSecureStorage();
-
     final result = await Navigator.push(
       (context.mounted) ? context : context,
       MaterialPageRoute(
@@ -250,15 +261,10 @@ class Functions {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
       uuid = Uuid().v4();
-      await storage.write(key: 'uuid', value: uuid);
       log("Generated and saved new UUID due to error: $uuid");
     }
 
     return uuid;
-  }
-
-  static Future<void> clearAllData() async {
-    await storage.deleteAll();
   }
 
   static Future<String> readAndWriteEmployeeId({
@@ -270,6 +276,7 @@ class Functions {
     try {
       // Read the existing ID only once
       String? existingId = await storage.read(key: 'employeeId');
+      log('Existing ID: $existingId');
 
       if (existingId == null || existingId.isEmpty || isLogin) {
         // Generate a new ID if none exists
@@ -287,7 +294,7 @@ class Functions {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
       employeeId = id;
-      await storage.write(key: 'employeeId', value: id);
+      // await storage.write(key: 'employeeId', value: id);
       log("Input and saved new ID due to error: $employeeId");
     }
 
@@ -303,6 +310,7 @@ class Functions {
     try {
       // Read the existing Password only once
       String? existingPass = await storage.read(key: 'pass');
+      log('Existing Password: $existingPass');
 
       if (existingPass == null || existingPass.isEmpty || isLogin) {
         // Generate a new Password if none exists
@@ -319,9 +327,8 @@ class Functions {
     } catch (e) {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
-
       password = pass;
-      await storage.write(key: 'pass', value: pass);
+      // await storage.write(key: 'pass', value: pass);
       log("Input and saved new Password due to error: $password");
     }
 
@@ -376,8 +383,8 @@ class Functions {
   }
 
   static Future<bool> requestPermission() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLocationGranted', false);
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setBool('isLocationGranted', false);
 
     try {
       handler.PermissionStatus permissionStatus;
@@ -395,7 +402,7 @@ class Functions {
       await storage.write(key: 'isLocationGranted', value: 'true');
       return true;
     } catch (e) {
-      await storage.write(key: 'isLocationGranted', value: 'false');
+      // await storage.write(key: 'isLocationGranted', value: 'false');
       return false;
     }
   }

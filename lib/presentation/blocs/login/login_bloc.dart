@@ -34,6 +34,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       String savedUserPass = '';
 
       if (event.id.isNotEmpty && event.pass.isNotEmpty) {
+        log('Event id & password are not empty');
         // Explicit login attempt: save provided credentials
         savedEmployeeId = await Functions.readAndWriteEmployeeId(
           id: event.id,
@@ -44,12 +45,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           isLogin: true,
         );
       } else {
+        log('Event id & password are empty');
         // Auto-login attempt from stored secure storage
         savedEmployeeId = await Functions.readAndWriteEmployeeId();
         savedUserPass = await Functions.readAndWriteUserPass();
       }
 
       if (savedEmployeeId.isNotEmpty && savedUserPass.isNotEmpty) {
+        log('Saved id & password are not empty');
         final uuid = await Functions.generateUuid();
         final deviceConfig = await Functions.readAndWriteDeviceConfig();
 
@@ -62,10 +65,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         log(loginRes.toString());
         log('Flag: ${loginRes['data'].flag}');
-
         if (loginRes['status'] == 'success') {
           log('Login Success');
           if (loginRes['data'].flag == 1) {
+            log('Account is available');
             // event.appState.setUserAccountList(res);
             switch (loginRes['data'].code) {
               // ~:Shop Manager:~
@@ -158,7 +161,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               LoginSuccess(user: loginRes['data'], isRefresh: event.isRefresh),
             );
           } else {
-            log('User not found');
+            log('Account is not available');
             emit(
               LoginFailed(
                 message: Formatter.toTitleCase(loginRes['data'].memo),
@@ -180,13 +183,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } else {
         // No credentials available, treat as unauthenticated
         log('No credentials available');
+        await Functions.clearAllData();
         emit(LoginUnauthenticated());
       }
+    } on PlatformException catch (e) {
+      log('PlatformException caught: ${e.code}, ${e.message}, ${e.details}');
+      // Implement error handling logic based on the exception details
+      emit(LoginFailed(message: e.toString(), isRefresh: event.isRefresh));
     } catch (e) {
-      if (e is PlatformException && e.code == 'BadPaddingException') {
-        log('Clearing all data');
-        await Functions.clearAllData();
-      }
       log('Login Error: $e');
       emit(LoginFailed(message: e.toString(), isRefresh: event.isRefresh));
     }

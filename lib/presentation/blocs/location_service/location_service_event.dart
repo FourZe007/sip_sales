@@ -6,6 +6,7 @@ abstract class LocationServiceEvent {
 
 class LocationServiceButtonPressed extends LocationServiceEvent {
   final BuildContext context;
+  final bool isPermissionGranted;
 
-  LocationServiceButtonPressed(this.context);
+  LocationServiceButtonPressed(this.context, this.isPermissionGranted);
 }
