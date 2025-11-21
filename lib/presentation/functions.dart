@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sip_sales_clean/presentation/screens/login_screen.dart';
@@ -260,7 +261,8 @@ class Functions {
     } catch (e) {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
-      uuid = Uuid().v4();
+      // uuid = Uuid().v4();
+      await storage.delete(key: 'uuid');
       log("Generated and saved new UUID due to error: $uuid");
     }
 
@@ -294,6 +296,7 @@ class Functions {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
       employeeId = id;
+      await storage.delete(key: 'employeeId');
       // await storage.write(key: 'employeeId', value: id);
       log("Input and saved new ID due to error: $employeeId");
     }
@@ -329,6 +332,7 @@ class Functions {
       log("Error reading or writing secure storage: $e");
       password = pass;
       // await storage.write(key: 'pass', value: pass);
+      await storage.delete(key: 'pass');
       log("Input and saved new Password due to error: $password");
     }
 
@@ -342,22 +346,17 @@ class Functions {
     try {
       // Read the existing ID only once
       String? deviceConfig = await storage.read(key: 'deviceConfig');
+      log('Read Device Config: $deviceConfig');
 
       if (deviceConfig == null || deviceConfig.isEmpty) {
-        if (Platform.isAndroid) {
-          // For Android devices
-          final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        log('Device Config is either null or empty!');
+        if (Platform.isIOS) {
+          // storage = FlutterSecureStorage(iOptions: getIOSOptions());
 
-          // Generate a new ID if none exists
-          deviceConfiguration =
-              '${androidInfo.model}, Android ${androidInfo.version.release}';
-          await storage.write(key: 'deviceConfig', value: deviceConfiguration);
-
-          // Log the action for debugging
-          log("Device Configuration: $deviceConfiguration");
-        } else if (Platform.isIOS) {
           // For iOS devices
           final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+          log('iOS Info: $iosInfo');
+          log('iOS System Version: ${iosInfo.systemVersion}');
 
           // Generate a new ID if none exists
           deviceConfiguration =
@@ -365,18 +364,40 @@ class Functions {
           await storage.write(key: 'deviceConfig', value: deviceConfiguration);
 
           // Log the action for debugging
-          log("Device Configuration: $deviceConfiguration");
+          log("Wrote New iOS Device Config: $deviceConfiguration");
         } else {
-          // add handler for non-Android and non-iOS devices (upcoming v1.1.11)
+          // storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+
+          // For Non-iOS devices
+          final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          log('Android Info: $androidInfo');
+          log('Android Version: ${androidInfo.version.release}');
+
+          // Generate a new ID if none exists
+          deviceConfiguration =
+              '${androidInfo.model}, Android ${androidInfo.version.release}';
+          log('New Android Device Config: $deviceConfiguration');
+          await storage.write(key: 'deviceConfig', value: deviceConfiguration);
+
+          // Log the action for debugging
+          log(
+            "Read Saved Android Device Config: ${await storage.read(key: 'deviceConfig')}",
+          );
         }
       } else {
+        log('Device Config is not null or empty!');
         // Use the existing ID
         deviceConfiguration = deviceConfig;
-        log("Device Configuration: $deviceConfiguration");
+        log("Existing Device Config: $deviceConfiguration");
       }
+    } on PlatformException catch (e) {
+      log(e.toString());
+      deviceConfiguration = '';
+      await storage.delete(key: 'deviceConfig');
     } catch (e) {
-      log('Error retrieving device info: $e');
-      deviceConfiguration = 'error';
+      log('Error retrieving device config: $e');
+      deviceConfiguration = '';
+      await storage.delete(key: 'deviceConfig');
     }
 
     return deviceConfiguration;
@@ -394,12 +415,12 @@ class Functions {
         permissionStatus = await handler.Permission.locationWhenInUse.request();
         if (permissionStatus == handler.PermissionStatus.denied ||
             permissionStatus == handler.PermissionStatus.permanentlyDenied) {
-          await storage.write(key: 'isLocationGranted', value: 'false');
+          // await storage.write(key: 'isLocationGranted', value: 'false');
           return false;
         }
       }
 
-      await storage.write(key: 'isLocationGranted', value: 'true');
+      // await storage.write(key: 'isLocationGranted', value: 'true');
       return true;
     } catch (e) {
       // await storage.write(key: 'isLocationGranted', value: 'false');
