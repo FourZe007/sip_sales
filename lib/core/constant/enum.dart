@@ -22,6 +22,7 @@ enum DashboardSlidingUpType {
   none,
   followupfilter, // for filter controls
   moreoption, // for each cards if needed in the future
+  newManagerActivity, // for create new activity
   deleteManagerActivity, // for delete manager activity
   logout, // for logout
   // leasing, // for SPK leasing filter

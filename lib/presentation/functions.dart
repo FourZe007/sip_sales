@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/presentation/screens/login_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/request_id_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/reset_password_screen.dart';
@@ -26,16 +27,32 @@ class Functions {
     accessibility: KeychainAccessibility.first_unlock,
   );
 
-  static FlutterSecureStorage storage = FlutterSecureStorage(
-    aOptions: getAndroidOptions(),
-    iOptions: getIOSOptions(),
-  );
+  static FlutterSecureStorage? storage;
+  //  = FlutterSecureStorage(
+  //   aOptions: getAndroidOptions(),
+  //   iOptions: getIOSOptions(),
+  // );
+
+  static SharedPreferences? prefs;
 
   static Future<void> clearAllData() async {
-    await storage.deleteAll(
+    await storage?.deleteAll(
       aOptions: getAndroidOptions(),
       iOptions: getIOSOptions(),
     );
+  }
+
+  static Future<void> initStorageConfig(
+    final bool isOldAndroid,
+  ) async {
+    if (isOldAndroid) {
+      prefs = await SharedPreferences.getInstance();
+    } else {
+      storage = FlutterSecureStorage(
+        aOptions: getAndroidOptions(),
+        iOptions: getIOSOptions(),
+      );
+    }
   }
 
   static void viewPhoto(
@@ -243,26 +260,48 @@ class Functions {
     String uuid = '';
 
     try {
-      // Read the existing UUID only once
-      String? existingUuid = await storage.read(key: 'uuid');
+      if ((int.parse(await readDeviceOS())) >= 10) {
+        // Read the existing UUID only once
+        String? existingUuid = await storage?.read(key: 'uuid');
 
-      if (existingUuid == null || existingUuid.isEmpty) {
-        // Generate a new UUID if none exists
-        uuid = Uuid().v4();
-        await storage.write(key: 'uuid', value: uuid);
+        if (existingUuid == null || existingUuid.isEmpty) {
+          // Generate a new UUID if none exists
+          uuid = Uuid().v4();
+          await storage?.write(key: 'uuid', value: uuid);
 
-        // Log the action for debugging
-        log("Generated and saved new UUID: $uuid");
+          // Log the action for debugging
+          log("Generated and saved new UUID: $uuid");
+        } else {
+          // Use the existing UUID
+          uuid = existingUuid;
+          log("Using existing UUID: $uuid");
+        }
       } else {
-        // Use the existing UUID
-        uuid = existingUuid;
-        log("Using existing UUID: $uuid");
+        // Read the existing UUID only once
+        String? existingUuid = prefs?.getString('uuid');
+
+        if (existingUuid == null || existingUuid.isEmpty) {
+          // Generate a new UUID if none exists
+          uuid = Uuid().v4();
+          prefs?.setString('uuid', uuid);
+
+          // Log the action for debugging
+          log("Generated and saved new UUID: $uuid");
+        } else {
+          // Use the existing UUID
+          uuid = existingUuid;
+          log("Using existing UUID: $uuid");
+        }
       }
     } catch (e) {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
       // uuid = Uuid().v4();
-      await storage.delete(key: 'uuid');
+      if (int.parse(await readDeviceOS()) >= 10) {
+        await storage?.delete(key: 'uuid');
+      } else {
+        await prefs?.remove('uuid');
+      }
       log("Generated and saved new UUID due to error: $uuid");
     }
 
@@ -276,27 +315,51 @@ class Functions {
     String employeeId = '';
 
     try {
-      // Read the existing ID only once
-      String? existingId = await storage.read(key: 'employeeId');
-      log('Existing ID: $existingId');
+      if (int.parse(await readDeviceOS()) >= 10) {
+        // Read the existing ID only once
+        String? existingId = await storage?.read(key: 'employeeId');
+        log('Existing ID: $existingId');
 
-      if (existingId == null || existingId.isEmpty || isLogin) {
-        // Generate a new ID if none exists
-        employeeId = id;
-        await storage.write(key: 'employeeId', value: id);
+        if (existingId == null || existingId.isEmpty || isLogin) {
+          // Generate a new ID if none exists
+          employeeId = id;
+          await storage?.write(key: 'employeeId', value: id);
 
-        // Log the action for debugging
-        log("Employee Id: $employeeId");
+          // Log the action for debugging
+          log("Employee Id: $employeeId");
+        } else {
+          // Use the existing ID
+          employeeId = existingId;
+          log("Employee Id: $employeeId");
+        }
       } else {
-        // Use the existing ID
-        employeeId = existingId;
-        log("Employee Id: $employeeId");
+        // Read the existing ID only once
+        String? existingId = prefs?.getString('employeeId');
+        log('Existing ID: $existingId');
+
+        if (existingId == null || existingId.isEmpty || isLogin) {
+          // Generate a new ID if none exists
+          employeeId = id;
+          await prefs?.setString('employeeId', id);
+
+          // Log the action for debugging
+          log("Employee Id: $employeeId");
+        } else {
+          // Use the existing ID
+          employeeId = existingId;
+          log("Employee Id: $employeeId");
+        }
       }
     } catch (e) {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
       employeeId = id;
-      await storage.delete(key: 'employeeId');
+
+      if (int.parse(await readDeviceOS()) >= 10) {
+        await storage?.delete(key: 'employeeId');
+      } else {
+        await prefs?.remove('employeeId');
+      }
       // await storage.write(key: 'employeeId', value: id);
       log("Input and saved new ID due to error: $employeeId");
     }
@@ -311,28 +374,51 @@ class Functions {
     String password = '';
 
     try {
-      // Read the existing Password only once
-      String? existingPass = await storage.read(key: 'pass');
-      log('Existing Password: $existingPass');
+      if (int.parse(await readDeviceOS()) >= 10) {
+        // Read the existing Password only once
+        String? existingPass = await storage?.read(key: 'pass');
+        log('Existing Password: $existingPass');
 
-      if (existingPass == null || existingPass.isEmpty || isLogin) {
-        // Generate a new Password if none exists
-        password = pass;
-        await storage.write(key: 'pass', value: pass);
+        if (existingPass == null || existingPass.isEmpty || isLogin) {
+          // Generate a new Password if none exists
+          password = pass;
+          await storage?.write(key: 'pass', value: pass);
 
-        // Log the action for debugging
-        log("Input and saved Password: $password");
+          // Log the action for debugging
+          log("Input and saved Password: $password");
+        } else {
+          // Use the existing Password
+          password = existingPass;
+          log("Input and saved Password: $password");
+        }
       } else {
-        // Use the existing Password
-        password = existingPass;
-        log("Input and saved Password: $password");
+        // Read the existing Password only once
+        String? existingPass = prefs?.getString('pass');
+        log('Existing Password: $existingPass');
+
+        if (existingPass == null || existingPass.isEmpty || isLogin) {
+          // Generate a new Password if none exists
+          password = pass;
+          await prefs?.setString('pass', pass);
+
+          // Log the action for debugging
+          log("Input and saved Password: $password");
+        } else {
+          // Use the existing Password
+          password = existingPass;
+          log("Input and saved Password: $password");
+        }
       }
     } catch (e) {
       // Handle decryption or secure storage errors
       log("Error reading or writing secure storage: $e");
       password = pass;
       // await storage.write(key: 'pass', value: pass);
-      await storage.delete(key: 'pass');
+      if (int.parse(await readDeviceOS()) >= 10) {
+        await storage?.delete(key: 'pass');
+      } else {
+        await prefs?.remove('pass');
+      }
       log("Input and saved new Password due to error: $password");
     }
 
@@ -344,63 +430,170 @@ class Functions {
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
     try {
-      // Read the existing ID only once
-      String? deviceConfig = await storage.read(key: 'deviceConfig');
-      log('Read Device Config: $deviceConfig');
+      if (int.parse(await readDeviceOS()) >= 10) {
+        // Read the existing ID only once
+        String? deviceConfig = await storage?.read(key: 'deviceConfig');
+        log('Read Device Config: $deviceConfig');
 
-      if (deviceConfig == null || deviceConfig.isEmpty) {
-        log('Device Config is either null or empty!');
-        if (Platform.isIOS) {
-          // storage = FlutterSecureStorage(iOptions: getIOSOptions());
+        if (deviceConfig == null || deviceConfig.isEmpty) {
+          log('Device Config is either null or empty!');
+          if (Platform.isIOS) {
+            // storage = FlutterSecureStorage(iOptions: getIOSOptions());
 
-          // For iOS devices
-          final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-          log('iOS Info: $iosInfo');
-          log('iOS System Version: ${iosInfo.systemVersion}');
+            // For iOS devices
+            final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+            log('iOS Info: $iosInfo');
+            log('iOS System Version: ${iosInfo.systemVersion}');
 
-          // Generate a new ID if none exists
-          deviceConfiguration =
-              '${iosInfo.model}, iOS ${iosInfo.systemVersion}';
-          await storage.write(key: 'deviceConfig', value: deviceConfiguration);
+            // Generate a new ID if none exists
+            deviceConfiguration =
+                '${iosInfo.model}, iOS ${iosInfo.systemVersion}';
+            await storage?.write(
+              key: 'deviceConfig',
+              value: deviceConfiguration,
+            );
 
-          // Log the action for debugging
-          log("Wrote New iOS Device Config: $deviceConfiguration");
+            // Log the action for debugging
+            log("Wrote New iOS Device Config: $deviceConfiguration");
+          } else {
+            // storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+
+            // For Non-iOS devices
+            final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+            log('Android Info: $androidInfo');
+            log('Android Version: ${androidInfo.version.release}');
+
+            // Generate a new ID if none exists
+            deviceConfiguration =
+                '${androidInfo.model}, Android ${androidInfo.version.release}';
+            log('New Android Device Config: $deviceConfiguration');
+            await storage?.write(
+              key: 'deviceConfig',
+              value: deviceConfiguration,
+            );
+
+            // Log the action for debugging
+            log(
+              "Read Saved Android Device Config: ${await storage?.read(key: 'deviceConfig')}",
+            );
+          }
         } else {
-          // storage = FlutterSecureStorage(aOptions: getAndroidOptions());
-
-          // For Non-iOS devices
-          final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-          log('Android Info: $androidInfo');
-          log('Android Version: ${androidInfo.version.release}');
-
-          // Generate a new ID if none exists
-          deviceConfiguration =
-              '${androidInfo.model}, Android ${androidInfo.version.release}';
-          log('New Android Device Config: $deviceConfiguration');
-          await storage.write(key: 'deviceConfig', value: deviceConfiguration);
-
-          // Log the action for debugging
-          log(
-            "Read Saved Android Device Config: ${await storage.read(key: 'deviceConfig')}",
-          );
+          log('Device Config is not null or empty!');
+          // Use the existing ID
+          deviceConfiguration = deviceConfig;
+          log("Existing Device Config: $deviceConfiguration");
         }
       } else {
-        log('Device Config is not null or empty!');
-        // Use the existing ID
-        deviceConfiguration = deviceConfig;
-        log("Existing Device Config: $deviceConfiguration");
+        // Read the existing ID only once
+        String? deviceConfig = prefs?.getString('deviceConfig');
+        log('Read Device Config: $deviceConfig');
+
+        if (deviceConfig == null || deviceConfig.isEmpty) {
+          log('Device Config is either null or empty!');
+          if (Platform.isIOS) {
+            // storage = FlutterSecureStorage(iOptions: getIOSOptions());
+
+            // For iOS devices
+            final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+            log('iOS Info: $iosInfo');
+            log('iOS System Version: ${iosInfo.systemVersion}');
+
+            // Generate a new ID if none exists
+            deviceConfiguration =
+                '${iosInfo.model}, iOS ${iosInfo.systemVersion}';
+            await prefs?.setString('deviceConfig', deviceConfiguration);
+
+            // Log the action for debugging
+            log("Wrote New iOS Device Config: $deviceConfiguration");
+          } else {
+            // storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+
+            // For Non-iOS devices
+            final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+            log('Android Info: $androidInfo');
+            log('Android Version: ${androidInfo.version.release}');
+
+            // Generate a new ID if none exists
+            deviceConfiguration =
+                '${androidInfo.model}, Android ${androidInfo.version.release}';
+            log('New Android Device Config: $deviceConfiguration');
+            await prefs?.setString('deviceConfig', deviceConfiguration);
+
+            // Log the action for debugging
+            log("Read Saved Android Device Config: $deviceConfiguration");
+          }
+        } else {
+          log('Device Config is not null or empty!');
+          // Use the existing ID
+          deviceConfiguration = deviceConfig;
+          log("Existing Device Config: $deviceConfiguration");
+        }
       }
     } on PlatformException catch (e) {
       log(e.toString());
       deviceConfiguration = '';
-      await storage.delete(key: 'deviceConfig');
+      if (int.parse(await readDeviceOS()) >= 10) {
+        await storage?.delete(key: 'deviceConfig');
+      } else {
+        await prefs?.remove('deviceConfig');
+      }
     } catch (e) {
       log('Error retrieving device config: $e');
       deviceConfiguration = '';
-      await storage.delete(key: 'deviceConfig');
+      if (int.parse(await readDeviceOS()) >= 10) {
+        await storage?.delete(key: 'deviceConfig');
+      } else {
+        await prefs?.remove('deviceConfig');
+      }
     }
 
     return deviceConfiguration;
+  }
+
+  static Future<String> readDeviceOS() async {
+    String deviceOS = '';
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    try {
+      log('Device OS is either null or empty!');
+      if (Platform.isIOS) {
+        // storage = FlutterSecureStorage(iOptions: getIOSOptions());
+
+        // For iOS devices
+        final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        log('iOS Info: $iosInfo');
+        log('iOS System Version: ${iosInfo.systemVersion}');
+
+        // Generate a new ID if none exists
+        // deviceOS = iosInfo.systemVersion;
+        deviceOS = '';
+
+        // Log the action for debugging
+        log("Wrote New iOS Device OS: $deviceOS");
+      } else {
+        // storage = FlutterSecureStorage(aOptions: getAndroidOptions());
+
+        // For Non-iOS devices
+        final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        // log('Android Info: $androidInfo');
+        log('Android Version: ${androidInfo.version.release}');
+
+        // Generate a new ID if none exists
+        deviceOS = androidInfo.version.release.split('.')[0];
+        log('New Android Device OS: $deviceOS');
+
+        // Log the action for debugging
+        log('Read Saved Android Device OS: $deviceOS');
+      }
+    } on PlatformException catch (e) {
+      log(e.toString());
+      deviceOS = '';
+    } catch (e) {
+      log('Error retrieving device OS: $e');
+      deviceOS = '';
+    }
+
+    return deviceOS;
   }
 
   static Future<bool> requestPermission() async {

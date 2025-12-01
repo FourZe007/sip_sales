@@ -42,6 +42,7 @@ import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.d
 import 'package:sip_sales_clean/presentation/widgets/panels/category_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/dealer_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/leasing_filter_panel.dart';
+import 'package:sip_sales_clean/presentation/widgets/panels/new_act_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/user_profile.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -1211,6 +1212,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             } else if (state.type ==
                 DashboardSlidingUpType.deleteManagerActivity) {
               return deleteActs(state.optionalData);
+            } else if (state.type ==
+                DashboardSlidingUpType.newManagerActivity) {
+              return NewActPanel();
             }
             // else if (state.type == DashboardSlidingUpType.groupDealer) {
             //   return GroupDealerFilterPanel();
@@ -1233,7 +1237,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         animationDuration: Duration(milliseconds: 500),
         child: BlocListener<DashboardSlidingUpCubit, DashboardSlidingUpState>(
           listener: (context, state) {
-            if (state.type == DashboardSlidingUpType.deleteManagerActivity ||
+            if (state.type == DashboardSlidingUpType.newManagerActivity ||
+                state.type == DashboardSlidingUpType.deleteManagerActivity ||
                 state.type == DashboardSlidingUpType.logout ||
                 state.type == DashboardSlidingUpType.groupDealer ||
                 state.type == DashboardSlidingUpType.dealer ||
@@ -1419,12 +1424,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     onPressed: () async {
                       context.read<ImageCubit>().clearImage();
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HeadNewActsScreen(),
-                        ),
+                      setPanelMaxHeight(310);
+
+                      context.read<DashboardSlidingUpCubit>().changeType(
+                        DashboardSlidingUpType.newManagerActivity,
                       );
+
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const HeadNewActsScreen(),
+                      //   ),
+                      // );
                     },
                     backgroundColor: Colors.blue[200],
                     child: const Icon(
