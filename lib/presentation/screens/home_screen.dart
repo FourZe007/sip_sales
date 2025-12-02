@@ -1424,18 +1424,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     onPressed: () async {
                       context.read<ImageCubit>().clearImage();
 
-                      setPanelMaxHeight(310);
+                      // setPanelMaxHeight(310);
 
-                      context.read<DashboardSlidingUpCubit>().changeType(
-                        DashboardSlidingUpType.newManagerActivity,
-                      );
-
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const HeadNewActsScreen(),
-                      //   ),
+                      // context.read<DashboardSlidingUpCubit>().changeType(
+                      //   DashboardSlidingUpType.newManagerActivity,
                       // );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HeadNewActsScreen(),
+                        ),
+                      );
                     },
                     backgroundColor: Colors.blue[200],
                     child: const Icon(

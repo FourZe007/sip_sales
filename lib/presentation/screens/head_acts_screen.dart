@@ -231,12 +231,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
         ),
         color: Colors.white,
       ),
-      padding: EdgeInsets.fromLTRB(
-        10,
-        20,
-        10,
-        (Platform.isIOS) ? 8 : 16,
-      ),
+      padding: EdgeInsets.fromLTRB(10, 20, 10, 8),
       child: Column(
         spacing: 12,
         children: [

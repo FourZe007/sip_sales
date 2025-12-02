@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sip_sales_clean/core/helpers/formatter.dart';
+import 'package:sip_sales_clean/data/models/act_types.dart';
+import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
+import 'package:sip_sales_clean/presentation/screens/create_briefing_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/create_interview_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/create_recruitment_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/create_report_screen.dart';
+import 'package:sip_sales_clean/presentation/screens/create_visit_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 
 class NewActPanel extends StatefulWidget {
@@ -9,6 +19,50 @@ class NewActPanel extends StatefulWidget {
 }
 
 class _NewActPanelState extends State<NewActPanel> {
+  void openCreationScreen(
+    BuildContext context,
+    HeadActTypesModel actTypes,
+  ) async {
+    final actName = actTypes.activityName.toLowerCase();
+    if (actName.contains('briefing')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateBriefingScreen(),
+        ),
+      );
+    } else if (actName.contains('visit')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateVisitScreen(),
+        ),
+      );
+    } else if (actName.contains('recruitment')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateRecruitmentScreen(),
+        ),
+      );
+    } else if (actName.contains('interview')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateInterviewScreen(),
+        ),
+      );
+    } else if (actName.contains('report')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateReportScreen(),
+        ),
+      );
+    }
+    context.read<DashboardSlidingUpCubit>().closePanel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,112 +80,200 @@ class _NewActPanelState extends State<NewActPanel> {
       child: Column(
         spacing: 8,
         children: [
-          Text(
-            'Buat Laporan / Tambah Data',
-            style: TextThemes.normal.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 24,
+            padding: EdgeInsets.only(left: 16, top: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Buat Laporan / Tambah Data',
+                  style: TextThemes.normal.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                IconButton(
+                  onPressed: () async =>
+                      context.read<DashboardSlidingUpCubit>().closePanel(),
+                  icon: const Icon(Icons.close, size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(),
+                  iconSize: 20,
+                ),
+              ],
             ),
           ),
 
           Expanded(
             child: Column(
-              children: [
-                DefaultTextStyle(
-                  style: TextThemes.normalTextButton,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text('Morning Briefing'),
-                    ),
-                  ),
-                ),
+              children: context
+                  .read<HeadActTypesCubit>()
+                  .getActTypes()
+                  .asMap()
+                  .entries
+                  .map((
+                    e,
+                  ) {
+                    final index = e.key;
+                    final actTypes = e.value;
 
-                const Divider(height: 0.5),
+                    if (index == 0) {
+                      return DefaultTextStyle(
+                        style: TextThemes.normalTextButton,
+                        child: GestureDetector(
+                          onTap: () => openCreationScreen(context, actTypes),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 50,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              Formatter.toTitleCase(actTypes.activityName),
+                              style: TextThemes.normal.copyWith(fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          const Divider(height: 0.5),
 
-                DefaultTextStyle(
-                  style: TextThemes.normalTextButton,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text('Visit Market'),
-                    ),
-                  ),
-                ),
-
-                const Divider(height: 0.5),
-
-                DefaultTextStyle(
-                  style: TextThemes.normalTextButton,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text('Recruitment'),
-                    ),
-                  ),
-                ),
-
-                const Divider(height: 0.5),
-
-                DefaultTextStyle(
-                  style: TextThemes.normalTextButton,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text('Interview'),
-                    ),
-                  ),
-                ),
-
-                const Divider(height: 0.5),
-
-                DefaultTextStyle(
-                  style: TextThemes.normalTextButton,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text('Daily Report'),
-                    ),
-                  ),
-                ),
-              ],
+                          DefaultTextStyle(
+                            style: TextThemes.normalTextButton,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  openCreationScreen(context, actTypes),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 50,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  Formatter.toTitleCase(actTypes.activityName),
+                                  style: TextThemes.normal.copyWith(
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  })
+                  .toList(),
             ),
           ),
+          // Expanded(
+          //   child: Column(
+          //     children: [
+          //       DefaultTextStyle(
+          //         style: TextThemes.normalTextButton,
+          //         child: GestureDetector(
+          //           onTap: () {},
+          //           child: Container(
+          //             width: MediaQuery.of(context).size.width,
+          //             height: 50,
+          //             alignment: Alignment.center,
+          //             decoration: BoxDecoration(
+          //               color: Colors.transparent,
+          //               borderRadius: BorderRadius.circular(20),
+          //             ),
+          //             child: Text('Morning Briefing'),
+          //           ),
+          //         ),
+          //       ),
+          //
+          //       const Divider(height: 0.5),
+          //
+          //       DefaultTextStyle(
+          //         style: TextThemes.normalTextButton,
+          //         child: GestureDetector(
+          //           onTap: () {},
+          //           child: Container(
+          //             width: MediaQuery.of(context).size.width,
+          //             height: 50,
+          //             alignment: Alignment.center,
+          //             decoration: BoxDecoration(
+          //               color: Colors.transparent,
+          //               borderRadius: BorderRadius.circular(20),
+          //             ),
+          //             child: Text('Visit Market'),
+          //           ),
+          //         ),
+          //       ),
+          //
+          //       const Divider(height: 0.5),
+          //
+          //       DefaultTextStyle(
+          //         style: TextThemes.normalTextButton,
+          //         child: GestureDetector(
+          //           onTap: () {},
+          //           child: Container(
+          //             width: MediaQuery.of(context).size.width,
+          //             height: 50,
+          //             alignment: Alignment.center,
+          //             decoration: BoxDecoration(
+          //               color: Colors.transparent,
+          //               borderRadius: BorderRadius.circular(20),
+          //             ),
+          //             child: Text('Recruitment'),
+          //           ),
+          //         ),
+          //       ),
+          //
+          //       const Divider(height: 0.5),
+          //
+          //       DefaultTextStyle(
+          //         style: TextThemes.normalTextButton,
+          //         child: GestureDetector(
+          //           onTap: () {},
+          //           child: Container(
+          //             width: MediaQuery.of(context).size.width,
+          //             height: 50,
+          //             alignment: Alignment.center,
+          //             decoration: BoxDecoration(
+          //               color: Colors.transparent,
+          //               borderRadius: BorderRadius.circular(20),
+          //             ),
+          //             child: Text('Interview'),
+          //           ),
+          //         ),
+          //       ),
+          //
+          //       const Divider(height: 0.5),
+          //
+          //       DefaultTextStyle(
+          //         style: TextThemes.normalTextButton,
+          //         child: GestureDetector(
+          //           onTap: () {},
+          //           child: Container(
+          //             width: MediaQuery.of(context).size.width,
+          //             height: 50,
+          //             alignment: Alignment.center,
+          //             decoration: BoxDecoration(
+          //               color: Colors.transparent,
+          //               borderRadius: BorderRadius.circular(20),
+          //             ),
+          //             child: Text('Daily Report'),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
