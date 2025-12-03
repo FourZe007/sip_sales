@@ -22,7 +22,7 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
         scrolledUnderElevation: 0.0,
         centerTitle: true,
         title: Text(
-          'Buat Recruitment',
+          'Recruitment',
           style: TextThemes.normal.copyWith(
             fontSize: 16,
           ),

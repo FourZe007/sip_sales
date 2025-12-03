@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/act_types.dart';
+import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
 import 'package:sip_sales_clean/presentation/screens/create_briefing_screen.dart';
@@ -25,6 +26,19 @@ class _NewActPanelState extends State<NewActPanel> {
   ) async {
     final actName = actTypes.activityName.toLowerCase();
     if (actName.contains('briefing')) {
+      // ~:Reset all required data for new form:~
+      context.read<CounterCubit>().setInitial('total', 1);
+      context.read<CounterCubit>().setInitial(
+        'shop_manager',
+        1,
+      );
+      context.read<CounterCubit>().setInitial(
+        'sales_counter',
+        1,
+      );
+      context.read<CounterCubit>().setInitial('salesman', 1);
+      context.read<CounterCubit>().setInitial('others', 1);
+
       Navigator.push(
         context,
         MaterialPageRoute(

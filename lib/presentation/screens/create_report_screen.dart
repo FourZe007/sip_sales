@@ -21,7 +21,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         scrolledUnderElevation: 0.0,
         centerTitle: true,
         title: Text(
-          'Buat Daily Report',
+          'Daily Report',
           style: TextThemes.normal.copyWith(
             fontSize: 16,
           ),

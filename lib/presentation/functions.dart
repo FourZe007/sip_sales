@@ -136,14 +136,17 @@ class Functions {
 
   static void customSnackBar(
     BuildContext context,
-    String text,
-  ) {
+    String text, {
+    Color defaultTextColor = Colors.black,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.grey.shade300,
         content: Text(
           text,
-          style: TextThemes.normalTextButton,
+          style: TextThemes.normalTextButton.copyWith(
+            color: defaultTextColor,
+          ),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),

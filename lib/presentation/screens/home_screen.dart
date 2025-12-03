@@ -19,6 +19,7 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_event.dart';
+import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
@@ -30,7 +31,6 @@ import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dar
 import 'package:sip_sales_clean/presentation/screens/coordinator_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/forgot_password_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_screen.dart';
-import 'package:sip_sales_clean/presentation/screens/head_new_acts.dart';
 import 'package:sip_sales_clean/presentation/screens/head_dashboard_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/head_spk_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/profile_screen.dart';
@@ -1422,20 +1422,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 if (state == NavbarType.home) {
                   return FloatingActionButton(
                     onPressed: () async {
+                      // ~:Reset all required data for new form:~
                       context.read<ImageCubit>().clearImage();
 
-                      // setPanelMaxHeight(310);
+                      setPanelMaxHeight(310);
 
-                      // context.read<DashboardSlidingUpCubit>().changeType(
-                      //   DashboardSlidingUpType.newManagerActivity,
-                      // );
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HeadNewActsScreen(),
-                        ),
+                      context.read<DashboardSlidingUpCubit>().changeType(
+                        DashboardSlidingUpType.newManagerActivity,
                       );
+
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const HeadNewActsScreen(),
+                      //   ),
+                      // );
                     },
                     backgroundColor: Colors.blue[200],
                     child: const Icon(

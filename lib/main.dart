@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final String deviceOS = await Functions.readDeviceOS();
 
-  if (deviceOS.isNotEmpty) {
+  if (deviceOS.isNotEmpty && Platform.isAndroid) {
     if (int.parse(deviceOS.split('.')[0]) >= 10) {
       log('Device OS $deviceOS is above OS 10.');
       await Functions.initStorageConfig(false);

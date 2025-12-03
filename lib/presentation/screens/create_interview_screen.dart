@@ -21,7 +21,7 @@ class _CreateInterviewScreenState extends State<CreateInterviewScreen> {
         scrolledUnderElevation: 0.0,
         centerTitle: true,
         title: Text(
-          'Buat Interview',
+          'Interview',
           style: TextThemes.normal.copyWith(
             fontSize: 16,
           ),

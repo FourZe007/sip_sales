@@ -20,6 +20,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/update_followup/update_fu_dashboard_bloc.dart';
 import 'package:sip_sales_clean/presentation/cubit/attendance_type_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/forgot_cubit.dart';
@@ -35,6 +36,9 @@ import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';
 class StateManager {
   static List<SingleChildWidget> getBlocProviders() {
     return [
+      BlocProvider<CounterCubit>(
+        create: (context) => CounterCubit(),
+      ),
       BlocProvider<ImageCubit>(
         create: (context) => ImageCubit(ImageRepoImp()),
       ),

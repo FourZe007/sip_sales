@@ -1,6 +1,10 @@
 import 'package:flutter/services.dart';
 
 class Formatter {
+  static TextInputFormatter get normalFormatter {
+    return FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z 0-9./@]*$'));
+  }
+
   /// Allows alphanumeric characters, common symbols (./@:), and basic punctuation for general text input
   static FilteringTextInputFormatter allowCommonTextInput =
       FilteringTextInputFormatter.allow(

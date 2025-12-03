@@ -88,8 +88,12 @@ class ImageCubit extends Cubit<ImageState> {
     }
   }
 
-  void clearImage() {
-    emit(ImageInitial());
+  void clearImage({final bool isDeleted = false}) {
+    if (!isDeleted) {
+      emit(ImageInitial());
+    } else {
+      emit(ImageDeleted());
+    }
   }
 }
 
@@ -103,6 +107,8 @@ abstract class ImageState extends Equatable {
 class ImageInitial extends ImageState {}
 
 class ImageLoading extends ImageState {}
+
+class ImageDeleted extends ImageState {}
 
 class ImageCaptured extends ImageState {
   final XFile image;

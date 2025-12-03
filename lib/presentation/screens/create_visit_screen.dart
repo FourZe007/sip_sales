@@ -21,7 +21,7 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
         scrolledUnderElevation: 0.0,
         centerTitle: true,
         title: Text(
-          'Buat Visit Market',
+          'Visit Market',
           style: TextThemes.normal.copyWith(
             fontSize: 16,
           ),

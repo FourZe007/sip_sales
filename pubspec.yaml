@@ -60,6 +60,7 @@ dependencies:
   device_type: ^0.0.6
   syncfusion_flutter_datepicker: ^31.2.5
   provider: ^6.1.5+1
+  dotted_border: ^3.1.0
 
 dev_dependencies:
   flutter_test:
