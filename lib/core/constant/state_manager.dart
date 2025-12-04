@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-// ignore: depend_on_referenced_packages
 import 'package:provider/single_child_widget.dart';
 import 'package:sip_sales_clean/data/repositories/attendance_data.dart';
 import 'package:sip_sales_clean/data/repositories/followup_data.dart';
@@ -7,17 +6,22 @@ import 'package:sip_sales_clean/data/repositories/head_store_data.dart';
 import 'package:sip_sales_clean/data/repositories/image_data.dart';
 import 'package:sip_sales_clean/data/repositories/login_data.dart';
 import 'package:sip_sales_clean/data/repositories/radius_checker_data.dart';
+import 'package:sip_sales_clean/data/repositories/sales.dart';
 import 'package:sip_sales_clean/data/repositories/salesman_data.dart';
 import 'package:sip_sales_clean/data/repositories/spk_leasing_filter_data.dart';
 import 'package:sip_sales_clean/data/repositories/update_followup_data.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/location_service/location_service_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/radius_checker/radius_checker_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/update_followup/update_fu_dashboard_bloc.dart';
 import 'package:sip_sales_clean/presentation/cubit/attendance_type_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
@@ -76,6 +80,14 @@ class StateManager {
         create: (context) => HeadStoreBloc(
           headStoreRepo: HeadStoreDataImp(),
           followupRepo: FollowupDataImp(),
+        ),
+      ),
+      BlocProvider<StuBloc>(create: (context) => StuBloc()),
+      BlocProvider<PaymentBloc>(create: (context) => PaymentBloc()),
+      BlocProvider<LeasingBloc>(create: (context) => LeasingBloc()),
+      BlocProvider<SalesmanTableBloc>(
+        create: (context) => SalesmanTableBloc(
+          salesRepo: SalesRepoImp(),
         ),
       ),
       BlocProvider<SpkLeasingFilterCubit>(

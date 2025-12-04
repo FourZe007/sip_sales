@@ -1,6 +1,10 @@
 import 'package:flutter/services.dart';
 
 class Formatter {
+  static String removeSpaces(String text) {
+    return text.trim();
+  }
+
   static TextInputFormatter get normalFormatter {
     return FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z 0-9./@]*$'));
   }
@@ -13,6 +17,7 @@ class Formatter {
 
   /// Converts a string to title case (first letter of each word capitalized, rest lowercase).
   /// Example: 'hELLO wOrLd' becomes 'Hello World'
+  /// Example: 'SIP NANGKAAN' becomes 'SIP Nangkaan'
   static String toTitleCase(String text) {
     if (text.isEmpty) return text;
 
@@ -33,6 +38,12 @@ class Formatter {
     }
 
     return result.join(' ');
+  }
+
+  /// Converts a string to title case (first letter of each word capitalized, rest lowercase except 'SIP').
+  /// Example: 'SIP NANGKAAN' becomes 'SIP Nangkaan'
+  static String toBranchShopName(String text) {
+    return toTitleCase(text).replaceFirst('Sip', 'SIP');
   }
 
   static String dateFormat(String tanggal) {

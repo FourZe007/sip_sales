@@ -1,0 +1,96 @@
+import 'package:equatable/equatable.dart';
+import 'package:sip_sales_clean/data/models/sales.dart';
+import 'package:sip_sales_clean/data/models/sales_profile.dart';
+import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
+
+class SalesmanTableState with EquatableMixin {
+  final List<SalesProfileModel> salesDraftList;
+  final List<SalesModel> fetchSalesList;
+  final List<SalesmanData> salesDataList;
+
+  SalesmanTableState(
+    this.salesDraftList,
+    this.fetchSalesList,
+    this.salesDataList,
+  );
+
+  @override
+  List<Object?> get props => [salesDraftList, fetchSalesList, salesDataList];
+}
+
+class SalesmanInitial extends SalesmanTableState {
+  SalesmanInitial(
+    super.salesDraftList,
+    super.fetchSalesList,
+    super.salesDataList,
+  );
+}
+
+class SalesmanLoading extends SalesmanTableState {
+  SalesmanLoading(SalesmanTableState previousState)
+    : super(previousState.salesDraftList, previousState.fetchSalesList, []);
+
+  List<SalesProfileModel> get getSalesmanLoading => [];
+}
+
+class SalesmanFetched extends SalesmanTableState {
+  final List<SalesModel> salesList;
+  final List<SalesmanData> salesmanDataList;
+
+  SalesmanFetched(
+    SalesmanTableState previousState,
+    this.salesList,
+    this.salesmanDataList,
+  ) : super(previousState.salesDraftList, salesList, salesmanDataList);
+
+  @override
+  List<Object?> get props => [salesDraftList, fetchSalesList, salesDataList];
+}
+
+class SalesmanAdded extends SalesmanTableState {
+  final List<Map<String, dynamic>>? results;
+
+  SalesmanAdded({this.results}) : super([], [], []);
+
+  @override
+  List<Object?> get props => [results];
+}
+
+class SalesmanPartialSuccess extends SalesmanTableState {
+  final List<Map<String, dynamic>> results;
+  final String? errorMessage;
+
+  SalesmanPartialSuccess(this.results, {this.errorMessage}) : super([], [], []);
+
+  @override
+  List<Object?> get props => [results, errorMessage];
+}
+
+class SalesmanError extends SalesmanTableState {
+  final String error;
+
+  SalesmanError(this.error) : super([], [], []);
+
+  String get getSalesmanError => 'Error: $error';
+}
+
+// ~:Table Insertation:~
+class SalesmanModified extends SalesmanTableState {
+  final SalesmanTableState previousState;
+  final List<SalesmanData> newData;
+
+  SalesmanModified(this.previousState, this.newData) : super([], [], newData);
+}
+
+// ~:Modify Salesman Status:~
+class SalesmanStatusModified extends SalesmanTableState {
+  final String message;
+
+  SalesmanStatusModified(this.message) : super([], [], []);
+}
+
+class SalesmanStatusModifyError extends SalesmanTableState {
+  final String error;
+
+  SalesmanStatusModifyError(this.error) : super([], [], []);
+}

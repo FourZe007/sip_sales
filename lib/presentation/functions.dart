@@ -687,7 +687,7 @@ class Functions {
 
       // 4. If we get here, we can get the location
       Position position = await Geolocator.getCurrentPosition();
-      print("Clock In Success at: ${position.latitude}, ${position.longitude}");
+      log("Clock In Success at: ${position.latitude}, ${position.longitude}");
       return {
         'isServiceEnabled': true,
         'message': 'Location services are enabled.',

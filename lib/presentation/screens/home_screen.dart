@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +18,6 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_event.dart';
-import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
@@ -1745,12 +1743,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     tabController = TabController(length: 2, vsync: this);
 
-    if (Platform.isIOS) {
-      SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.manual,
-        overlays: SystemUiOverlay.values,
-      );
-    }
+    // if (Platform.isIOS) {
+    //   SystemChrome.setEnabledSystemUIMode(
+    //     SystemUiMode.manual,
+    //     overlays: SystemUiOverlay.values,
+    //   );
+    // }
   }
 
   @override

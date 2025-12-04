@@ -42,4 +42,7 @@ class APIConstants {
   static const String headDashboardEndpoint = '/DBSales/DBSales05';
   static const String insertNewHeadActsEndpoint =
       '/api/SIPSales/InsertEmployeeActivitySM';
+  static const String fetchSalesProfileEndpoint =
+      '/api/BrowseSubDealer/SubDealerSalesman';
+  static const String salesAndReportEndpoint = '/api/ModifySubDealer';
 }
