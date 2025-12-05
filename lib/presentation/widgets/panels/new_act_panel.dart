@@ -35,6 +35,7 @@ class _NewActPanelState extends State<NewActPanel> {
     HeadActTypesModel actTypes,
   ) async {
     final actName = actTypes.activityName.toLowerCase();
+    log('Activity Name: $actName');
     if (actName.contains('briefing')) {
       // ~:Reset all required data for new form:~
       context.read<CounterCubit>().setInitial('total', 1);
@@ -62,20 +63,38 @@ class _NewActPanelState extends State<NewActPanel> {
           builder: (context) => const CreateVisitScreen(),
         ),
       );
-    } else if (actName.contains('recruitment')) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CreateRecruitmentScreen(),
-        ),
-      );
-    } else if (actName.contains('interview')) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CreateInterviewScreen(),
-        ),
-      );
+    } else if (actName.contains('(') && actName.contains(')')) {
+      final actNameWithoutParenthesis = actName.split(' ')[0];
+      log('Activity Name Without Parenthesis: $actNameWithoutParenthesis');
+
+      if (actNameWithoutParenthesis.contains('recruitment')) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CreateRecruitmentScreen(),
+          ),
+        );
+      } else if (actNameWithoutParenthesis.contains('interview')) {
+        // ~:Reset all required data for new form:~
+        context.read<CounterCubit>().setInitial('total_itv', 0);
+        context.read<CounterCubit>().setInitial('fb_itv', 0);
+        context.read<CounterCubit>().setInitial('ig_itv', 0);
+        context.read<CounterCubit>().setInitial('training_itv', 0);
+        context.read<CounterCubit>().setInitial('cv_itv', 0);
+        context.read<CounterCubit>().setInitial('other_itv', 0);
+        context.read<CounterCubit>().setInitial('called_mp', 0);
+        context.read<CounterCubit>().setInitial('came_mp', 0);
+        context.read<CounterCubit>().setInitial('acc_mp', 0);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CreateInterviewScreen(),
+          ),
+        );
+      } else {
+        log('Not considered as Recruitment or Interview');
+      }
     } else if (actName.contains('report')) {
       context.read<StuBloc>().add(ResetStuData());
       context.read<PaymentBloc>().add(ResetPaymentData());
@@ -90,7 +109,10 @@ class _NewActPanelState extends State<NewActPanel> {
           builder: (context) => const CreateReportScreen(),
         ),
       );
+    } else {
+      log('Activity not found');
     }
+
     context.read<DashboardSlidingUpCubit>().closePanel();
   }
 

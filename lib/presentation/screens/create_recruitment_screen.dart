@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
+import 'package:sip_sales_clean/presentation/widgets/image/dotted_rounded_image_picker.dart';
+import 'package:sip_sales_clean/presentation/widgets/textfields/custom_textformfield.dart';
 
 class CreateRecruitmentScreen extends StatefulWidget {
   const CreateRecruitmentScreen({super.key});
@@ -10,6 +13,9 @@ class CreateRecruitmentScreen extends StatefulWidget {
 }
 
 class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
+  final TextEditingController mediaController = TextEditingController();
+  final TextEditingController positionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +51,96 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
           padding: EdgeInsets.symmetric(
             horizontal: 24,
             vertical: 20,
+          ),
+          child: Column(
+            spacing: 10,
+            children: [
+              // ~:Header:~
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ~:Title:~
+                    Text(
+                      'Informasi Laporan',
+                      style: TextThemes.subtitle.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    // ~:Description:~
+                    Text(
+                      'Masukkan data untuk membuat laporan rekrutmen.',
+                      style: TextThemes.normal,
+                    ),
+                  ],
+                ),
+              ),
+
+              // ~:Body:~
+              Expanded(
+                child: Column(
+                  children: [
+                    // ~:User Input:~
+                    // includes textfields and image button
+                    Expanded(
+                      child: Column(
+                        children: [
+                          // ~:Media Textfield:~
+                          CustomTextFormField(
+                            'e.g. Instagram',
+                            'Media',
+                            const Icon(Icons.public_rounded),
+                            mediaController,
+                            inputFormatters: [Formatter.normalFormatter],
+                            borderRadius: 20,
+                          ),
+
+                          // ~:Position Textfield:~
+                          CustomTextFormField(
+                            'e.g. Salesman',
+                            'Posisi',
+                            const Icon(Icons.work),
+                            positionController,
+                            inputFormatters: [Formatter.normalFormatter],
+                            borderRadius: 20,
+                          ),
+
+                          // ~:Image Section:~
+                          DottedRoundedImagePicker(isUploadWithGallery: true),
+                        ],
+                      ),
+                    ),
+
+                    // ~:Create Button:~
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 20,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 24,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Buat',
+                          style: TextThemes.subtitle,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

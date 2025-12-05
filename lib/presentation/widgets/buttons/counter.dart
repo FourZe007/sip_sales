@@ -6,8 +6,8 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 class Counter {
   static Widget automaticPerson(
     BuildContext context,
-    String type,
     String name,
+    List<String> types,
   ) {
     return Row(
       children: [
@@ -15,11 +15,11 @@ class Counter {
         Expanded(
           child: BlocBuilder<CounterCubit, Map<String, int>>(
             builder: (context, state) {
-              final total =
-                  (state['shop_manager'] ?? 0) +
-                  (state['sales_counter'] ?? 0) +
-                  (state['salesman'] ?? 0) +
-                  (state['others'] ?? 0);
+              final total = types.fold(
+                0,
+                (previousValue, element) =>
+                    previousValue + (state[element] ?? 0),
+              );
 
               return Container(
                 alignment: Alignment.center,
@@ -46,15 +46,16 @@ class Counter {
   static Widget person(
     BuildContext context,
     String type,
-    String name,
-  ) {
+    String name, {
+    int defaultNumber = 1,
+  }) {
     return Row(
       children: [
         Expanded(child: Text(name, style: TextThemes.subtitle)),
         Expanded(
           child: BlocBuilder<CounterCubit, Map<String, int>>(
             builder: (context, map) {
-              final count = map[type] ?? 1;
+              final count = map[type] ?? defaultNumber;
 
               return Container(
                 decoration: BoxDecoration(

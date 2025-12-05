@@ -95,7 +95,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               vertical: 16,
             ),
             hintStyle: TextThemes.textfieldPlaceholder,
-            hintText: 'Enter ${widget.hintText}',
+            hintText: widget.hintText.contains('e.g.')
+                ? widget.hintText
+                : 'Enter ${widget.hintText}',
             labelText: widget.labelText,
             floatingLabelBehavior: widget.isLabelFloat
                 ? FloatingLabelBehavior.always
