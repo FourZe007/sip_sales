@@ -1,3 +1,6 @@
+import 'package:sip_sales_clean/data/models/employee.dart';
+import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
+
 abstract class HeadStoreEvent {
   final String employeeID;
   final String activityID;
@@ -39,26 +42,34 @@ class LoadHeadActsDetail extends HeadStoreEvent {
 }
 
 class InsertHeadActs extends HeadStoreEvent {
-  final String branch;
-  final String shop;
-  final String date;
-  final String time;
-  final double lat;
-  final double lng;
+  final EmployeeModel employee;
+  final String actId;
   final String desc;
-  final String image;
+  final ImageState img;
+  // final String branch;
+  // final String shop;
+  // final String date;
+  // final String time;
+  // final double lat;
+  // final double lng;
+  // final String desc;
+  // final String image;
 
   InsertHeadActs({
-    required super.employeeID,
-    required super.activityID,
-    required this.branch,
-    required this.shop,
-    required this.date,
-    required this.time,
-    required this.lat,
-    required this.lng,
+    super.employeeID = '',
+    super.activityID = '',
+    required this.employee,
+    required this.actId,
     required this.desc,
-    required this.image,
+    required this.img,
+    // required this.branch,
+    // required this.shop,
+    // required this.date,
+    // required this.time,
+    // required this.lat,
+    // required this.lng,
+    // required this.desc,
+    // required this.image,
   });
 }
 

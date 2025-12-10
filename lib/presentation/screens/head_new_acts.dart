@@ -100,24 +100,24 @@ class _HeadNewActsScreenState extends State<HeadNewActsScreen> {
     log('Activity Id: $activityID');
 
     if (context.mounted) {
-      final loginState = (context.read<LoginBloc>().state as LoginSuccess).user;
+      // final loginState = (context.read<LoginBloc>().state as LoginSuccess).user;
 
-      context.read<HeadStoreBloc>().add(
-        InsertHeadActs(
-          employeeID: loginState.employeeID,
-          activityID: activityID,
-          branch: loginState.branch,
-          shop: loginState.shop,
-          date: DateFormat(
-            'yyyy-MM-dd',
-          ).format(DateTime.now()),
-          time: DateFormat('HH:mm').format(DateTime.now()),
-          lat: position.latitude,
-          lng: position.longitude,
-          desc: description,
-          image: image,
-        ),
-      );
+      // context.read<HeadStoreBloc>().add(
+      //   InsertHeadActs(
+      //     employeeID: loginState.employeeID,
+      //     activityID: activityID,
+      //     branch: loginState.branch,
+      //     shop: loginState.shop,
+      //     date: DateFormat(
+      //       'yyyy-MM-dd',
+      //     ).format(DateTime.now()),
+      //     time: DateFormat('HH:mm').format(DateTime.now()),
+      //     lat: position.latitude,
+      //     lng: position.longitude,
+      //     desc: description,
+      //     image: image,
+      //   ),
+      // );
     }
   }
 

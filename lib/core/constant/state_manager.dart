@@ -30,7 +30,6 @@ import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/forgot_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_cubit.dart';
-import 'package:sip_sales_clean/presentation/cubit/head_act.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
 import 'package:sip_sales_clean/presentation/cubit/navbar_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
@@ -73,9 +72,9 @@ class StateManager {
       BlocProvider<LocationServiceBloc>(
         create: (context) => LocationServiceBloc(),
       ),
-      BlocProvider<HeadActCubit>(
-        create: (context) => HeadActCubit(),
-      ),
+      // BlocProvider<HeadActCubit>(
+      //   create: (context) => HeadActCubit(),
+      // ),
       BlocProvider<HeadStoreBloc>(
         create: (context) => HeadStoreBloc(
           headStoreRepo: HeadStoreDataImp(),

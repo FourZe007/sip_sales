@@ -4,9 +4,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/screens/login_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/request_id_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/reset_password_screen.dart';
@@ -53,6 +59,28 @@ class Functions {
         iOptions: getIOSOptions(),
       );
     }
+  }
+
+  // employeeId, branch & shop -> loginstate
+  // activityId -> decide from which type the user chose
+  // date & time -> auto generate
+  // lat & lng -> auto generate
+  // desc -> user input
+  // image -> user input
+  static Future<void> manageNewHeadStoreAct(
+    final BuildContext context,
+    final String actTypeId,
+    final String desc,
+    // final String img,
+  ) async {
+    context.read<HeadStoreBloc>().add(
+      InsertHeadActs(
+        employee: (context.read<LoginBloc>().state as LoginSuccess).user,
+        actId: actTypeId,
+        desc: desc,
+        img: context.read<ImageCubit>().state,
+      ),
+    );
   }
 
   static void viewPhoto(
@@ -638,7 +666,7 @@ class Functions {
   //   } else {
   //     log('Service enabled');
   //   }
-
+  //
   //   return true;
   // }
 

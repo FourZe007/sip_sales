@@ -1,10 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/domain/repositories/followup_domain.dart';
 import 'package:sip_sales_clean/domain/repositories/head_store_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 
 class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
   final HeadStoreRepo headStoreRepo;
@@ -134,28 +139,32 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         ),
       );
 
-      if (event.activityID.isEmpty) {
-        emit(HeadStoreInsertFailed('Tipe aktivitas tidak boleh kosong'));
-        return;
-      } else if (event.desc.isEmpty) {
+      // if (event.activityID.isEmpty) {
+      //   emit(HeadStoreInsertFailed('Tipe aktivitas tidak boleh kosong'));
+      //   return;
+      // } else
+      if (event.desc.isEmpty) {
         emit(HeadStoreInsertFailed('Deskripsi tidak boleh kosong'));
         return;
-      } else if (event.image.isEmpty) {
+      } else if (event.img is ImageInitial) {
         emit(HeadStoreInsertFailed('Foto tidak boleh kosong'));
+        return;
+      } else if (event.img is ImageError) {
+        emit(HeadStoreInsertFailed((event.img as ImageError).message));
         return;
       } else {
         final res = await headStoreRepo.insertNewActivity(
           '1',
-          event.employeeID,
-          event.branch,
-          event.shop,
-          event.date,
-          event.time,
-          event.lat,
-          event.lng,
-          event.activityID,
+          event.employee.employeeID,
+          event.employee.branch,
+          event.employee.shop,
+          DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          DateFormat('HH:mm').format(DateTime.now()),
+          (await Geolocator.getCurrentPosition()).latitude,
+          (await Geolocator.getCurrentPosition()).longitude,
+          event.actId,
           event.desc,
-          event.image,
+          base64Encode(await (event.img as ImageCaptured).image.readAsBytes()),
         );
         log('$res');
 
@@ -172,6 +181,12 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(HeadStoreInsertFailed(res['msg']));
         }
       }
+    } on LocationServiceDisabledException {
+      emit(HeadStoreInsertFailed('Lokasi tidak diizinkan'));
+    } on PermissionDeniedException {
+      emit(HeadStoreInsertFailed('Izin lokasi ditolak'));
+    } on TimeoutException {
+      emit(HeadStoreInsertFailed('Waktu permintaan lokasi habis'));
     } catch (e) {
       emit(HeadStoreInsertFailed(e.toString()));
     }

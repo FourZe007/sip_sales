@@ -42,7 +42,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       "ActivityDescription": activityDesc,
       "Pic1": images,
     };
-    // log('Body: $body');
+    log('Body: $body');
 
     final response = await http
         .post(
@@ -170,7 +170,13 @@ class HeadStoreDataImp implements HeadStoreRepo {
       log("${res['msg']}, ${res['code']}");
       if (res['msg'] == 'Sukses' && res['code'] == '100') {
         log('Success, head act types fetched');
-        log('Data: ${(res['data'] as List).length}');
+        log('Data Head Act Types: ${(res['data'] as List).length}');
+        final finalRes = (res['data'] as List)
+            .map((e) => HeadActTypesModel.fromJson(e))
+            .toList();
+        for (var type in finalRes) {
+          log('${type.activityID} - ${type.activityName}');
+        }
         return {
           'status': 'success',
           'code': res['code'],
