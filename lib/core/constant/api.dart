@@ -9,7 +9,8 @@ class APIConstants {
   static const String headActTypesEndpoint =
       '/api/SIPSales/MEmployeeActivitySM';
   static const String headActsEndpoint =
-      '/api/SIPSales/EmployeeActivitySMHeader';
+      '/DealerActivity/DealerActivity/BrowseBySM';
+  // Head Store Old Header API: '/api/SIPSales/EmployeeActivitySMHeader';
   static const String headActsDetailEndpoint =
       '/api/SIPSales/EmployeeActivitySMDetail';
   static const String spkLeasingDataEndpoint = '/DBapi/DBSPKLeasing';

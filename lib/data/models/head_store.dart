@@ -12,6 +12,8 @@ class HeadActsModel {
   double lng;
   String activityId;
   String activityName;
+  String activityDesc;
+  String img;
 
   HeadActsModel({
     required this.employeeId,
@@ -25,6 +27,8 @@ class HeadActsModel {
     required this.lng,
     required this.activityId,
     required this.activityName,
+    required this.activityDesc,
+    required this.img,
   });
 
   factory HeadActsModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +44,10 @@ class HeadActsModel {
       lng: json['lng'],
       activityId: json['activityID'],
       activityName: json['activityName'],
+      // ~:New:~
+      activityDesc: json['activityDescription'],
+      img: json['pic1'],
+      // ~:New:~
     );
   }
 }

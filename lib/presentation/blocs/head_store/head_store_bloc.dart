@@ -38,7 +38,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         event.employeeID,
         event.date,
       );
-      log('$res');
+      log('Result: $res');
 
       if (res['status'] == 'success') {
         log('Success');
