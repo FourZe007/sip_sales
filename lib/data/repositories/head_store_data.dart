@@ -294,7 +294,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
     log('Response: $response');
 
     if (response.statusCode <= 200) {
-      log('Response: ${response.statusCode}');
+      log('Response Code: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
       if (res['msg'] == 'Sukses' && res['code'] == '100') {

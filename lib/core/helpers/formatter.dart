@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
+import 'package:sip_sales_clean/core/constant/special_char.dart';
 
 class Formatter {
   static String removeSpaces(String text) {
@@ -17,7 +20,6 @@ class Formatter {
 
   /// Converts a string to title case (first letter of each word capitalized, rest lowercase).
   /// Example: 'hELLO wOrLd' becomes 'Hello World'
-  /// Example: 'SIP NANGKAAN' becomes 'SIP Nangkaan'
   static String toTitleCase(String text) {
     if (text.isEmpty) return text;
 
@@ -71,5 +73,29 @@ class Formatter {
   // ~:Change only first letter of a sentence to uppercase:~
   static String toFirstLetterUpperCase(String text) {
     return text[0].toUpperCase() + text.substring(1).toLowerCase();
+  }
+
+  // ~:Change certain characters to be formatted into the correct format:~
+  // Example: 'Surya Inti Putra' to 'SIP'; 'Graha Rssm' to 'Graha RSSM'
+  static String toSpecialCharacter(String text) {
+    if (text.isEmpty) return text;
+
+    text = toTitleCase(text);
+
+    // Split the text into words
+    final words = text.split(' ');
+
+    // Process each word
+    final processedWords = words.map((word) {
+      // Check if the word matches any special company name (case-insensitive)
+      for (var company in SpecialCharacter.ltdCompany) {
+        if (word.toLowerCase() == company.toLowerCase()) {
+          return company; // Return the properly formatted company name
+        }
+      }
+      return word; // Return the word as-is if no match
+    }).toList();
+
+    return processedWords.join(' ');
   }
 }

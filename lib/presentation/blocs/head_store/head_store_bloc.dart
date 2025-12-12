@@ -34,11 +34,12 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     try {
       emit(HeadStoreLoading(isActs: true, isDashboard: false, isInsert: false));
 
+      log('Fetching data using API call');
       final res = await headStoreRepo.fetchHeadActs(
         event.employeeID,
         event.date,
       );
-      log('Result: $res');
+      log('Result: ${(res['data'] as List).length}');
 
       if (res['status'] == 'success') {
         log('Success');

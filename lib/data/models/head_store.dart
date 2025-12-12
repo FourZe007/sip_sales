@@ -40,8 +40,8 @@ class HeadActsModel {
       shopName: json['bsName'],
       date: json['currentDate'],
       time: json['currentTime'],
-      lat: json['lat'],
-      lng: json['lng'],
+      lat: (json['lat'] is int ? json['lat'].toDouble() : json['lat']),
+      lng: (json['lng'] is int ? json['lng'].toDouble() : json['lng']),
       activityId: json['activityID'],
       activityName: json['activityName'],
       // ~:New:~
