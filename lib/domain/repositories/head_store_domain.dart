@@ -37,4 +37,29 @@ abstract class HeadStoreRepo {
     String date,
     String actId,
   );
+
+  Future<Map<String, dynamic>> fetchHeadBriefingMaster(
+    String branch,
+    String shop,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadVisitMaster(
+    String branch,
+    String shop,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadRecruitmentMaster(
+    String branch,
+    String shop,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadInterviewMaster(
+    String branch,
+    String shop,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadReportMaster(
+    String branch,
+    String shop,
+  );
 }

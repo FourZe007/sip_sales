@@ -19,7 +19,6 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: true,
         backgroundColor: Colors.blue,

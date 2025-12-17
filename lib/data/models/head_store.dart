@@ -80,3 +80,263 @@ class HeadActsDetailsModel {
     );
   }
 }
+
+class HeadBriefingMasterModel {
+  final String bsName;
+  final String area;
+  final int contestant;
+  final int shopManager;
+  final int salesCounter;
+  final int salesman;
+  final int others;
+
+  HeadBriefingMasterModel({
+    required this.bsName,
+    required this.area,
+    required this.contestant,
+    required this.shopManager,
+    required this.salesCounter,
+    required this.salesman,
+    required this.others,
+  });
+
+  factory HeadBriefingMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadBriefingMasterModel(
+      bsName: json['bsName'],
+      area: json['area'],
+      contestant: json['peserta'],
+      shopManager: json['shopManager'],
+      salesCounter: json['salesCounter'],
+      salesman: json['salesman'],
+      others: json['others'],
+    );
+  }
+}
+
+class HeadVisitMasterModel {
+  final String bsName;
+  final String area;
+
+  HeadVisitMasterModel({
+    required this.bsName,
+    required this.area,
+  });
+
+  factory HeadVisitMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadVisitMasterModel(
+      bsName: json['bsName'],
+      area: json['area'],
+    );
+  }
+}
+
+class HeadRecruitmentMasterModel {
+  final String bsName;
+  final String area;
+
+  HeadRecruitmentMasterModel({
+    required this.bsName,
+    required this.area,
+  });
+
+  factory HeadRecruitmentMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadRecruitmentMasterModel(
+      bsName: json['bsName'],
+      area: json['area'],
+    );
+  }
+}
+
+class HeadInterviewMasterModel {
+  final String bsName;
+  final String area;
+  final List<HeadMediaMasterModel> masterMedia;
+
+  HeadInterviewMasterModel({
+    required this.bsName,
+    required this.area,
+    required this.masterMedia,
+  });
+
+  factory HeadInterviewMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadInterviewMasterModel(
+      bsName: json['bsName'],
+      area: json['area'],
+      masterMedia: json['masterMedia'],
+    );
+  }
+}
+
+class HeadMediaMasterModel {
+  final String mediaCode;
+  final String mediaName;
+  final int line;
+
+  HeadMediaMasterModel({
+    required this.mediaCode,
+    required this.mediaName,
+    required this.line,
+  });
+
+  factory HeadMediaMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadMediaMasterModel(
+      mediaCode: json['mediaCode'],
+      mediaName: json['mediaName'],
+      line: json['line'],
+    );
+  }
+}
+
+class HeadReportMasterModel {
+  final String bsName;
+  final String area;
+  final List<HeadStuCategoriesMasterModel> stuCategories;
+  final List<HeadPaymentMasterModel> payment;
+  final List<HeadLeasingMasterModel> spkLeasing;
+  final List<HeadEmployeeMasterModel> employee;
+
+  HeadReportMasterModel({
+    required this.bsName,
+    required this.area,
+    required this.stuCategories,
+    required this.payment,
+    required this.spkLeasing,
+    required this.employee,
+  });
+
+  factory HeadReportMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadReportMasterModel(
+      bsName: json['bsName'],
+      area: json['area'],
+      stuCategories: json['stuCategory'],
+      payment: json['payment'],
+      spkLeasing: json['spkLeasing'],
+      employee: json['employee'],
+    );
+  }
+}
+
+class HeadStuCategoriesMasterModel {
+  final int line;
+  final String category;
+  final int target;
+  final int tm;
+  final double acv;
+  final int lm;
+  final double growth;
+
+  HeadStuCategoriesMasterModel({
+    required this.line,
+    required this.category,
+    required this.target,
+    required this.tm,
+    required this.acv,
+    required this.lm,
+    required this.growth,
+  });
+
+  factory HeadStuCategoriesMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadStuCategoriesMasterModel(
+      line: json['line'],
+      category: json['category'],
+      target: json['target'],
+      tm: json['tm'],
+      acv: json['acv'].toDouble(),
+      lm: json['lm'],
+      growth: json['growth'].toDouble(),
+    );
+  }
+}
+
+class HeadPaymentMasterModel {
+  final int line;
+  final String payment;
+  final int tm;
+  final int lm;
+  final double growth;
+
+  HeadPaymentMasterModel({
+    required this.line,
+    required this.payment,
+    required this.tm,
+    required this.lm,
+    required this.growth,
+  });
+
+  factory HeadPaymentMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadPaymentMasterModel(
+      line: json['line'],
+      payment: json['payment'],
+      tm: json['tm'],
+      lm: json['lm'],
+      growth: json['growth'].toDouble(),
+    );
+  }
+}
+
+class HeadLeasingMasterModel {
+  final int line;
+  final String leasingID;
+  final int total;
+  final int terbuka;
+  final int disetujui;
+  final int ditolak;
+  final double persentase;
+
+  HeadLeasingMasterModel({
+    required this.line,
+    required this.leasingID,
+    required this.total,
+    required this.terbuka,
+    required this.disetujui,
+    required this.ditolak,
+    required this.persentase,
+  });
+
+  factory HeadLeasingMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadLeasingMasterModel(
+      line: json['line'],
+      leasingID: json['leasingID'],
+      total: json['total'],
+      terbuka: json['terbuka'],
+      disetujui: json['disetujui'],
+      ditolak: json['ditolak'],
+      persentase: json['persentase'].toDouble(),
+    );
+  }
+}
+
+class HeadEmployeeMasterModel {
+  final int line;
+  final String employeeID;
+  final String eName;
+  final String eTypeID;
+  final String position;
+  final int spk;
+  final int stu;
+  final int stuLm;
+
+  HeadEmployeeMasterModel({
+    required this.line,
+    required this.employeeID,
+    required this.eName,
+    required this.eTypeID,
+    required this.position,
+    required this.spk,
+    required this.stu,
+    required this.stuLm,
+  });
+
+  factory HeadEmployeeMasterModel.fromJson(Map<String, dynamic> json) {
+    return HeadEmployeeMasterModel(
+      line: json['line'],
+      employeeID: json['employeeID'],
+      eName: json['eName'],
+      eTypeID: json['eTypeID'],
+      position: json['position'],
+      spk: json['spk'],
+      stu: json['stu'],
+      stuLm: json['stuLm'],
+    );
+  }
+}

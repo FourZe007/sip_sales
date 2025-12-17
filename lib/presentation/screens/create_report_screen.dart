@@ -27,6 +27,7 @@ import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_state.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
+import 'package:sip_sales_clean/presentation/widgets/image/dotted_rounded_image_picker.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/leasing_report.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/payment_report.dart';
@@ -216,7 +217,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: true,
         backgroundColor: Colors.blue,
@@ -541,6 +541,9 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               ),
                             ],
                           ),
+
+                          // ~:Photo Section:~
+                          DottedRoundedImagePicker(),
                         ],
                       ),
                     ],
