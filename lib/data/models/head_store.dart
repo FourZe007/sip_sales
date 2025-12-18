@@ -162,13 +162,15 @@ class HeadInterviewMasterModel {
     return HeadInterviewMasterModel(
       bsName: json['bsName'],
       area: json['area'],
-      masterMedia: json['masterMedia'],
+      masterMedia: (json['masterMedia'] as List)
+          .map((e) => HeadMediaMasterModel.fromJson(e))
+          .toList(),
     );
   }
 }
 
 class HeadMediaMasterModel {
-  final String mediaCode;
+  final int mediaCode;
   final String mediaName;
   final int line;
 
@@ -208,10 +210,18 @@ class HeadReportMasterModel {
     return HeadReportMasterModel(
       bsName: json['bsName'],
       area: json['area'],
-      stuCategories: json['stuCategory'],
-      payment: json['payment'],
-      spkLeasing: json['spkLeasing'],
-      employee: json['employee'],
+      stuCategories: (json['stuCategory'] as List)
+          .map((e) => HeadStuCategoriesMasterModel.fromJson(e))
+          .toList(),
+      payment: (json['payment'] as List)
+          .map((e) => HeadPaymentMasterModel.fromJson(e))
+          .toList(),
+      spkLeasing: (json['spkLeasing'] as List)
+          .map((e) => HeadLeasingMasterModel.fromJson(e))
+          .toList(),
+      employee: (json['employee'] as List)
+          .map((e) => HeadEmployeeMasterModel.fromJson(e))
+          .toList(),
     );
   }
 }
@@ -241,9 +251,9 @@ class HeadStuCategoriesMasterModel {
       category: json['category'],
       target: json['target'],
       tm: json['tm'],
-      acv: json['acv'].toDouble(),
+      acv: json['acv'],
       lm: json['lm'],
-      growth: json['growth'].toDouble(),
+      growth: json['growth'],
     );
   }
 }
@@ -269,7 +279,7 @@ class HeadPaymentMasterModel {
       payment: json['payment'],
       tm: json['tm'],
       lm: json['lm'],
-      growth: json['growth'].toDouble(),
+      growth: json['growth'],
     );
   }
 }
@@ -301,7 +311,7 @@ class HeadLeasingMasterModel {
       terbuka: json['terbuka'],
       disetujui: json['disetujui'],
       ditolak: json['ditolak'],
-      persentase: json['persentase'].toDouble(),
+      persentase: json['persentase'],
     );
   }
 }

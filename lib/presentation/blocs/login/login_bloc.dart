@@ -11,6 +11,7 @@ import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordin
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_event.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_filter_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 
@@ -75,11 +76,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               case 0:
                 log('Head Store');
                 if (event.context.mounted) {
-                  event.context.read<SpkLeasingFilterCubit>().loadFilterData();
-                  event.context.read<HeadActTypesCubit>().fetchActTypes();
+                  await Future.wait([
+                    event.context
+                        .read<SpkLeasingFilterCubit>()
+                        .loadFilterData(),
+                    event.context.read<HeadActTypesCubit>().fetchActTypes(),
+                    event.context
+                        .read<HeadActsMasterCubit>()
+                        .fetchHeadActsMasterData(
+                          loginRes['data'].branch,
+                          loginRes['data'].shop,
+                        ),
+                  ]);
                 }
                 break;
-              // ~:Sales:~
+              // ~:Sale  ~
               case 1:
                 try {
                   // Do nothing

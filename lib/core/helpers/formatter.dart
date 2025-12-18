@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/services.dart';
 import 'package:sip_sales_clean/core/constant/special_char.dart';
 

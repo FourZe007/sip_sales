@@ -54,8 +54,8 @@ class APIConstants {
       '/DealerActivity/DealerActivity02/Master';
   static const String headRecruitmentMasterEndpoint =
       '/DealerActivity/DealerActivity03/Master_1';
-  static const String headReportMasterEndpoint =
-      '/DealerActivity/DealerActivity03/Master_2';
   static const String headInterviewMasterEndpoint =
+      '/DealerActivity/DealerActivity03/Master_2';
+  static const String headReportMasterEndpoint =
       '/DealerActivity/DealerActivity04/Master';
 }

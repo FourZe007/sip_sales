@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -10,6 +11,7 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.da
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/counter.dart';
@@ -92,13 +94,37 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                       ),
 
                       // ~:Body:~
-                      // ~:Location Textfield:~
-                      BlocBuilder<LoginBloc, LoginState>(
+                      // ~:Location Textfield using LoginBloc:~
+                      // BlocBuilder<LoginBloc, LoginState>(
+                      //   builder: (context, state) {
+                      //     if (state is LoginSuccess) {
+                      //       // ~:Set the location controller text:~
+                      //       locationController.text = state.user.bsName;
+                      //     }
+                      //
+                      //     return CustomTextFormField(
+                      //       'your location',
+                      //       'Location',
+                      //       const Icon(Icons.location_pin),
+                      //       locationController,
+                      //       inputFormatters: [Formatter.normalFormatter],
+                      //       borderRadius: 24,
+                      //       isEnabled: false,
+                      //     );
+                      //   },
+                      // ),
+
+                      // ~:Location Textfield using HeadActsMasterCubit:~
+                      BlocBuilder<HeadActsMasterCubit, HeadActsMasterState>(
                         builder: (context, state) {
-                          if (state is LoginSuccess) {
+                          if (state is HeadActsMasterLoaded) {
                             // ~:Set the location controller text:~
-                            locationController.text = state.user.bsName;
+                            locationController.text =
+                                state.briefingMaster[0].bsName;
                           }
+                          log(
+                            'Location Controller: ${locationController.text}',
+                          );
 
                           return CustomTextFormField(
                             'your location',

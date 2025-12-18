@@ -411,7 +411,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
       if (res['msg'] == 'Sukses' && res['code'] == '100') {
-        log('Fetch succeed');
+        log('Briefing Master fetch succeed');
         return {
           'status': 'success',
           'code': res['code'],
@@ -420,7 +420,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
               .toList(),
         };
       } else {
-        log('Fail');
+        log('Briefing Master fetch failed');
         return {
           'status': res['msg'],
           'code': res['code'],
@@ -466,7 +466,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
       if (res['msg'] == 'Sukses' && res['code'] == '100') {
-        log('Fetch succeed');
+        log('Visit Master fetch succeed');
         return {
           'status': 'success',
           'code': res['code'],
@@ -475,7 +475,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
               .toList(),
         };
       } else {
-        log('Fail');
+        log('Visit Master fetch failed');
         return {
           'status': res['msg'],
           'code': res['code'],
@@ -521,7 +521,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
       if (res['msg'] == 'Sukses' && res['code'] == '100') {
-        log('Fetch succeed');
+        log('Recruitment Master fetch succeed');
         return {
           'status': 'success',
           'code': res['code'],
@@ -530,7 +530,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
               .toList(),
         };
       } else {
-        log('Fail');
+        log('Recruitment Master fetch failed');
         return {
           'status': res['msg'],
           'code': res['code'],
@@ -580,7 +580,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
       if (res['msg'] == 'Sukses' && res['code'] == '100') {
-        log('Fetch succeed');
+        log('Interview Master fetch succeed');
         return {
           'status': 'success',
           'code': res['code'],
@@ -589,7 +589,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
               .toList(),
         };
       } else {
-        log('Fail');
+        log('Interview Master fetch failed');
         return {
           'status': res['msg'],
           'code': res['code'],
@@ -637,7 +637,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
       if (res['msg'] == 'Sukses' && res['code'] == '100') {
-        log('Fetch succeed');
+        log('Report Master fetch succeed');
         return {
           'status': 'success',
           'code': res['code'],
@@ -646,7 +646,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
               .toList(),
         };
       } else {
-        log('Fail');
+        log('Report Master fetch failed');
         return {
           'status': res['msg'],
           'code': res['code'],
