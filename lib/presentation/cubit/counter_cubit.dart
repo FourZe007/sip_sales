@@ -29,4 +29,13 @@ class CounterCubit extends Cubit<Map<String, int>> {
   }
 
   Map<String, int> getCount() => state;
+
+  // ~:Get value based on Map key:~
+  int getValueWithKey(String userKey) {
+    int val = 0;
+    state.forEach((key, value) {
+      if (key == userKey) val = value;
+    });
+    return val;
+  }
 }

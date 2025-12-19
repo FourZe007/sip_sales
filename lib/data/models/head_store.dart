@@ -227,13 +227,13 @@ class HeadReportMasterModel {
 }
 
 class HeadStuCategoriesMasterModel {
-  final int line;
+  final int? line;
   final String category;
-  final int target;
-  final int tm;
-  final double acv;
-  final int lm;
-  final double growth;
+  final int? target;
+  final int? tm;
+  final double? acv;
+  final int? lm;
+  final double? growth;
 
   HeadStuCategoriesMasterModel({
     required this.line,
@@ -247,23 +247,23 @@ class HeadStuCategoriesMasterModel {
 
   factory HeadStuCategoriesMasterModel.fromJson(Map<String, dynamic> json) {
     return HeadStuCategoriesMasterModel(
-      line: json['line'],
+      line: json['line'] ?? 0,
       category: json['category'],
-      target: json['target'],
-      tm: json['tm'],
-      acv: json['acv'],
-      lm: json['lm'],
-      growth: json['growth'],
+      target: json['target'] ?? 0,
+      tm: json['tm'] ?? 0,
+      acv: json['acv'] ?? 0.0,
+      lm: json['lm'] ?? 0,
+      growth: json['growth'] ?? 0.0,
     );
   }
 }
 
 class HeadPaymentMasterModel {
-  final int line;
+  final int? line;
   final String payment;
-  final int tm;
-  final int lm;
-  final double growth;
+  final int? tm;
+  final int? lm;
+  final double? growth;
 
   HeadPaymentMasterModel({
     required this.line,
@@ -275,23 +275,23 @@ class HeadPaymentMasterModel {
 
   factory HeadPaymentMasterModel.fromJson(Map<String, dynamic> json) {
     return HeadPaymentMasterModel(
-      line: json['line'],
+      line: json['line'] ?? 0,
       payment: json['payment'],
-      tm: json['tm'],
-      lm: json['lm'],
-      growth: json['growth'],
+      tm: json['tm'] ?? 0,
+      lm: json['lm'] ?? 0,
+      growth: json['growth'] ?? 0.0,
     );
   }
 }
 
 class HeadLeasingMasterModel {
-  final int line;
+  final int? line;
   final String leasingID;
-  final int total;
-  final int terbuka;
-  final int disetujui;
-  final int ditolak;
-  final double persentase;
+  final int? total;
+  final int? terbuka;
+  final int? disetujui;
+  final int? ditolak;
+  final double? persentase;
 
   HeadLeasingMasterModel({
     required this.line,
@@ -305,26 +305,26 @@ class HeadLeasingMasterModel {
 
   factory HeadLeasingMasterModel.fromJson(Map<String, dynamic> json) {
     return HeadLeasingMasterModel(
-      line: json['line'],
+      line: json['line'] ?? 0,
       leasingID: json['leasingID'],
-      total: json['total'],
-      terbuka: json['terbuka'],
-      disetujui: json['disetujui'],
-      ditolak: json['ditolak'],
-      persentase: json['persentase'],
+      total: json['total'] ?? 0,
+      terbuka: json['terbuka'] ?? 0,
+      disetujui: json['disetujui'] ?? 0,
+      ditolak: json['ditolak'] ?? 0,
+      persentase: json['persentase'] ?? 0.0,
     );
   }
 }
 
 class HeadEmployeeMasterModel {
-  final int line;
+  final int? line;
   final String employeeID;
   final String eName;
   final String eTypeID;
   final String position;
-  final int spk;
-  final int stu;
-  final int stuLm;
+  final int? spk;
+  final int? stu;
+  final int? stuLm;
 
   HeadEmployeeMasterModel({
     required this.line,
@@ -339,14 +339,14 @@ class HeadEmployeeMasterModel {
 
   factory HeadEmployeeMasterModel.fromJson(Map<String, dynamic> json) {
     return HeadEmployeeMasterModel(
-      line: json['line'],
+      line: json['line'] ?? 0,
       employeeID: json['employeeID'],
       eName: json['eName'],
       eTypeID: json['eTypeID'],
       position: json['position'],
-      spk: json['spk'],
-      stu: json['stu'],
-      stuLm: json['stuLm'],
+      spk: json['spk'] ?? 0,
+      stu: json['stu'] ?? 0,
+      stuLm: json['stuLm'] ?? 0,
     );
   }
 }

@@ -159,7 +159,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    Formatter.toSpecialCharacter(data.shopName),
+                                    Formatter.toCompanyAbbForm(data.shopName),
                                     style: TextThemes.normal.copyWith(
                                       fontSize: 20,
                                     ),

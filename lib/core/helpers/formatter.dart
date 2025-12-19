@@ -43,6 +43,15 @@ class Formatter {
   /// Converts a string to title case (first letter of each word capitalized, rest lowercase except 'SIP').
   /// Example: 'SIP NANGKAAN' becomes 'SIP Nangkaan'
   static String toBranchShopName(String text) {
+    // if (text.contains('SURYA INTI PUTRA')) {
+    //   log('Contains surya inti putra');
+    //   return text.toLowerCase().replaceAll(
+    //     RegExp('surya inti putra', caseSensitive: false),
+    //     'SIP',
+    //   );
+    // } else {
+    //   return toTitleCase(text).replaceFirst('Sip', 'SIP');
+    // }
     return toTitleCase(text).replaceFirst('Sip', 'SIP');
   }
 
@@ -75,25 +84,32 @@ class Formatter {
 
   // ~:Change certain characters to be formatted into the correct format:~
   // Example: 'Surya Inti Putra' to 'SIP'; 'Graha Rssm' to 'Graha RSSM'
-  static String toSpecialCharacter(String text) {
+  static String toCompanyAbbForm(String text) {
     if (text.isEmpty) return text;
 
     text = toTitleCase(text);
 
-    // Split the text into words
-    final words = text.split(' ');
+    if (text.contains('Surya Inti Putra')) {
+      return text.replaceAll(
+        RegExp('surya inti putra', caseSensitive: false),
+        'SIP',
+      );
+    } else {
+      // Split the text into words
+      final words = text.split(' ');
 
-    // Process each word
-    final processedWords = words.map((word) {
-      // Check if the word matches any special company name (case-insensitive)
-      for (var company in SpecialCharacter.ltdCompany) {
-        if (word.toLowerCase() == company.toLowerCase()) {
-          return company; // Return the properly formatted company name
+      // Process each word
+      final processedWords = words.map((word) {
+        // Check if the word matches any special company name (case-insensitive)
+        for (var company in SpecialCharacter.ltdCompany) {
+          if (word.toLowerCase() == company.toLowerCase()) {
+            return company; // Return the properly formatted company name
+          }
         }
-      }
-      return word; // Return the word as-is if no match
-    }).toList();
+        return word; // Return the word as-is if no match
+      }).toList();
 
-    return processedWords.join(' ');
+      return processedWords.join(' ');
+    }
   }
 }

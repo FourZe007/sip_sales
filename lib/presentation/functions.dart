@@ -8,10 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
-import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
+import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/screens/login_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/request_id_screen.dart';
@@ -73,14 +74,31 @@ class Functions {
     final String desc,
     // final String img,
   ) async {
-    context.read<HeadStoreBloc>().add(
-      InsertHeadActs(
-        employee: (context.read<LoginBloc>().state as LoginSuccess).user,
-        actId: actTypeId,
-        desc: desc,
-        img: context.read<ImageCubit>().state,
-      ),
-    );
+    log('Activity Code: $actTypeId');
+    final headMasterCubit = context.read<HeadActsMasterCubit>().state;
+    if (headMasterCubit is HeadActsMasterLoaded) {
+      log('Location: ${headMasterCubit.briefingMaster[0].bsName}');
+    } else {
+      log(
+        'Location: ${(context.read<LoginBloc>().state as LoginSuccess).user.bsName}',
+      );
+    }
+    // ~:Description user input should be break down into several fields!:~
+    final counterCubit = context.read<CounterCubit>();
+    log('Shop Manager: ${counterCubit.getValueWithKey('shop_manager')}');
+    log('Shop Counter: ${counterCubit.getValueWithKey('shop_counter')}');
+    log('Salesman: ${counterCubit.getValueWithKey('salesman')}');
+    log('Others: ${counterCubit.getValueWithKey('others')}');
+    log('Description: $desc');
+    log('Image state: ${context.read<ImageCubit>().state}');
+    // context.read<HeadStoreBloc>().add(
+    //   InsertHeadActs(
+    //     employee: (context.read<LoginBloc>().state as LoginSuccess).user,
+    //     actId: actTypeId,
+    //     desc: desc,
+    //     img: context.read<ImageCubit>().state,
+    //   ),
+    // );
   }
 
   static void viewPhoto(

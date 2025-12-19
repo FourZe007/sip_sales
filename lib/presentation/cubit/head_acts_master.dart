@@ -24,7 +24,7 @@ class HeadActsMasterCubit extends Cubit<HeadActsMasterState> {
 
       if (briefingRes['status'] == 'success' && briefingRes['code'] == '100') {
         log(
-          'Briefing Master fetched; bsName: ${(briefingRes['data'] as List<HeadBriefingMasterModel>)[0].bsName}',
+          'Briefing Master fetched; bsName: ${(briefingRes['data'] as List)[0].bsName}',
         );
       } else {
         log('Briefing Master failed');

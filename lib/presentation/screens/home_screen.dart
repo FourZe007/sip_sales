@@ -1423,14 +1423,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     onPressed: () async {
                       // ~:Reset all required data for new form:~
                       context.read<ImageCubit>().clearImage();
-                      if (context.read<HeadActsMasterCubit>().state
-                          is HeadActsMasterLoaded) {
-                        log('Head Acts Master data available');
-                      } else {
-                        log(
-                          'Head Acts Master data not available, state: ${context.read<HeadActsMasterCubit>().state}',
-                        );
-                      }
+                      // if (context.read<HeadActsMasterCubit>().state
+                      //     is HeadActsMasterLoaded) {
+                      //   log('Head Acts Master data available');
+                      // } else {
+                      //   log(
+                      //     'Head Acts Master data not available, state: ${(context.read<HeadActsMasterCubit>().state as HeadActsMasterFailed).message}',
+                      //   );
+                      // }
 
                       setPanelMaxHeight(310);
 

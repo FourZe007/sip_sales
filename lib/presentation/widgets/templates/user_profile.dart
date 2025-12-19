@@ -417,7 +417,7 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                         builder: (context, state) {
                           if (state is LoginSuccess && state.user.code == 0) {
                             return Text(
-                              '${Formatter.toSpecialCharacter(widget.employee.bsName)}, ${Formatter.toTitleCase(widget.employee.locationName)}',
+                              '${Formatter.toCompanyAbbForm(widget.employee.bsName)}, ${Formatter.toTitleCase(widget.employee.locationName)}',
                               style: TextThemes.subtitle.copyWith(fontSize: 18),
                               overflow: TextOverflow.ellipsis,
                             );

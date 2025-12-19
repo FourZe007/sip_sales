@@ -35,33 +35,39 @@ class _NewActPanelState extends State<NewActPanel> {
     BuildContext context,
     HeadActTypesModel actTypes,
   ) async {
-    final headActsMaster =
-        (context.read<HeadActsMasterCubit>().state is HeadActsMasterLoaded)
-        ? (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
-        : null;
+    final headActsMaster = context.read<HeadActsMasterCubit>().state;
+    // (context.read<HeadActsMasterCubit>().state is HeadActsMasterLoaded)
+    //     ? (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+    //     : (context.read<HeadActsMasterCubit>().state as HeadActsMasterFailed);
+    log('Head Acts Master state: $headActsMaster');
+
     final actName = actTypes.activityName.toLowerCase();
     log('Activity Name: $actName');
-    if (actName.contains('briefing') && headActsMaster != null) {
+    if (actName.contains('briefing')) {
       // ~:Reset all required data for new form:~
       context.read<CounterCubit>().setInitial(
-        'total',
-        headActsMaster.briefingMaster[0].contestant,
-      );
-      context.read<CounterCubit>().setInitial(
         'shop_manager',
-        headActsMaster.briefingMaster[0].shopManager,
+        (headActsMaster is HeadActsMasterLoaded)
+            ? headActsMaster.briefingMaster[0].shopManager
+            : 1,
       );
       context.read<CounterCubit>().setInitial(
         'sales_counter',
-        headActsMaster.briefingMaster[0].salesCounter,
+        (headActsMaster is HeadActsMasterLoaded)
+            ? headActsMaster.briefingMaster[0].salesCounter
+            : 1,
       );
       context.read<CounterCubit>().setInitial(
         'salesman',
-        headActsMaster.briefingMaster[0].salesman,
+        (headActsMaster is HeadActsMasterLoaded)
+            ? headActsMaster.briefingMaster[0].salesman
+            : 1,
       );
       context.read<CounterCubit>().setInitial(
         'others',
-        headActsMaster.briefingMaster[0].others,
+        (headActsMaster is HeadActsMasterLoaded)
+            ? headActsMaster.briefingMaster[0].others
+            : 1,
       );
 
       Navigator.push(
@@ -70,16 +76,14 @@ class _NewActPanelState extends State<NewActPanel> {
           builder: (context) => const CreateBriefingScreen(),
         ),
       );
-    } else if (actName.contains('visit') && headActsMaster != null) {
+    } else if (actName.contains('visit')) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const CreateVisitScreen(),
         ),
       );
-    } else if (actName.contains('(') &&
-        actName.contains(')') &&
-        headActsMaster != null) {
+    } else if (actName.contains('(') && actName.contains(')')) {
       final actNameWithoutParenthesis = actName.split(' ')[0];
       log('Activity Name Without Parenthesis: $actNameWithoutParenthesis');
 
@@ -90,8 +94,7 @@ class _NewActPanelState extends State<NewActPanel> {
             builder: (context) => const CreateRecruitmentScreen(),
           ),
         );
-      } else if (actNameWithoutParenthesis.contains('interview') &&
-          headActsMaster != null) {
+      } else if (actNameWithoutParenthesis.contains('interview')) {
         // ~:Reset all required data for new form:~
         context.read<CounterCubit>().setInitial('total_itv', 0);
         context.read<CounterCubit>().setInitial('fb_itv', 0);
@@ -112,7 +115,7 @@ class _NewActPanelState extends State<NewActPanel> {
       } else {
         log('Not considered as Recruitment or Interview');
       }
-    } else if (actName.contains('report') && headActsMaster != null) {
+    } else if (actName.contains('report')) {
       context.read<StuBloc>().add(ResetStuData());
       context.read<PaymentBloc>().add(ResetPaymentData());
       context.read<LeasingBloc>().add(ResetLeasingData());
@@ -127,7 +130,23 @@ class _NewActPanelState extends State<NewActPanel> {
         ),
       );
     } else {
-      log('Activity not found');
+      // log('Activity not found');
+      final actName = actTypes.activityName.toLowerCase();
+      log('Activity Name: $actName');
+      if (actName.contains('briefing')) {
+        // ~:Reset all required data for new form:~
+        context.read<CounterCubit>().setInitial('shop_manager', 1);
+        context.read<CounterCubit>().setInitial('sales_counter', 1);
+        context.read<CounterCubit>().setInitial('salesman', 1);
+        context.read<CounterCubit>().setInitial('others', 1);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CreateBriefingScreen(),
+          ),
+        );
+      }
     }
 
     context.read<DashboardSlidingUpCubit>().closePanel();

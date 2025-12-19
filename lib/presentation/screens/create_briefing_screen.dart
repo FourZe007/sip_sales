@@ -120,7 +120,9 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                           if (state is HeadActsMasterLoaded) {
                             // ~:Set the location controller text:~
                             locationController.text =
-                                state.briefingMaster[0].bsName;
+                                Formatter.toCompanyAbbForm(
+                                  (state.briefingMaster as List)[0].bsName,
+                                );
                           }
                           log(
                             'Location Controller: ${locationController.text}',
