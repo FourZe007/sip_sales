@@ -7,8 +7,9 @@ class Counter {
   static Widget automaticPerson(
     BuildContext context,
     String name,
-    List<String> types,
-  ) {
+    List<String> types, {
+    String type = '',
+  }) {
     return Row(
       children: [
         Expanded(child: Text(name, style: TextThemes.subtitle)),

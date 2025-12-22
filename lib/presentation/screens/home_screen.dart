@@ -21,7 +21,6 @@ import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_event.dart'
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
-import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/navbar_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/spk_leasing_data_cubit.dart';

@@ -8,7 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sip_sales_clean/core/helpers/formatter.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
@@ -75,30 +76,104 @@ class Functions {
     // final String img,
   ) async {
     log('Activity Code: $actTypeId');
-    final headMasterCubit = context.read<HeadActsMasterCubit>().state;
-    if (headMasterCubit is HeadActsMasterLoaded) {
-      log('Location: ${headMasterCubit.briefingMaster[0].bsName}');
-    } else {
-      log(
-        'Location: ${(context.read<LoginBloc>().state as LoginSuccess).user.bsName}',
-      );
+
+    switch (actTypeId) {
+      case '00':
+        final headMasterCubit = context.read<HeadActsMasterCubit>().state;
+        if (headMasterCubit is HeadActsMasterLoaded) {
+          log('Location: ${headMasterCubit.briefingMaster[0].bsName}');
+        } else {
+          log(
+            'Location: ${(context.read<LoginBloc>().state as LoginSuccess).user.bsName}',
+          );
+        }
+        // ~:Description user input should be break down into several fields!:~
+        final counterCubit = context.read<CounterCubit>();
+        log('Shop Manager: ${counterCubit.getValueWithKey('shop_manager')}');
+        log('Shop Counter: ${counterCubit.getValueWithKey('sales_counter')}');
+        log('Salesman: ${counterCubit.getValueWithKey('salesman')}');
+        log('Others: ${counterCubit.getValueWithKey('others')}');
+        log(
+          'Number of Participants: ${counterCubit.getKeysTotalValue(['shop_manager', 'sales_counter', 'salesman', 'others'])}',
+        );
+        log(
+          'Morning Briefing values: ${counterCubit.getBriefingValues(['shop_manager', 'sales_counter', 'salesman', 'others'])}',
+        );
+        log('Description: $desc');
+        log('Image state: ${context.read<ImageCubit>().state}');
+        context.read<HeadStoreBloc>().add(
+          InsertMorningBriefing(
+            employee: (context.read<LoginBloc>().state as LoginSuccess).user,
+            actId: actTypeId,
+            desc: desc,
+            img: context.read<ImageCubit>().state,
+            locationName:
+                (context.read<HeadActsMasterCubit>().state
+                    is HeadActsMasterLoaded)
+                ? (context.read<HeadActsMasterCubit>().state
+                          as HeadActsMasterLoaded)
+                      .briefingMaster[0]
+                      .bsName
+                : (context.read<LoginBloc>().state as LoginSuccess).user.bsName,
+            values: counterCubit.getBriefingValues([
+              'shop_manager',
+              'sales_counter',
+              'salesman',
+              'others',
+            ]),
+          ),
+        );
+        break;
+      case '01':
+        // context.read<HeadStoreBloc>().add(
+        //   InsertVisitMarket(
+        //     employee: employee,
+        //     actId: actId,
+        //     desc: desc,
+        //     img: img,
+        //     locationName: locationName,
+        //     values: values,
+        //   ),
+        // );
+        break;
+      case '02':
+        // context.read<HeadStoreBloc>().add(
+        //   InsertRecruitment(
+        //     employee: employee,
+        //     actId: actId,
+        //     desc: desc,
+        //     img: img,
+        //     locationName: locationName,
+        //     values: values,
+        //   ),
+        // );
+        break;
+      case '03':
+        // context.read<HeadStoreBloc>().add(
+        //   InsertInterview(
+        //     employee: employee,
+        //     actId: actId,
+        //     desc: desc,
+        //     img: img,
+        //     locationName: locationName,
+        //     values: values,
+        //   ),
+        // );
+        break;
+      case '04':
+        // context.read<HeadStoreBloc>().add(
+        //   InsertDailyReport(
+        //     employee: employee,
+        //     actId: actId,
+        //     desc: desc,
+        //     img: img,
+        //     locationName: locationName,
+        //     values: values,
+        //   ),
+        // );
+        break;
+      default:
     }
-    // ~:Description user input should be break down into several fields!:~
-    final counterCubit = context.read<CounterCubit>();
-    log('Shop Manager: ${counterCubit.getValueWithKey('shop_manager')}');
-    log('Shop Counter: ${counterCubit.getValueWithKey('shop_counter')}');
-    log('Salesman: ${counterCubit.getValueWithKey('salesman')}');
-    log('Others: ${counterCubit.getValueWithKey('others')}');
-    log('Description: $desc');
-    log('Image state: ${context.read<ImageCubit>().state}');
-    // context.read<HeadStoreBloc>().add(
-    //   InsertHeadActs(
-    //     employee: (context.read<LoginBloc>().state as LoginSuccess).user,
-    //     actId: actTypeId,
-    //     desc: desc,
-    //     img: context.read<ImageCubit>().state,
-    //   ),
-    // );
   }
 
   static void viewPhoto(

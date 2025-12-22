@@ -72,7 +72,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             log('Account is available');
             // event.appState.setUserAccountList(res);
             switch (loginRes['data'].code) {
-              // ~:Shop Manager:~
+              // ~:Head Store:~
               case 0:
                 log('Head Store');
                 if (event.context.mounted) {
@@ -90,7 +90,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                   ]);
                 }
                 break;
-              // ~:Sale  ~
+              // ~:Salesman:~
               case 1:
                 try {
                   // Do nothing

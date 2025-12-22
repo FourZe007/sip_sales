@@ -69,6 +69,12 @@ class _NewActPanelState extends State<NewActPanel> {
             ? headActsMaster.briefingMaster[0].others
             : 1,
       );
+      context.read<CounterCubit>().setInitial(
+        'number_of_participants',
+        (headActsMaster is HeadActsMasterLoaded)
+            ? headActsMaster.briefingMaster[0].contestant
+            : 1,
+      );
 
       Navigator.push(
         context,

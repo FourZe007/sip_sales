@@ -130,7 +130,7 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
 
                           return CustomTextFormField(
                             'your location',
-                            'Location',
+                            'Lokasi',
                             const Icon(Icons.location_pin),
                             locationController,
                             inputFormatters: [Formatter.normalFormatter],
@@ -183,6 +183,7 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                         padding: const EdgeInsets.only(top: 16),
                         child: TextField(
                           controller: descriptionController,
+                          autofocus: false,
                           maxLines: 8,
                           decoration: InputDecoration(
                             filled: true,

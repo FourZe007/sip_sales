@@ -22,7 +22,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     on<LoadHeadActs>(loadHeadActs);
     on<LoadHeadActsDetail>(loadHeadActsDetail);
     on<LoadHeadDashboard>(loadHeadDashboard);
-    on<InsertHeadActs>(insertHeadActs);
+    on<InsertMorningBriefing>(insertMorningBriefing);
     on<DeleteHeadActs>(deleteHeadActs);
   }
 
@@ -125,8 +125,8 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     }
   }
 
-  Future<void> insertHeadActs(
-    InsertHeadActs event,
+  Future<void> insertMorningBriefing(
+    InsertMorningBriefing event,
     Emitter<HeadStoreState> emit,
   ) async {
     try {
@@ -156,16 +156,21 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
       } else {
         final res = await headStoreRepo.insertNewActivity(
           '1',
-          event.employee.employeeID,
           event.employee.branch,
           event.employee.shop,
           DateFormat('yyyy-MM-dd').format(DateTime.now()),
           DateFormat('HH:mm').format(DateTime.now()),
           (await Geolocator.getCurrentPosition()).latitude,
           (await Geolocator.getCurrentPosition()).longitude,
-          event.actId,
-          event.desc,
           base64Encode(await (event.img as ImageCaptured).image.readAsBytes()),
+          event.employee.employeeID,
+          event.locationName,
+          event.desc,
+          event.values[0],
+          event.values[1],
+          event.values[2],
+          event.values[3],
+          event.values[4],
         );
         log('$res');
 

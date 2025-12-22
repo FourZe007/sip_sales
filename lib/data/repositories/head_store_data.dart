@@ -13,16 +13,21 @@ class HeadStoreDataImp implements HeadStoreRepo {
   @override
   Future<Map<String, dynamic>> insertNewActivity(
     String mode,
-    String employeeID,
     String branch,
     String shop,
     String date,
     String time,
     double lat,
     double lng,
-    String activityID,
-    String activityDesc,
-    String? images,
+    String img,
+    String employeeId,
+    String locationName,
+    String description,
+    int numberOfParticipants,
+    int headStore,
+    int salesCounter,
+    int salesman,
+    int others,
   ) async {
     Uri uri = Uri.https(
       APIConstants.baseUrl,
@@ -31,16 +36,21 @@ class HeadStoreDataImp implements HeadStoreRepo {
 
     Map body = {
       "Mode": mode,
-      "EmployeeID": employeeID,
-      "CurrentDate": date,
-      "CurrentTime": time,
       "Branch": branch,
       "Shop": shop,
+      "CurrentDate": date,
+      "CurrentTime": time,
       "Lat": lat,
       "Lng": lng,
-      "ActivityID": activityID,
-      "ActivityDescription": activityDesc,
-      "Pic1": images,
+      "Pic1": img,
+      "EmployeeID": employeeId,
+      "Lokasi": locationName,
+      "Topic": description,
+      "peserta": numberOfParticipants,
+      "shopManager": headStore,
+      "salesCounter": salesCounter,
+      "salesman": salesman,
+      "others": others,
     };
     log('Body: $body');
 

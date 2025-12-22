@@ -41,36 +41,114 @@ class LoadHeadActsDetail extends HeadStoreEvent {
   });
 }
 
-class InsertHeadActs extends HeadStoreEvent {
+class InsertMorningBriefing extends HeadStoreEvent {
   final EmployeeModel employee;
   final String actId;
   final String desc;
   final ImageState img;
-  // final String branch;
-  // final String shop;
-  // final String date;
-  // final String time;
-  // final double lat;
-  // final double lng;
-  // final String desc;
-  // final String image;
+  final String locationName;
+  final List<int> values;
 
-  InsertHeadActs({
+  InsertMorningBriefing({
     super.employeeID = '',
     super.activityID = '',
     required this.employee,
     required this.actId,
     required this.desc,
     required this.img,
-    // required this.branch,
-    // required this.shop,
-    // required this.date,
-    // required this.time,
-    // required this.lat,
-    // required this.lng,
-    // required this.desc,
-    // required this.image,
+    required this.locationName,
+    required this.values,
   });
+
+  get user => null;
+}
+
+class InsertVisitMarket extends HeadStoreEvent {
+  final EmployeeModel employee;
+  final String actId;
+  final String desc;
+  final ImageState img;
+  final String locationName;
+  final List<int> values;
+
+  InsertVisitMarket({
+    super.employeeID = '',
+    super.activityID = '',
+    required this.employee,
+    required this.actId,
+    required this.desc,
+    required this.img,
+    required this.locationName,
+    required this.values,
+  });
+
+  get user => null;
+}
+
+class InsertRecruitment extends HeadStoreEvent {
+  final EmployeeModel employee;
+  final String actId;
+  final String desc;
+  final ImageState img;
+  final String locationName;
+  final List<int> values;
+
+  InsertRecruitment({
+    super.employeeID = '',
+    super.activityID = '',
+    required this.employee,
+    required this.actId,
+    required this.desc,
+    required this.img,
+    required this.locationName,
+    required this.values,
+  });
+
+  get user => null;
+}
+
+class InsertInterview extends HeadStoreEvent {
+  final EmployeeModel employee;
+  final String actId;
+  final String desc;
+  final ImageState img;
+  final String locationName;
+  final List<int> values;
+
+  InsertInterview({
+    super.employeeID = '',
+    super.activityID = '',
+    required this.employee,
+    required this.actId,
+    required this.desc,
+    required this.img,
+    required this.locationName,
+    required this.values,
+  });
+
+  get user => null;
+}
+
+class InsertDailyReport extends HeadStoreEvent {
+  final EmployeeModel employee;
+  final String actId;
+  final String desc;
+  final ImageState img;
+  final String locationName;
+  final List<int> values;
+
+  InsertDailyReport({
+    super.employeeID = '',
+    super.activityID = '',
+    required this.employee,
+    required this.actId,
+    required this.desc,
+    required this.img,
+    required this.locationName,
+    required this.values,
+  });
+
+  get user => null;
 }
 
 class DeleteHeadActs extends HeadStoreEvent {
