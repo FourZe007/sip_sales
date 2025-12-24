@@ -62,3 +62,11 @@ enum PaymentType { payment, result, target, growth }
 enum LeasingType { leasing, spk, terbuka, disetujui, ditolak, approval }
 
 enum SalesmanType { sales, position, spk, stu, stuLm }
+
+enum HeadStoreActTypes {
+  morningBriefing,
+  visitMarket,
+  recruitment,
+  interview,
+  dailyReport,
+}

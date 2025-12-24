@@ -1,3 +1,4 @@
+import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/data/models/coordinator_dashboard.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
 
@@ -62,13 +63,16 @@ class HeadStoreDashboardFailed extends HeadStoreState {
 
 // ~:Insert New Data:~
 class HeadStoreInsertSucceed extends HeadStoreState {
-  HeadStoreInsertSucceed();
+  final HeadStoreActTypes actType;
+
+  HeadStoreInsertSucceed(this.actType);
 }
 
 class HeadStoreInsertFailed extends HeadStoreState {
+  final HeadStoreActTypes actType;
   final String message;
 
-  HeadStoreInsertFailed(this.message);
+  HeadStoreInsertFailed(this.actType, this.message);
 }
 
 // ~:Delete Data:~

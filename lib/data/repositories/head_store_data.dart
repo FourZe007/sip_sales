@@ -11,7 +11,7 @@ import 'package:sip_sales_clean/domain/repositories/head_store_domain.dart';
 
 class HeadStoreDataImp implements HeadStoreRepo {
   @override
-  Future<Map<String, dynamic>> insertNewActivity(
+  Future<Map<String, dynamic>> insertNewBriefingActivity(
     String mode,
     String branch,
     String shop,
@@ -94,6 +94,82 @@ class HeadStoreDataImp implements HeadStoreRepo {
         'data': ([]).map((e) => ResultMessageModel.fromJson(e)).toList(),
       };
     }
+  }
+
+  @override
+  Future<Map<String, dynamic>> insertNewVisitActivity(
+    String mode,
+    String branch,
+    String shop,
+    String date,
+    String time,
+    double lat,
+    double lng,
+    String activityType,
+    String location,
+    int salesman,
+    String unitDisplay,
+    int database,
+    int hotProspek,
+    int deal,
+    String unitTestRide,
+    int participantsTestRide,
+    String pic1,
+    String employeeId,
+  ) async {
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> insertNewRecruitmentActivity(
+    String mode,
+    String branch,
+    double lat,
+    double lng,
+    String media,
+    String posisi,
+    String pic1,
+    String employeeID,
+  ) async {
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> insertNewInterviewActivity(
+    String mode,
+    String branch,
+    String shop,
+    String currentDate,
+    String currentTime,
+    double lat,
+    double lng,
+    int dipanggil,
+    int datang,
+    int diterima,
+    String pic1,
+    String employeeID,
+    List<HeadMediaMasterModel> listMedia,
+  ) async {
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> insertNewReportActivity(
+    String mode,
+    String branch,
+    String shop,
+    String date,
+    String time,
+    double lat,
+    double lng,
+    String img,
+    String employeeId,
+    List<HeadStuCategoriesMasterModel> categoryList,
+    List<HeadPaymentMasterModel> paymentList,
+    List<HeadLeasingMasterModel> leasingList,
+    List<HeadEmployeeMasterModel> employeeList,
+  ) async {
+    return {};
   }
 
   @override
@@ -336,7 +412,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
   }
 
   @override
-  Future<Map<String, dynamic>> fetchHeadActsDetails(
+  Future<Map<String, dynamic>> fetchHeadBriefingDetails(
     String employeeID,
     String date,
     String actId,
@@ -390,6 +466,42 @@ class HeadStoreDataImp implements HeadStoreRepo {
         'data': ([]).map((e) => HeadActsDetailsModel.fromJson(e)).toList(),
       };
     }
+  }
+
+  @override
+  Future<Map<String, dynamic>> fetchHeadVisitDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  ) async {
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> fetchHeadRecruitmentDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  ) async {
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> fetchHeadInterviewDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  ) async {
+    return {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> fetchHeadReportDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  ) async {
+    return {};
   }
 
   @override

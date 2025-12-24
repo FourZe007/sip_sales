@@ -1,21 +1,7 @@
+import 'package:sip_sales_clean/data/models/head_store.dart';
+
 abstract class HeadStoreRepo {
-  Future<Map<String, dynamic>> insertNewActivity(
-    // "Mode":"1",
-    // "Branch":"02",
-    // "Shop":"01",
-    // "CurrentDate":"2025-11-12",
-    // "CurrentTime":"08:24",
-    // "Lat":0,
-    // "Lng":0,
-    // "Pic1":"",
-    // "EmployeeID":"",
-    // "Lokasi":"DEALER",
-    // "Topic":"PENJUALAN MINGGU KE 2",
-    // "peserta": 31,
-    // "shopManager": 1,
-    // "salesCounter": 2,
-    // "salesman": 27,
-    // "others": 0
+  Future<Map<String, dynamic>> insertNewBriefingActivity(
     String mode,
     String branch,
     String shop,
@@ -34,6 +20,70 @@ abstract class HeadStoreRepo {
     int others,
   );
 
+  Future<Map<String, dynamic>> insertNewVisitActivity(
+    String mode,
+    String branch,
+    String shop,
+    String date,
+    String time,
+    double lat,
+    double lng,
+    String activityType,
+    String location,
+    int salesman,
+    String unitDisplay,
+    int database,
+    int hotProspek,
+    int deal,
+    String unitTestRide,
+    int participantsTestRide,
+    String pic1,
+    String employeeId,
+  );
+
+  Future<Map<String, dynamic>> insertNewRecruitmentActivity(
+    String mode,
+    String branch,
+    double lat,
+    double lng,
+    String media,
+    String posisi,
+    String pic1,
+    String employeeID,
+  );
+
+  Future<Map<String, dynamic>> insertNewInterviewActivity(
+    String mode,
+    String branch,
+    String shop,
+    String currentDate,
+    String currentTime,
+    double lat,
+    double lng,
+    int dipanggil,
+    int datang,
+    int diterima,
+    String pic1,
+    String employeeID,
+    List<HeadMediaMasterModel> listMedia,
+  );
+
+  Future<Map<String, dynamic>> insertNewReportActivity(
+    String mode,
+    String branch,
+    String shop,
+    String date,
+    String time,
+    double lat,
+    double lng,
+    String img,
+    String employeeId,
+    List<HeadStuCategoriesMasterModel> categoryList,
+    List<HeadPaymentMasterModel> paymentList,
+    List<HeadLeasingMasterModel> leasingList,
+    List<HeadEmployeeMasterModel> employeeList,
+  );
+
   Future<Map<String, dynamic>> deleteActivity(
     String mode,
     String employeeID,
@@ -49,14 +99,44 @@ abstract class HeadStoreRepo {
   );
 
   Future<Map<String, dynamic>> fetchHeadActs(
-    String employeeID,
-    String date,
+    String employeeId,
+    String currentDate,
   );
 
-  Future<Map<String, dynamic>> fetchHeadActsDetails(
-    String employeeID,
-    String date,
-    String actId,
+  // ~:Split into 5 types of activities:~
+  // Future<Map<String, dynamic>> fetchHeadActsDetails(
+  //   String employeeID,
+  //   String date,
+  //   String actId,
+  // );
+  Future<Map<String, dynamic>> fetchHeadBriefingDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadVisitDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadRecruitmentDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadInterviewDetails(
+    String branch,
+    String shop,
+    String currentDate,
+  );
+
+  Future<Map<String, dynamic>> fetchHeadReportDetails(
+    String branch,
+    String shop,
+    String currentDate,
   );
 
   Future<Map<String, dynamic>> fetchHeadBriefingMaster(

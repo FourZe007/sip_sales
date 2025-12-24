@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/domain/repositories/followup_domain.dart';
 import 'package:sip_sales_clean/domain/repositories/head_store_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
@@ -23,6 +24,10 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     on<LoadHeadActsDetail>(loadHeadActsDetail);
     on<LoadHeadDashboard>(loadHeadDashboard);
     on<InsertMorningBriefing>(insertMorningBriefing);
+    on<InsertVisitMarket>(insertVisitMarket);
+    on<InsertRecruitment>(insertRecruitment);
+    on<InsertInterview>(insertInterview);
+    on<InsertDailyReport>(insertDailyReport);
     on<DeleteHeadActs>(deleteHeadActs);
   }
 
@@ -72,22 +77,50 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         ),
       );
 
-      final res = await headStoreRepo.fetchHeadActsDetails(
+      final breifingRes = await headStoreRepo.fetchHeadBriefingDetails(
         event.employeeID,
         event.date,
         event.activityID,
       );
-      log('$res');
+      log('$breifingRes');
 
-      if (res['status'] == 'success') {
+      final visitRes = await headStoreRepo.fetchHeadVisitDetails(
+        event.employeeID,
+        event.date,
+        event.activityID,
+      );
+      log('$visitRes');
+
+      final recruitmnetRes = await headStoreRepo.fetchHeadRecruitmentDetails(
+        event.employeeID,
+        event.date,
+        event.activityID,
+      );
+      log('$recruitmnetRes');
+
+      final interviewRes = await headStoreRepo.fetchHeadInterviewDetails(
+        event.employeeID,
+        event.date,
+        event.activityID,
+      );
+      log('$interviewRes');
+
+      final reportRes = await headStoreRepo.fetchHeadReportDetails(
+        event.employeeID,
+        event.date,
+        event.activityID,
+      );
+      log('$reportRes');
+
+      if (breifingRes['status'] == 'success') {
         log('Success');
-        emit(HeadStoreDataDetailLoaded(res['data']));
-      } else if (res['status'].toString().toLowerCase() == 'no data') {
+        emit(HeadStoreDataDetailLoaded(breifingRes['data']));
+      } else if (breifingRes['status'].toString().toLowerCase() == 'no data') {
         log('Empty');
         emit(HeadStoreDataDetailFailed('Data tidak tersedia.'));
       } else {
         log('Failed');
-        emit(HeadStoreDataDetailFailed(res['msg']));
+        emit(HeadStoreDataDetailFailed(breifingRes['msg']));
       }
     } catch (e) {
       log('Load Head Acts Detail failed: $e');
@@ -130,31 +163,34 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     Emitter<HeadStoreState> emit,
   ) async {
     try {
-      emit(
-        HeadStoreLoading(
-          isInsert: true,
-          isActs: false,
-          isDashboard: false,
-          isActsDetail: false,
-          isDelete: false,
-        ),
-      );
+      emit(HeadStoreLoading(isInsert: true));
 
-      // if (event.activityID.isEmpty) {
-      //   emit(HeadStoreInsertFailed('Tipe aktivitas tidak boleh kosong'));
-      //   return;
-      // } else
       if (event.desc.isEmpty) {
-        emit(HeadStoreInsertFailed('Deskripsi tidak boleh kosong'));
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.morningBriefing,
+            'Deskripsi tidak boleh kosong',
+          ),
+        );
         return;
       } else if (event.img is ImageInitial) {
-        emit(HeadStoreInsertFailed('Foto tidak boleh kosong'));
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.morningBriefing,
+            'Foto tidak boleh kosong',
+          ),
+        );
         return;
       } else if (event.img is ImageError) {
-        emit(HeadStoreInsertFailed((event.img as ImageError).message));
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.morningBriefing,
+            (event.img as ImageError).message,
+          ),
+        );
         return;
       } else {
-        final res = await headStoreRepo.insertNewActivity(
+        final res = await headStoreRepo.insertNewBriefingActivity(
           '1',
           event.employee.branch,
           event.employee.shop,
@@ -176,25 +212,246 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
 
         if (res['status'] == 'success' && res['code'] == '100') {
           log('Success');
-          emit(HeadStoreInsertSucceed());
+          emit(HeadStoreInsertSucceed(HeadStoreActTypes.morningBriefing));
         } else if (res['status'] == 'fail' &&
             res['code'] == '200' &&
             (res['data'] as List)[0].resultMessage.toLowerCase().contains(
               'duplicate key',
             )) {
-          emit(HeadStoreInsertFailed('Aktivitas sudah pernah diinput'));
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.morningBriefing,
+              'Aktivitas sudah pernah diinput',
+            ),
+          );
         } else {
-          emit(HeadStoreInsertFailed(res['msg']));
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.morningBriefing,
+              res['msg'],
+            ),
+          );
         }
       }
     } on LocationServiceDisabledException {
-      emit(HeadStoreInsertFailed('Lokasi tidak diizinkan'));
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.morningBriefing,
+          'Lokasi tidak diizinkan',
+        ),
+      );
     } on PermissionDeniedException {
-      emit(HeadStoreInsertFailed('Izin lokasi ditolak'));
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.morningBriefing,
+          'Izin lokasi ditolak',
+        ),
+      );
     } on TimeoutException {
-      emit(HeadStoreInsertFailed('Waktu permintaan lokasi habis'));
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.morningBriefing,
+          'Waktu permintaan lokasi habis',
+        ),
+      );
     } catch (e) {
-      emit(HeadStoreInsertFailed(e.toString()));
+      emit(
+        HeadStoreInsertFailed(HeadStoreActTypes.morningBriefing, e.toString()),
+      );
+    }
+  }
+
+  Future<void> insertVisitMarket(
+    InsertVisitMarket event,
+    Emitter<HeadStoreState> emit,
+  ) async {
+    try {
+      emit(HeadStoreLoading(isInsert: true));
+
+      if (event.desc.isEmpty) {
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.morningBriefing,
+            'Deskripsi tidak boleh kosong',
+          ),
+        );
+        return;
+      } else if (event.img is ImageInitial || event.img is ImageError) {
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.morningBriefing,
+            event.img is ImageInitial
+                ? 'Foto tidak boleh kosong'
+                : (event.img as ImageError).message,
+          ),
+        );
+        return;
+      } else {
+        // final res = await headStoreRepo.insertNewVisitActivity(
+        //   '1',
+        //   event.employee.branch,
+        //   event.employee.shop,
+        //   DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        //   DateFormat('HH:mm').format(DateTime.now()),
+        //   (await Geolocator.getCurrentPosition()).latitude,
+        //   (await Geolocator.getCurrentPosition()).longitude,
+        //   base64Encode(await (event.img as ImageCaptured).image.readAsBytes()),
+        //   event.employee.employeeID,
+        //   event.locationName,
+        //   event.desc,
+        //   event.values[0],
+        //   event.values[1],
+        //   event.values[2],
+        //   event.values[3],
+        //   event.values[4],
+        // );
+        final res = {};
+        log('$res');
+
+        if (res['status'] == 'success' && res['code'] == '100') {
+          log('Success');
+          emit(HeadStoreInsertSucceed(HeadStoreActTypes.morningBriefing));
+        } else if (res['status'] == 'fail' &&
+            res['code'] == '200' &&
+            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
+              'duplicate key',
+            )) {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.morningBriefing,
+              'Aktivitas sudah pernah diinput',
+            ),
+          );
+        } else {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.morningBriefing,
+              res['msg'],
+            ),
+          );
+        }
+      }
+    } on LocationServiceDisabledException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.visitMarket,
+          'Lokasi tidak diizinkan',
+        ),
+      );
+    } on PermissionDeniedException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.visitMarket,
+          'Izin lokasi ditolak',
+        ),
+      );
+    } on TimeoutException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.visitMarket,
+          'Waktu permintaan lokasi habis',
+        ),
+      );
+    } catch (e) {
+      emit(
+        HeadStoreInsertFailed(HeadStoreActTypes.visitMarket, e.toString()),
+      );
+    }
+  }
+
+  Future<void> insertRecruitment(
+    InsertRecruitment event,
+    Emitter<HeadStoreState> emit,
+  ) async {
+    try {} on LocationServiceDisabledException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.recruitment,
+          'Lokasi tidak diizinkan',
+        ),
+      );
+    } on PermissionDeniedException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.recruitment,
+          'Izin lokasi ditolak',
+        ),
+      );
+    } on TimeoutException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.recruitment,
+          'Waktu permintaan lokasi habis',
+        ),
+      );
+    } catch (e) {
+      emit(
+        HeadStoreInsertFailed(HeadStoreActTypes.recruitment, e.toString()),
+      );
+    }
+  }
+
+  Future<void> insertInterview(
+    InsertInterview event,
+    Emitter<HeadStoreState> emit,
+  ) async {
+    try {} on LocationServiceDisabledException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.interview,
+          'Lokasi tidak diizinkan',
+        ),
+      );
+    } on PermissionDeniedException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.interview,
+          'Izin lokasi ditolak',
+        ),
+      );
+    } on TimeoutException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.interview,
+          'Waktu permintaan lokasi habis',
+        ),
+      );
+    } catch (e) {
+      emit(
+        HeadStoreInsertFailed(HeadStoreActTypes.interview, e.toString()),
+      );
+    }
+  }
+
+  Future<void> insertDailyReport(
+    InsertDailyReport event,
+    Emitter<HeadStoreState> emit,
+  ) async {
+    try {} on LocationServiceDisabledException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.dailyReport,
+          'Lokasi tidak diizinkan',
+        ),
+      );
+    } on PermissionDeniedException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.dailyReport,
+          'Izin lokasi ditolak',
+        ),
+      );
+    } on TimeoutException {
+      emit(
+        HeadStoreInsertFailed(
+          HeadStoreActTypes.dailyReport,
+          'Waktu permintaan lokasi habis',
+        ),
+      );
+    } catch (e) {
+      emit(
+        HeadStoreInsertFailed(HeadStoreActTypes.dailyReport, e.toString()),
+      );
     }
   }
 

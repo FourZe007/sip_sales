@@ -47,7 +47,7 @@ class APIConstants {
       '/api/BrowseSubDealer/SubDealerSalesman';
   static const String salesAndReportEndpoint = '/api/ModifySubDealer';
 
-  // ~:Head Store Input Default Values:~
+  // ~:Head Store Input Default Values API:~
   static const String headBriefingMasterEndpoint =
       '/DealerActivity/DealerActivity01/Master';
   static const String headVisitMasterEndpoint =
@@ -58,4 +58,16 @@ class APIConstants {
       '/DealerActivity/DealerActivity03/Master_2';
   static const String headReportMasterEndpoint =
       '/DealerActivity/DealerActivity04/Master';
+
+  // ~:Head Store Show Data API:~
+  static const String showHeadBriefingEndpoint =
+      '/DealerActivity/DealerActivity01/Show';
+  static const String showHeadVisitEndpoint =
+      '/DealerActivity/DealerActivity02/Show';
+  static const String showHeadRecruitmentEndpoint =
+      '/DealerActivity/DealerActivity03/Show_1';
+  static const String showHeadInterviewEndpoint =
+      '/DealerActivity/DealerActivity03/Show_2';
+  static const String showHeadReportEndpoint =
+      '/DealerActivity/DealerActivity04/Show';
 }
