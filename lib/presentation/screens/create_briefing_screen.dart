@@ -215,7 +215,7 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                 onPressed: () async => await Functions.manageNewHeadStoreAct(
                   context,
                   '00',
-                  descriptionController.text,
+                  desc: descriptionController.text,
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,

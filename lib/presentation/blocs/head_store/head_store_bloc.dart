@@ -10,6 +10,10 @@ import 'package:sip_sales_clean/domain/repositories/followup_domain.dart';
 import 'package:sip_sales_clean/domain/repositories/head_store_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 
 class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
@@ -165,7 +169,28 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     try {
       emit(HeadStoreLoading(isInsert: true));
 
-      if (event.desc.isEmpty) {
+      final employee =
+          (event.context.read<LoginBloc>().state as LoginSuccess).user;
+      final isDescEmpty = event.desc.isEmpty;
+      final img = event.context.read<ImageCubit>().state;
+      final isImgInvalid = img is ImageInitial || img is ImageError;
+      final headActsMaster = event.context.read<HeadActsMasterCubit>().state;
+      final counter = event.context.read<CounterCubit>().getBriefingValues([
+        'shop_manager',
+        'sales_counter',
+        'salesman',
+        'others',
+      ]);
+
+      if (isDescEmpty && isImgInvalid) {
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.morningBriefing,
+            'Deskripsi tidak boleh kosong dan foto tidak boleh kosong',
+          ),
+        );
+        return;
+      } else if (isDescEmpty) {
         emit(
           HeadStoreInsertFailed(
             HeadStoreActTypes.morningBriefing,
@@ -173,40 +198,36 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           ),
         );
         return;
-      } else if (event.img is ImageInitial) {
+      } else if (isImgInvalid) {
         emit(
           HeadStoreInsertFailed(
             HeadStoreActTypes.morningBriefing,
-            'Foto tidak boleh kosong',
-          ),
-        );
-        return;
-      } else if (event.img is ImageError) {
-        emit(
-          HeadStoreInsertFailed(
-            HeadStoreActTypes.morningBriefing,
-            (event.img as ImageError).message,
+            img is ImageInitial
+                ? 'Foto tidak boleh kosong'
+                : (img as ImageError).message,
           ),
         );
         return;
       } else {
         final res = await headStoreRepo.insertNewBriefingActivity(
           '1',
-          event.employee.branch,
-          event.employee.shop,
+          employee.branch,
+          employee.shop,
           DateFormat('yyyy-MM-dd').format(DateTime.now()),
           DateFormat('HH:mm').format(DateTime.now()),
           (await Geolocator.getCurrentPosition()).latitude,
           (await Geolocator.getCurrentPosition()).longitude,
-          base64Encode(await (event.img as ImageCaptured).image.readAsBytes()),
-          event.employee.employeeID,
-          event.locationName,
+          base64Encode(await (img as ImageCaptured).image.readAsBytes()),
+          employee.employeeID,
+          (headActsMaster is HeadActsMasterLoaded)
+              ? headActsMaster.briefingMaster[0].bsName
+              : employee.bsName,
           event.desc,
-          event.values[0],
-          event.values[1],
-          event.values[2],
-          event.values[3],
-          event.values[4],
+          counter[0],
+          counter[1],
+          counter[2],
+          counter[3],
+          counter[4],
         );
         log('$res');
 

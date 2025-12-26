@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/counter.dart';
 import 'package:sip_sales_clean/presentation/widgets/image/dotted_rounded_image_picker.dart';
@@ -14,8 +18,10 @@ class CreateVisitScreen extends StatefulWidget {
 }
 
 class _CreateVisitScreenState extends State<CreateVisitScreen> {
+  final TextEditingController locationController = TextEditingController();
   final TextEditingController actTypeController = TextEditingController();
   final TextEditingController displayUnitController = TextEditingController();
+  final TextEditingController testRideUnitController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +94,35 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
                       Column(
                         spacing: 4,
                         children: [
+                          // ~:Location Textfield using HeadActsMasterCubit:~
+                          BlocBuilder<HeadActsMasterCubit, HeadActsMasterState>(
+                            builder: (context, state) {
+                              if (state is HeadActsMasterLoaded) {
+                                // ~:Set the location controller text:~
+                                locationController.text =
+                                    Formatter.toCompanyAbbForm(
+                                      (state.briefingMaster as List)[0].bsName,
+                                    );
+                              }
+                              log(
+                                'Location Controller: ${locationController.text}',
+                              );
+
+                              return CustomTextFormField(
+                                'your location',
+                                'Lokasi',
+                                const Icon(Icons.location_pin),
+                                locationController,
+                                inputFormatters: [Formatter.normalFormatter],
+                                borderRadius: 24,
+                                isEnabled: false,
+                              );
+                            },
+                          ),
+
                           // ~:Activity Type Textfield:~
                           CustomTextFormField(
-                            'activity type',
+                            'e.g. Test Ride',
                             'Jenis Aktivitas',
                             const Icon(Icons.run_circle_outlined),
                             actTypeController,
@@ -100,10 +132,20 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
 
                           // ~:Display Unit Textfield:~
                           CustomTextFormField(
-                            'display unit',
+                            'e.g. Filano, Lexi LX, Nmax',
                             'Unit Display',
+                            const Icon(Icons.garage),
+                            displayUnitController,
+                            inputFormatters: [Formatter.normalFormatter],
+                            borderRadius: 20,
+                          ),
+
+                          // ~:Test Ride Unit Textfield:~
+                          CustomTextFormField(
+                            'e.g. Filano, Lexi LX, Nmax',
+                            'Unit Test Ride',
                             const Icon(Icons.pedal_bike_sharp),
-                            actTypeController,
+                            testRideUnitController,
                             inputFormatters: [Formatter.normalFormatter],
                             borderRadius: 20,
                           ),
@@ -141,14 +183,6 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
                                 context,
                                 'deal',
                                 'Deal',
-                                defaultNumber: 0,
-                              ),
-
-                              // ~:Unit Test Ride:~
-                              Counter.person(
-                                context,
-                                'test_ride',
-                                'Unit Test Ride',
                                 defaultNumber: 0,
                               ),
 

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 
@@ -42,22 +43,23 @@ class LoadHeadActsDetail extends HeadStoreEvent {
 }
 
 class InsertMorningBriefing extends HeadStoreEvent {
-  final EmployeeModel employee;
+  final BuildContext context;
+  // final EmployeeModel employee;
   final String actId;
   final String desc;
-  final ImageState img;
-  final String locationName;
-  final List<int> values;
+  // final ImageState img;
+  // final String locationName;
+  // final List<int> values;
 
   InsertMorningBriefing({
     super.employeeID = '',
     super.activityID = '',
-    required this.employee,
+    required this.context,
     required this.actId,
     required this.desc,
-    required this.img,
-    required this.locationName,
-    required this.values,
+    // required this.img,
+    // required this.locationName,
+    // required this.values,
   });
 
   get user => null;

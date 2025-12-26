@@ -1436,13 +1436,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       context.read<DashboardSlidingUpCubit>().changeType(
                         DashboardSlidingUpType.newManagerActivity,
                       );
-
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const HeadNewActsScreen(),
-                      //   ),
-                      // );
                     },
                     backgroundColor: Colors.blue[200],
                     child: const Icon(

@@ -71,14 +71,15 @@ class Functions {
   // image -> user input
   static Future<void> manageNewHeadStoreAct(
     final BuildContext context,
-    final String actTypeId,
-    final String desc,
-    // final String img,
-  ) async {
+    final String actTypeId, {
+    final String desc = '',
+    // HeadBriefingCreationModel? briefing,
+  }) async {
     log('Activity Code: $actTypeId');
 
     switch (actTypeId) {
       case '00':
+        log('Morning Briefing');
         final headMasterCubit = context.read<HeadActsMasterCubit>().state;
         if (headMasterCubit is HeadActsMasterLoaded) {
           log('Location: ${headMasterCubit.briefingMaster[0].bsName}');
@@ -103,28 +104,14 @@ class Functions {
         log('Image state: ${context.read<ImageCubit>().state}');
         context.read<HeadStoreBloc>().add(
           InsertMorningBriefing(
-            employee: (context.read<LoginBloc>().state as LoginSuccess).user,
+            context: context,
             actId: actTypeId,
             desc: desc,
-            img: context.read<ImageCubit>().state,
-            locationName:
-                (context.read<HeadActsMasterCubit>().state
-                    is HeadActsMasterLoaded)
-                ? (context.read<HeadActsMasterCubit>().state
-                          as HeadActsMasterLoaded)
-                      .briefingMaster[0]
-                      .bsName
-                : (context.read<LoginBloc>().state as LoginSuccess).user.bsName,
-            values: counterCubit.getBriefingValues([
-              'shop_manager',
-              'sales_counter',
-              'salesman',
-              'others',
-            ]),
           ),
         );
         break;
       case '01':
+        log('Visit Market');
         // context.read<HeadStoreBloc>().add(
         //   InsertVisitMarket(
         //     employee: employee,
@@ -137,6 +124,7 @@ class Functions {
         // );
         break;
       case '02':
+        log('Recruitment');
         // context.read<HeadStoreBloc>().add(
         //   InsertRecruitment(
         //     employee: employee,
@@ -149,6 +137,7 @@ class Functions {
         // );
         break;
       case '03':
+        log('Interview');
         // context.read<HeadStoreBloc>().add(
         //   InsertInterview(
         //     employee: employee,
@@ -161,6 +150,7 @@ class Functions {
         // );
         break;
       case '04':
+        log('Daily Report');
         // context.read<HeadStoreBloc>().add(
         //   InsertDailyReport(
         //     employee: employee,

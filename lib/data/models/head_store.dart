@@ -1,5 +1,6 @@
 // Model for Shop Manager Activities
 // 2401/003346 -> HARKA WICAKSONO
+
 class HeadActsModel {
   String employeeId;
   String employeeName;
@@ -82,6 +83,14 @@ class HeadActsDetailsModel {
   }
 }
 
+// ~:New:~
+class HeadBriefingCreationModel {
+  final String mode;
+  final String desc;
+
+  HeadBriefingCreationModel(this.mode, this.desc);
+}
+
 class HeadBriefingMasterModel {
   final String bsName;
   final String area;
@@ -114,22 +123,6 @@ class HeadBriefingMasterModel {
   }
 }
 
-// "bsName": "SENTRAL YAMAHA MALANG",
-//       "area": "MALANG",
-//       "currentDate": "2025-11-12",
-//       "currentTime": "08:24",
-//       "lat": -7.9778212,
-//       "lng": 112.6297474,
-//       "lokasi": "DEALER",
-//       "topic": "PENJUALAN MINGGU KE 2",
-//       "pic1Thumb":
-// "employeeID": "2006/002812",
-//       "eName": "EVAN AGUS MAULANA",
-//       "peserta": 30,
-//       "shopManager": 1,
-//       "salesCounter": 2,
-//       "salesman": 27,
-//       "others": 0
 class HeadBriefingDetailsModel {
   final String bsName;
   final String area;
@@ -187,6 +180,48 @@ class HeadBriefingDetailsModel {
       others: json['others'],
     );
   }
+}
+
+class HeadVisitCreationModel {
+  final String mode;
+  final String branch;
+  final String shop;
+  final String currentDate;
+  final String currentTime;
+  final double lat;
+  final double lng;
+  final String activityType;
+  final String location;
+  final int salesman;
+  final String unitDisplay;
+  final int database;
+  final int hotProspek;
+  final int deal;
+  final String unitTestRide;
+  final int participantsTestRide;
+  final String pic1;
+  final String employeeId;
+
+  HeadVisitCreationModel({
+    required this.mode,
+    required this.branch,
+    required this.shop,
+    required this.currentDate,
+    required this.currentTime,
+    required this.lat,
+    required this.lng,
+    required this.activityType,
+    required this.location,
+    required this.salesman,
+    required this.unitDisplay,
+    required this.database,
+    required this.hotProspek,
+    required this.deal,
+    required this.unitTestRide,
+    required this.participantsTestRide,
+    required this.pic1,
+    required this.employeeId,
+  });
 }
 
 class HeadVisitMasterModel {
@@ -265,6 +300,34 @@ class HeadVisitDetailsModel {
   }
 }
 
+class HeadRecruitmentCreationModel {
+  final String mode;
+  final String branch;
+  final String shop;
+  final String currentDate;
+  final String currentTime;
+  final double lat;
+  final double lng;
+  final String media;
+  final String posisi;
+  final String pic1;
+  final String employeeID;
+
+  HeadRecruitmentCreationModel({
+    required this.mode,
+    required this.branch,
+    required this.shop,
+    required this.currentDate,
+    required this.currentTime,
+    required this.lat,
+    required this.lng,
+    required this.media,
+    required this.posisi,
+    required this.pic1,
+    required this.employeeID,
+  });
+}
+
 class HeadRecruitmentMasterModel {
   final String bsName;
   final String area;
@@ -324,6 +387,38 @@ class HeadRecruitmentDetailsModel {
       posisi: json['posisi'],
     );
   }
+}
+
+class HeadInterviewCreationModel {
+  final String mode;
+  final String branch;
+  final String shop;
+  final String currentDate;
+  final String currentTime;
+  final double lat;
+  final double lng;
+  final int dipanggil;
+  final int datang;
+  final int diterima;
+  final String pic1;
+  final String employeeID;
+  final List<HeadMediaMasterModel> listMedia;
+
+  HeadInterviewCreationModel({
+    required this.mode,
+    required this.branch,
+    required this.shop,
+    required this.currentDate,
+    required this.currentTime,
+    required this.lat,
+    required this.lng,
+    required this.dipanggil,
+    required this.datang,
+    required this.diterima,
+    required this.pic1,
+    required this.employeeID,
+    required this.listMedia,
+  });
 }
 
 class HeadInterviewMasterModel {
@@ -441,6 +536,38 @@ class HeadMediaDetailsModel {
       qty: json['qty'],
     );
   }
+}
+
+class HeadReportCreationModel {
+  final String mode;
+  final String branch;
+  final String shop;
+  final String currentDate;
+  final String currentTime;
+  final double lat;
+  final double lng;
+  final String pic1;
+  final String employeeID;
+  final List<HeadStuCategoriesMasterModel> listCategory;
+  final List<HeadPaymentMasterModel> listPayment;
+  final List<HeadLeasingMasterModel> listLeasing;
+  final List<HeadEmployeeMasterModel> listEmployee;
+
+  HeadReportCreationModel({
+    required this.mode,
+    required this.branch,
+    required this.shop,
+    required this.currentDate,
+    required this.currentTime,
+    required this.lat,
+    required this.lng,
+    required this.pic1,
+    required this.employeeID,
+    required this.listCategory,
+    required this.listPayment,
+    required this.listLeasing,
+    required this.listEmployee,
+  });
 }
 
 class HeadReportMasterModel {
