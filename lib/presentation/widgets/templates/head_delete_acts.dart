@@ -96,10 +96,9 @@ class HeadDeleteActsScreen extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => context.read<HeadStoreBloc>().add(
                     DeleteHeadActs(
-                      employeeID:
+                      employee:
                           (context.read<LoginBloc>().state as LoginSuccess)
-                              .user
-                              .employeeID,
+                              .user,
                       activityID: activityId,
                       date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
                     ),

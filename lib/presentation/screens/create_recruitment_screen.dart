@@ -52,43 +52,45 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
             vertical: 20,
           ),
           child: Column(
-            spacing: 10,
+            spacing: 8,
             children: [
-              // ~:Header:~
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ~:Title:~
-                    Text(
-                      'Informasi Laporan',
-                      style: TextThemes.subtitle.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    // ~:Description:~
-                    Text(
-                      'Masukkan data untuk membuat laporan rekrutmen.',
-                      style: TextThemes.normal,
-                    ),
-                  ],
-                ),
-              ),
-
               // ~:Body:~
               Expanded(
-                child: Column(
-                  children: [
-                    // ~:User Input:~
-                    // includes textfields and image button
-                    Expanded(
-                      child: Column(
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    spacing: 12,
+                    children: [
+                      // ~:Header:~
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // ~:Title:~
+                            Text(
+                              'Informasi Laporan',
+                              style: TextThemes.subtitle.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            // ~:Description:~
+                            Text(
+                              'Masukkan data untuk membuat laporan rekrutmen.',
+                              style: TextThemes.normal,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // ~:User Input:~
+                      // includes textfields and image button
+                      Column(
                         children: [
                           // ~:Media Textfield:~
                           CustomTextFormField(
-                            'e.g. Instagram',
+                            'e.g. Instagram, Facebook, LinkedIn',
                             'Media',
                             const Icon(Icons.public_rounded),
                             mediaController,
@@ -110,33 +112,33 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
                           DottedRoundedImagePicker(isUploadWithGallery: true),
                         ],
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+              ),
 
-                    // ~:Create Button:~
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 20,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 24,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Buat',
-                          style: TextThemes.subtitle,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
+              // ~:Create Button:~
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 20,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 24,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Buat',
+                    style: TextThemes.subtitle,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ],

@@ -85,9 +85,10 @@ abstract class HeadStoreRepo {
   );
 
   Future<Map<String, dynamic>> deleteActivity(
+    String apiEndpoint,
     String mode,
-    String employeeID,
-    String activityID,
+    String branch,
+    String shop,
     String date,
   );
 

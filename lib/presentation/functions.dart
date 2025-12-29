@@ -72,7 +72,15 @@ class Functions {
   static Future<void> manageNewHeadStoreAct(
     final BuildContext context,
     final String actTypeId, {
+    // ~:Morning Briefing:~
     final String desc = '',
+    // ~:Visit Market:~
+    final String actTypeName = '',
+    final String unitDisplay = '',
+    final String unitTest = '',
+    // ~:Recruitment:~
+    // ~:Interview:~
+    // ~:Daily Report:~
     // HeadBriefingCreationModel? briefing,
   }) async {
     log('Activity Code: $actTypeId');
@@ -112,16 +120,60 @@ class Functions {
         break;
       case '01':
         log('Visit Market');
-        // context.read<HeadStoreBloc>().add(
-        //   InsertVisitMarket(
-        //     employee: employee,
-        //     actId: actId,
-        //     desc: desc,
-        //     img: img,
-        //     locationName: locationName,
-        //     values: values,
-        //   ),
-        // );
+        // mode
+        // employee Id
+        log(
+          'EmployeeId: ${(context.read<LoginBloc>().state as LoginSuccess).user.employeeID}',
+        );
+        // branch + shop
+        log(
+          'Branch: ${(context.read<LoginBloc>().state as LoginSuccess).user.branch}',
+        );
+        log(
+          'Shop: ${(context.read<LoginBloc>().state as LoginSuccess).user.bsName}',
+        );
+        // date & time
+        // lat & lng
+        // jenis aktivitas
+        log('Activity Type Name: $actTypeName');
+        // lokasi
+        final headMasterCubit = context.read<HeadActsMasterCubit>().state;
+        if (headMasterCubit is HeadActsMasterLoaded) {
+          log('Location: ${headMasterCubit.briefingMaster[0].bsName}');
+        } else {
+          log(
+            'Location: ${(context.read<LoginBloc>().state as LoginSuccess).user.bsName}',
+          );
+        }
+        // jumlah salesman
+        // nama unit display
+        // jumlah database
+        // jumlah hot prospek
+        // jumlah deal
+        // nama unit test ride
+        // jumlah peserta test ride
+        final counterCubit = context.read<CounterCubit>();
+        log('Total sales: ${counterCubit.getValueWithKey('ttl_sales')}');
+        log('Database: ${counterCubit.getValueWithKey('db')}');
+        log('Hot Prospek: ${counterCubit.getValueWithKey('hot_pros')}');
+        log('Deal: ${counterCubit.getValueWithKey('deal')}');
+        log(
+          'Test Ride Participant: ${counterCubit.getValueWithKey('test_ride_participant')}',
+        );
+        log('Unit Display: $unitDisplay');
+        log('Unit Test Ride: $unitTest');
+        // img
+        log('Image state: ${context.read<ImageCubit>().state}');
+
+        // mandatory: actTypeName, unitDisplay (String), unitTest (String),
+        context.read<HeadStoreBloc>().add(
+          InsertVisitMarket(
+            context: context,
+            actTypeName: actTypeName,
+            unitDisplay: unitDisplay,
+            unitTest: unitTest,
+          ),
+        );
         break;
       case '02':
         log('Recruitment');

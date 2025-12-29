@@ -700,11 +700,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: ElevatedButton(
                   onPressed: () => context.read<HeadStoreBloc>().add(
                     DeleteHeadActs(
-                      employeeID:
-                          (context.read<LoginBloc>().state as LoginSuccess)
-                              .user
-                              .employeeID,
                       activityID: activityId,
+                      employee:
+                          (context.read<LoginBloc>().state as LoginSuccess)
+                              .user,
                       date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
                     ),
                   ),

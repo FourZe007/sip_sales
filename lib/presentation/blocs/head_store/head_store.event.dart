@@ -66,25 +66,19 @@ class InsertMorningBriefing extends HeadStoreEvent {
 }
 
 class InsertVisitMarket extends HeadStoreEvent {
-  final EmployeeModel employee;
-  final String actId;
-  final String desc;
-  final ImageState img;
-  final String locationName;
-  final List<int> values;
+  final BuildContext context;
+  final String actTypeName;
+  final String unitDisplay;
+  final String unitTest;
 
   InsertVisitMarket({
     super.employeeID = '',
     super.activityID = '',
-    required this.employee,
-    required this.actId,
-    required this.desc,
-    required this.img,
-    required this.locationName,
-    required this.values,
+    required this.context,
+    required this.actTypeName,
+    required this.unitDisplay,
+    required this.unitTest,
   });
-
-  get user => null;
 }
 
 class InsertRecruitment extends HeadStoreEvent {
@@ -154,11 +148,13 @@ class InsertDailyReport extends HeadStoreEvent {
 }
 
 class DeleteHeadActs extends HeadStoreEvent {
+  final EmployeeModel employee;
   final String date;
 
   DeleteHeadActs({
-    required super.employeeID,
-    required super.activityID,
+    super.employeeID = '',
+    super.activityID = '',
+    required this.employee,
     required this.date,
   });
 }

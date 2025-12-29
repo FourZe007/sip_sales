@@ -5,7 +5,9 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:sip_sales_clean/core/constant/api.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
+import 'package:sip_sales_clean/core/helpers/validator.dart';
 import 'package:sip_sales_clean/domain/repositories/followup_domain.dart';
 import 'package:sip_sales_clean/domain/repositories/head_store_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
@@ -171,6 +173,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
 
       final employee =
           (event.context.read<LoginBloc>().state as LoginSuccess).user;
+      log('EmployeeId: ${employee.employeeID}');
       final isDescEmpty = event.desc.isEmpty;
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
@@ -289,44 +292,59 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     try {
       emit(HeadStoreLoading(isInsert: true));
 
-      if (event.desc.isEmpty) {
+      final employee =
+          (event.context.read<LoginBloc>().state as LoginSuccess).user;
+      final isActEmpty = event.actTypeName.isEmpty;
+      final isUnitDisplayEmpty = event.unitDisplay.isEmpty;
+      final isUnitTestEmpty = event.unitTest.isEmpty;
+      final img = event.context.read<ImageCubit>().state;
+      final isImgInvalid = img is ImageInitial || img is ImageError;
+      final validator = Validator.visitMarket(
+        isActEmpty: isActEmpty,
+        isUnitDisplayEmpty: isUnitDisplayEmpty,
+        isUnitTestEmpty: isUnitTestEmpty,
+        isImgInvalid: isImgInvalid,
+      );
+      final headActsMaster = event.context.read<HeadActsMasterCubit>().state;
+      final counter = event.context.read<CounterCubit>().getBriefingValues([
+        'ttl_sales',
+        'db',
+        'hot_pros',
+        'deal',
+        'test_ride_participant',
+      ]);
+
+      if (!validator.isValid) {
         emit(
           HeadStoreInsertFailed(
-            HeadStoreActTypes.morningBriefing,
-            'Deskripsi tidak boleh kosong',
-          ),
-        );
-        return;
-      } else if (event.img is ImageInitial || event.img is ImageError) {
-        emit(
-          HeadStoreInsertFailed(
-            HeadStoreActTypes.morningBriefing,
-            event.img is ImageInitial
-                ? 'Foto tidak boleh kosong'
-                : (event.img as ImageError).message,
+            HeadStoreActTypes.visitMarket,
+            validator.errorMessage!,
           ),
         );
         return;
       } else {
-        // final res = await headStoreRepo.insertNewVisitActivity(
-        //   '1',
-        //   event.employee.branch,
-        //   event.employee.shop,
-        //   DateFormat('yyyy-MM-dd').format(DateTime.now()),
-        //   DateFormat('HH:mm').format(DateTime.now()),
-        //   (await Geolocator.getCurrentPosition()).latitude,
-        //   (await Geolocator.getCurrentPosition()).longitude,
-        //   base64Encode(await (event.img as ImageCaptured).image.readAsBytes()),
-        //   event.employee.employeeID,
-        //   event.locationName,
-        //   event.desc,
-        //   event.values[0],
-        //   event.values[1],
-        //   event.values[2],
-        //   event.values[3],
-        //   event.values[4],
-        // );
-        final res = {};
+        final res = await headStoreRepo.insertNewVisitActivity(
+          '1',
+          employee.branch,
+          employee.shop,
+          DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          DateFormat('HH:mm').format(DateTime.now()),
+          (await Geolocator.getCurrentPosition()).latitude,
+          (await Geolocator.getCurrentPosition()).longitude,
+          event.actTypeName,
+          (headActsMaster is HeadActsMasterLoaded)
+              ? headActsMaster.briefingMaster[0].bsName
+              : employee.bsName,
+          counter[0],
+          event.unitDisplay,
+          counter[1],
+          counter[2],
+          counter[3],
+          event.unitTest,
+          counter[4],
+          base64Encode(await (img as ImageCaptured).image.readAsBytes()),
+          employee.employeeID,
+        );
         log('$res');
 
         if (res['status'] == 'success' && res['code'] == '100') {
@@ -491,11 +509,31 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         ),
       );
 
+      String apiEndpoint = '';
+      switch (event.activityID) {
+        case ('00'):
+          apiEndpoint = APIConstants.headBriefingMasterEndpoint;
+          break;
+        case ('01'):
+          apiEndpoint = APIConstants.headVisitMasterEndpoint;
+          break;
+        case ('02'):
+          apiEndpoint = APIConstants.headRecruitmentMasterEndpoint;
+          break;
+        case ('03'):
+          apiEndpoint = APIConstants.headInterviewMasterEndpoint;
+          break;
+        case ('04'):
+          apiEndpoint = APIConstants.headReportMasterEndpoint;
+          break;
+      }
+
       final res = await headStoreRepo.deleteActivity(
+        apiEndpoint,
         '2',
-        event.employeeID,
+        event.employee.branch,
+        event.employee.shop,
         event.date,
-        event.activityID,
       );
       log('$res');
 

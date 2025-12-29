@@ -174,28 +174,19 @@ class HeadStoreDataImp implements HeadStoreRepo {
 
   @override
   Future<Map<String, dynamic>> deleteActivity(
+    String apiEndpoint,
     String mode,
-    String employeeId,
+    String branch,
+    String shop,
     String date,
-    String activityId,
   ) async {
-    Uri uri = Uri.https(
-      APIConstants.baseUrl,
-      APIConstants.insertNewHeadActsEndpoint,
-    );
+    Uri uri = Uri.https(APIConstants.baseUrl, apiEndpoint);
 
     Map body = {
       "Mode": mode,
-      "EmployeeID": employeeId,
+      "Branch": branch,
+      "Shop": shop,
       "CurrentDate": date,
-      "CurrentTime": '',
-      "Branch": '',
-      "Shop": '',
-      "Lat": 0,
-      "Lng": 0,
-      "ActivityID": activityId,
-      "ActivityDescription": '',
-      "Pic1": '',
     };
 
     final response = await http
