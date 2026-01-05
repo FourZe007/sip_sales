@@ -27,6 +27,12 @@ import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:geolocator/geolocator.dart';
 
 class Functions {
+  // ~:Connection Check:~
+  static Future<bool> checkConnection() async {
+    final result = await InternetAddress.lookup('wsip.yamaha-jatim.co.id');
+    return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+  }
+
   static AndroidOptions getAndroidOptions() => const AndroidOptions(
     encryptedSharedPreferences: true,
   );

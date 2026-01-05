@@ -28,6 +28,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     try {
+      // if (!await Functions.checkConnection()) {
+      //   emit(
+      //     LoginFailed(
+      //       message: 'No internet connection',
+      //       isRefresh: event.isRefresh,
+      //     ),
+      //   );
+      //   return;
+      // }
+
       emit(LoginLoading(isRefresh: event.isRefresh));
 
       // Determine credentials: use provided ones (explicit login), otherwise try stored ones (auto-login)
@@ -76,18 +86,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               case 0:
                 log('Head Store');
                 if (event.context.mounted) {
-                  await Future.wait([
-                    event.context
-                        .read<SpkLeasingFilterCubit>()
-                        .loadFilterData(),
-                    event.context.read<HeadActTypesCubit>().fetchActTypes(),
-                    event.context
-                        .read<HeadActsMasterCubit>()
-                        .fetchHeadActsMasterData(
-                          loginRes['data'].branch,
-                          loginRes['data'].shop,
-                        ),
-                  ]);
+                  // await Future.wait([]);
+                  event.context.read<SpkLeasingFilterCubit>().loadFilterData();
+                  event.context.read<HeadActTypesCubit>().fetchActTypes();
+                  event.context
+                      .read<HeadActsMasterCubit>()
+                      .fetchHeadActsMasterData(
+                        loginRes['data'].branch,
+                        loginRes['data'].shop,
+                      );
                 }
                 break;
               // ~:Salesman:~

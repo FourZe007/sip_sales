@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 import 'package:sip_sales_clean/routes.dart';
 
@@ -50,11 +52,20 @@ class _SplashScreenState extends State<SplashScreen> {
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) async {
             if (state is LoginUnauthenticated || state is LoginFailed) {
-              if (context.mounted) {
-                Navigator.pushReplacementNamed(
-                  context,
-                  ConstantRoutes.login,
+              log('Login State: $state');
+              if (state is LoginFailed &&
+                  state.message.toLowerCase().contains('failed host lookup')) {
+                log('No internet connection');
+                Functions.customFlutterToast(
+                  'No internet connection',
                 );
+              } else {
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    ConstantRoutes.login,
+                  );
+                }
               }
             } else if (state is LoginSuccess) {
               // On auto-login success, continue to next screen (e.g., location)
