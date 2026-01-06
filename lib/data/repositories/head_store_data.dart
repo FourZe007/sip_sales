@@ -31,7 +31,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
   ) async {
     Uri uri = Uri.https(
       APIConstants.baseUrl,
-      APIConstants.insertNewHeadActsEndpoint,
+      APIConstants.insertHeadBriefingEndpoint,
     );
 
     Map body = {
@@ -117,7 +117,71 @@ class HeadStoreDataImp implements HeadStoreRepo {
     String pic1,
     String employeeId,
   ) async {
-    return {};
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.insertHeadBriefingEndpoint,
+    );
+
+    Map body = {
+      // "Mode": mode,
+      // "Branch": branch,
+      // "Shop": shop,
+      // "CurrentDate": date,
+      // "CurrentTime": time,
+      // "Lat": lat,
+      // "Lng": lng,
+      // "Pic1": img,
+      // "EmployeeID": employeeId,
+      // "Lokasi": locationName,
+      // "Topic": description,
+      // "peserta": numberOfParticipants,
+      // "shopManager": headStore,
+      // "salesCounter": salesCounter,
+      // "salesman": salesman,
+      // "others": others,
+    };
+    log('Body: $body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': 'fail',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([]).map((e) => ResultMessageModel.fromJson(e)).toList(),
+      };
+    }
   }
 
   @override

@@ -189,7 +189,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         emit(
           HeadStoreInsertFailed(
             HeadStoreActTypes.morningBriefing,
-            'Deskripsi tidak boleh kosong dan foto tidak boleh kosong',
+            'Deskripsi dan foto tidak boleh kosong',
           ),
         );
         return;

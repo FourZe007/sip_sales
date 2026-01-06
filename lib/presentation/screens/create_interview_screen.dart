@@ -86,6 +86,24 @@ class _CreateInterviewScreenState extends State<CreateInterviewScreen> {
                             children: [
                               Counter.person(
                                 context,
+                                'called_mp',
+                                'Jumlah yg dipanggil',
+                                defaultNumber: 0,
+                              ),
+                              Counter.person(
+                                context,
+                                'came_mp',
+                                'Jumlah yg datang',
+                                defaultNumber: 0,
+                              ),
+                              Counter.person(
+                                context,
+                                'acc_mp',
+                                'Jumlah yg diterima',
+                                defaultNumber: 0,
+                              ),
+                              Counter.person(
+                                context,
                                 'fb_itv',
                                 'Facebook',
                                 defaultNumber: 0,
@@ -124,24 +142,6 @@ class _CreateInterviewScreenState extends State<CreateInterviewScreen> {
                                   'cv_itv',
                                   'other_itv',
                                 ],
-                              ),
-                              Counter.person(
-                                context,
-                                'called_mp',
-                                'Jumlah yg dipanggil',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'came_mp',
-                                'Jumlah yg datang',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'acc_mp',
-                                'Jumlah yg diterima',
-                                defaultNumber: 0,
                               ),
                             ],
                           ),
