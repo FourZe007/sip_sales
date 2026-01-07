@@ -119,26 +119,28 @@ class HeadStoreDataImp implements HeadStoreRepo {
   ) async {
     Uri uri = Uri.https(
       APIConstants.baseUrl,
-      APIConstants.insertHeadBriefingEndpoint,
+      APIConstants.insertHeadVisitEndpoint,
     );
 
     Map body = {
-      // "Mode": mode,
-      // "Branch": branch,
-      // "Shop": shop,
-      // "CurrentDate": date,
-      // "CurrentTime": time,
-      // "Lat": lat,
-      // "Lng": lng,
-      // "Pic1": img,
-      // "EmployeeID": employeeId,
-      // "Lokasi": locationName,
-      // "Topic": description,
-      // "peserta": numberOfParticipants,
-      // "shopManager": headStore,
-      // "salesCounter": salesCounter,
-      // "salesman": salesman,
-      // "others": others,
+      "Mode": mode,
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+      "CurrentTime": time,
+      "Lat": lat,
+      "Lng": lng,
+      "JenisAktivitas": activityType,
+      "Lokasi": location,
+      "Salesman": salesman,
+      "UnitDisplay": unitDisplay,
+      "Database": database,
+      "HotProspek": hotProspek,
+      "Deal": deal,
+      "UnitTestRide": unitTestRide,
+      "PesertaTestRide": participantsTestRide,
+      "Pic1": pic1,
+      "EmployeeID": employeeId,
     };
     log('Body: $body');
 
@@ -188,14 +190,76 @@ class HeadStoreDataImp implements HeadStoreRepo {
   Future<Map<String, dynamic>> insertNewRecruitmentActivity(
     String mode,
     String branch,
+    String shop,
+    String date,
+    String time,
     double lat,
     double lng,
     String media,
-    String posisi,
+    String position,
     String pic1,
     String employeeID,
   ) async {
-    return {};
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.insertHeadRecruitmentEndpoint,
+    );
+
+    Map body = {
+      "Mode": mode,
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+      "CurrentTime": time,
+      "Lat": lat,
+      "Lng": lng,
+      "Media": media,
+      "Posisi": position,
+      "Pic1": pic1,
+      "EmployeeID": employeeID,
+    };
+    log('Body: $body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': 'fail',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([]).map((e) => ResultMessageModel.fromJson(e)).toList(),
+      };
+    }
   }
 
   @override
@@ -203,18 +267,79 @@ class HeadStoreDataImp implements HeadStoreRepo {
     String mode,
     String branch,
     String shop,
-    String currentDate,
-    String currentTime,
+    String date,
+    String time,
     double lat,
     double lng,
-    int dipanggil,
-    int datang,
-    int diterima,
+    int called,
+    int came,
+    int accepted,
     String pic1,
     String employeeID,
-    List<HeadMediaMasterModel> listMedia,
+    List<HeadMediaDetailsModel> listMedia,
   ) async {
-    return {};
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.insertHeadInterviewEndpoint,
+    );
+
+    Map body = {
+      "Mode": mode,
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+      "CurrentTime": time,
+      "Lat": lat,
+      "Lng": lng,
+      "Dipanggil": called,
+      "Datang": came,
+      "Diterima": accepted,
+      "Pic1": pic1,
+      "EmployeeID": employeeID,
+      "ListMedia": listMedia,
+    };
+    log('Body: $body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': 'fail',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([]).map((e) => ResultMessageModel.fromJson(e)).toList(),
+      };
+    }
   }
 
   @override
@@ -233,7 +358,68 @@ class HeadStoreDataImp implements HeadStoreRepo {
     List<HeadLeasingMasterModel> leasingList,
     List<HeadEmployeeMasterModel> employeeList,
   ) async {
-    return {};
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.insertHeadReportEndpoint,
+    );
+
+    Map body = {
+      "Mode": mode,
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+      "CurrentTime": time,
+      "Lat": lat,
+      "Lng": lng,
+      "Img": img,
+      "EmployeeID": employeeId,
+      "ListCategory": categoryList,
+      "ListPayment": paymentList,
+      "ListLeasing": leasingList,
+      "ListEmployee": employeeList,
+    };
+    log('Body: $body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': 'fail',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([]).map((e) => ResultMessageModel.fromJson(e)).toList(),
+      };
+    }
   }
 
   @override

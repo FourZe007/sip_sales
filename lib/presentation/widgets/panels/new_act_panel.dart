@@ -83,6 +83,12 @@ class _NewActPanelState extends State<NewActPanel> {
         ),
       );
     } else if (actName.contains('visit')) {
+      context.read<CounterCubit>().setInitial('ttl_sales', 0);
+      context.read<CounterCubit>().setInitial('db', 0);
+      context.read<CounterCubit>().setInitial('hot_pros', 0);
+      context.read<CounterCubit>().setInitial('deal', 0);
+      context.read<CounterCubit>().setInitial('test_ride_participant', 0);
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -108,9 +114,9 @@ class _NewActPanelState extends State<NewActPanel> {
         context.read<CounterCubit>().setInitial('training_itv', 0);
         context.read<CounterCubit>().setInitial('cv_itv', 0);
         context.read<CounterCubit>().setInitial('other_itv', 0);
-        context.read<CounterCubit>().setInitial('called_mp', 0);
-        context.read<CounterCubit>().setInitial('came_mp', 0);
-        context.read<CounterCubit>().setInitial('acc_mp', 0);
+        context.read<CounterCubit>().setInitial('called', 0);
+        context.read<CounterCubit>().setInitial('came', 0);
+        context.read<CounterCubit>().setInitial('acc', 0);
 
         Navigator.push(
           context,

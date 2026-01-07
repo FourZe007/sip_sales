@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/leasing_data_table.dart';
@@ -11,6 +12,9 @@ import 'package:sip_sales_clean/data/models/payment_data_table.dart';
 import 'package:sip_sales_clean/data/models/sales.dart';
 import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
 import 'package:sip_sales_clean/data/models/stu_data_table.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_state.dart';
@@ -25,6 +29,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_state.dart';
+import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
 import 'package:sip_sales_clean/presentation/widgets/image/dotted_rounded_image_picker.dart';
@@ -569,10 +574,63 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   width: MediaQuery.of(context).size.width,
                   height: 24,
                   alignment: Alignment.center,
-                  child: Text(
-                    'Buat',
-                    style: TextThemes.subtitle,
-                    textAlign: TextAlign.center,
+                  child: BlocConsumer<HeadStoreBloc, HeadStoreState>(
+                    buildWhen: (previous, current) =>
+                        (current is HeadStoreLoading &&
+                            current.isInsert &&
+                            !current.isActs &&
+                            !current.isDashboard) ||
+                        current is HeadStoreInsertSucceed ||
+                        current is HeadStoreInsertFailed,
+                    listener: (context, state) {
+                      if (state is HeadStoreInsertFailed) {
+                        Functions.customFlutterToast(state.message);
+                      } else if (state is HeadStoreInsertSucceed) {
+                        Functions.customFlutterToast(
+                          'Aktivitas berhasil dibuat',
+                        );
+
+                        context.read<HeadStoreBloc>().add(
+                          LoadHeadActs(
+                            employeeID:
+                                (context.read<LoginBloc>().state
+                                        as LoginSuccess)
+                                    .user
+                                    .employeeID,
+                            date: DateFormat(
+                              'yyyy-MM-dd',
+                            ).format(DateTime.now()),
+                          ),
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is HeadStoreLoading &&
+                          state.isInsert &&
+                          !state.isActs &&
+                          !state.isDashboard &&
+                          !state.isActsDetail &&
+                          !state.isDelete) {
+                        if (Platform.isIOS) {
+                          return const CupertinoActivityIndicator(
+                            radius: 12.5,
+                            color: Colors.black,
+                          );
+                        } else {
+                          return const AndroidLoading(
+                            warna: Colors.black,
+                            strokeWidth: 3,
+                          );
+                        }
+                      } else {
+                        return Text(
+                          'Buat',
+                          style: TextThemes.subtitle,
+                          textAlign: TextAlign.center,
+                        );
+                      }
+                    },
                   ),
                 ),
               ),

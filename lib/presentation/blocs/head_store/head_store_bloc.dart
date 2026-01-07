@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/api.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/validator.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/domain/repositories/followup_domain.dart';
 import 'package:sip_sales_clean/domain/repositories/head_store_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
@@ -178,7 +179,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
       final headActsMaster = event.context.read<HeadActsMasterCubit>().state;
-      final counter = event.context.read<CounterCubit>().getBriefingValues([
+      final counter = event.context.read<CounterCubit>().getValues([
         'shop_manager',
         'sales_counter',
         'salesman',
@@ -306,7 +307,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         isImgInvalid: isImgInvalid,
       );
       final headActsMaster = event.context.read<HeadActsMasterCubit>().state;
-      final counter = event.context.read<CounterCubit>().getBriefingValues([
+      final counter = event.context.read<CounterCubit>().getValues([
         'ttl_sales',
         'db',
         'hot_pros',
@@ -349,7 +350,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
 
         if (res['status'] == 'success' && res['code'] == '100') {
           log('Success');
-          emit(HeadStoreInsertSucceed(HeadStoreActTypes.morningBriefing));
+          emit(HeadStoreInsertSucceed(HeadStoreActTypes.visitMarket));
         } else if (res['status'] == 'fail' &&
             res['code'] == '200' &&
             (res['data'] as List)[0].resultMessage.toLowerCase().contains(
@@ -357,14 +358,14 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
             )) {
           emit(
             HeadStoreInsertFailed(
-              HeadStoreActTypes.morningBriefing,
+              HeadStoreActTypes.visitMarket,
               'Aktivitas sudah pernah diinput',
             ),
           );
         } else {
           emit(
             HeadStoreInsertFailed(
-              HeadStoreActTypes.morningBriefing,
+              HeadStoreActTypes.visitMarket,
               res['msg'],
             ),
           );
@@ -402,7 +403,69 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     InsertRecruitment event,
     Emitter<HeadStoreState> emit,
   ) async {
-    try {} on LocationServiceDisabledException {
+    try {
+      emit(HeadStoreLoading(isInsert: true));
+
+      final employee =
+          (event.context.read<LoginBloc>().state as LoginSuccess).user;
+      final isMediaEmpty = event.media.isEmpty;
+      final isPositionEmpty = event.position.isEmpty;
+      final img = event.context.read<ImageCubit>().state;
+      final isImgInvalid = img is ImageInitial || img is ImageError;
+      final validator = Validator.recruitment(
+        isMediaEmpty: isMediaEmpty,
+        isPositionEmtpy: isPositionEmpty,
+        isImgInvalid: isImgInvalid,
+      );
+
+      if (!validator.isValid) {
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.recruitment,
+            validator.errorMessage!,
+          ),
+        );
+        return;
+      } else {
+        final res = await headStoreRepo.insertNewRecruitmentActivity(
+          '1',
+          employee.branch,
+          employee.shop,
+          DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          DateFormat('HH:mm').format(DateTime.now()),
+          (await Geolocator.getCurrentPosition()).latitude,
+          (await Geolocator.getCurrentPosition()).longitude,
+          event.media,
+          event.position,
+          base64Encode(await (img as ImageCaptured).image.readAsBytes()),
+          employee.employeeID,
+        );
+        log('$res');
+
+        if (res['status'] == 'success' && res['code'] == '100') {
+          log('Success');
+          emit(HeadStoreInsertSucceed(HeadStoreActTypes.recruitment));
+        } else if (res['status'] == 'fail' &&
+            res['code'] == '200' &&
+            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
+              'duplicate key',
+            )) {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.recruitment,
+              'Aktivitas sudah pernah diinput',
+            ),
+          );
+        } else {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.recruitment,
+              res['msg'],
+            ),
+          );
+        }
+      }
+    } on LocationServiceDisabledException {
       emit(
         HeadStoreInsertFailed(
           HeadStoreActTypes.recruitment,
@@ -434,7 +497,99 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     InsertInterview event,
     Emitter<HeadStoreState> emit,
   ) async {
-    try {} on LocationServiceDisabledException {
+    try {
+      emit(HeadStoreLoading(isInsert: true));
+
+      final employee =
+          (event.context.read<LoginBloc>().state as LoginSuccess).user;
+      final img = event.context.read<ImageCubit>().state;
+      final isImgInvalid = img is ImageInitial || img is ImageError;
+      final validator = Validator.interview(
+        isImgInvalid: isImgInvalid,
+      );
+
+      if (!validator.isValid) {
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.interview,
+            validator.errorMessage!,
+          ),
+        );
+        return;
+      } else {
+        final counter = event.context.read<CounterCubit>().getValues([
+          'called',
+          'came',
+          'acc',
+          'fb_itv',
+          'ig_itv',
+          'training_itv',
+          'cv_itv',
+          'other_itv',
+        ]);
+
+        final res = await headStoreRepo.insertNewInterviewActivity(
+          '1',
+          employee.branch,
+          employee.shop,
+          DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          DateFormat('HH:mm').format(DateTime.now()),
+          (await Geolocator.getCurrentPosition()).latitude,
+          (await Geolocator.getCurrentPosition()).longitude,
+          counter[0],
+          counter[1],
+          counter[2],
+          base64Encode(await (img as ImageCaptured).image.readAsBytes()),
+          employee.employeeID,
+          [
+            HeadMediaDetailsModel(
+              mediaCode: 1,
+              qty: counter[3],
+            ),
+            HeadMediaDetailsModel(
+              mediaCode: 2,
+              qty: counter[4],
+            ),
+            HeadMediaDetailsModel(
+              mediaCode: 3,
+              qty: counter[5],
+            ),
+            HeadMediaDetailsModel(
+              mediaCode: 4,
+              qty: counter[6],
+            ),
+            HeadMediaDetailsModel(
+              mediaCode: 5,
+              qty: counter[7],
+            ),
+          ],
+        );
+        log('$res');
+
+        if (res['status'] == 'success' && res['code'] == '100') {
+          log('Success');
+          emit(HeadStoreInsertSucceed(HeadStoreActTypes.interview));
+        } else if (res['status'] == 'fail' &&
+            res['code'] == '200' &&
+            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
+              'duplicate key',
+            )) {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.interview,
+              'Aktivitas sudah pernah diinput',
+            ),
+          );
+        } else {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.interview,
+              res['msg'],
+            ),
+          );
+        }
+      }
+    } on LocationServiceDisabledException {
       emit(
         HeadStoreInsertFailed(
           HeadStoreActTypes.interview,
@@ -466,7 +621,67 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
     InsertDailyReport event,
     Emitter<HeadStoreState> emit,
   ) async {
-    try {} on LocationServiceDisabledException {
+    try {
+      emit(HeadStoreLoading(isInsert: true));
+
+      final employee =
+          (event.context.read<LoginBloc>().state as LoginSuccess).user;
+      final img = event.context.read<ImageCubit>().state;
+      final isImgInvalid = img is ImageInitial || img is ImageError;
+      final validator = Validator.interview(
+        isImgInvalid: isImgInvalid,
+      );
+
+      if (!validator.isValid) {
+        emit(
+          HeadStoreInsertFailed(
+            HeadStoreActTypes.interview,
+            validator.errorMessage!,
+          ),
+        );
+        return;
+      } else {
+        final res = await headStoreRepo.insertNewReportActivity(
+          '1',
+          employee.branch,
+          employee.shop,
+          DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          DateFormat('HH:mm').format(DateTime.now()),
+          (await Geolocator.getCurrentPosition()).latitude,
+          (await Geolocator.getCurrentPosition()).longitude,
+          base64Encode(await (img as ImageCaptured).image.readAsBytes()),
+          employee.employeeID,
+          event.categoriesList,
+          event.paymentList,
+          event.leasingList,
+          event.employeeList,
+        );
+        log('$res');
+
+        if (res['status'] == 'success' && res['code'] == '100') {
+          log('Success');
+          emit(HeadStoreInsertSucceed(HeadStoreActTypes.dailyReport));
+        } else if (res['status'] == 'fail' &&
+            res['code'] == '200' &&
+            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
+              'duplicate key',
+            )) {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.dailyReport,
+              'Aktivitas sudah pernah diinput',
+            ),
+          );
+        } else {
+          emit(
+            HeadStoreInsertFailed(
+              HeadStoreActTypes.dailyReport,
+              res['msg'],
+            ),
+          );
+        }
+      }
+    } on LocationServiceDisabledException {
       emit(
         HeadStoreInsertFailed(
           HeadStoreActTypes.dailyReport,

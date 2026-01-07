@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
@@ -85,8 +86,15 @@ class Functions {
     final String unitDisplay = '',
     final String unitTest = '',
     // ~:Recruitment:~
+    final String media = '',
+    final String position = '',
     // ~:Interview:~
     // ~:Daily Report:~
+    final String pic = '',
+    final List<HeadStuCategoriesMasterModel> categoriesList = const [],
+    final List<HeadPaymentMasterModel> paymentList = const [],
+    final List<HeadLeasingMasterModel> leasingList = const [],
+    final List<HeadEmployeeMasterModel> employeeList = const [],
     // HeadBriefingCreationModel? briefing,
   }) async {
     log('Activity Code: $actTypeId');
@@ -112,7 +120,7 @@ class Functions {
           'Number of Participants: ${counterCubit.getKeysTotalValue(['shop_manager', 'sales_counter', 'salesman', 'others'])}',
         );
         log(
-          'Morning Briefing values: ${counterCubit.getBriefingValues(['shop_manager', 'sales_counter', 'salesman', 'others'])}',
+          'Morning Briefing values: ${counterCubit.getValues(['shop_manager', 'sales_counter', 'salesman', 'others'])}',
         );
         log('Description: $desc');
         log('Image state: ${context.read<ImageCubit>().state}');
@@ -136,7 +144,7 @@ class Functions {
           'Branch: ${(context.read<LoginBloc>().state as LoginSuccess).user.branch}',
         );
         log(
-          'Shop: ${(context.read<LoginBloc>().state as LoginSuccess).user.bsName}',
+          'Shop: ${(context.read<LoginBloc>().state as LoginSuccess).user.shop}',
         );
         // date & time
         // lat & lng
@@ -183,42 +191,50 @@ class Functions {
         break;
       case '02':
         log('Recruitment');
-        // context.read<HeadStoreBloc>().add(
-        //   InsertRecruitment(
-        //     employee: employee,
-        //     actId: actId,
-        //     desc: desc,
-        //     img: img,
-        //     locationName: locationName,
-        //     values: values,
-        //   ),
-        // );
+        // mandatory: media (String), position (String),
+        log('Media: $media');
+        log('Position: $position');
+        // img
+        log('Image state: ${context.read<ImageCubit>().state}');
+
+        context.read<HeadStoreBloc>().add(
+          InsertRecruitment(
+            context: context,
+            media: media,
+            position: position,
+          ),
+        );
         break;
       case '03':
         log('Interview');
-        // context.read<HeadStoreBloc>().add(
-        //   InsertInterview(
-        //     employee: employee,
-        //     actId: actId,
-        //     desc: desc,
-        //     img: img,
-        //     locationName: locationName,
-        //     values: values,
-        //   ),
-        // );
+        final counterCubit = context.read<CounterCubit>();
+        log('Dipanggil: ${counterCubit.getValueWithKey('called')}');
+        log('Datang: ${counterCubit.getValueWithKey('came')}');
+        log('Diterima: ${counterCubit.getValueWithKey('acc')}');
+        log('Facebook: ${counterCubit.getValueWithKey('fb_itv')}');
+        log('Instagram: ${counterCubit.getValueWithKey('ig_itv')}');
+        log(
+          'Balai Latihan Kerja: ${counterCubit.getValueWithKey('training_itv')}',
+        );
+        log('Kirim CV langsung: ${counterCubit.getValueWithKey('cv_itv')}');
+        log('Other: ${counterCubit.getValueWithKey('other_itv')}');
+
+        context.read<HeadStoreBloc>().add(InsertInterview(context: context));
         break;
       case '04':
         log('Daily Report');
-        // context.read<HeadStoreBloc>().add(
-        //   InsertDailyReport(
-        //     employee: employee,
-        //     actId: actId,
-        //     desc: desc,
-        //     img: img,
-        //     locationName: locationName,
-        //     values: values,
-        //   ),
-        // );
+        log('PIC name: $pic');
+
+        context.read<HeadStoreBloc>().add(
+          InsertDailyReport(
+            context: context,
+            pic: pic,
+            categoriesList: categoriesList,
+            paymentList: paymentList,
+            leasingList: leasingList,
+            employeeList: employeeList,
+          ),
+        );
         break;
       default:
     }

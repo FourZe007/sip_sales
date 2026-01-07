@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
-import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 
 abstract class HeadStoreEvent {
   final String employeeID;
@@ -82,66 +82,49 @@ class InsertVisitMarket extends HeadStoreEvent {
 }
 
 class InsertRecruitment extends HeadStoreEvent {
-  final EmployeeModel employee;
-  final String actId;
-  final String desc;
-  final ImageState img;
-  final String locationName;
-  final List<int> values;
+  final BuildContext context;
+  final String media;
+  final String position;
 
   InsertRecruitment({
     super.employeeID = '',
     super.activityID = '',
-    required this.employee,
-    required this.actId,
-    required this.desc,
-    required this.img,
-    required this.locationName,
-    required this.values,
+    required this.context,
+    required this.media,
+    required this.position,
   });
 
   get user => null;
 }
 
 class InsertInterview extends HeadStoreEvent {
-  final EmployeeModel employee;
-  final String actId;
-  final String desc;
-  final ImageState img;
-  final String locationName;
-  final List<int> values;
-
+  final BuildContext context;
   InsertInterview({
     super.employeeID = '',
     super.activityID = '',
-    required this.employee,
-    required this.actId,
-    required this.desc,
-    required this.img,
-    required this.locationName,
-    required this.values,
+    required this.context,
   });
 
   get user => null;
 }
 
 class InsertDailyReport extends HeadStoreEvent {
-  final EmployeeModel employee;
-  final String actId;
-  final String desc;
-  final ImageState img;
-  final String locationName;
-  final List<int> values;
+  final BuildContext context;
+  final String pic;
+  final List<HeadStuCategoriesMasterModel> categoriesList;
+  final List<HeadPaymentMasterModel> paymentList;
+  final List<HeadLeasingMasterModel> leasingList;
+  final List<HeadEmployeeMasterModel> employeeList;
 
   InsertDailyReport({
     super.employeeID = '',
     super.activityID = '',
-    required this.employee,
-    required this.actId,
-    required this.desc,
-    required this.img,
-    required this.locationName,
-    required this.values,
+    required this.context,
+    required this.pic,
+    required this.categoriesList,
+    required this.paymentList,
+    required this.leasingList,
+    required this.employeeList,
   });
 
   get user => null;

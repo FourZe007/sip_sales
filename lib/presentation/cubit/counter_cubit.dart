@@ -43,6 +43,6 @@ class CounterCubit extends Cubit<Map<String, int>> {
   int getKeysTotalValue(List<String> keys) =>
       keys.map((key) => state[key] ?? 0).reduce((a, b) => a + b);
 
-  List<int> getBriefingValues(List<String> keys) =>
+  List<int> getValues(List<String> keys) =>
       [getKeysTotalValue(keys)] + keys.map((key) => state[key] ?? 0).toList();
 }

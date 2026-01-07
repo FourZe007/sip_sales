@@ -120,6 +120,56 @@ class Validator {
 
     return ValidationResult.valid();
   }
+
+  static ValidationResult recruitment({
+    required bool isMediaEmpty,
+    required bool isPositionEmtpy,
+    required bool isImgInvalid,
+  }) {
+    final errors = <String>[];
+
+    if (isMediaEmpty) errors.add('media');
+    if (isPositionEmtpy) errors.add('posisi');
+    if (isImgInvalid) errors.add('foto');
+
+    if (errors.isNotEmpty) {
+      log(errors.toString());
+      String message;
+      if (errors.length == 1) {
+        message = '${Formatter.toTitleCase(errors[0])} tidak boleh kosong';
+      } else if (errors.length == 2) {
+        message =
+            '${Formatter.toTitleCase(errors[0])} dan ${errors[1]} tidak boleh kosong';
+      } else {
+        final allButFirst = errors.first;
+        final all = errors.sublist(1, errors.length - 1).join(', ');
+        final allButLast = errors.last;
+        message =
+            '${Formatter.toTitleCase(allButFirst)}, $all, dan $allButLast tidak boleh kosong';
+      }
+
+      return ValidationResult.invalid('$message.');
+    }
+
+    return ValidationResult.valid();
+  }
+
+  static ValidationResult interview({
+    required bool isImgInvalid,
+  }) {
+    final errors = <String>[];
+
+    if (isImgInvalid) errors.add('foto');
+
+    if (errors.isNotEmpty) {
+      log(errors.toString());
+      String message = '${Formatter.toTitleCase(errors[0])} tidak boleh kosong';
+
+      return ValidationResult.invalid('$message.');
+    }
+
+    return ValidationResult.valid();
+  }
 }
 
 // final allButLast = errors.sublist(0, errors.length - 1).join(', ');

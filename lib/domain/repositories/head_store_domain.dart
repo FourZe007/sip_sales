@@ -44,10 +44,13 @@ abstract class HeadStoreRepo {
   Future<Map<String, dynamic>> insertNewRecruitmentActivity(
     String mode,
     String branch,
+    String shop,
+    String date,
+    String time,
     double lat,
     double lng,
     String media,
-    String posisi,
+    String position,
     String pic1,
     String employeeID,
   );
@@ -65,7 +68,7 @@ abstract class HeadStoreRepo {
     int diterima,
     String pic1,
     String employeeID,
-    List<HeadMediaMasterModel> listMedia,
+    List<HeadMediaDetailsModel> listMedia,
   );
 
   Future<Map<String, dynamic>> insertNewReportActivity(

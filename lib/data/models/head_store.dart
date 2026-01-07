@@ -516,23 +516,23 @@ class HeadInterviewDetailsModel {
 }
 
 class HeadMediaDetailsModel {
-  final int line;
+  final int? line;
   final int mediaCode;
-  final String mediaName;
+  final String? mediaName;
   final int qty;
 
   HeadMediaDetailsModel({
-    required this.line,
+    this.line = 0,
     required this.mediaCode,
-    required this.mediaName,
+    this.mediaName = '',
     required this.qty,
   });
 
   factory HeadMediaDetailsModel.fromJson(Map<String, dynamic> json) {
     return HeadMediaDetailsModel(
-      line: json['line'],
+      line: json.containsKey('line') ? json['line'] : null,
       mediaCode: json['mediaCode'],
-      mediaName: json['mediaName'],
+      mediaName: json['mediaName'] ?? '',
       qty: json['qty'],
     );
   }
