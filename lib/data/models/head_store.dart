@@ -536,6 +536,15 @@ class HeadMediaDetailsModel {
       qty: json['qty'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'line': line,
+      'mediaCode': mediaCode,
+      'mediaName': mediaName,
+      'qty': qty,
+    };
+  }
 }
 
 class HeadReportCreationModel {
@@ -730,6 +739,29 @@ class HeadEmployeeMasterModel {
       spk: json['spk'] ?? 0,
       stu: json['stu'] ?? 0,
       stuLm: json['stuLm'] ?? 0,
+    );
+  }
+
+  // Add a copyWith method for easier immutable updates
+  HeadEmployeeMasterModel copyWith({
+    int? line,
+    String? employeeId,
+    String? employeeName,
+    String? typeId,
+    String? position,
+    int? spk,
+    int? stu,
+    int? stuLm,
+  }) {
+    return HeadEmployeeMasterModel(
+      line: line ?? this.line,
+      employeeID: employeeId ?? employeeID,
+      eName: employeeName ?? eName,
+      eTypeID: typeId ?? eTypeID,
+      position: position ?? this.position,
+      spk: spk ?? this.spk,
+      stu: stu ?? this.stu,
+      stuLm: stuLm ?? this.stuLm,
     );
   }
 }

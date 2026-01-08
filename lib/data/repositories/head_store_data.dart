@@ -296,7 +296,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       "Diterima": accepted,
       "Pic1": pic1,
       "EmployeeID": employeeID,
-      "ListMedia": listMedia,
+      "ListMedia": listMedia.map((media) => media.toJson()).toList(),
     };
     log('Body: $body');
 

@@ -132,7 +132,7 @@ class _NewActPanelState extends State<NewActPanel> {
       context.read<PaymentBloc>().add(ResetPaymentData());
       context.read<LeasingBloc>().add(ResetLeasingData());
       log('Salesman data is empty, fetching...');
-      context.read<SalesmanTableBloc>().add(FetchSalesman());
+      context.read<SalesmanTableBloc>().add(FetchSalesman(context));
       // context.read<ReportBloc>().add(InitiateReport());
 
       Navigator.push(

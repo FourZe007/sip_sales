@@ -504,11 +504,10 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           (event.context.read<LoginBloc>().state as LoginSuccess).user;
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
-      final validator = Validator.interview(
-        isImgInvalid: isImgInvalid,
-      );
+      final validator = Validator.interview(isImgInvalid: isImgInvalid);
 
       if (!validator.isValid) {
+        log('Validator failed: ${validator.errorMessage}');
         emit(
           HeadStoreInsertFailed(
             HeadStoreActTypes.interview,
@@ -517,6 +516,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         );
         return;
       } else {
+        log('Validator passed');
         final counter = event.context.read<CounterCubit>().getValues([
           'called',
           'came',
@@ -528,6 +528,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           'other_itv',
         ]);
 
+        log('Creating the activity');
         final res = await headStoreRepo.insertNewInterviewActivity(
           '1',
           employee.branch,
@@ -541,7 +542,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           counter[2],
           base64Encode(await (img as ImageCaptured).image.readAsBytes()),
           employee.employeeID,
-          [
+          <HeadMediaDetailsModel>[
             HeadMediaDetailsModel(
               mediaCode: 1,
               qty: counter[3],
@@ -564,7 +565,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
             ),
           ],
         );
-        log('$res');
+        log('Result: $res');
 
         if (res['status'] == 'success' && res['code'] == '100') {
           log('Success');

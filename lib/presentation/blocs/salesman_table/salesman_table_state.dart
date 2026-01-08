@@ -1,12 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'package:sip_sales_clean/data/models/sales.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/data/models/sales_profile.dart';
-import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
 
 class SalesmanTableState with EquatableMixin {
   final List<SalesProfileModel> salesDraftList;
-  final List<SalesModel> fetchSalesList;
-  final List<SalesmanData> salesDataList;
+  final List<HeadReportMasterModel> fetchSalesList;
+  final List<HeadEmployeeMasterModel> salesDataList;
 
   SalesmanTableState(
     this.salesDraftList,
@@ -34,8 +33,8 @@ class SalesmanLoading extends SalesmanTableState {
 }
 
 class SalesmanFetched extends SalesmanTableState {
-  final List<SalesModel> salesList;
-  final List<SalesmanData> salesmanDataList;
+  final List<HeadReportMasterModel> salesList;
+  final List<HeadEmployeeMasterModel> salesmanDataList;
 
   SalesmanFetched(
     SalesmanTableState previousState,
@@ -77,7 +76,7 @@ class SalesmanError extends SalesmanTableState {
 // ~:Table Insertation:~
 class SalesmanModified extends SalesmanTableState {
   final SalesmanTableState previousState;
-  final List<SalesmanData> newData;
+  final List<HeadEmployeeMasterModel> newData;
 
   SalesmanModified(this.previousState, this.newData) : super([], [], newData);
 }

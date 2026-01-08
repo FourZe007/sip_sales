@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -196,6 +197,7 @@ class _CreateInterviewScreenState extends State<CreateInterviewScreen> {
                         current is HeadStoreInsertFailed,
                     listener: (context, state) {
                       if (state is HeadStoreInsertFailed) {
+                        log('Insert Failed: ${state.message}');
                         Functions.customFlutterToast(state.message);
                       } else if (state is HeadStoreInsertSucceed) {
                         Functions.customFlutterToast(

@@ -7,10 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/data/models/leasing_data_table.dart';
 import 'package:sip_sales_clean/data/models/payment_data_table.dart';
-import 'package:sip_sales_clean/data/models/sales.dart';
-import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
 import 'package:sip_sales_clean/data/models/stu_data_table.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
@@ -60,8 +59,8 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   List<StuData> stuData = [];
   List<PaymentData> paymentData = [];
   List<LeasingData> leasingData = [];
-  List<SalesmanData> salesmanData = [];
-  List<SalesModel> salesData = [];
+  List<HeadEmployeeMasterModel> salesmanData = [];
+  List<HeadReportMasterModel> salesData = [];
 
   void editStuValue(
     StuBloc stuBloc,
@@ -480,9 +479,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                 SalesmanTableState
                               >(
                                 builder: (context, state) {
-                                  salesData = state.fetchSalesList
-                                      .where((e) => e.isActive == 1)
-                                      .toList();
                                   if (state is SalesmanLoading) {
                                     if (Platform.isIOS) {
                                       return const CupertinoActivityIndicator(

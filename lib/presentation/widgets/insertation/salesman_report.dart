@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
-import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class SalesmanInsertDataSource extends DataGridSource {
@@ -12,13 +12,16 @@ class SalesmanInsertDataSource extends DataGridSource {
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, FocusNode> _focusNodes = {};
 
-  SalesmanInsertDataSource(List<SalesmanData> data, {this.onCellValueEdited}) {
+  SalesmanInsertDataSource(
+    List<HeadEmployeeMasterModel> data, {
+    this.onCellValueEdited,
+  }) {
     _salesmanData = data;
     buildDataGridRows();
     notifyListeners();
   }
 
-  List<SalesmanData> _salesmanData = [];
+  List<HeadEmployeeMasterModel> _salesmanData = [];
   List<DataGridRow> dataGridRows = [];
 
   @override
@@ -37,7 +40,7 @@ class SalesmanInsertDataSource extends DataGridSource {
     return '${rowIndex}_$cellIndex';
   }
 
-  void updateData(List<SalesmanData> newData) {
+  void updateData(List<HeadEmployeeMasterModel> newData) {
     _salesmanData = newData;
     buildDataGridRows();
     notifyListeners();
@@ -58,10 +61,10 @@ class SalesmanInsertDataSource extends DataGridSource {
       _salesmanData.asMap().entries.map<DataGridRow>((entry) {
         final index = entry.key;
         final salesman = entry.value;
-        log('Processing salesman at index $index: ${salesman.name}');
+        log('Processing salesman at index $index: ${salesman.eName}');
         return DataGridRow(
           cells: [
-            DataGridCell<String>(columnName: 'Nama', value: salesman.name),
+            DataGridCell<String>(columnName: 'Nama', value: salesman.eName),
             DataGridCell<String>(
               columnName: 'Posisi',
               value: salesman.position,

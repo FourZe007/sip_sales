@@ -9,6 +9,10 @@ class HeadActsMasterCubit extends Cubit<HeadActsMasterState> {
 
   HeadActsMasterCubit(this.headStoreRepo) : super(HeadActsMasterInit());
 
+  Future<bool> getHeadActsMasterData() async {
+    return state is HeadActsMasterLoaded;
+  }
+
   Future<void> fetchHeadActsMasterData(
     String branch,
     String shop,
@@ -83,6 +87,18 @@ class HeadActsMasterCubit extends Cubit<HeadActsMasterState> {
       if (reportRes['status'] == 'success' && reportRes['code'] == '100') {
         log(
           'Report Master fetched; length: ${(reportRes['data'] as List).length}',
+        );
+        log(
+          'STU length: ${(reportRes['data'] as List<HeadReportMasterModel>)[0].stuCategories.length}',
+        );
+        log(
+          'Payment length: ${(reportRes['data'] as List<HeadReportMasterModel>)[0].payment.length}',
+        );
+        log(
+          'Leasing length: ${(reportRes['data'] as List<HeadReportMasterModel>)[0].spkLeasing.length}',
+        );
+        log(
+          'Employee length: ${(reportRes['data'] as List<HeadReportMasterModel>)[0].employee.length}',
         );
       } else {
         log('Report Master failed');

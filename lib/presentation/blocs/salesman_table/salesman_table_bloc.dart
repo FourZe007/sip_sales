@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
-import 'package:sip_sales_clean/data/models/sales.dart';
-import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/domain/repositories/sales.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 
 class SalesmanTableBloc<BaseEvent, BaseState>
@@ -16,7 +16,7 @@ class SalesmanTableBloc<BaseEvent, BaseState>
   SalesmanTableBloc({required this.salesRepo})
     : super(SalesmanInitial([], [], [])) {
     on<ResetSalesman>(
-      (event, emit) => emit(SalesmanInitial([], [], event.salesDraftList)),
+      (event, emit) => emit(SalesmanInitial([], [], [])),
     );
     on<FetchSalesman>(fetchSalesmanHandler);
     on<AddSalesman>(addSalesmanHandler);
@@ -28,11 +28,20 @@ class SalesmanTableBloc<BaseEvent, BaseState>
 
   /// Dynamically creates a list of SalesmanData using state.fetchSalesList,
   /// extracting only the name and tier, and setting other parameters to 0.
-  List<SalesmanData> buildSalesmanDataListFromFetchSalesList() {
-    return state.fetchSalesList.map((sales) {
-      return SalesmanData(sales.userName, sales.tierLevel, 0, 0, 0);
-    }).toList();
-  }
+  // List<SalesmanData> buildSalesmanDataListFromFetchSalesList() {
+  //   return state.fetchSalesList.map((sales) {
+  //     return SalesmanData(
+  //       0,
+  //       sales.userId,
+  //       sales.userName,
+  //       sales.tierLevel,
+  //       sales.tierLevel,
+  //       0,
+  //       0,
+  //       0,
+  //     );
+  //   }).toList();
+  // }
 
   Future<void> fetchSalesmanHandler(
     FetchSalesman event,
@@ -40,40 +49,20 @@ class SalesmanTableBloc<BaseEvent, BaseState>
   ) async {
     emit(SalesmanLoading(state));
     try {
-      // ~:Secure Storage Simulation:~
-      // UserCredsModel userCredentials = await storageRepo.getUserCredentials();
-      final String userId = await Functions.readAndWriteEmployeeId();
+      final isSalesmanEmpty = await event.context
+          .read<HeadActsMasterCubit>()
+          .getHeadActsMasterData();
 
-      if (userId != '') {
-        final result = await salesRepo.fetchSalesman(userId);
+      if (!isSalesmanEmpty) {
+        final fetchedList =
+            (isSalesmanEmpty as HeadActsMasterLoaded).reportMaster;
 
-        if (result['status'] == 'success') {
-          final List<SalesModel> fetchedList = result['data'];
+        // Map from the API model to our new UI model
+        final List<HeadEmployeeMasterModel> uiList = fetchedList[0].employee;
 
-          // Map from the API model to our new UI model
-          final List<SalesmanData> uiList = fetchedList
-              .map(
-                (apiModel) => SalesmanData(
-                  apiModel.userName,
-                  apiModel.tierLevel,
-                  0,
-                  0,
-                  0,
-                ),
-              )
-              .where(
-                (e) => fetchedList.any(
-                  (f) => f.userName == e.name && f.isActive == 1,
-                ),
-              )
-              .toList();
-
-          emit(SalesmanFetched(state, fetchedList, uiList));
-        } else {
-          emit(SalesmanError(result['data']));
-        }
+        emit(SalesmanFetched(state, fetchedList, uiList));
       } else {
-        emit(SalesmanError('User credentials not found'));
+        emit(SalesmanError('No data received'));
       }
     } catch (e) {
       emit(SalesmanError(e.toString()));
@@ -190,15 +179,16 @@ class SalesmanTableBloc<BaseEvent, BaseState>
       if (state is! SalesmanFetched && state is! SalesmanModified) return;
 
       // 1. Create a NEW list from the current state's list.
-      final List<SalesmanData> newList = List<SalesmanData>.from(
-        state.salesDataList,
-      );
+      final List<HeadEmployeeMasterModel> newList =
+          List<HeadEmployeeMasterModel>.from(
+            state.salesDataList,
+          );
 
       // 2. Check for a valid index.
       if (event.rowIndex < 0 || event.rowIndex >= newList.length) return;
 
       // 3. Get a reference to the specific object to be updated.
-      SalesmanData entryToUpdate = newList[event.rowIndex];
+      HeadEmployeeMasterModel entryToUpdate = newList[event.rowIndex];
 
       // 4. Use `copyWith` and a switch on the column name to create a new instance.
       switch (event.columnName) {

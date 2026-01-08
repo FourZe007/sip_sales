@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:sip_sales_clean/data/models/new_salesman_data_table.dart';
 import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
 
@@ -14,7 +15,9 @@ class ResetSalesman extends SalesmanTableEvent {
 }
 
 class FetchSalesman extends SalesmanTableEvent {
-  FetchSalesman();
+  final BuildContext context;
+
+  FetchSalesman(this.context);
 }
 
 class AddSalesman extends SalesmanTableEvent {

@@ -218,6 +218,7 @@ class Functions {
         );
         log('Kirim CV langsung: ${counterCubit.getValueWithKey('cv_itv')}');
         log('Other: ${counterCubit.getValueWithKey('other_itv')}');
+        log('Image state: ${context.read<ImageCubit>().state}');
 
         context.read<HeadStoreBloc>().add(InsertInterview(context: context));
         break;
