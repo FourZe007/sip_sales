@@ -1,18 +1,22 @@
+import 'package:sip_sales_clean/data/models/head_store.dart';
+
 abstract class StuEvent {}
 
 class ResetStuData extends StuEvent {
-  ResetStuData();
+  final List<HeadStuCategoriesMasterModel> stuList;
+
+  ResetStuData(this.stuList);
 }
 
 class ModifyStuData extends StuEvent {
   final int rowIndex;
-  final int? newResultValue;
+  final int? newTmValue;
   final int? newTargetValue;
   final int? newLmValue;
 
   ModifyStuData({
     required this.rowIndex,
-    this.newResultValue,
+    this.newTmValue,
     this.newTargetValue,
     this.newLmValue,
   });

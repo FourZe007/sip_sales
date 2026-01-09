@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sip_sales_clean/data/models/stu_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -13,13 +13,16 @@ class StuInsertDataSource extends DataGridSource {
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, FocusNode> _focusNodes = {};
 
-  StuInsertDataSource(List<StuData> data, {this.onCellValueEdited}) {
+  StuInsertDataSource(
+    List<HeadStuCategoriesMasterModel> data, {
+    this.onCellValueEdited,
+  }) {
     _stuData = data;
     buildDataGridRows();
     notifyListeners();
   }
 
-  late List<StuData> _stuData;
+  late List<HeadStuCategoriesMasterModel> _stuData;
   late List<DataGridRow> _dataGridRows;
 
   @override
@@ -42,12 +45,15 @@ class StuInsertDataSource extends DataGridSource {
     _dataGridRows = _stuData.map<DataGridRow>((data) {
       return DataGridRow(
         cells: [
-          DataGridCell<String>(columnName: 'STU', value: data.type),
-          DataGridCell<int>(columnName: 'Result', value: data.result),
+          DataGridCell<String>(columnName: 'STU', value: data.category),
           DataGridCell<int>(columnName: 'Target', value: data.target),
-          DataGridCell<String>(columnName: 'Ach', value: data.ach),
+          DataGridCell<int>(columnName: 'Tm', value: data.tm),
+          DataGridCell<String>(columnName: 'Ach', value: data.acv.toString()),
           DataGridCell<int>(columnName: 'LM', value: data.lm),
-          DataGridCell<String>(columnName: 'Growth', value: data.growth),
+          DataGridCell<String>(
+            columnName: 'Growth',
+            value: data.growth.toString(),
+          ),
         ],
       );
     }).toList();
@@ -61,7 +67,7 @@ class StuInsertDataSource extends DataGridSource {
     final int rowIndex = _dataGridRows.indexOf(row);
     if (rowIndex == -1) return null;
 
-    final StuData stuEntry = _stuData[rowIndex];
+    final HeadStuCategoriesMasterModel stuEntry = _stuData[rowIndex];
 
     return DataGridRowAdapter(
       cells: row.getCells().asMap().entries.map<Widget>((entry) {
@@ -70,9 +76,7 @@ class StuInsertDataSource extends DataGridSource {
         final String columnName = dataGridCell.columnName;
 
         bool isEditable =
-            columnName == 'Result' ||
-            columnName == 'Target' ||
-            columnName == 'LM';
+            columnName == 'Tm' || columnName == 'Target' || columnName == 'LM';
 
         if (isEditable) {
           // Create or get controller and focus node for this cell
@@ -121,10 +125,10 @@ class StuInsertDataSource extends DataGridSource {
                 if (rowIndex != -1) {
                   switch (cellIndex) {
                     case 1:
-                      _stuData[rowIndex].result = parsedValue ?? 0;
+                      _stuData[rowIndex].target = parsedValue ?? 0;
                       break;
                     case 2:
-                      _stuData[rowIndex].target = parsedValue ?? 0;
+                      _stuData[rowIndex].tm = parsedValue ?? 0;
                       break;
                     case 4:
                       _stuData[rowIndex].lm = parsedValue ?? 0;
@@ -142,7 +146,7 @@ class StuInsertDataSource extends DataGridSource {
           );
         } else if (columnName == 'Ach') {
           // ~:Display achievement rate as a percentage string:~
-          String achievementRate = stuEntry.ach;
+          String achievementRate = stuEntry.acv.toString();
           return Center(
             child: Text(
               '$achievementRate%',
@@ -152,7 +156,7 @@ class StuInsertDataSource extends DataGridSource {
           );
         } else if (columnName == 'Growth') {
           // ~:Display growth rate as a percentage string:~
-          String growthRate = stuEntry.growth;
+          String growthRate = stuEntry.growth.toString();
           return Center(
             child: Text(
               '$growthRate%',

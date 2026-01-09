@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sip_sales_clean/data/models/leasing_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -13,9 +13,12 @@ class LeasingInsertDataSource extends DataGridSource {
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, FocusNode> _focusNodes = {};
 
-  LeasingInsertDataSource(List<LeasingData> data, {this.onCellValueEdited}) {
+  LeasingInsertDataSource(
+    List<HeadLeasingMasterModel> data, {
+    this.onCellValueEdited,
+  }) {
     log('Data Source length: ${data.length}');
-    _leasingData = List<LeasingData>.from(data);
+    _leasingData = List<HeadLeasingMasterModel>.from(data);
     buildDataGridRows();
     notifyListeners();
   }
@@ -37,9 +40,9 @@ class LeasingInsertDataSource extends DataGridSource {
   }
 
   // Method to update data and refresh the grid
-  void updateData(List<LeasingData> newData) {
+  void updateData(List<HeadLeasingMasterModel> newData) {
     log('Updating data source with ${newData.length} items');
-    _leasingData = List<LeasingData>.from(newData);
+    _leasingData = List<HeadLeasingMasterModel>.from(newData);
     buildDataGridRows();
     notifyListeners();
   }
@@ -51,19 +54,19 @@ class LeasingInsertDataSource extends DataGridSource {
   //   notifyListeners();
   // }
 
-  late List<LeasingData> _leasingData;
+  late List<HeadLeasingMasterModel> _leasingData;
   late List<DataGridRow> _dataGridRows;
 
   void buildDataGridRows() {
     _dataGridRows = _leasingData.map<DataGridRow>((data) {
       return DataGridRow(
         cells: [
-          DataGridCell<String>(columnName: 'Leasing', value: data.type),
-          DataGridCell<int>(columnName: 'SPK', value: data.spk),
-          DataGridCell<int>(columnName: 'Opened', value: data.open),
-          DataGridCell<int>(columnName: 'Accepted', value: data.accept),
-          DataGridCell<int>(columnName: 'Rejected', value: data.reject),
-          DataGridCell<double>(columnName: 'Approval', value: data.approve),
+          DataGridCell<String>(columnName: 'Leasing', value: data.leasingID),
+          DataGridCell<int>(columnName: 'Total', value: data.total),
+          DataGridCell<int>(columnName: 'Opened', value: data.terbuka),
+          DataGridCell<int>(columnName: 'Accepted', value: data.disetujui),
+          DataGridCell<int>(columnName: 'Rejected', value: data.ditolak),
+          DataGridCell<double>(columnName: 'Approval', value: data.persentase),
         ],
       );
     }).toList();
@@ -78,7 +81,7 @@ class LeasingInsertDataSource extends DataGridSource {
     final int rowIndex = _dataGridRows.indexOf(row);
     if (rowIndex == -1) return const DataGridRowAdapter(cells: []);
 
-    LeasingData leasingEntry = _leasingData[rowIndex];
+    HeadLeasingMasterModel leasingEntry = _leasingData[rowIndex];
 
     return DataGridRowAdapter(
       cells: row.getCells().asMap().entries.map<Widget>((entry) {
@@ -87,7 +90,7 @@ class LeasingInsertDataSource extends DataGridSource {
         final String columnName = dataGridCell.columnName;
 
         bool isEditable =
-            columnName == 'SPK' ||
+            columnName == 'Total' ||
             columnName == 'Opened' ||
             columnName == 'Accepted' ||
             columnName == 'Rejected';
@@ -167,7 +170,9 @@ class LeasingInsertDataSource extends DataGridSource {
           );
         } else if (columnName == 'Approval') {
           // Format the approvalRate (double 0.0-1.0) as a percentage string
-          String approvalText = (leasingEntry.approve * 100).toStringAsFixed(1);
+          String approvalText = (leasingEntry.persentase ?? 0).toStringAsFixed(
+            1,
+          );
           return Center(
             child: Text(
               '$approvalText%',

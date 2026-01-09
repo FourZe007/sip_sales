@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:sip_sales_clean/data/models/leasing_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 
 class LeasingState with EquatableMixin {
-  final List<LeasingData> data;
+  final List<HeadLeasingMasterModel> data;
 
   LeasingState(this.data);
 
@@ -19,7 +19,7 @@ class LeasingInitial extends LeasingState {
 }
 
 class AddLeasingData extends LeasingState {
-  final List<LeasingData> newData;
+  final List<HeadLeasingMasterModel> newData;
 
   AddLeasingData(this.newData) : super(newData);
 }

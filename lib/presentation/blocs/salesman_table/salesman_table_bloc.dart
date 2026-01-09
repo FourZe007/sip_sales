@@ -15,9 +15,7 @@ class SalesmanTableBloc<BaseEvent, BaseState>
 
   SalesmanTableBloc({required this.salesRepo})
     : super(SalesmanInitial([], [], [])) {
-    on<ResetSalesman>(
-      (event, emit) => emit(SalesmanInitial([], [], [])),
-    );
+    on<ResetSalesman>(resetSalesman);
     on<FetchSalesman>(fetchSalesmanHandler);
     on<AddSalesman>(addSalesmanHandler);
     on<AddSalesmanList>(addSalesmanListHandler);
@@ -25,6 +23,11 @@ class SalesmanTableBloc<BaseEvent, BaseState>
     on<ModifySalesmanStatus>(modifySalesmanStatusHandler);
     // on<RemoveSalesman>(removeSalesmanHandler);
   }
+
+  Future<void> resetSalesman(
+    ResetSalesman event,
+    Emitter<SalesmanTableState> emit,
+  ) async {}
 
   /// Dynamically creates a list of SalesmanData using state.fetchSalesList,
   /// extracting only the name and tier, and setting other parameters to 0.

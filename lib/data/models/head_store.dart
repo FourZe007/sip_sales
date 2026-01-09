@@ -619,10 +619,10 @@ class HeadReportMasterModel {
 class HeadStuCategoriesMasterModel {
   final int? line;
   final String category;
-  final int? target;
-  final int? tm;
+  int? target;
+  int? tm;
   final double? acv;
-  final int? lm;
+  int? lm;
   final double? growth;
 
   HeadStuCategoriesMasterModel({
@@ -672,6 +672,22 @@ class HeadPaymentMasterModel {
       growth: json.containsKey('growth') ? (json['growth'] ?? 0.0) : null,
     );
   }
+
+  HeadPaymentMasterModel copyWith({
+    int? line,
+    String? payment,
+    int? tm,
+    int? lm,
+    double? growth,
+  }) {
+    return HeadPaymentMasterModel(
+      line: line ?? this.line,
+      payment: payment ?? this.payment,
+      tm: tm ?? this.tm,
+      lm: lm ?? this.lm,
+      growth: growth ?? this.growth,
+    );
+  }
 }
 
 class HeadLeasingMasterModel {
@@ -704,6 +720,26 @@ class HeadLeasingMasterModel {
       persentase: json.containsKey('persentase')
           ? (json['persentase'] ?? 0.0)
           : null,
+    );
+  }
+
+  HeadLeasingMasterModel copyWith({
+    int? line,
+    String? leasingID,
+    int? total,
+    int? terbuka,
+    int? disetujui,
+    int? ditolak,
+    double? persentase,
+  }) {
+    return HeadLeasingMasterModel(
+      line: line ?? this.line,
+      leasingID: leasingID ?? this.leasingID,
+      total: total ?? this.total,
+      terbuka: terbuka ?? this.terbuka,
+      disetujui: disetujui ?? this.disetujui,
+      ditolak: ditolak ?? this.ditolak,
+      persentase: persentase ?? this.persentase,
     );
   }
 }

@@ -1,26 +1,36 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sip_sales_clean/data/models/stu_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_state.dart';
 
+// Change all model from StuData to HeadStuCategoriesMasterModel
 class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
   StuBloc() : super(StuInitial([])) {
-    on<ResetStuData>((event, emit) {
-      emit(
-        StuInitial([
-          StuData('MAXI', 0, 0, '0.0', 0, '0.0'),
-          StuData('AT CLASSY', 0, 0, '0.0', 0, '0.0'),
-          StuData('AT LPM', 0, 0, '0.0', 0, '0.0'),
-          StuData('Others', 0, 0, '0.0', 0, '0.0'),
-        ]),
-      );
-    });
+    on<ResetStuData>(resetData);
+    // on<ResetStuData>((event, emit) {
+    //   emit(
+    //     StuInitial([
+    //       StuData('MAXI', 0, 0, '0.0', 0, '0.0'),
+    //       StuData('AT CLASSY', 0, 0, '0.0', 0, '0.0'),
+    //       StuData('AT LPM', 0, 0, '0.0', 0, '0.0'),
+    //       StuData('Others', 0, 0, '0.0', 0, '0.0'),
+    //     ]),
+    //   );
+    // });
     on<ModifyStuData>(modifyData);
     on<ModifyStuResultData>(modifyResultData);
     on<ModifyStuTargetData>(modifyTargetData);
     on<ModifyStuLmData>(modifyLmData);
+  }
+
+  Future<void> resetData(
+    ResetStuData event,
+    Emitter<StuState> emit,
+  ) async {
+    log('Stu list length: ${event.stuList.length}');
+    emit(StuInitial(event.stuList));
   }
 
   Future<void> modifyData(
@@ -28,16 +38,17 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
     Emitter<StuState> emit,
   ) async {
     // Create a NEW list based on the current state's data
-    final List<StuData> newList = List<StuData>.from(state.data);
+    final List<HeadStuCategoriesMasterModel> newList =
+        List<HeadStuCategoriesMasterModel>.from(state.data);
 
-    StuData entryToUpdate = newList[event.rowIndex];
+    HeadStuCategoriesMasterModel entryToUpdate = newList[event.rowIndex];
 
-    int currentResult = entryToUpdate.result;
-    int currentTarget = entryToUpdate.target;
-    int currentLm = entryToUpdate.lm;
+    int currentTm = entryToUpdate.tm ?? 0;
+    int currentTarget = entryToUpdate.target ?? 0;
+    int currentLm = entryToUpdate.lm ?? 0;
 
-    if (event.newResultValue != null) {
-      currentResult = event.newResultValue!;
+    if (event.newTmValue != null) {
+      currentTm = event.newTmValue!;
     }
     if (event.newTargetValue != null) {
       currentTarget = event.newTargetValue!;
@@ -47,31 +58,31 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
     }
 
     log(
-      'Current Result: $currentResult, Current Target: $currentTarget, Current LM: $currentLm',
+      'Current TM: $currentTm, Current Target: $currentTarget, Current LM: $currentLm',
     );
 
     String newAchievementRate = '0.0';
-    if (currentResult > 0 && currentTarget > 0) {
+    if (currentTm > 0 && currentTarget > 0) {
       log('Calculating Achievement Rate');
-      newAchievementRate = (currentResult / currentTarget * 100)
-          .toStringAsFixed(1);
+      newAchievementRate = (currentTm / currentTarget * 100).toStringAsFixed(1);
       log('New Achievement Rate: $newAchievementRate%');
     }
 
     String newGrowthRate = '0.0';
-    if (currentResult > 0 && currentLm > 0) {
+    if (currentTm > 0 && currentLm > 0) {
       log('Calculating Growth Rate');
-      newGrowthRate = (currentResult / currentLm * 100).toStringAsFixed(1);
+      newGrowthRate = (currentTm / currentLm * 100).toStringAsFixed(1);
       log('New Growth Rate: $newGrowthRate%');
     }
 
-    newList[event.rowIndex] = StuData(
-      entryToUpdate.type,
-      currentResult,
-      currentTarget,
-      newAchievementRate,
-      currentLm,
-      newGrowthRate,
+    newList[event.rowIndex] = HeadStuCategoriesMasterModel(
+      line: event.rowIndex + 1,
+      category: entryToUpdate.category,
+      target: currentTarget,
+      tm: currentTm,
+      acv: double.parse(newAchievementRate),
+      lm: currentLm,
+      growth: double.parse(newGrowthRate),
     );
 
     emit(StuDataModified(newList));
@@ -82,38 +93,39 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
     Emitter<StuState> emit,
   ) async {
     // Create a NEW list based on the current state's data
-    final List<StuData> newList = List<StuData>.from(state.data);
+    final List<HeadStuCategoriesMasterModel> newList =
+        List<HeadStuCategoriesMasterModel>.from(state.data);
 
-    StuData entryToUpdate = newList[event.rowIndex];
+    HeadStuCategoriesMasterModel entryToUpdate = newList[event.rowIndex];
 
-    int currentResult = entryToUpdate.result;
-    int currentTarget = entryToUpdate.target;
-    int currentLm = entryToUpdate.lm;
+    int currentTm = entryToUpdate.tm ?? 0;
+    int currentTarget = entryToUpdate.target ?? 0;
+    int currentLm = entryToUpdate.lm ?? 0;
 
     if (event.newResultValue != null) {
       currentTarget = event.newResultValue!;
     }
 
     String newAchievementRate = '0.0';
-    log('Current Result: $currentResult, Current Target: $currentTarget');
-    if (currentResult > 0 && currentTarget > 0) {
-      newAchievementRate = (currentResult / currentTarget * 100)
-          .toStringAsFixed(1);
+    log('Current Result: $currentTm, Current Target: $currentTarget');
+    if (currentTm > 0 && currentTarget > 0) {
+      newAchievementRate = (currentTm / currentTarget * 100).toStringAsFixed(1);
     }
 
     String newGrowthRate = '0.0';
-    log('Current Result: $currentResult, Current LM: $currentLm');
-    if (currentResult > 0 && currentLm > 0) {
-      newGrowthRate = (currentResult / currentLm * 100).toStringAsFixed(1);
+    log('Current Result: $currentTm, Current LM: $currentLm');
+    if (currentTm > 0 && currentLm > 0) {
+      newGrowthRate = (currentTm / currentLm * 100).toStringAsFixed(1);
     }
 
-    newList[event.rowIndex] = StuData(
-      entryToUpdate.type,
-      currentResult,
-      currentTarget,
-      newAchievementRate,
-      currentLm,
-      newGrowthRate,
+    newList[event.rowIndex] = HeadStuCategoriesMasterModel(
+      line: event.rowIndex + 1,
+      category: entryToUpdate.category,
+      target: currentTarget,
+      tm: currentTm,
+      acv: double.parse(newAchievementRate),
+      lm: currentLm,
+      growth: double.parse(newGrowthRate),
     );
 
     emit(StuDataModified(newList));
@@ -124,31 +136,32 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
     Emitter<StuState> emit,
   ) async {
     // Create a NEW list based on the current state's data
-    final List<StuData> newList = List<StuData>.from(state.data);
+    final List<HeadStuCategoriesMasterModel> newList =
+        List<HeadStuCategoriesMasterModel>.from(state.data);
 
-    StuData entryToUpdate = newList[event.rowIndex];
+    HeadStuCategoriesMasterModel entryToUpdate = newList[event.rowIndex];
 
-    int currentResult = entryToUpdate.result;
-    int currentTarget = entryToUpdate.target;
+    int currentTm = entryToUpdate.tm ?? 0;
+    int currentTarget = entryToUpdate.target ?? 0;
 
     if (event.newTargetValue != null) {
       currentTarget = event.newTargetValue!;
     }
 
     String newAchievementRate = '0.0';
-    log('Current Result: $currentResult, Current Target: $currentTarget');
-    if (currentResult > 0 && currentTarget > 0) {
-      newAchievementRate = (currentResult / currentTarget * 100)
-          .toStringAsFixed(1);
+    log('Current Result: $currentTm, Current Target: $currentTarget');
+    if (currentTm > 0 && currentTarget > 0) {
+      newAchievementRate = (currentTm / currentTarget * 100).toStringAsFixed(1);
     }
 
-    newList[event.rowIndex] = StuData(
-      entryToUpdate.type,
-      currentResult,
-      currentTarget,
-      newAchievementRate,
-      entryToUpdate.lm,
-      entryToUpdate.growth,
+    newList[event.rowIndex] = HeadStuCategoriesMasterModel(
+      line: event.rowIndex + 1,
+      category: entryToUpdate.category,
+      target: currentTarget,
+      tm: currentTm,
+      acv: double.parse(newAchievementRate),
+      lm: entryToUpdate.lm,
+      growth: entryToUpdate.growth,
     );
 
     emit(StuDataModified(newList));
@@ -159,30 +172,32 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
     Emitter<StuState> emit,
   ) async {
     // Create a NEW list based on the current state's data
-    final List<StuData> newList = List<StuData>.from(state.data);
+    final List<HeadStuCategoriesMasterModel> newList =
+        List<HeadStuCategoriesMasterModel>.from(state.data);
 
-    StuData entryToUpdate = newList[event.rowIndex];
+    HeadStuCategoriesMasterModel entryToUpdate = newList[event.rowIndex];
 
-    int currentResult = entryToUpdate.result;
-    int currentLm = entryToUpdate.lm;
+    int currentTm = entryToUpdate.tm ?? 0;
+    int currentLm = entryToUpdate.lm ?? 0;
 
     if (event.newLmValue != null) {
       currentLm = event.newLmValue!;
     }
 
     String newGrowthRate = '0.0';
-    log('Current Result: $currentResult, Current LM: $currentLm');
-    if (currentResult > 0 && currentLm > 0) {
-      newGrowthRate = (currentResult / currentLm * 100).toStringAsFixed(1);
+    log('Current Result: $currentTm, Current LM: $currentLm');
+    if (currentTm > 0 && currentLm > 0) {
+      newGrowthRate = (currentTm / currentLm * 100).toStringAsFixed(1);
     }
 
-    newList[event.rowIndex] = StuData(
-      entryToUpdate.type,
-      currentResult,
-      entryToUpdate.target,
-      entryToUpdate.ach,
-      currentLm,
-      newGrowthRate,
+    newList[event.rowIndex] = HeadStuCategoriesMasterModel(
+      line: event.rowIndex + 1,
+      category: entryToUpdate.category,
+      target: currentTm,
+      tm: currentTm,
+      acv: entryToUpdate.acv,
+      lm: entryToUpdate.lm,
+      growth: double.parse(newGrowthRate),
     );
 
     emit(StuDataModified(newList));

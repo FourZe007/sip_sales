@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:sip_sales_clean/data/models/payment_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 
 class PaymentState with EquatableMixin {
-  final List<PaymentData> data;
+  final List<HeadPaymentMasterModel> data;
 
   PaymentState(this.data);
 
@@ -15,7 +15,7 @@ class PaymentInitial extends PaymentState {
 }
 
 class PaymentModified extends PaymentState {
-  final List<PaymentData> newData;
+  final List<HeadPaymentMasterModel> newData;
 
   PaymentModified(this.newData) : super(newData);
 }

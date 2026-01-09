@@ -8,9 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
-import 'package:sip_sales_clean/data/models/leasing_data_table.dart';
-import 'package:sip_sales_clean/data/models/payment_data_table.dart';
-import 'package:sip_sales_clean/data/models/stu_data_table.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
@@ -54,11 +51,14 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
 
   late LeasingInsertDataSource _leasingDataSource;
   late SalesmanInsertDataSource _salesmanDataSource;
-  double tableHeight = 260;
+  double stuTableHeight = 0;
+  double paymentTableHeight = 0;
+  double leasingTableHeight = 0;
+  double salesmanTableHeight = 260;
 
-  List<StuData> stuData = [];
-  List<PaymentData> paymentData = [];
-  List<LeasingData> leasingData = [];
+  List<HeadStuCategoriesMasterModel> stuData = [];
+  List<HeadPaymentMasterModel> paymentData = [];
+  List<HeadLeasingMasterModel> leasingData = [];
   List<HeadEmployeeMasterModel> salesmanData = [];
   List<HeadReportMasterModel> salesData = [];
 
@@ -68,8 +68,8 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
     String columnName,
     int newValue,
   ) {
-    if (columnName == 'Result') {
-      stuBloc.add(ModifyStuData(rowIndex: rowIndex, newResultValue: newValue));
+    if (columnName == 'Tm') {
+      stuBloc.add(ModifyStuData(rowIndex: rowIndex, newTmValue: newValue));
     } else if (columnName == 'Target') {
       stuBloc.add(ModifyStuData(rowIndex: rowIndex, newTargetValue: newValue));
     } else if (columnName == 'LM') {
@@ -370,6 +370,14 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               BlocBuilder<StuBloc, StuState>(
                                 builder: (context, state) {
                                   stuData = state.data;
+                                  log('Stu length: ${stuData.length}');
+                                  log('Stu height before: $stuTableHeight');
+                                  stuTableHeight =
+                                      (115 +
+                                      double.parse(
+                                        (50 * stuData.length).toString(),
+                                      ));
+                                  log('Stu height after: $stuTableHeight');
                                   if (state is StuDataModified) {
                                     stuData = state.newData;
                                   }
@@ -389,7 +397,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                             newValue,
                                           ),
                                     ),
-                                    tableHeight: 310,
+                                    tableHeight: stuTableHeight,
                                     loadedData: StuType.values
                                         .map((e) => e.name.toString())
                                         .toList(),
@@ -405,6 +413,11 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               BlocBuilder<PaymentBloc, PaymentState>(
                                 builder: (context, state) {
                                   paymentData = state.data;
+                                  paymentTableHeight =
+                                      (115 +
+                                      double.parse(
+                                        (50 * paymentData.length).toString(),
+                                      ));
                                   if (state is PaymentModified) {
                                     paymentData = state.newData;
                                     // log('New Payment length: ${paymentData.length}');
@@ -428,7 +441,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     loadedData: PaymentType.values
                                         .map((e) => e.name.toString())
                                         .toList(),
-                                    tableHeight: 215,
+                                    tableHeight: paymentTableHeight,
                                     allowEditing: true,
                                     horizontalScrollPhysics:
                                         const BouncingScrollPhysics(),
@@ -440,8 +453,12 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               // ~:Leasing Input Table:~
                               BlocBuilder<LeasingBloc, LeasingState>(
                                 builder: (context, state) {
-                                  tableHeight = 410;
                                   leasingData = state.data;
+                                  leasingTableHeight =
+                                      (115 +
+                                      double.parse(
+                                        (50 * leasingData.length).toString(),
+                                      ));
 
                                   if (state is AddLeasingData) {
                                     leasingData = state.newData;
@@ -464,7 +481,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     loadedData: LeasingType.values
                                         .map((e) => e.name.toString())
                                         .toList(),
-                                    tableHeight: tableHeight,
+                                    tableHeight: leasingTableHeight,
                                     allowEditing: true,
                                     horizontalScrollPhysics:
                                         const BouncingScrollPhysics(),
@@ -506,13 +523,13 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     'Salesman length: ${salesmanData.length}',
                                   );
 
-                                  tableHeight = 120;
+                                  salesmanTableHeight = 120;
                                   if (salesmanData.length < 6) {
-                                    tableHeight += double.parse(
+                                    salesmanTableHeight += double.parse(
                                       (50 * salesmanData.length).toString(),
                                     );
                                   } else {
-                                    tableHeight = 410;
+                                    salesmanTableHeight = 410;
                                   }
 
                                   // ~:Set a dynamic table height:~
@@ -525,7 +542,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     loadedData: SalesmanType.values
                                         .map((e) => e.name.toString())
                                         .toList(),
-                                    tableHeight: tableHeight,
+                                    tableHeight: salesmanTableHeight,
                                     rowHeaderWidth: 75,
                                     allowEditing: true,
                                     horizontalScrollPhysics:

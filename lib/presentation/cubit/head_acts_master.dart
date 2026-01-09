@@ -9,9 +9,7 @@ class HeadActsMasterCubit extends Cubit<HeadActsMasterState> {
 
   HeadActsMasterCubit(this.headStoreRepo) : super(HeadActsMasterInit());
 
-  Future<bool> getHeadActsMasterData() async {
-    return state is HeadActsMasterLoaded;
-  }
+  bool getHeadActsMasterData() => state is HeadActsMasterLoaded;
 
   Future<void> fetchHeadActsMasterData(
     String branch,

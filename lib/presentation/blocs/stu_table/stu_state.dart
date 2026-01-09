@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:sip_sales_clean/data/models/stu_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 
 class StuState with EquatableMixin {
-  final List<StuData> data;
+  final List<HeadStuCategoriesMasterModel> data;
 
   StuState(this.data);
 
@@ -15,7 +15,7 @@ class StuInitial extends StuState {
 }
 
 class StuDataModified extends StuState {
-  final List<StuData> newData;
+  final List<HeadStuCategoriesMasterModel> newData;
 
   StuDataModified(this.newData) : super(newData);
 }

@@ -1,7 +1,11 @@
+import 'package:sip_sales_clean/data/models/head_store.dart';
+
 abstract class PaymentEvent {}
 
 class ResetPaymentData extends PaymentEvent {
-  ResetPaymentData();
+  final List<HeadPaymentMasterModel> paymentList;
+
+  ResetPaymentData(this.paymentList);
 }
 
 class PaymentDataAdded extends PaymentEvent {

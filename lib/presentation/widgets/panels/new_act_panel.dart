@@ -128,12 +128,34 @@ class _NewActPanelState extends State<NewActPanel> {
         log('Not considered as Recruitment or Interview');
       }
     } else if (actName.contains('report')) {
-      context.read<StuBloc>().add(ResetStuData());
-      context.read<PaymentBloc>().add(ResetPaymentData());
-      context.read<LeasingBloc>().add(ResetLeasingData());
-      log('Salesman data is empty, fetching...');
-      context.read<SalesmanTableBloc>().add(FetchSalesman(context));
-      // context.read<ReportBloc>().add(InitiateReport());
+      if (context.read<HeadActsMasterCubit>().state is HeadActsMasterLoaded) {
+        log('Load Report Data');
+        context.read<StuBloc>().add(
+          ResetStuData(
+            (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+                .reportMaster[0]
+                .stuCategories,
+          ),
+        );
+        context.read<PaymentBloc>().add(
+          ResetPaymentData(
+            (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+                .reportMaster[0]
+                .payment,
+          ),
+        );
+        context.read<LeasingBloc>().add(
+          ResetLeasingData(
+            (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+                .reportMaster[0]
+                .spkLeasing,
+          ),
+        );
+        log('Salesman data is empty, fetching...');
+        context.read<SalesmanTableBloc>().add(FetchSalesman(context));
+      } else {
+        log('Master data is not loaded');
+      }
 
       Navigator.push(
         context,

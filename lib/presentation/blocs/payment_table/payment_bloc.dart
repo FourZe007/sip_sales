@@ -1,18 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sip_sales_clean/data/models/payment_data_table.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_state.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  PaymentBloc()
-    : super(
-        PaymentInitial([
-          const PaymentData('Cash', 0, 0, '0.0'),
-          const PaymentData('Credit', 0, 0, '0.0'),
-        ]),
-      ) {
+  PaymentBloc() : super(PaymentInitial([])) {
     on<ResetPaymentData>(resetData);
     on<PaymentDataModified>(onPaymentDataModify);
   }
@@ -21,12 +15,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     ResetPaymentData event,
     Emitter<PaymentState> emit,
   ) async {
-    emit(
-      PaymentInitial([
-        const PaymentData('Cash', 0, 0, '0.0'),
-        const PaymentData('Credit', 0, 0, '0.0'),
-      ]),
-    );
+    emit(PaymentInitial(event.paymentList));
   }
 
   Future<void> onPaymentDataModify(
@@ -34,35 +23,36 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     Emitter<PaymentState> emit,
   ) async {
     // Create a NEW list based on the current state's data
-    final List<PaymentData> newList = List<PaymentData>.from(state.data);
+    final List<HeadPaymentMasterModel> newList =
+        List<HeadPaymentMasterModel>.from(state.data);
 
-    PaymentData entryToUpdate = newList[event.rowIndex];
+    HeadPaymentMasterModel entryToUpdate = newList[event.rowIndex];
 
-    int currentResult = entryToUpdate.result;
-    int currentTarget = entryToUpdate.lm;
+    int currentTm = entryToUpdate.tm ?? 0;
+    int currentLm = entryToUpdate.lm ?? 0;
 
     if (event.newResultValue != null) {
-      currentResult = event.newResultValue!;
+      currentTm = event.newResultValue!;
     }
     if (event.newTargetValue != null) {
-      currentTarget = event.newTargetValue!;
+      currentLm = event.newTargetValue!;
     }
 
     String newGrowthRate = '0.0';
-    log('Current Target: $currentTarget, Current Result: $currentResult');
-    if (currentTarget > 0 && currentResult > 0) {
-      newGrowthRate = (currentResult / currentTarget * 100).toStringAsFixed(1);
+    log('Current Target: $currentLm, Current Result: $currentTm');
+    if (currentLm > 0 && currentTm > 0) {
+      newGrowthRate = (currentTm / currentLm * 100).toStringAsFixed(1);
     }
 
     // Create new LeasingData with updated values
     newList[event.rowIndex] = entryToUpdate.copyWith(
-      result: currentResult,
-      lm: currentTarget,
-      growth: newGrowthRate,
+      tm: currentTm,
+      lm: currentLm,
+      growth: double.parse(newGrowthRate),
     );
 
     log(
-      'Row ${event.rowIndex} updated: Result: $currentResult, LM: $currentTarget, Growth: $newGrowthRate',
+      'Row ${event.rowIndex} updated: Result: $currentTm, LM: $currentLm, Growth: $newGrowthRate',
     );
     emit(PaymentModified(newList));
     log('Updated data length: ${newList.length}');
