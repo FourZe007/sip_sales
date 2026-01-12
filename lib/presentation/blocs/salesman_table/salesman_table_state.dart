@@ -3,23 +3,24 @@ import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/data/models/sales_profile.dart';
 
 class SalesmanTableState with EquatableMixin {
-  final List<SalesProfileModel> salesDraftList;
+  // final List<SalesProfileModel> salesDraftList;
+  final List<HeadEmployeeMasterModel> salesmanList;
   final List<HeadReportMasterModel> fetchSalesList;
   final List<HeadEmployeeMasterModel> salesDataList;
 
   SalesmanTableState(
-    this.salesDraftList,
+    this.salesmanList,
     this.fetchSalesList,
     this.salesDataList,
   );
 
   @override
-  List<Object?> get props => [salesDraftList, fetchSalesList, salesDataList];
+  List<Object?> get props => [salesmanList, fetchSalesList, salesDataList];
 }
 
 class SalesmanInitial extends SalesmanTableState {
   SalesmanInitial(
-    super.salesDraftList,
+    super.salesmanList,
     super.fetchSalesList,
     super.salesDataList,
   );
@@ -27,7 +28,7 @@ class SalesmanInitial extends SalesmanTableState {
 
 class SalesmanLoading extends SalesmanTableState {
   SalesmanLoading(SalesmanTableState previousState)
-    : super(previousState.salesDraftList, previousState.fetchSalesList, []);
+    : super(previousState.salesmanList, previousState.fetchSalesList, []);
 
   List<SalesProfileModel> get getSalesmanLoading => [];
 }
@@ -40,10 +41,10 @@ class SalesmanFetched extends SalesmanTableState {
     SalesmanTableState previousState,
     this.salesList,
     this.salesmanDataList,
-  ) : super(previousState.salesDraftList, salesList, salesmanDataList);
+  ) : super(previousState.salesmanList, salesList, salesmanDataList);
 
   @override
-  List<Object?> get props => [salesDraftList, fetchSalesList, salesDataList];
+  List<Object?> get props => [salesmanList, fetchSalesList, salesDataList];
 }
 
 class SalesmanAdded extends SalesmanTableState {

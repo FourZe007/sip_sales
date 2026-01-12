@@ -539,7 +539,6 @@ class HeadMediaDetailsModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'line': line,
       'mediaCode': mediaCode,
       'mediaName': mediaName,
       'qty': qty,
@@ -646,6 +645,17 @@ class HeadStuCategoriesMasterModel {
       growth: json.containsKey('growth') ? (json['growth'] ?? 0.0) : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'category': category,
+      'target': target,
+      'tm': tm,
+      'acv': acv,
+      'lm': lm,
+      'growth': growth,
+    };
+  }
 }
 
 class HeadPaymentMasterModel {
@@ -687,6 +697,15 @@ class HeadPaymentMasterModel {
       lm: lm ?? this.lm,
       growth: growth ?? this.growth,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'payment': payment,
+      'tm': tm,
+      'lm': lm,
+      'growth': growth,
+    };
   }
 }
 
@@ -741,6 +760,17 @@ class HeadLeasingMasterModel {
       ditolak: ditolak ?? this.ditolak,
       persentase: persentase ?? this.persentase,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'leasingID': leasingID,
+      'total': total,
+      'terbuka': terbuka,
+      'disetujui': disetujui,
+      'ditolak': ditolak,
+      'persentase': persentase,
+    };
   }
 }
 
@@ -799,6 +829,18 @@ class HeadEmployeeMasterModel {
       stu: stu ?? this.stu,
       stuLm: stuLm ?? this.stuLm,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'employeeID': employeeID,
+      'eName': eName,
+      'eTypeID': eTypeID,
+      'position': position,
+      'spk': spk,
+      'stu': stu,
+      'stuLm': stuLm,
+    };
   }
 }
 

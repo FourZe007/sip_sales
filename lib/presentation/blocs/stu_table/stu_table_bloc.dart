@@ -2,12 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
-import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
 
 // Change all model from StuData to HeadStuCategoriesMasterModel
-class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
-  StuBloc() : super(StuInitial([])) {
+class StuTableBloc<BaseEvent, BaseState>
+    extends Bloc<StuTableEvent, StuTableState> {
+  StuTableBloc() : super(StuInitial([])) {
     on<ResetStuData>(resetData);
     // on<ResetStuData>((event, emit) {
     //   emit(
@@ -27,15 +28,19 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
 
   Future<void> resetData(
     ResetStuData event,
-    Emitter<StuState> emit,
+    Emitter<StuTableState> emit,
   ) async {
     log('Stu list length: ${event.stuList.length}');
-    emit(StuInitial(event.stuList));
+    emit(
+      StuInitial(
+        event.stuList.where((e) => e.category != 'STU TOTAL').toList(),
+      ),
+    );
   }
 
   Future<void> modifyData(
     ModifyStuData event,
-    Emitter<StuState> emit,
+    Emitter<StuTableState> emit,
   ) async {
     // Create a NEW list based on the current state's data
     final List<HeadStuCategoriesMasterModel> newList =
@@ -90,7 +95,7 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
 
   Future<void> modifyResultData(
     ModifyStuResultData event,
-    Emitter<StuState> emit,
+    Emitter<StuTableState> emit,
   ) async {
     // Create a NEW list based on the current state's data
     final List<HeadStuCategoriesMasterModel> newList =
@@ -133,7 +138,7 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
 
   Future<void> modifyTargetData(
     ModifyStuTargetData event,
-    Emitter<StuState> emit,
+    Emitter<StuTableState> emit,
   ) async {
     // Create a NEW list based on the current state's data
     final List<HeadStuCategoriesMasterModel> newList =
@@ -169,7 +174,7 @@ class StuBloc<BaseEvent, BaseState> extends Bloc<StuEvent, StuState> {
 
   Future<void> modifyLmData(
     ModifyStuLmData event,
-    Emitter<StuState> emit,
+    Emitter<StuTableState> emit,
   ) async {
     // Create a NEW list based on the current state's data
     final List<HeadStuCategoriesMasterModel> newList =

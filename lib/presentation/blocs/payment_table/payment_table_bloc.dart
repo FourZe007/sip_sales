@@ -2,25 +2,25 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
-import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_state.dart';
 
-class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  PaymentBloc() : super(PaymentInitial([])) {
+class PaymentTableBloc extends Bloc<PaymentTableEvent, PaymentTableState> {
+  PaymentTableBloc() : super(PaymentInitial([])) {
     on<ResetPaymentData>(resetData);
     on<PaymentDataModified>(onPaymentDataModify);
   }
 
   Future<void> resetData(
     ResetPaymentData event,
-    Emitter<PaymentState> emit,
+    Emitter<PaymentTableState> emit,
   ) async {
     emit(PaymentInitial(event.paymentList));
   }
 
   Future<void> onPaymentDataModify(
     PaymentDataModified event,
-    Emitter<PaymentState> emit,
+    Emitter<PaymentTableState> emit,
   ) async {
     // Create a NEW list based on the current state's data
     final List<HeadPaymentMasterModel> newList =

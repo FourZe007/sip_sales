@@ -1,6 +1,7 @@
 // DataGridSource implementation for the STU table
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -43,7 +44,10 @@ class PaymentInsertDataSource extends DataGridSource {
     _dataGridRows = _paymentData.map<DataGridRow>((data) {
       return DataGridRow(
         cells: [
-          DataGridCell<String>(columnName: 'Payment', value: data.payment),
+          DataGridCell<String>(
+            columnName: 'Payment',
+            value: Formatter.toTitleCase(data.payment),
+          ),
           DataGridCell<int>(columnName: 'TM', value: data.tm),
           DataGridCell<int>(columnName: 'LM', value: data.lm),
           DataGridCell<String>(

@@ -2,24 +2,31 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
-import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_state.dart';
 
-class LeasingBloc<BaseEvent, BaseState>
-    extends Bloc<LeasingEvent, LeasingState> {
-  LeasingBloc() : super(LeasingInitial([])) {
+class LeasingTableBloc<BaseEvent, BaseState>
+    extends Bloc<LeasingEvent, LeasingTableState> {
+  LeasingTableBloc() : super(LeasingInitial([])) {
     on<ResetLeasingData>(resetData);
     on<LeasingDataAdded>(addData);
     on<LeasingDataModified>(modifyData);
   }
 
-  void resetData(ResetLeasingData event, Emitter<LeasingState> emit) {
-    emit(LeasingInitial(event.leasingList));
+  void resetData(
+    ResetLeasingData event,
+    Emitter<LeasingTableState> emit,
+  ) {
+    emit(
+      LeasingInitial(
+        event.leasingList.where((e) => e.leasingID != 'SPK TOTAL').toList(),
+      ),
+    );
   }
 
   Future<void> addData(
     LeasingDataAdded event,
-    Emitter<LeasingState> emit,
+    Emitter<LeasingTableState> emit,
   ) async {
     // emit(LeasingLoading(state.data));
     log('Current data length: ${state.data.length}');
@@ -46,7 +53,7 @@ class LeasingBloc<BaseEvent, BaseState>
 
   Future<void> modifyData(
     LeasingDataModified event,
-    Emitter<LeasingState> emit,
+    Emitter<LeasingTableState> emit,
   ) async {
     log('Current data length: ${state.data.length}');
 

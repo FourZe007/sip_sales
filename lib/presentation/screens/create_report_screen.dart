@@ -11,20 +11,20 @@ import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
-import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
-import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_state.dart';
-import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
@@ -63,7 +63,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   List<HeadReportMasterModel> salesData = [];
 
   void editStuValue(
-    StuBloc stuBloc,
+    StuTableBloc stuBloc,
     int rowIndex,
     String columnName,
     int newValue,
@@ -78,7 +78,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   }
 
   void editPaymentValue(
-    PaymentBloc paymentBloc,
+    PaymentTableBloc paymentBloc,
     int rowIndex,
     String columnName,
     int newValue,
@@ -95,7 +95,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   }
 
   void editLeasingValue(
-    LeasingBloc leasingBloc,
+    LeasingTableBloc leasingBloc,
     int rowIndex,
     String columnName,
     int newValue,
@@ -192,7 +192,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
     _leasingDataSource = LeasingInsertDataSource(
       [],
       onCellValueEdited: (rowIndex, columnName, newValue) => editLeasingValue(
-        context.read<LeasingBloc>(),
+        context.read<LeasingTableBloc>(),
         rowIndex,
         columnName,
         newValue,
@@ -367,7 +367,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                             spacing: 12,
                             children: [
                               // ~:STU Input Table:~
-                              BlocBuilder<StuBloc, StuState>(
+                              BlocBuilder<StuTableBloc, StuTableState>(
                                 builder: (context, state) {
                                   stuData = state.data;
                                   log('Stu length: ${stuData.length}');
@@ -391,7 +391,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                             columnName,
                                             newValue,
                                           ) => editStuValue(
-                                            context.read<StuBloc>(),
+                                            context.read<StuTableBloc>(),
                                             rowIndex,
                                             columnName,
                                             newValue,
@@ -410,7 +410,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               ),
 
                               // ~:Payment Input Table:~
-                              BlocBuilder<PaymentBloc, PaymentState>(
+                              BlocBuilder<PaymentTableBloc, PaymentTableState>(
                                 builder: (context, state) {
                                   paymentData = state.data;
                                   paymentTableHeight =
@@ -432,7 +432,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                             columnName,
                                             newValue,
                                           ) => editPaymentValue(
-                                            context.read<PaymentBloc>(),
+                                            context.read<PaymentTableBloc>(),
                                             rowIndex,
                                             columnName,
                                             newValue,
@@ -451,7 +451,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               ),
 
                               // ~:Leasing Input Table:~
-                              BlocBuilder<LeasingBloc, LeasingState>(
+                              BlocBuilder<LeasingTableBloc, LeasingTableState>(
                                 builder: (context, state) {
                                   leasingData = state.data;
                                   leasingTableHeight =
@@ -496,45 +496,57 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                 SalesmanTableState
                               >(
                                 builder: (context, state) {
-                                  if (state is SalesmanLoading) {
-                                    if (Platform.isIOS) {
-                                      return const CupertinoActivityIndicator(
-                                        radius: 12.5,
-                                        color: Colors.black,
-                                      );
-                                    } else {
-                                      return const AndroidLoading(
-                                        warna: Colors.black,
-                                        strokeWidth: 3,
-                                      );
-                                    }
-                                  } else if (state is SalesmanFetched) {
-                                    salesmanData = state.salesDataList;
-                                    _salesmanDataSource.updateData(
-                                      salesmanData,
-                                    );
-                                  } else if (state is SalesmanModified) {
+                                  // if (state is SalesmanLoading) {
+                                  //   if (Platform.isIOS) {
+                                  //     return const CupertinoActivityIndicator(
+                                  //       radius: 12.5,
+                                  //       color: Colors.black,
+                                  //     );
+                                  //   } else {
+                                  //     return const AndroidLoading(
+                                  //       warna: Colors.black,
+                                  //       strokeWidth: 3,
+                                  //     );
+                                  //   }
+                                  // } else if (state is SalesmanFetched) {
+                                  //   salesmanData = state.salesDataList;
+                                  //   _salesmanDataSource.updateData(
+                                  //     salesmanData,
+                                  //   );
+                                  // } else
+                                  if (state is SalesmanModified) {
                                     salesmanData = state.newData;
                                     _salesmanDataSource.updateData(
                                       salesmanData,
                                     );
-                                  }
-                                  log(
-                                    'Salesman length: ${salesmanData.length}',
-                                  );
-
-                                  salesmanTableHeight = 120;
-                                  if (salesmanData.length < 6) {
-                                    salesmanTableHeight += double.parse(
-                                      (50 * salesmanData.length).toString(),
+                                  } else if (state is SalesmanInitial) {
+                                    salesmanData = state.salesmanList;
+                                    _salesmanDataSource.updateData(
+                                      salesmanData,
                                     );
+                                  }
+
+                                  // salesmanTableHeight = 120;
+                                  if (salesmanData.length <= 5) {
+                                    salesmanTableHeight =
+                                        (120 +
+                                        double.parse(
+                                          (50 * salesmanData.length).toString(),
+                                        ));
                                   } else {
                                     salesmanTableHeight = 410;
                                   }
 
                                   // ~:Set a dynamic table height:~
                                   if (salesmanData.isEmpty) {
+                                    log(
+                                      'Salesman data is empty, ${salesmanData.length}',
+                                    );
                                     return const SizedBox();
+                                  } else {
+                                    log(
+                                      'Salesman data is not empty, ${salesmanData.length}',
+                                    );
                                   }
 
                                   return ReportDataGrid(
@@ -548,7 +560,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     horizontalScrollPhysics:
                                         const BouncingScrollPhysics(),
                                     verticalScrollPhysics:
-                                        salesmanData.length < 6
+                                        salesmanData.length <= 5
                                         ? const NeverScrollableScrollPhysics()
                                         : const AlwaysScrollableScrollPhysics(),
                                     columnWidthMode:
@@ -572,7 +584,10 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               // ~:Page Content - Footer:~
               // Create Report Button
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async => await Functions.manageNewHeadStoreAct(
+                  context,
+                  '04',
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   padding: const EdgeInsets.symmetric(

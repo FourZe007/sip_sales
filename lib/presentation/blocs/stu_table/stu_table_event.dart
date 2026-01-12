@@ -1,14 +1,14 @@
 import 'package:sip_sales_clean/data/models/head_store.dart';
 
-abstract class StuEvent {}
+abstract class StuTableEvent {}
 
-class ResetStuData extends StuEvent {
+class ResetStuData extends StuTableEvent {
   final List<HeadStuCategoriesMasterModel> stuList;
 
   ResetStuData(this.stuList);
 }
 
-class ModifyStuData extends StuEvent {
+class ModifyStuData extends StuTableEvent {
   final int rowIndex;
   final int? newTmValue;
   final int? newTargetValue;
@@ -22,7 +22,7 @@ class ModifyStuData extends StuEvent {
   });
 }
 
-class ModifyStuResultData extends StuEvent {
+class ModifyStuResultData extends StuTableEvent {
   final int rowIndex;
   final int? newResultValue;
 
@@ -32,7 +32,7 @@ class ModifyStuResultData extends StuEvent {
   });
 }
 
-class ModifyStuTargetData extends StuEvent {
+class ModifyStuTargetData extends StuTableEvent {
   final int rowIndex;
   final int? newTargetValue;
 
@@ -42,7 +42,7 @@ class ModifyStuTargetData extends StuEvent {
   });
 }
 
-class ModifyStuLmData extends StuEvent {
+class ModifyStuLmData extends StuTableEvent {
   final int rowIndex;
   final int? newLmValue;
 

@@ -27,7 +27,9 @@ class SalesmanTableBloc<BaseEvent, BaseState>
   Future<void> resetSalesman(
     ResetSalesman event,
     Emitter<SalesmanTableState> emit,
-  ) async {}
+  ) async {
+    emit(SalesmanInitial(event.salesmanList, [], []));
+  }
 
   /// Dynamically creates a list of SalesmanData using state.fetchSalesList,
   /// extracting only the name and tier, and setting other parameters to 0.

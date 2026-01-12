@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/data/models/new_salesman_data_table.dart';
-import 'package:sip_sales_clean/data/models/salesman_data_table.dart';
 
 class SalesmanTableEvent with EquatableMixin {
   @override
@@ -9,9 +9,9 @@ class SalesmanTableEvent with EquatableMixin {
 }
 
 class ResetSalesman extends SalesmanTableEvent {
-  final List<SalesmanData> salesDraftList;
+  final List<HeadEmployeeMasterModel> salesmanList;
 
-  ResetSalesman(this.salesDraftList);
+  ResetSalesman(this.salesmanList);
 }
 
 class FetchSalesman extends SalesmanTableEvent {

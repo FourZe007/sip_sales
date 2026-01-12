@@ -11,8 +11,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
@@ -224,18 +233,53 @@ class Functions {
         break;
       case '04':
         log('Daily Report');
-        log('PIC name: $pic');
+        final stuBlocState = context.read<StuTableBloc>().state;
+        if (stuBlocState is StuInitial || stuBlocState is StuDataModified) {
+          log('Stu data length: ${stuBlocState.data.length}');
+          for (var i = 0; i < stuBlocState.data.length; i++) {
+            log('${stuBlocState.data[i].toJson()}');
+          }
+        }
 
-        context.read<HeadStoreBloc>().add(
-          InsertDailyReport(
-            context: context,
-            pic: pic,
-            categoriesList: categoriesList,
-            paymentList: paymentList,
-            leasingList: leasingList,
-            employeeList: employeeList,
-          ),
-        );
+        final paymentBlocState = context.read<PaymentTableBloc>().state;
+        if (paymentBlocState is PaymentInitial ||
+            paymentBlocState is PaymentDataModified) {
+          log('Payment data length: ${paymentBlocState.data.length}');
+          for (var i = 0; i < paymentBlocState.data.length; i++) {
+            log('${paymentBlocState.data[i].toJson()}');
+          }
+        }
+
+        final leasingBlocState = context.read<LeasingTableBloc>().state;
+        if (leasingBlocState is LeasingInitial ||
+            leasingBlocState is AddLeasingData) {
+          log('Leasing data length: ${leasingBlocState.data.length}');
+          for (var i = 0; i < leasingBlocState.data.length; i++) {
+            log('${leasingBlocState.data[i].toJson()}');
+          }
+        }
+
+        final salesmanBlocState = context.read<SalesmanTableBloc>().state;
+        if (salesmanBlocState is SalesmanInitial ||
+            salesmanBlocState is SalesmanModified) {
+          log(
+            'Salesman data length: ${salesmanBlocState.salesmanList.length}',
+          );
+          for (var i = 0; i < salesmanBlocState.salesmanList.length; i++) {
+            log('${salesmanBlocState.salesmanList[i].toJson()}');
+          }
+        }
+
+        // context.read<HeadStoreBloc>().add(
+        //   InsertDailyReport(
+        //     context: context,
+        //     pic: pic,
+        //     categoriesList: categoriesList,
+        //     paymentList: paymentList,
+        //     leasingList: leasingList,
+        //     employeeList: employeeList,
+        //   ),
+        // );
         break;
       default:
     }
