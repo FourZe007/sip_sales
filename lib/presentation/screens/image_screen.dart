@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/data/models/salesman.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
@@ -11,9 +10,20 @@ import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 
 class ImageScreen extends StatelessWidget {
-  const ImageScreen({this.headActs, this.salesActs, super.key});
+  const ImageScreen({
+    required this.img,
+    required this.lat,
+    required this.lng,
+    required this.time,
+    this.salesActs,
+    super.key,
+  });
 
-  final HeadActsDetailsModel? headActs;
+  // final HeadBriefingDetailsModel? headActs;
+  final String img;
+  final double lat;
+  final double lng;
+  final String time;
   final SalesActsModel? salesActs;
 
   @override
@@ -65,10 +75,7 @@ class ImageScreen extends StatelessWidget {
                   child: BlocBuilder<LoginBloc, LoginState>(
                     builder: (context, state) {
                       if (state is LoginSuccess && state.user.code == 0) {
-                        if (headActs != null &&
-                            headActs!.time.isNotEmpty &&
-                            headActs!.lat != 0.0 &&
-                            headActs!.lng != 0.0) {
+                        if (time.isNotEmpty && lat != 0.0 && lng != 0.0) {
                           return Align(
                             alignment: Alignment.center,
                             child: Stack(
@@ -77,7 +84,7 @@ class ImageScreen extends StatelessWidget {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(20.0),
                                   child: Image.memory(
-                                    base64Decode(headActs!.pic1),
+                                    base64Decode(img),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -102,7 +109,7 @@ class ImageScreen extends StatelessWidget {
                                         padding: const EdgeInsets.all(4.0),
                                         margin: const EdgeInsets.all(4.0),
                                         child: Text(
-                                          headActs!.time,
+                                          time,
                                           style: TextThemes.normal.copyWith(
                                             fontSize: 20,
                                             color: Colors.white,
@@ -113,8 +120,8 @@ class ImageScreen extends StatelessWidget {
                                       // ~:Map:~
                                       GestureDetector(
                                         onTap: () => Functions.openMap(
-                                          headActs!.lat,
-                                          headActs!.lng,
+                                          lat,
+                                          lng,
                                         ),
                                         child: CircleAvatar(
                                           radius: 25,
@@ -153,7 +160,7 @@ class ImageScreen extends StatelessWidget {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(20.0),
                                     child: Image.memory(
-                                      base64Decode(headActs!.pic1),
+                                      base64Decode(img),
                                       fit: BoxFit.cover,
                                       scale: 0.55,
                                       height:
@@ -183,7 +190,7 @@ class ImageScreen extends StatelessWidget {
                                                     .user
                                                     .code ==
                                                 0) {
-                                              if (headActs!.time != '') {
+                                              if (time != '') {
                                                 return Container(
                                                   decoration: BoxDecoration(
                                                     color: Colors.grey[350],
@@ -199,7 +206,7 @@ class ImageScreen extends StatelessWidget {
                                                     5.0,
                                                   ),
                                                   child: Text(
-                                                    headActs!.time,
+                                                    time,
                                                     style: TextThemes.normal
                                                         .copyWith(
                                                           fontSize: 20,

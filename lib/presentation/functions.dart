@@ -270,16 +270,9 @@ class Functions {
           }
         }
 
-        // context.read<HeadStoreBloc>().add(
-        //   InsertDailyReport(
-        //     context: context,
-        //     pic: pic,
-        //     categoriesList: categoriesList,
-        //     paymentList: paymentList,
-        //     leasingList: leasingList,
-        //     employeeList: employeeList,
-        //   ),
-        // );
+        context.read<HeadStoreBloc>().add(
+          InsertDailyReport(context: context, pic: pic),
+        );
         break;
       default:
     }

@@ -47,7 +47,7 @@ class CreateReportScreen extends StatefulWidget {
 class _CreateReportScreenState extends State<CreateReportScreen> {
   final TextEditingController locationController = TextEditingController();
   final TextEditingController areaController = TextEditingController();
-  final TextEditingController personController = TextEditingController();
+  // final TextEditingController personController = TextEditingController();
 
   late LeasingInsertDataSource _leasingDataSource;
   late SalesmanInsertDataSource _salesmanDataSource;
@@ -302,7 +302,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     if (locationController.text.isEmpty) {
                                       locationController.text =
                                           Formatter.toTitleCase(
-                                            state.user.employeeName,
+                                            state.user.bsName,
                                           );
                                     }
                                   }
@@ -328,7 +328,10 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     // ~:Set the area controller text:~
                                     if (areaController.text.isEmpty) {
                                       areaController.text =
-                                          '${state.user.branch} ${Formatter.toBranchShopName(state.user.bsName)}';
+                                          Formatter.toTitleCase(
+                                            state.user.locationName,
+                                          );
+                                      // '${state.user.branch} ${Formatter.toBranchShopName(state.user.bsName)}';
                                     }
                                   }
 
@@ -348,17 +351,17 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               ),
 
                               // ~:PIC Textfield:~
-                              CustomTextFormField(
-                                'your PIC name',
-                                'PIC',
-                                const Icon(Icons.person),
-                                personController,
-                                isLabelFloat: true,
-                                inputFormatters: [
-                                  Formatter.normalFormatter,
-                                ],
-                                borderRadius: 20,
-                              ),
+                              // CustomTextFormField(
+                              //   'your PIC name',
+                              //   'PIC',
+                              //   const Icon(Icons.person),
+                              //   personController,
+                              //   isLabelFloat: true,
+                              //   inputFormatters: [
+                              //     Formatter.normalFormatter,
+                              //   ],
+                              //   borderRadius: 20,
+                              // ),
                             ],
                           ),
 

@@ -13,8 +13,18 @@ import 'package:sip_sales_clean/domain/repositories/followup_domain.dart';
 import 'package:sip_sales_clean/domain/repositories/head_store_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_event.dart';
+import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
@@ -84,50 +94,80 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         ),
       );
 
-      final breifingRes = await headStoreRepo.fetchHeadBriefingDetails(
-        event.employeeID,
-        event.date,
-        event.activityID,
-      );
-      log('$breifingRes');
+      late Map<String, dynamic> futures = {};
 
-      final visitRes = await headStoreRepo.fetchHeadVisitDetails(
-        event.employeeID,
-        event.date,
-        event.activityID,
-      );
-      log('$visitRes');
+      switch (event.activityID) {
+        case ('00'):
+          log('Futures fetching briefing data');
+          futures = await headStoreRepo.fetchHeadBriefingDetails(
+            event.employee.branch,
+            event.employee.shop,
+            event.date,
+          );
+          break;
+        case ('01'):
+          log('Futures fetching visit data');
+          futures = await headStoreRepo.fetchHeadVisitDetails(
+            event.employeeID,
+            event.date,
+            event.activityID,
+          );
+          break;
+        case ('02'):
+          log('Futures fetching recruitment data');
+          futures = await headStoreRepo.fetchHeadRecruitmentDetails(
+            event.employeeID,
+            event.date,
+            event.activityID,
+          );
+          break;
+        case ('03'):
+          log('Futures fetching interview data');
+          futures = await headStoreRepo.fetchHeadInterviewDetails(
+            event.employeeID,
+            event.date,
+            event.activityID,
+          );
+          break;
+        case ('04'):
+          log('Futures fetching report data');
+          futures = await headStoreRepo.fetchHeadReportDetails(
+            event.employeeID,
+            event.date,
+            event.activityID,
+          );
+          break;
+      }
 
-      final recruitmnetRes = await headStoreRepo.fetchHeadRecruitmentDetails(
-        event.employeeID,
-        event.date,
-        event.activityID,
-      );
-      log('$recruitmnetRes');
+      Map<String, dynamic> result = futures;
 
-      final interviewRes = await headStoreRepo.fetchHeadInterviewDetails(
-        event.employeeID,
-        event.date,
-        event.activityID,
-      );
-      log('$interviewRes');
-
-      final reportRes = await headStoreRepo.fetchHeadReportDetails(
-        event.employeeID,
-        event.date,
-        event.activityID,
-      );
-      log('$reportRes');
-
-      if (breifingRes['status'] == 'success') {
+      if (result['status'] == 'success') {
         log('Success');
-        emit(HeadStoreDataDetailLoaded(breifingRes['data']));
-      } else if (breifingRes['status'].toString().toLowerCase() == 'no data') {
+        switch (event.activityID) {
+          case ('00'):
+            emit(HeadStoreDataDetailLoaded(briefingDetail: result['data']));
+            break;
+          case ('01'):
+            emit(HeadStoreDataDetailLoaded(visitDetail: result['data']));
+            break;
+          case ('02'):
+            emit(
+              HeadStoreDataDetailLoaded(recruitmentDetail: result['data']),
+            );
+            break;
+          case ('03'):
+            emit(HeadStoreDataDetailLoaded(interviewDetail: result['data']));
+            break;
+          case ('04'):
+            emit(HeadStoreDataDetailLoaded(reportDetail: result['data']));
+            break;
+        }
+      } else if (result['status'].toString().toLowerCase() == 'no data') {
         log('Empty');
         emit(HeadStoreDataDetailFailed('Data tidak tersedia.'));
       } else {
         log('Failed');
-        emit(HeadStoreDataDetailFailed(breifingRes['msg']));
+        emit(HeadStoreDataDetailFailed(result['msg']));
       }
     } catch (e) {
       log('Load Head Acts Detail failed: $e');
@@ -627,16 +667,37 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
 
       final employee =
           (event.context.read<LoginBloc>().state as LoginSuccess).user;
+      final stuBlocState = event.context.read<StuTableBloc>().state;
+      final stuList =
+          (stuBlocState is StuInitial || stuBlocState is StuDataModified)
+          ? stuBlocState.data
+          : <HeadStuCategoriesMasterModel>[];
+      final paymentBlocState = event.context.read<PaymentTableBloc>().state;
+      final paymentList =
+          (paymentBlocState is PaymentInitial ||
+              paymentBlocState is PaymentDataModified)
+          ? paymentBlocState.data
+          : <HeadPaymentMasterModel>[];
+      final leasingBlocState = event.context.read<LeasingTableBloc>().state;
+      final leasingList =
+          (leasingBlocState is LeasingInitial ||
+              leasingBlocState is LeasingDataModified)
+          ? leasingBlocState.data
+          : <HeadLeasingMasterModel>[];
+      final employeeBlocState = event.context.read<SalesmanTableBloc>().state;
+      final employeeList =
+          (employeeBlocState is SalesmanInitial ||
+              employeeBlocState is SalesmanModified)
+          ? employeeBlocState.salesmanList
+          : <HeadEmployeeMasterModel>[];
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
-      final validator = Validator.interview(
-        isImgInvalid: isImgInvalid,
-      );
+      final validator = Validator.dailyReport(isImgInvalid);
 
       if (!validator.isValid) {
         emit(
           HeadStoreInsertFailed(
-            HeadStoreActTypes.interview,
+            HeadStoreActTypes.dailyReport,
             validator.errorMessage!,
           ),
         );
@@ -652,10 +713,10 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           (await Geolocator.getCurrentPosition()).longitude,
           base64Encode(await (img as ImageCaptured).image.readAsBytes()),
           employee.employeeID,
-          event.categoriesList,
-          event.paymentList,
-          event.leasingList,
-          event.employeeList,
+          stuList,
+          paymentList,
+          leasingList,
+          employeeList,
         );
         log('$res');
 
@@ -728,19 +789,19 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
       String apiEndpoint = '';
       switch (event.activityID) {
         case ('00'):
-          apiEndpoint = APIConstants.headBriefingMasterEndpoint;
+          apiEndpoint = APIConstants.insertHeadBriefingEndpoint;
           break;
         case ('01'):
-          apiEndpoint = APIConstants.headVisitMasterEndpoint;
+          apiEndpoint = APIConstants.insertHeadVisitEndpoint;
           break;
         case ('02'):
-          apiEndpoint = APIConstants.headRecruitmentMasterEndpoint;
+          apiEndpoint = APIConstants.insertHeadRecruitmentEndpoint;
           break;
         case ('03'):
-          apiEndpoint = APIConstants.headInterviewMasterEndpoint;
+          apiEndpoint = APIConstants.insertHeadInterviewEndpoint;
           break;
         case ('04'):
-          apiEndpoint = APIConstants.headReportMasterEndpoint;
+          apiEndpoint = APIConstants.insertHeadReportEndpoint;
           break;
       }
 

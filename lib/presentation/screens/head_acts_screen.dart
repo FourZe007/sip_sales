@@ -13,6 +13,8 @@ import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_detail_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
@@ -183,16 +185,20 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                       onTap: () {
                         context.read<HeadStoreBloc>().add(
                           LoadHeadActsDetail(
-                            employeeID: widget.employeeModel.employeeID,
-                            date: date,
                             activityID: data.activityId,
+                            employee:
+                                (context.read<LoginBloc>().state
+                                        as LoginSuccess)
+                                    .user,
+                            date: date,
                           ),
                         );
 
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const HeadActDetailScreen(),
+                            builder: (context) =>
+                                HeadActDetailScreen(data.activityId),
                           ),
                         );
                       },

@@ -170,6 +170,43 @@ class Validator {
 
     return ValidationResult.valid();
   }
+
+  static ValidationResult dailyReport(
+    bool isImgInvalid,
+    // bool isStuInvalid,
+    // bool isPaymentInvalid,
+    // bool isLeasingInvalid,
+    // bool isEmployeeInvalid,
+  ) {
+    final errors = <String>[];
+
+    if (isImgInvalid) errors.add('foto');
+    // if (isStuInvalid) errors.add('stu');
+    // if (isPaymentInvalid) errors.add('payment');
+    // if (isLeasingInvalid) errors.add('leasing');
+    // if (isEmployeeInvalid) errors.add('salesman');
+
+    if (errors.isNotEmpty) {
+      log(errors.toString());
+      String message;
+      if (errors.length == 1) {
+        message = '${Formatter.toTitleCase(errors[0])} tidak boleh kosong';
+      } else if (errors.length == 2) {
+        message =
+            '${Formatter.toTitleCase(errors[0])} dan ${errors[1]} tidak boleh kosong';
+      } else {
+        final allButFirst = errors.first;
+        final all = errors.sublist(1, errors.length - 1).join(', ');
+        final allButLast = errors.last;
+        message =
+            '${Formatter.toTitleCase(allButFirst)}, $all, dan $allButLast tidak boleh kosong';
+      }
+
+      return ValidationResult.invalid('$message.');
+    }
+
+    return ValidationResult.valid();
+  }
 }
 
 // final allButLast = errors.sublist(0, errors.length - 1).join(', ');

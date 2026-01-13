@@ -170,7 +170,7 @@ class HeadBriefingDetailsModel {
       lng: (json['lng'] is int ? json['lng'].toDouble() : json['lng']),
       locationName: json['lokasi'],
       description: json['topic'],
-      img: json['pic1'],
+      img: json['pic1Thumb'],
       employeeId: json['employeeID'],
       employeeName: json['eName'],
       numberOfParticipant: json['peserta'],
@@ -246,6 +246,8 @@ class HeadVisitDetailsModel {
   final String area;
   final String date;
   final String time;
+  final double lat;
+  final double lng;
   final String employeeId;
   final String employeeName;
   final int salesman;
@@ -258,12 +260,15 @@ class HeadVisitDetailsModel {
   final String jenisAktivitas;
   final String lokasi;
   final String jenisAktivitasDesc;
+  final String img;
 
   HeadVisitDetailsModel({
     required this.bsName,
     required this.area,
     required this.date,
     required this.time,
+    required this.lat,
+    required this.lng,
     required this.employeeId,
     required this.employeeName,
     required this.salesman,
@@ -276,6 +281,7 @@ class HeadVisitDetailsModel {
     required this.jenisAktivitas,
     required this.lokasi,
     required this.jenisAktivitasDesc,
+    required this.img,
   });
 
   factory HeadVisitDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -284,6 +290,8 @@ class HeadVisitDetailsModel {
       area: json['area'],
       date: json['currentDate'],
       time: json['currentTime'],
+      lat: (json['lat'] is int ? json['lat'].toDouble() : json['lat']),
+      lng: (json['lng'] is int ? json['lng'].toDouble() : json['lng']),
       employeeId: json['employeeID'],
       employeeName: json['eName'],
       salesman: json['salesman'],
@@ -296,6 +304,7 @@ class HeadVisitDetailsModel {
       jenisAktivitas: json['jenisAktivitas'],
       lokasi: json['lokasi'],
       jenisAktivitasDesc: json['jenisAktivitasDesc'],
+      img: json['pic1Thumb'],
     );
   }
 }
@@ -357,6 +366,7 @@ class HeadRecruitmentDetailsModel {
   final String eName;
   final String media;
   final String posisi;
+  final String img;
 
   HeadRecruitmentDetailsModel({
     required this.bsName,
@@ -370,6 +380,7 @@ class HeadRecruitmentDetailsModel {
     required this.eName,
     required this.media,
     required this.posisi,
+    required this.img,
   });
 
   factory HeadRecruitmentDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -385,6 +396,7 @@ class HeadRecruitmentDetailsModel {
       eName: json['eName'],
       media: json['media'],
       posisi: json['posisi'],
+      img: json['pic1Thumb'],
     );
   }
 }
@@ -470,7 +482,7 @@ class HeadInterviewDetailsModel {
   final String currentTime;
   final double lat;
   final double lng;
-  final String pic1Thumb;
+  final String img;
   final String employeeID;
   final String eName;
   final int dipanggil;
@@ -485,7 +497,7 @@ class HeadInterviewDetailsModel {
     required this.currentTime,
     required this.lat,
     required this.lng,
-    required this.pic1Thumb,
+    required this.img,
     required this.employeeID,
     required this.eName,
     required this.dipanggil,
@@ -502,7 +514,7 @@ class HeadInterviewDetailsModel {
       currentTime: json['currentTime'],
       lat: json['lat'],
       lng: json['lng'],
-      pic1Thumb: json['pic1Thumb'],
+      img: json['pic1Thumb'],
       employeeID: json['employeeID'],
       eName: json['eName'],
       dipanggil: json['dipanggil'],
@@ -851,7 +863,7 @@ class HeadReportDetailsModel {
   final String currentTime;
   final double lat;
   final double lng;
-  final String pic1Thumb;
+  final String img;
   final String employeeID;
   final String eName;
   final List<HeadStuCategoriesMasterModel> stuCategories;
@@ -866,7 +878,7 @@ class HeadReportDetailsModel {
     required this.currentTime,
     required this.lat,
     required this.lng,
-    required this.pic1Thumb,
+    required this.img,
     required this.employeeID,
     required this.eName,
     required this.stuCategories,
@@ -883,7 +895,7 @@ class HeadReportDetailsModel {
       currentTime: json['currentTime'],
       lat: json['lat'].toDouble(),
       lng: json['lng'].toDouble(),
-      pic1Thumb: json['pic1Thumb'],
+      img: json['pic1Thumb'],
       employeeID: json['employeeID'],
       eName: json['eName'],
       stuCategories: (json['stuCategory'] as List)

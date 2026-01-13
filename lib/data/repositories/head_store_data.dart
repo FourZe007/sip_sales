@@ -431,6 +431,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
     String date,
   ) async {
     Uri uri = Uri.https(APIConstants.baseUrl, apiEndpoint);
+    log('Delete Act Uri: $uri');
 
     Map body = {
       "Mode": mode,
@@ -438,6 +439,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       "Shop": shop,
       "CurrentDate": date,
     };
+    log('Delete Act body: $body');
 
     final response = await http
         .post(
@@ -654,20 +656,21 @@ class HeadStoreDataImp implements HeadStoreRepo {
 
   @override
   Future<Map<String, dynamic>> fetchHeadBriefingDetails(
-    String employeeID,
+    String branch,
+    String shop,
     String date,
-    String actId,
   ) async {
     Uri uri = Uri.https(
       APIConstants.baseUrl,
-      APIConstants.headActsDetailEndpoint,
+      APIConstants.showHeadBriefingEndpoint,
     );
 
     Map body = {
-      "EmployeeID": employeeID,
+      "Branch": branch,
+      "Shop": shop,
       "CurrentDate": date,
-      "ActivityID": actId,
     };
+    log('$body');
 
     final response = await http
         .post(
@@ -688,7 +691,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'status': 'success',
           'code': res['code'],
           'data': (res['data'] as List)
-              .map((e) => HeadActsDetailsModel.fromJson(e))
+              .map((e) => HeadBriefingDetailsModel.fromJson(e))
               .toList(),
         };
       } else {
@@ -696,7 +699,9 @@ class HeadStoreDataImp implements HeadStoreRepo {
         return {
           'status': res['msg'],
           'code': res['code'],
-          'data': ([]).map((e) => HeadActsDetailsModel.fromJson(e)).toList(),
+          'data': ([])
+              .map((e) => HeadBriefingDetailsModel.fromJson(e))
+              .toList(),
         };
       }
     } else {
@@ -704,7 +709,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([]).map((e) => HeadActsDetailsModel.fromJson(e)).toList(),
+        'data': ([]).map((e) => HeadBriefingDetailsModel.fromJson(e)).toList(),
       };
     }
   }
@@ -713,9 +718,58 @@ class HeadStoreDataImp implements HeadStoreRepo {
   Future<Map<String, dynamic>> fetchHeadVisitDetails(
     String branch,
     String shop,
-    String currentDate,
+    String date,
   ) async {
-    return {};
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.showHeadVisitEndpoint,
+    );
+
+    Map body = {
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+    };
+    log('$body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => HeadVisitDetailsModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': res['msg'],
+          'code': res['code'],
+          'data': ([]).map((e) => HeadVisitDetailsModel.fromJson(e)).toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([]).map((e) => HeadVisitDetailsModel.fromJson(e)).toList(),
+      };
+    }
   }
 
   @override
@@ -731,18 +785,120 @@ class HeadStoreDataImp implements HeadStoreRepo {
   Future<Map<String, dynamic>> fetchHeadInterviewDetails(
     String branch,
     String shop,
-    String currentDate,
+    String date,
   ) async {
-    return {};
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.showHeadInterviewEndpoint,
+    );
+
+    Map body = {
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+    };
+    log('$body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => HeadRecruitmentDetailsModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': res['msg'],
+          'code': res['code'],
+          'data': ([])
+              .map((e) => HeadRecruitmentDetailsModel.fromJson(e))
+              .toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([])
+            .map((e) => HeadRecruitmentDetailsModel.fromJson(e))
+            .toList(),
+      };
+    }
   }
 
   @override
   Future<Map<String, dynamic>> fetchHeadReportDetails(
     String branch,
     String shop,
-    String currentDate,
+    String date,
   ) async {
-    return {};
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.showHeadReportEndpoint,
+    );
+
+    Map body = {
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+    };
+    log('$body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => HeadReportDetailsModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': res['msg'],
+          'code': res['code'],
+          'data': ([]).map((e) => HeadReportDetailsModel.fromJson(e)).toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([]).map((e) => HeadReportDetailsModel.fromJson(e)).toList(),
+      };
+    }
   }
 
   @override

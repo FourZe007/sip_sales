@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sip_sales_clean/data/models/employee.dart';
-import 'package:sip_sales_clean/data/models/head_store.dart';
 
 abstract class HeadStoreEvent {
   final String employeeID;
@@ -33,12 +32,14 @@ class LoadHeadActs extends HeadStoreEvent {
 }
 
 class LoadHeadActsDetail extends HeadStoreEvent {
+  final EmployeeModel employee;
   final String date;
 
   LoadHeadActsDetail({
-    required super.employeeID,
     required this.date,
-    required super.activityID,
+    required this.employee,
+    super.employeeID = '',
+    super.activityID = '',
   });
 }
 
@@ -111,20 +112,20 @@ class InsertInterview extends HeadStoreEvent {
 class InsertDailyReport extends HeadStoreEvent {
   final BuildContext context;
   final String pic;
-  final List<HeadStuCategoriesMasterModel> categoriesList;
-  final List<HeadPaymentMasterModel> paymentList;
-  final List<HeadLeasingMasterModel> leasingList;
-  final List<HeadEmployeeMasterModel> employeeList;
+  // final List<HeadStuCategoriesMasterModel> categoriesList;
+  // final List<HeadPaymentMasterModel> paymentList;
+  // final List<HeadLeasingMasterModel> leasingList;
+  // final List<HeadEmployeeMasterModel> employeeList;
 
   InsertDailyReport({
     super.employeeID = '',
     super.activityID = '',
     required this.context,
     required this.pic,
-    required this.categoriesList,
-    required this.paymentList,
-    required this.leasingList,
-    required this.employeeList,
+    // required this.categoriesList,
+    // required this.paymentList,
+    // required this.leasingList,
+    // required this.employeeList,
   });
 
   get user => null;
