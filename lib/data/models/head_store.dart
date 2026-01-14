@@ -248,18 +248,17 @@ class HeadVisitDetailsModel {
   final String time;
   final double lat;
   final double lng;
-  final String employeeId;
-  final String employeeName;
+  final String jenisAktivitas;
+  final String lokasi;
   final int salesman;
-  final int unitDisplay;
+  final String unitDisplay;
   final int database;
   final int hotProspek;
   final int deal;
-  final int unitTestRide;
+  final String unitTestRide;
   final int pesertaTestRide;
-  final String jenisAktivitas;
-  final String lokasi;
-  final String jenisAktivitasDesc;
+  final String employeeId;
+  final String employeeName;
   final String img;
 
   HeadVisitDetailsModel({
@@ -269,8 +268,8 @@ class HeadVisitDetailsModel {
     required this.time,
     required this.lat,
     required this.lng,
-    required this.employeeId,
-    required this.employeeName,
+    required this.jenisAktivitas,
+    required this.lokasi,
     required this.salesman,
     required this.unitDisplay,
     required this.database,
@@ -278,9 +277,8 @@ class HeadVisitDetailsModel {
     required this.deal,
     required this.unitTestRide,
     required this.pesertaTestRide,
-    required this.jenisAktivitas,
-    required this.lokasi,
-    required this.jenisAktivitasDesc,
+    required this.employeeId,
+    required this.employeeName,
     required this.img,
   });
 
@@ -292,8 +290,8 @@ class HeadVisitDetailsModel {
       time: json['currentTime'],
       lat: (json['lat'] is int ? json['lat'].toDouble() : json['lat']),
       lng: (json['lng'] is int ? json['lng'].toDouble() : json['lng']),
-      employeeId: json['employeeID'],
-      employeeName: json['eName'],
+      jenisAktivitas: json['jenisAktivitas'],
+      lokasi: json['lokasi'],
       salesman: json['salesman'],
       unitDisplay: json['unitDisplay'],
       database: json['database'],
@@ -301,9 +299,8 @@ class HeadVisitDetailsModel {
       deal: json['deal'],
       unitTestRide: json['unitTestRide'],
       pesertaTestRide: json['pesertaTestRide'],
-      jenisAktivitas: json['jenisAktivitas'],
-      lokasi: json['lokasi'],
-      jenisAktivitasDesc: json['jenisAktivitasDesc'],
+      employeeId: json['employeeID'],
+      employeeName: json['eName'],
       img: json['pic1Thumb'],
     );
   }
@@ -357,46 +354,43 @@ class HeadRecruitmentMasterModel {
 class HeadRecruitmentDetailsModel {
   final String bsName;
   final String area;
-  final String currentDate;
-  final String currentTime;
+  final String date;
+  final String time;
   final double lat;
   final double lng;
-  final String pic1Thumb;
+  final String img;
   final String employeeID;
   final String eName;
   final String media;
   final String posisi;
-  final String img;
 
   HeadRecruitmentDetailsModel({
     required this.bsName,
     required this.area,
-    required this.currentDate,
-    required this.currentTime,
+    required this.date,
+    required this.time,
     required this.lat,
     required this.lng,
-    required this.pic1Thumb,
+    required this.img,
     required this.employeeID,
     required this.eName,
     required this.media,
     required this.posisi,
-    required this.img,
   });
 
   factory HeadRecruitmentDetailsModel.fromJson(Map<String, dynamic> json) {
     return HeadRecruitmentDetailsModel(
       bsName: json['bsName'],
       area: json['area'],
-      currentDate: json['currentDate'],
-      currentTime: json['currentTime'],
+      date: json['currentDate'],
+      time: json['currentTime'],
       lat: json['lat'],
       lng: json['lng'],
-      pic1Thumb: json['pic1Thumb'],
+      img: json['pic1Thumb'],
       employeeID: json['employeeID'],
       eName: json['eName'],
       media: json['media'],
       posisi: json['posisi'],
-      img: json['pic1Thumb'],
     );
   }
 }

@@ -121,18 +121,23 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
 
                 IconData icon;
                 switch (data.activityId) {
+                  // Morning Briefing
                   case '00':
                     icon = Icons.flare_rounded;
                     break;
+                  // Visit Market
                   case '01':
                     icon = Icons.shopping_bag_rounded;
                     break;
+                  // Recruitment
                   case '02':
                     icon = Icons.find_in_page_rounded;
                     break;
+                  // Daily Report
                   case '03':
                     icon = Icons.note_rounded;
                     break;
+                  // Interview
                   case '04':
                     icon = Icons.event_note_rounded;
                     break;

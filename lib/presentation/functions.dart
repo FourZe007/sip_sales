@@ -99,7 +99,6 @@ class Functions {
     final String position = '',
     // ~:Interview:~
     // ~:Daily Report:~
-    final String pic = '',
     final List<HeadStuCategoriesMasterModel> categoriesList = const [],
     final List<HeadPaymentMasterModel> paymentList = const [],
     final List<HeadLeasingMasterModel> leasingList = const [],
@@ -109,6 +108,7 @@ class Functions {
     log('Activity Code: $actTypeId');
 
     switch (actTypeId) {
+      // ~:Morning Briefing:~
       case '00':
         log('Morning Briefing');
         final headMasterCubit = context.read<HeadActsMasterCubit>().state;
@@ -141,6 +141,7 @@ class Functions {
           ),
         );
         break;
+      // ~:Visit Market:~
       case '01':
         log('Visit Market');
         // mode
@@ -198,6 +199,7 @@ class Functions {
           ),
         );
         break;
+      // ~:Recruitment:~
       case '02':
         log('Recruitment');
         // mandatory: media (String), position (String),
@@ -214,24 +216,8 @@ class Functions {
           ),
         );
         break;
+      // ~:Daily Report:~
       case '03':
-        log('Interview');
-        final counterCubit = context.read<CounterCubit>();
-        log('Dipanggil: ${counterCubit.getValueWithKey('called')}');
-        log('Datang: ${counterCubit.getValueWithKey('came')}');
-        log('Diterima: ${counterCubit.getValueWithKey('acc')}');
-        log('Facebook: ${counterCubit.getValueWithKey('fb_itv')}');
-        log('Instagram: ${counterCubit.getValueWithKey('ig_itv')}');
-        log(
-          'Balai Latihan Kerja: ${counterCubit.getValueWithKey('training_itv')}',
-        );
-        log('Kirim CV langsung: ${counterCubit.getValueWithKey('cv_itv')}');
-        log('Other: ${counterCubit.getValueWithKey('other_itv')}');
-        log('Image state: ${context.read<ImageCubit>().state}');
-
-        context.read<HeadStoreBloc>().add(InsertInterview(context: context));
-        break;
-      case '04':
         log('Daily Report');
         final stuBlocState = context.read<StuTableBloc>().state;
         if (stuBlocState is StuInitial || stuBlocState is StuDataModified) {
@@ -270,9 +256,25 @@ class Functions {
           }
         }
 
-        context.read<HeadStoreBloc>().add(
-          InsertDailyReport(context: context, pic: pic),
+        context.read<HeadStoreBloc>().add(InsertDailyReport(context: context));
+        break;
+      // ~:Interview:~
+      case '04':
+        log('Interview');
+        final counterCubit = context.read<CounterCubit>();
+        log('Dipanggil: ${counterCubit.getValueWithKey('called')}');
+        log('Datang: ${counterCubit.getValueWithKey('came')}');
+        log('Diterima: ${counterCubit.getValueWithKey('acc')}');
+        log('Facebook: ${counterCubit.getValueWithKey('fb_itv')}');
+        log('Instagram: ${counterCubit.getValueWithKey('ig_itv')}');
+        log(
+          'Balai Latihan Kerja: ${counterCubit.getValueWithKey('training_itv')}',
         );
+        log('Kirim CV langsung: ${counterCubit.getValueWithKey('cv_itv')}');
+        log('Other: ${counterCubit.getValueWithKey('other_itv')}');
+        log('Image state: ${context.read<ImageCubit>().state}');
+
+        context.read<HeadStoreBloc>().add(InsertInterview(context: context));
         break;
       default:
     }

@@ -5,13 +5,19 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
 import 'package:sip_sales_clean/presentation/screens/image_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
+import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/insertation/leasing_report.dart';
+import 'package:sip_sales_clean/presentation/widgets/insertation/payment_report.dart';
+import 'package:sip_sales_clean/presentation/widgets/insertation/salesman_report.dart';
+import 'package:sip_sales_clean/presentation/widgets/insertation/stu_report.dart';
 
 class HeadActDetailScreen extends StatefulWidget {
   const HeadActDetailScreen(this.actId, {super.key});
@@ -114,21 +120,21 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                         );
                       }
                     case '03':
-                      log('Interview');
-                      if (state.interviewDetail.isNotEmpty) {
-                        return interviewDetail(
-                          context,
-                          state.interviewDetail[0],
-                        );
+                      log('Daily Report');
+                      if (state.reportDetail.isNotEmpty) {
+                        return reportDetail(context, state.reportDetail[0]);
                       } else {
                         return Center(
                           child: Text('No data available'),
                         );
                       }
                     case '04':
-                      log('Daily Report');
-                      if (state.reportDetail.isNotEmpty) {
-                        return reportDetail(context, state.reportDetail[0]);
+                      log('Interview');
+                      if (state.interviewDetail.isNotEmpty) {
+                        return interviewDetail(
+                          context,
+                          state.interviewDetail[0],
+                        );
                       } else {
                         return Center(
                           child: Text('No data available'),
@@ -167,79 +173,100 @@ Widget briefingDetail(
         spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ~:Location:~
           Text(
             'Lokasi: ${Formatter.toTitleCase(data.locationName)}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Head Store:~
           Text(
             'Kepala Toko: ${data.shopManager}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Sales Counter:~
           Text(
             'Sales Counter: ${data.salesCounter}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Salesman:~
           Text(
             'Salesman: ${data.salesman}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Other Participants:~
           Text(
             'Lain-lain: ${data.others}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Description:~
           Text(
             'Deskripsi: ${data.description}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageScreen(
-                    img: data.img,
-                    lat: data.lat,
-                    lng: data.lng,
-                    time: data.time,
+
+          // ~:Image Preview:~
+          Builder(
+            builder: (context) {
+              if (data.img.isEmpty) {
+                return SizedBox.shrink();
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageScreen(
+                          img: data.img,
+                          lat: data.lat,
+                          lng: data.lng,
+                          time: data.time,
+                        ),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(4),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.grey[600]!,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.memory(
+                        base64Decode(data.img),
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(4),
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.grey[600]!,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.memory(
-                  base64Decode(data.img),
-                  fit: BoxFit.cover,
-                  height: 100,
-                  width: 100,
-                ),
-              ),
-            ),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -260,103 +287,132 @@ Widget visitDetail(
         spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ~:Date and Time:~
           Text(
-            'Tanggal dan waktu: ${data.date} ${data.time}',
+            'Tanggal ${Formatter.dateFormat(data.date)}, Pukul ${data.time}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Location:~
           Text(
-            'Lokasi: ${data.lokasi} ${Formatter.toTitleCase(data.bsName)}, ${data.area}',
+            'Lokasi: ${data.lokasi} ${Formatter.toTitleCase(data.bsName)}, ${Formatter.toTitleCase(data.area)}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Activity Type:~
           Text(
             'Jenis aktivitas: ${data.jenisAktivitas}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Salesman:~
           Text(
             'Jumlah salesman: ${data.salesman}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Unit Display Name:~
           Text(
             'Unit display: ${data.unitDisplay}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Customer Database:~
           Text(
             'Jumlah database: ${data.database}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Hot Prospect:~
           Text(
             'Jumlah hot prospek: ${data.hotProspek}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Deal:~
           Text(
             'Jumlah deal: ${data.deal}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Unit Test Ride Name:~
           Text(
             'Unit test ride: ${data.unitTestRide}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Test Ride:~
           Text(
             'Jumlah test ride: ${data.pesertaTestRide}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageScreen(
-                    img: data.img,
-                    lat: data.lat,
-                    lng: data.lng,
-                    time: data.time,
+
+          // ~:Image Preview:~
+          Builder(
+            builder: (context) {
+              if (data.img.isEmpty) {
+                return SizedBox.shrink();
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageScreen(
+                          img: data.img,
+                          lat: data.lat,
+                          lng: data.lng,
+                          time: data.time,
+                        ),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(4),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.grey[600]!,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.memory(
+                        base64Decode(data.img),
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(4),
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.grey[600]!,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.memory(
-                  base64Decode(data.img),
-                  fit: BoxFit.cover,
-                  height: 100,
-                  width: 100,
-                ),
-              ),
-            ),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -377,67 +433,84 @@ Widget recruitmentDetail(
         spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ~:Date and Time:~
           Text(
-            'Tanggal dan waktu: ${data.currentDate} ${data.currentTime}',
+            'Tanggal ${Formatter.dateFormat(data.date)}, Pukul ${data.time}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Location:~
           Text(
-            'Lokasi: ${Formatter.toTitleCase(data.bsName)}, ${data.area}',
+            'Lokasi: ${Formatter.toTitleCase(data.bsName)}, ${Formatter.toTitleCase(data.area)}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Media Name:~
           Text(
             'Media: ${data.media}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Position:~
           Text(
             'Posisi: ${data.posisi}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageScreen(
-                    img: data.img,
-                    lat: data.lat,
-                    lng: data.lng,
-                    time: data.currentTime,
+
+          // ~:Image Preview:~
+          Builder(
+            builder: (context) {
+              if (data.img.isEmpty) {
+                return SizedBox.shrink();
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageScreen(
+                          img: data.img,
+                          lat: data.lat,
+                          lng: data.lng,
+                          time: data.time,
+                        ),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(4),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.grey[600]!,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.memory(
+                        base64Decode(data.img),
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(4),
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.grey[600]!,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.memory(
-                  base64Decode(data.img),
-                  fit: BoxFit.cover,
-                  height: 100,
-                  width: 100,
-                ),
-              ),
-            ),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -458,36 +531,47 @@ Widget interviewDetail(
         spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ~:Date and Time:~
           Text(
-            'Tanggal dan waktu: ${data.currentDate} ${data.currentTime}',
+            'Tanggal ${Formatter.dateFormat(data.currentDate)}, Pukul ${data.currentTime}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Location:~
           Text(
-            'Lokasi: ${Formatter.toTitleCase(data.bsName)}, ${data.area}',
+            'Lokasi: ${Formatter.toTitleCase(data.bsName)}, ${Formatter.toTitleCase(data.area)}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Called Employee:~
           Text(
             'Jumlah dipanggil: ${data.dipanggil}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Arrived Employee:~
           Text(
             'Jumlah yang datang: ${data.datang}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Number of Accepted Employee:~
           Text(
             'Jumlah yang diterima: ${data.diterima}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Sources of Media with their numbers:~
           ListView(
             children: data.listMedia.asMap().entries.map((e) {
               final value = e.value;
@@ -501,43 +585,53 @@ Widget interviewDetail(
               );
             }).toList(),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageScreen(
-                    img: data.img,
-                    lat: data.lat,
-                    lng: data.lng,
-                    time: data.currentTime,
+
+          // ~:Image Preview:~
+          Builder(
+            builder: (context) {
+              if (data.img.isEmpty) {
+                return SizedBox.shrink();
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageScreen(
+                          img: data.img,
+                          lat: data.lat,
+                          lng: data.lng,
+                          time: data.currentTime,
+                        ),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(4),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.grey[600]!,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.memory(
+                        base64Decode(data.img),
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(4),
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.grey[600]!,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.memory(
-                  base64Decode(data.img),
-                  fit: BoxFit.cover,
-                  height: 100,
-                  width: 100,
-                ),
-              ),
-            ),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -555,58 +649,139 @@ Widget reportDetail(
     child: SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Column(
-        spacing: 4,
+        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ~:Date and Time:~
           Text(
-            'Tanggal dan waktu: ${data.currentDate} ${data.currentTime}',
+            'Tanggal ${Formatter.dateFormat(data.currentDate)}, Pukul ${data.currentTime}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
+
+          // ~:Location:~
           Text(
-            'Lokasi: ${Formatter.toTitleCase(data.bsName)}, ${data.area}',
+            'Lokasi: ${Formatter.toTitleCase(data.bsName)}, ${Formatter.toTitleCase(data.area)}',
             style: TextThemes.normal.copyWith(
               fontSize: 16,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageScreen(
-                    img: data.img,
-                    lat: data.lat,
-                    lng: data.lng,
-                    time: data.currentTime,
-                  ),
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(4),
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.grey[600]!,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.memory(
-                  base64Decode(data.img),
-                  fit: BoxFit.cover,
-                  height: 100,
-                  width: 100,
-                ),
-              ),
+
+          // ~:STU Data Table:~
+          ReportDataGrid(
+            dataSource: StuInsertDataSource(
+              data.stuCategories,
+              isEditingAllowed: false,
             ),
+            tableHeight:
+                (115 +
+                double.parse((50 * data.stuCategories.length).toString())),
+            loadedData: StuType.values.map((e) => e.name.toString()).toList(),
+            horizontalScrollPhysics: const BouncingScrollPhysics(),
+            textStyle: TextThemes.normal,
+          ),
+
+          // ~:Payment Data Table:~
+          ReportDataGrid(
+            dataSource: PaymentInsertDataSource(
+              data.payment,
+              isEditingAllowed: false,
+            ),
+            loadedData: PaymentType.values
+                .map((e) => e.name.toString())
+                .toList(),
+            tableHeight:
+                (115 +
+                double.parse(
+                  (50 * data.payment.length).toString(),
+                )),
+            horizontalScrollPhysics: const BouncingScrollPhysics(),
+            textStyle: TextThemes.normal,
+          ),
+
+          // ~:Leasing Data Table:~
+          ReportDataGrid(
+            dataSource: LeasingInsertDataSource(
+              data.leasing,
+              isEditingAllowed: false,
+            ),
+            loadedData: LeasingType.values
+                .map((e) => e.name.toString())
+                .toList(),
+            tableHeight:
+                (115 +
+                double.parse(
+                  (50 * data.leasing.length).toString(),
+                )),
+            horizontalScrollPhysics: const BouncingScrollPhysics(),
+            textStyle: TextThemes.normal,
+          ),
+
+          // ~:Salesman Data Table:~
+          ReportDataGrid(
+            dataSource: SalesmanInsertDataSource(
+              data.employee,
+              isEditingAllowed: false,
+            ),
+            loadedData: SalesmanType.values
+                .map((e) => e.name.toString())
+                .toList(),
+            tableHeight:
+                (115 +
+                double.parse(
+                  (50 * data.employee.length).toString(),
+                )),
+            horizontalScrollPhysics: const BouncingScrollPhysics(),
+            textStyle: TextThemes.normal,
+          ),
+
+          // ~:Image Preview Box:~
+          Builder(
+            builder: (context) {
+              if (data.img.isEmpty) {
+                return SizedBox.shrink();
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageScreen(
+                          img: data.img,
+                          lat: data.lat,
+                          lng: data.lng,
+                          time: data.currentTime,
+                        ),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(4),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.grey[600]!,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.memory(
+                        base64Decode(data.img),
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),

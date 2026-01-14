@@ -111,7 +111,6 @@ class InsertInterview extends HeadStoreEvent {
 
 class InsertDailyReport extends HeadStoreEvent {
   final BuildContext context;
-  final String pic;
   // final List<HeadStuCategoriesMasterModel> categoriesList;
   // final List<HeadPaymentMasterModel> paymentList;
   // final List<HeadLeasingMasterModel> leasingList;
@@ -121,7 +120,6 @@ class InsertDailyReport extends HeadStoreEvent {
     super.employeeID = '',
     super.activityID = '',
     required this.context,
-    required this.pic,
     // required this.categoriesList,
     // required this.paymentList,
     // required this.leasingList,

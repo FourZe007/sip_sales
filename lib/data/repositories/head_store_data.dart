@@ -371,7 +371,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       "CurrentTime": time,
       "Lat": lat,
       "Lng": lng,
-      "Img": img,
+      "Pic1": img,
       "EmployeeID": employeeId,
       "ListCategory": categoryList,
       "ListPayment": paymentList,
@@ -776,20 +776,11 @@ class HeadStoreDataImp implements HeadStoreRepo {
   Future<Map<String, dynamic>> fetchHeadRecruitmentDetails(
     String branch,
     String shop,
-    String currentDate,
-  ) async {
-    return {};
-  }
-
-  @override
-  Future<Map<String, dynamic>> fetchHeadInterviewDetails(
-    String branch,
-    String shop,
     String date,
   ) async {
     Uri uri = Uri.https(
       APIConstants.baseUrl,
-      APIConstants.showHeadInterviewEndpoint,
+      APIConstants.showHeadRecruitmentEndpoint,
     );
 
     Map body = {
@@ -839,6 +830,66 @@ class HeadStoreDataImp implements HeadStoreRepo {
         'data': ([])
             .map((e) => HeadRecruitmentDetailsModel.fromJson(e))
             .toList(),
+      };
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> fetchHeadInterviewDetails(
+    String branch,
+    String shop,
+    String date,
+  ) async {
+    Uri uri = Uri.https(
+      APIConstants.baseUrl,
+      APIConstants.showHeadInterviewEndpoint,
+    );
+
+    Map body = {
+      "Branch": branch,
+      "Shop": shop,
+      "CurrentDate": date,
+    };
+    log('$body');
+
+    final response = await http
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 60));
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Fetch succeed');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': (res['data'] as List)
+              .map((e) => HeadInterviewDetailsModel.fromJson(e))
+              .toList(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': res['msg'],
+          'code': res['code'],
+          'data': ([])
+              .map((e) => HeadInterviewDetailsModel.fromJson(e))
+              .toList(),
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': ([]).map((e) => HeadInterviewDetailsModel.fromJson(e)).toList(),
       };
     }
   }

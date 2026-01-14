@@ -94,12 +94,12 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         ),
       );
 
-      late Map<String, dynamic> futures = {};
+      Map<String, dynamic> result = {};
 
       switch (event.activityID) {
         case ('00'):
           log('Futures fetching briefing data');
-          futures = await headStoreRepo.fetchHeadBriefingDetails(
+          result = await headStoreRepo.fetchHeadBriefingDetails(
             event.employee.branch,
             event.employee.shop,
             event.date,
@@ -107,39 +107,38 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           break;
         case ('01'):
           log('Futures fetching visit data');
-          futures = await headStoreRepo.fetchHeadVisitDetails(
-            event.employeeID,
+          result = await headStoreRepo.fetchHeadVisitDetails(
+            event.employee.branch,
+            event.employee.shop,
             event.date,
-            event.activityID,
           );
           break;
         case ('02'):
           log('Futures fetching recruitment data');
-          futures = await headStoreRepo.fetchHeadRecruitmentDetails(
-            event.employeeID,
+          result = await headStoreRepo.fetchHeadRecruitmentDetails(
+            event.employee.branch,
+            event.employee.shop,
             event.date,
-            event.activityID,
           );
           break;
         case ('03'):
-          log('Futures fetching interview data');
-          futures = await headStoreRepo.fetchHeadInterviewDetails(
-            event.employeeID,
+          log('Futures fetching report data');
+          result = await headStoreRepo.fetchHeadReportDetails(
+            event.employee.branch,
+            event.employee.shop,
             event.date,
-            event.activityID,
           );
           break;
         case ('04'):
-          log('Futures fetching report data');
-          futures = await headStoreRepo.fetchHeadReportDetails(
-            event.employeeID,
+          log('Futures fetching interview data');
+          result = await headStoreRepo.fetchHeadInterviewDetails(
+            event.employee.branch,
+            event.employee.shop,
             event.date,
-            event.activityID,
           );
           break;
       }
-
-      Map<String, dynamic> result = futures;
+      log('Fetching process finished!');
 
       if (result['status'] == 'success') {
         log('Success');
@@ -156,10 +155,10 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
             );
             break;
           case ('03'):
-            emit(HeadStoreDataDetailLoaded(interviewDetail: result['data']));
+            emit(HeadStoreDataDetailLoaded(reportDetail: result['data']));
             break;
           case ('04'):
-            emit(HeadStoreDataDetailLoaded(reportDetail: result['data']));
+            emit(HeadStoreDataDetailLoaded(interviewDetail: result['data']));
             break;
         }
       } else if (result['status'].toString().toLowerCase() == 'no data') {
@@ -798,10 +797,10 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           apiEndpoint = APIConstants.insertHeadRecruitmentEndpoint;
           break;
         case ('03'):
-          apiEndpoint = APIConstants.insertHeadInterviewEndpoint;
+          apiEndpoint = APIConstants.insertHeadReportEndpoint;
           break;
         case ('04'):
-          apiEndpoint = APIConstants.insertHeadReportEndpoint;
+          apiEndpoint = APIConstants.insertHeadInterviewEndpoint;
           break;
       }
 

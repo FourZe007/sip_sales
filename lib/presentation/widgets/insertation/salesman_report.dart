@@ -9,12 +9,14 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 class SalesmanInsertDataSource extends DataGridSource {
   final Function(int rowIndex, String columnName, int newValue)?
   onCellValueEdited;
+  final bool isEditingAllowed;
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, FocusNode> _focusNodes = {};
 
   SalesmanInsertDataSource(
     List<HeadEmployeeMasterModel> data, {
     this.onCellValueEdited,
+    this.isEditingAllowed = true,
   }) {
     _salesmanData = data;
     buildDataGridRows();
@@ -98,73 +100,11 @@ class SalesmanInsertDataSource extends DataGridSource {
     final int rowIndex = dataGridRows.indexOf(row);
     if (rowIndex == -1) return const DataGridRowAdapter(cells: []);
 
-    return DataGridRowAdapter(
-      cells: row.getCells().asMap().entries.map<Widget>((entry) {
-        final int cellIndex = entry.key;
-        final DataGridCell<dynamic> dataGridCell = entry.value;
-        final String columnName = dataGridCell.columnName;
+    if (!isEditingAllowed) {
+      return DataGridRowAdapter(
+        cells: row.getCells().asMap().entries.map<Widget>((entry) {
+          final DataGridCell<dynamic> dataGridCell = entry.value;
 
-        // Check if the cell is editable (SPK, STU, or STU LM columns)
-        bool isEditable =
-            columnName == 'SPK' ||
-            columnName == 'STU' ||
-            columnName == 'STU LM';
-
-        if (isEditable) {
-          // Create or get controller and focus node for this cell
-          final controllerKey = _getControllerKey(rowIndex, cellIndex);
-          final controller =
-              _controllers[controllerKey] ??
-              TextEditingController(text: dataGridCell.value.toString());
-          final focusNode = _focusNodes[controllerKey] ?? FocusNode();
-
-          // Store them if they're new
-          if (!_controllers.containsKey(controllerKey)) {
-            _controllers[controllerKey] = controller;
-            _focusNodes[controllerKey] = focusNode;
-
-            // Set up focus listener to select all text when focused
-            focusNode.addListener(() {
-              if (focusNode.hasFocus) {
-                controller.selection = TextSelection(
-                  baseOffset: 0,
-                  extentOffset: controller.text.length,
-                );
-              }
-            });
-          } else {
-            // Update controller value if it already exists
-            controller.text = dataGridCell.value.toString();
-          }
-
-          // Editable cell with TextFormField
-          return Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: TextFormField(
-              controller: controller,
-              focusNode: focusNode,
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 8),
-              ),
-              onChanged: (String newValue) {
-                int? parsedValue = int.tryParse(newValue);
-
-                if (parsedValue != null && onCellValueEdited != null) {
-                  onCellValueEdited!(rowIndex, columnName, parsedValue);
-                } else if (newValue.isEmpty && onCellValueEdited != null) {
-                  // Handle clearing the field by sending 0
-                  onCellValueEdited!(rowIndex, columnName, 0);
-                }
-              },
-            ),
-          );
-        } else {
           // Non-editable cell
           return Container(
             alignment: Alignment.center,
@@ -174,8 +114,88 @@ class SalesmanInsertDataSource extends DataGridSource {
               textAlign: TextAlign.center,
             ),
           );
-        }
-      }).toList(),
-    );
+        }).toList(),
+      );
+    } else {
+      return DataGridRowAdapter(
+        cells: row.getCells().asMap().entries.map<Widget>((entry) {
+          final int cellIndex = entry.key;
+          final DataGridCell<dynamic> dataGridCell = entry.value;
+          final String columnName = dataGridCell.columnName;
+
+          // Check if the cell is editable (SPK, STU, or STU LM columns)
+          bool isEditable =
+              columnName == 'SPK' ||
+              columnName == 'STU' ||
+              columnName == 'STU LM';
+
+          if (isEditable) {
+            // Create or get controller and focus node for this cell
+            final controllerKey = _getControllerKey(rowIndex, cellIndex);
+            final controller =
+                _controllers[controllerKey] ??
+                TextEditingController(text: dataGridCell.value.toString());
+            final focusNode = _focusNodes[controllerKey] ?? FocusNode();
+
+            // Store them if they're new
+            if (!_controllers.containsKey(controllerKey)) {
+              _controllers[controllerKey] = controller;
+              _focusNodes[controllerKey] = focusNode;
+
+              // Set up focus listener to select all text when focused
+              focusNode.addListener(() {
+                if (focusNode.hasFocus) {
+                  controller.selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: controller.text.length,
+                  );
+                }
+              });
+            } else {
+              // Update controller value if it already exists
+              controller.text = dataGridCell.value.toString();
+            }
+
+            // Editable cell with TextFormField
+            return Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: TextFormField(
+                controller: controller,
+                focusNode: focusNode,
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                ),
+                onChanged: (String newValue) {
+                  int? parsedValue = int.tryParse(newValue);
+
+                  if (parsedValue != null && onCellValueEdited != null) {
+                    onCellValueEdited!(rowIndex, columnName, parsedValue);
+                  } else if (newValue.isEmpty && onCellValueEdited != null) {
+                    // Handle clearing the field by sending 0
+                    onCellValueEdited!(rowIndex, columnName, 0);
+                  }
+                },
+              ),
+            );
+          } else {
+            // Non-editable cell
+            return Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                Formatter.toTitleCase(dataGridCell.value.toString()),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+        }).toList(),
+      );
+    }
   }
 }

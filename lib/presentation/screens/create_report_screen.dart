@@ -499,24 +499,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                 SalesmanTableState
                               >(
                                 builder: (context, state) {
-                                  // if (state is SalesmanLoading) {
-                                  //   if (Platform.isIOS) {
-                                  //     return const CupertinoActivityIndicator(
-                                  //       radius: 12.5,
-                                  //       color: Colors.black,
-                                  //     );
-                                  //   } else {
-                                  //     return const AndroidLoading(
-                                  //       warna: Colors.black,
-                                  //       strokeWidth: 3,
-                                  //     );
-                                  //   }
-                                  // } else if (state is SalesmanFetched) {
-                                  //   salesmanData = state.salesDataList;
-                                  //   _salesmanDataSource.updateData(
-                                  //     salesmanData,
-                                  //   );
-                                  // } else
                                   if (state is SalesmanModified) {
                                     salesmanData = state.newData;
                                     _salesmanDataSource.updateData(
@@ -589,7 +571,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               ElevatedButton(
                 onPressed: () async => await Functions.manageNewHeadStoreAct(
                   context,
-                  '04',
+                  '03',
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,

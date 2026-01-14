@@ -10,12 +10,14 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 class LeasingInsertDataSource extends DataGridSource {
   final Function(int rowIndex, String columnName, int newValue)?
   onCellValueEdited;
+  final bool isEditingAllowed;
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, FocusNode> _focusNodes = {};
 
   LeasingInsertDataSource(
     List<HeadLeasingMasterModel> data, {
     this.onCellValueEdited,
+    this.isEditingAllowed = true,
   }) {
     log('Data Source length: ${data.length}');
     _leasingData = List<HeadLeasingMasterModel>.from(data);
@@ -83,116 +85,127 @@ class LeasingInsertDataSource extends DataGridSource {
 
     HeadLeasingMasterModel leasingEntry = _leasingData[rowIndex];
 
-    return DataGridRowAdapter(
-      cells: row.getCells().asMap().entries.map<Widget>((entry) {
-        final int cellIndex = entry.key;
-        final DataGridCell<dynamic> dataGridCell = entry.value;
-        final String columnName = dataGridCell.columnName;
+    if (!isEditingAllowed) {
+      return DataGridRowAdapter(
+        cells: row.getCells().asMap().entries.map<Widget>((entry) {
+          final DataGridCell<dynamic> dataGridCell = entry.value;
+          final String columnName = dataGridCell.columnName;
 
-        bool isEditable =
-            columnName == 'Total' ||
-            columnName == 'Opened' ||
-            columnName == 'Accepted' ||
-            columnName == 'Rejected';
-
-        if (isEditable) {
-          // Create or get controller and focus node for this cell
-          final controllerKey = _getControllerKey(rowIndex, cellIndex);
-          final controller =
-              _controllers[controllerKey] ??
-              TextEditingController(text: dataGridCell.value.toString());
-          final focusNode = _focusNodes[controllerKey] ?? FocusNode();
-
-          // Store them if they're new
-          if (!_controllers.containsKey(controllerKey)) {
-            _controllers[controllerKey] = controller;
-            _focusNodes[controllerKey] = focusNode;
-
-            // Set up focus listener to select all text when focused
-            focusNode.addListener(() {
-              if (focusNode.hasFocus) {
-                controller.selection = TextSelection(
-                  baseOffset: 0,
-                  extentOffset: controller.text.length,
+          if (columnName == 'Approval') {
+            // Format the approvalRate (double 0.0-1.0) as a percentage string
+            String approvalText = (leasingEntry.persentase ?? 0)
+                .toStringAsFixed(
+                  1,
                 );
-              }
-            });
-          } else {
-            // Update controller value if it already exists
-            controller.text = dataGridCell.value.toString();
-          }
-
-          return Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: TextFormField(
-              controller: controller,
-              focusNode: focusNode,
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 8),
+            return Center(
+              child: Text(
+                '$approvalText%',
+                textAlign: TextAlign.center,
+                style: TextThemes.normal, // (using existing style)
               ),
-              onChanged: (String newValue) {
-                int? parsedValue = int.tryParse(newValue);
-                // if (rowIndex != -1) {
-                //   LeasingData oldData = _leasingData[rowIndex];
-                //   LeasingData newData;
-                //   switch (cellIndex) {
-                //     case 1: // SPK
-                //       newData = oldData.copyWith(spk: parsedValue ?? 0);
-                //       break;
-                //     case 2: // Opened
-                //       newData = oldData.copyWith(open: parsedValue ?? 0);
-                //       break;
-                //     case 3: // Accepted
-                //       newData = oldData.copyWith(accept: parsedValue ?? 0);
-                //       break;
-                //     case 4: // Rejected
-                //       newData = oldData.copyWith(reject: parsedValue ?? 0);
-                //       break;
-                //     default:
-                //       newData =
-                //           oldData; // Should not happen for editable cells
-                //       break;
-                //   }
-                //   _leasingData[rowIndex] = newData;
-                // }
+            );
+          } else {
+            // 'Leasing' column (Type)
+            return Center(
+              child: Text(
+                dataGridCell.value.toString(),
+                textAlign: TextAlign.center,
+                style: TextThemes.normal,
+              ),
+            );
+          }
+        }).toList(),
+      );
+    } else {
+      return DataGridRowAdapter(
+        cells: row.getCells().asMap().entries.map<Widget>((entry) {
+          final int cellIndex = entry.key;
+          final DataGridCell<dynamic> dataGridCell = entry.value;
+          final String columnName = dataGridCell.columnName;
 
-                if (parsedValue != null && onCellValueEdited != null) {
-                  onCellValueEdited!(rowIndex, columnName, parsedValue);
+          bool isEditable =
+              columnName == 'Total' ||
+              columnName == 'Opened' ||
+              columnName == 'Accepted' ||
+              columnName == 'Rejected';
+
+          if (isEditable) {
+            // Create or get controller and focus node for this cell
+            final controllerKey = _getControllerKey(rowIndex, cellIndex);
+            final controller =
+                _controllers[controllerKey] ??
+                TextEditingController(text: dataGridCell.value.toString());
+            final focusNode = _focusNodes[controllerKey] ?? FocusNode();
+
+            // Store them if they're new
+            if (!_controllers.containsKey(controllerKey)) {
+              _controllers[controllerKey] = controller;
+              _focusNodes[controllerKey] = focusNode;
+
+              // Set up focus listener to select all text when focused
+              focusNode.addListener(() {
+                if (focusNode.hasFocus) {
+                  controller.selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: controller.text.length,
+                  );
                 }
-              },
-            ),
-          );
-        } else if (columnName == 'Approval') {
-          // Format the approvalRate (double 0.0-1.0) as a percentage string
-          String approvalText = (leasingEntry.persentase ?? 0).toStringAsFixed(
-            1,
-          );
-          return Center(
-            child: Text(
-              '$approvalText%',
-              textAlign: TextAlign.center,
-              style: TextThemes.normal, // (using existing style)
-            ),
-          );
-        } else {
-          // 'Leasing' column (Type)
-          return Center(
-            child: Text(
-              dataGridCell.value.toString(),
-              textAlign: TextAlign.center,
-              style: TextThemes.normal.copyWith(
-                fontWeight: FontWeight.bold,
-              ), //
-            ),
-          );
-        }
-      }).toList(),
-    );
+              });
+            } else {
+              // Update controller value if it already exists
+              controller.text = dataGridCell.value.toString();
+            }
+
+            return Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: TextFormField(
+                controller: controller,
+                focusNode: focusNode,
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                ),
+                onChanged: (String newValue) {
+                  int? parsedValue = int.tryParse(newValue);
+
+                  if (parsedValue != null && onCellValueEdited != null) {
+                    onCellValueEdited!(rowIndex, columnName, parsedValue);
+                  }
+                },
+              ),
+            );
+          } else if (columnName == 'Approval') {
+            // Format the approvalRate (double 0.0-1.0) as a percentage string
+            String approvalText = (leasingEntry.persentase ?? 0)
+                .toStringAsFixed(
+                  1,
+                );
+            return Center(
+              child: Text(
+                '$approvalText%',
+                textAlign: TextAlign.center,
+                style: TextThemes.normal, // (using existing style)
+              ),
+            );
+          } else {
+            // 'Leasing' column (Type)
+            return Center(
+              child: Text(
+                dataGridCell.value.toString(),
+                textAlign: TextAlign.center,
+                style: TextThemes.normal.copyWith(
+                  fontWeight: FontWeight.bold,
+                ), //
+              ),
+            );
+          }
+        }).toList(),
+      );
+    }
   }
 }

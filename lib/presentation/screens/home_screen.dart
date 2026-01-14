@@ -1241,6 +1241,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 state.type == DashboardSlidingUpType.dealer ||
                 state.type == DashboardSlidingUpType.leasing ||
                 state.type == DashboardSlidingUpType.category) {
+              if (state.type == DashboardSlidingUpType.deleteManagerActivity) {
+                setPanelMaxHeight(150);
+              }
               log('Opening Sliding Up Panel - State: ${state.type}');
               slidingPanelController.open();
             } else {
