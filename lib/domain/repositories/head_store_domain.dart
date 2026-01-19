@@ -68,7 +68,7 @@ abstract class HeadStoreRepo {
     int diterima,
     String pic1,
     String employeeID,
-    List<HeadMediaDetailsModel> listMedia,
+    List<InterviewMediaModel> listMedia,
   );
 
   Future<Map<String, dynamic>> insertNewReportActivity(

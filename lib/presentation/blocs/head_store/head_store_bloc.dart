@@ -581,24 +581,24 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           counter[2],
           base64Encode(await (img as ImageCaptured).image.readAsBytes()),
           employee.employeeID,
-          <HeadMediaDetailsModel>[
-            HeadMediaDetailsModel(
+          <InterviewMediaModel>[
+            InterviewMediaModel(
               mediaCode: 1,
               qty: counter[3],
             ),
-            HeadMediaDetailsModel(
+            InterviewMediaModel(
               mediaCode: 2,
               qty: counter[4],
             ),
-            HeadMediaDetailsModel(
+            InterviewMediaModel(
               mediaCode: 3,
               qty: counter[5],
             ),
-            HeadMediaDetailsModel(
+            InterviewMediaModel(
               mediaCode: 4,
               qty: counter[6],
             ),
-            HeadMediaDetailsModel(
+            InterviewMediaModel(
               mediaCode: 5,
               qty: counter[7],
             ),

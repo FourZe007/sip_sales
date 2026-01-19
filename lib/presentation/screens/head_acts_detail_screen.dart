@@ -162,7 +162,7 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
 
 Widget briefingDetail(
   BuildContext context,
-  HeadBriefingDetailsModel data,
+  HeadBriefingViewModel data,
 ) {
   return Container(
     width: MediaQuery.of(context).size.width,
@@ -276,7 +276,7 @@ Widget briefingDetail(
 
 Widget visitDetail(
   BuildContext context,
-  HeadVisitDetailsModel data,
+  HeadVisitViewModel data,
 ) {
   return Container(
     width: MediaQuery.of(context).size.width,
@@ -422,7 +422,7 @@ Widget visitDetail(
 
 Widget recruitmentDetail(
   BuildContext context,
-  HeadRecruitmentDetailsModel data,
+  HeadRecruitmentViewModel data,
 ) {
   return Container(
     width: MediaQuery.of(context).size.width,
@@ -520,7 +520,7 @@ Widget recruitmentDetail(
 
 Widget interviewDetail(
   BuildContext context,
-  HeadInterviewDetailsModel data,
+  HeadInterviewViewModel data,
 ) {
   return Container(
     width: MediaQuery.of(context).size.width,
@@ -641,7 +641,7 @@ Widget interviewDetail(
 
 Widget reportDetail(
   BuildContext context,
-  HeadReportDetailsModel data,
+  HeadReportViewModel data,
 ) {
   return Container(
     width: MediaQuery.of(context).size.width,

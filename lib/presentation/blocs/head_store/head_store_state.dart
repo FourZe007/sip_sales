@@ -37,11 +37,11 @@ class HeadStoreDataFailed extends HeadStoreState {
 
 // ~:Daily Activities Detail:~
 class HeadStoreDataDetailLoaded extends HeadStoreState {
-  final List<HeadBriefingDetailsModel> briefingDetail;
-  final List<HeadVisitDetailsModel> visitDetail;
-  final List<HeadRecruitmentDetailsModel> recruitmentDetail;
-  final List<HeadInterviewDetailsModel> interviewDetail;
-  final List<HeadReportDetailsModel> reportDetail;
+  final List<HeadBriefingViewModel> briefingDetail;
+  final List<HeadVisitViewModel> visitDetail;
+  final List<HeadRecruitmentViewModel> recruitmentDetail;
+  final List<HeadInterviewViewModel> interviewDetail;
+  final List<HeadReportViewModel> reportDetail;
 
   HeadStoreDataDetailLoaded({
     this.briefingDetail = const [],

@@ -276,7 +276,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
     int accepted,
     String pic1,
     String employeeID,
-    List<HeadMediaDetailsModel> listMedia,
+    List<InterviewMediaModel> listMedia,
   ) async {
     Uri uri = Uri.https(
       APIConstants.baseUrl,
@@ -691,7 +691,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'status': 'success',
           'code': res['code'],
           'data': (res['data'] as List)
-              .map((e) => HeadBriefingDetailsModel.fromJson(e))
+              .map((e) => HeadBriefingViewModel.fromJson(e))
               .toList(),
         };
       } else {
@@ -699,9 +699,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
         return {
           'status': res['msg'],
           'code': res['code'],
-          'data': ([])
-              .map((e) => HeadBriefingDetailsModel.fromJson(e))
-              .toList(),
+          'data': ([]).map((e) => HeadBriefingViewModel.fromJson(e)).toList(),
         };
       }
     } else {
@@ -709,7 +707,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([]).map((e) => HeadBriefingDetailsModel.fromJson(e)).toList(),
+        'data': ([]).map((e) => HeadBriefingViewModel.fromJson(e)).toList(),
       };
     }
   }
@@ -751,7 +749,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'status': 'success',
           'code': res['code'],
           'data': (res['data'] as List)
-              .map((e) => HeadVisitDetailsModel.fromJson(e))
+              .map((e) => HeadVisitViewModel.fromJson(e))
               .toList(),
         };
       } else {
@@ -759,7 +757,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
         return {
           'status': res['msg'],
           'code': res['code'],
-          'data': ([]).map((e) => HeadVisitDetailsModel.fromJson(e)).toList(),
+          'data': ([]).map((e) => HeadVisitViewModel.fromJson(e)).toList(),
         };
       }
     } else {
@@ -767,7 +765,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([]).map((e) => HeadVisitDetailsModel.fromJson(e)).toList(),
+        'data': ([]).map((e) => HeadVisitViewModel.fromJson(e)).toList(),
       };
     }
   }
@@ -809,7 +807,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'status': 'success',
           'code': res['code'],
           'data': (res['data'] as List)
-              .map((e) => HeadRecruitmentDetailsModel.fromJson(e))
+              .map((e) => HeadRecruitmentViewModel.fromJson(e))
               .toList(),
         };
       } else {
@@ -818,7 +816,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'status': res['msg'],
           'code': res['code'],
           'data': ([])
-              .map((e) => HeadRecruitmentDetailsModel.fromJson(e))
+              .map((e) => HeadRecruitmentViewModel.fromJson(e))
               .toList(),
         };
       }
@@ -827,9 +825,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([])
-            .map((e) => HeadRecruitmentDetailsModel.fromJson(e))
-            .toList(),
+        'data': ([]).map((e) => HeadRecruitmentViewModel.fromJson(e)).toList(),
       };
     }
   }
@@ -871,7 +867,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'status': 'success',
           'code': res['code'],
           'data': (res['data'] as List)
-              .map((e) => HeadInterviewDetailsModel.fromJson(e))
+              .map((e) => HeadInterviewViewModel.fromJson(e))
               .toList(),
         };
       } else {
@@ -879,9 +875,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
         return {
           'status': res['msg'],
           'code': res['code'],
-          'data': ([])
-              .map((e) => HeadInterviewDetailsModel.fromJson(e))
-              .toList(),
+          'data': ([]).map((e) => HeadInterviewViewModel.fromJson(e)).toList(),
         };
       }
     } else {
@@ -889,7 +883,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([]).map((e) => HeadInterviewDetailsModel.fromJson(e)).toList(),
+        'data': ([]).map((e) => HeadInterviewViewModel.fromJson(e)).toList(),
       };
     }
   }
@@ -931,7 +925,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'status': 'success',
           'code': res['code'],
           'data': (res['data'] as List)
-              .map((e) => HeadReportDetailsModel.fromJson(e))
+              .map((e) => HeadReportViewModel.fromJson(e))
               .toList(),
         };
       } else {
@@ -939,7 +933,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
         return {
           'status': res['msg'],
           'code': res['code'],
-          'data': ([]).map((e) => HeadReportDetailsModel.fromJson(e)).toList(),
+          'data': ([]).map((e) => HeadReportViewModel.fromJson(e)).toList(),
         };
       }
     } else {
@@ -947,7 +941,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([]).map((e) => HeadReportDetailsModel.fromJson(e)).toList(),
+        'data': ([]).map((e) => HeadReportViewModel.fromJson(e)).toList(),
       };
     }
   }

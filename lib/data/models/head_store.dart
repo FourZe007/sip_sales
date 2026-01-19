@@ -123,7 +123,7 @@ class HeadBriefingMasterModel {
   }
 }
 
-class HeadBriefingDetailsModel {
+class HeadBriefingViewModel {
   final String bsName;
   final String area;
   final String date;
@@ -140,8 +140,9 @@ class HeadBriefingDetailsModel {
   final int salesCounter;
   final int salesman;
   final int others;
+  final List<HeadBriefingViewDetailsModel> details;
 
-  HeadBriefingDetailsModel({
+  HeadBriefingViewModel({
     required this.bsName,
     required this.area,
     required this.date,
@@ -158,10 +159,11 @@ class HeadBriefingDetailsModel {
     required this.salesCounter,
     required this.salesman,
     required this.others,
+    required this.details,
   });
 
-  factory HeadBriefingDetailsModel.fromJson(Map<String, dynamic> json) {
-    return HeadBriefingDetailsModel(
+  factory HeadBriefingViewModel.fromJson(Map<String, dynamic> json) {
+    return HeadBriefingViewModel(
       bsName: json['bsName'],
       area: json['area'],
       date: json['currentDate'],
@@ -178,6 +180,26 @@ class HeadBriefingDetailsModel {
       salesCounter: json['salesCounter'],
       salesman: json['salesman'],
       others: json['others'],
+      details: (json['detail'] as List)
+          .map((e) => HeadBriefingViewDetailsModel.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class HeadBriefingViewDetailsModel {
+  final int line;
+  final String detail;
+
+  HeadBriefingViewDetailsModel({
+    required this.line,
+    required this.detail,
+  });
+
+  factory HeadBriefingViewDetailsModel.fromJson(Map<String, dynamic> json) {
+    return HeadBriefingViewDetailsModel(
+      line: json['line'],
+      detail: json['detailTopic'],
     );
   }
 }
@@ -241,7 +263,7 @@ class HeadVisitMasterModel {
   }
 }
 
-class HeadVisitDetailsModel {
+class HeadVisitViewModel {
   final String bsName;
   final String area;
   final String date;
@@ -261,7 +283,7 @@ class HeadVisitDetailsModel {
   final String employeeName;
   final String img;
 
-  HeadVisitDetailsModel({
+  HeadVisitViewModel({
     required this.bsName,
     required this.area,
     required this.date,
@@ -282,8 +304,8 @@ class HeadVisitDetailsModel {
     required this.img,
   });
 
-  factory HeadVisitDetailsModel.fromJson(Map<String, dynamic> json) {
-    return HeadVisitDetailsModel(
+  factory HeadVisitViewModel.fromJson(Map<String, dynamic> json) {
+    return HeadVisitViewModel(
       bsName: json['bsName'],
       area: json['area'],
       date: json['currentDate'],
@@ -351,7 +373,7 @@ class HeadRecruitmentMasterModel {
   }
 }
 
-class HeadRecruitmentDetailsModel {
+class HeadRecruitmentViewModel {
   final String bsName;
   final String area;
   final String date;
@@ -364,7 +386,7 @@ class HeadRecruitmentDetailsModel {
   final String media;
   final String posisi;
 
-  HeadRecruitmentDetailsModel({
+  HeadRecruitmentViewModel({
     required this.bsName,
     required this.area,
     required this.date,
@@ -378,8 +400,8 @@ class HeadRecruitmentDetailsModel {
     required this.posisi,
   });
 
-  factory HeadRecruitmentDetailsModel.fromJson(Map<String, dynamic> json) {
-    return HeadRecruitmentDetailsModel(
+  factory HeadRecruitmentViewModel.fromJson(Map<String, dynamic> json) {
+    return HeadRecruitmentViewModel(
       bsName: json['bsName'],
       area: json['area'],
       date: json['currentDate'],
@@ -469,7 +491,7 @@ class HeadMediaMasterModel {
   }
 }
 
-class HeadInterviewDetailsModel {
+class HeadInterviewViewModel {
   final String bsName;
   final String area;
   final String currentDate;
@@ -482,9 +504,9 @@ class HeadInterviewDetailsModel {
   final int dipanggil;
   final int datang;
   final int diterima;
-  final List<HeadMediaDetailsModel> listMedia;
+  final List<InterviewMediaModel> listMedia;
 
-  HeadInterviewDetailsModel({
+  HeadInterviewViewModel({
     required this.bsName,
     required this.area,
     required this.currentDate,
@@ -500,8 +522,8 @@ class HeadInterviewDetailsModel {
     required this.listMedia,
   });
 
-  factory HeadInterviewDetailsModel.fromJson(Map<String, dynamic> json) {
-    return HeadInterviewDetailsModel(
+  factory HeadInterviewViewModel.fromJson(Map<String, dynamic> json) {
+    return HeadInterviewViewModel(
       bsName: json['bsName'],
       area: json['area'],
       currentDate: json['currentDate'],
@@ -515,27 +537,27 @@ class HeadInterviewDetailsModel {
       datang: json['datang'],
       diterima: json['diterima'],
       listMedia: (json['listMedia'] as List)
-          .map((e) => HeadMediaDetailsModel.fromJson(e))
+          .map((e) => InterviewMediaModel.fromJson(e))
           .toList(),
     );
   }
 }
 
-class HeadMediaDetailsModel {
+class InterviewMediaModel {
   final int? line;
   final int mediaCode;
   final String? mediaName;
   final int qty;
 
-  HeadMediaDetailsModel({
+  InterviewMediaModel({
     this.line = 0,
     required this.mediaCode,
     this.mediaName = '',
     required this.qty,
   });
 
-  factory HeadMediaDetailsModel.fromJson(Map<String, dynamic> json) {
-    return HeadMediaDetailsModel(
+  factory InterviewMediaModel.fromJson(Map<String, dynamic> json) {
+    return InterviewMediaModel(
       line: json.containsKey('line') ? json['line'] : null,
       mediaCode: json['mediaCode'],
       mediaName: json['mediaName'] ?? '',
@@ -850,7 +872,7 @@ class HeadEmployeeMasterModel {
   }
 }
 
-class HeadReportDetailsModel {
+class HeadReportViewModel {
   final String bsName;
   final String area;
   final String currentDate;
@@ -865,7 +887,7 @@ class HeadReportDetailsModel {
   final List<HeadLeasingMasterModel> leasing;
   final List<HeadEmployeeMasterModel> employee;
 
-  HeadReportDetailsModel({
+  HeadReportViewModel({
     required this.bsName,
     required this.area,
     required this.currentDate,
@@ -881,8 +903,8 @@ class HeadReportDetailsModel {
     required this.employee,
   });
 
-  factory HeadReportDetailsModel.fromJson(Map<String, dynamic> json) {
-    return HeadReportDetailsModel(
+  factory HeadReportViewModel.fromJson(Map<String, dynamic> json) {
+    return HeadReportViewModel(
       bsName: json['bsName'],
       area: json['area'],
       currentDate: json['currentDate'],
