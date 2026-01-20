@@ -22,6 +22,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
@@ -89,7 +90,7 @@ class Functions {
     final BuildContext context,
     final String actTypeId, {
     // ~:Morning Briefing:~
-    final String desc = '',
+    final String topic = '',
     // ~:Visit Market:~
     final String actTypeName = '',
     final String unitDisplay = '',
@@ -131,13 +132,14 @@ class Functions {
         log(
           'Morning Briefing values: ${counterCubit.getValues(['shop_manager', 'sales_counter', 'salesman', 'others'])}',
         );
-        log('Description: $desc');
+        final descCubit = context.read<BriefingDescCubit>().state;
+        log('Description: $descCubit');
         log('Image state: ${context.read<ImageCubit>().state}');
         context.read<HeadStoreBloc>().add(
           InsertMorningBriefing(
             context: context,
             actId: actTypeId,
-            desc: desc,
+            topic: topic,
           ),
         );
         break;

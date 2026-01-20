@@ -11,6 +11,7 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.da
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
@@ -29,7 +30,17 @@ class CreateBriefingScreen extends StatefulWidget {
 
 class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
   final TextEditingController locationController = TextEditingController();
+  final TextEditingController topicController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+
+  int descHeight = 140;
+
+  void setDescHeight(int height) {
+    setState(() {
+      descHeight = height;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +80,7 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   physics: ClampingScrollPhysics(),
+                  controller: scrollController,
                   child: Column(
                     spacing: 8,
                     children: [
@@ -178,31 +190,137 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                         ],
                       ),
 
-                      // ~:Description Textfield:~
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: TextField(
-                          controller: descriptionController,
-                          autofocus: false,
-                          maxLines: 8,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: 'Enter your description',
-                            border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.black,
-                                width: 2.0,
-                              ),
-                              borderRadius: BorderRadius.circular(10.0),
+                      CustomTextFormField(
+                        'e.g. Penjualan minggu ke-2',
+                        'Topik',
+                        const Icon(Icons.file_open_rounded),
+                        topicController,
+                        inputFormatters: [Formatter.normalFormatter],
+                        borderRadius: 24,
+                      ),
+
+                      // ~:New Description:~
+                      SizedBox(
+                        height: double.parse(descHeight.toString()),
+                        child: Column(
+                          spacing: 4,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Deskripsi',
+                              style: TextThemes.normal.copyWith(fontSize: 16),
                             ),
-                            hintStyle: TextThemes.textfieldPlaceholder,
-                            labelText: 'Description',
-                            labelStyle: TextThemes.textfieldPlaceholder,
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                          ),
+
+                            Expanded(
+                              child: BlocBuilder<BriefingDescCubit, List<TextEditingController>>(
+                                builder: (context, controllers) {
+                                  return ListView.builder(
+                                    itemCount: controllers.length,
+                                    controller: scrollController,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: SizedBox(
+                                                height: 52,
+                                                child: TextField(
+                                                  controller:
+                                                      controllers[index],
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                        'Masukkan deskripsi ${index + 1}',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  maxLines: 3,
+                                                ),
+                                              ),
+                                            ),
+                                            if (index >
+                                                0) // Show remove button for all fields except the first one
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.remove_circle_outline,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () {
+                                                  context
+                                                      .read<BriefingDescCubit>()
+                                                      .removeField(index);
+                                                  setDescHeight(
+                                                    descHeight -= 60,
+                                                  );
+                                                },
+                                              ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+
+                            ElevatedButton(
+                              onPressed: () {
+                                context.read<BriefingDescCubit>().addField();
+                                setDescHeight(descHeight += 60);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: Size(
+                                  MediaQuery.of(context).size.width,
+                                  40,
+                                ),
+                                side: const BorderSide(
+                                  color: Colors.black,
+                                  width: 2,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                backgroundColor: Colors.white,
+                              ),
+                              child: Icon(Icons.add, size: 32),
+                            ),
+                          ],
                         ),
                       ),
+
+                      // ~:Description Textfield:~
+                      // Container(
+                      //   height: 250,
+                      //   padding: const EdgeInsets.only(top: 16),
+                      //   child: TextField(
+                      //     controller: descriptionController,
+                      //     autofocus: false,
+                      //     maxLines: 8,
+                      //     decoration: InputDecoration(
+                      //       filled: true,
+                      //       fillColor: Colors.white,
+                      //       hintText: 'Enter your description',
+                      //       border: OutlineInputBorder(
+                      //         borderSide: const BorderSide(
+                      //           color: Colors.black,
+                      //           width: 2.0,
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(10.0),
+                      //       ),
+                      //       hintStyle: TextThemes.textfieldPlaceholder,
+                      //       labelText: 'Description',
+                      //       labelStyle: TextThemes.textfieldPlaceholder,
+                      //       floatingLabelBehavior: FloatingLabelBehavior.always,
+                      //     ),
+                      //   ),
+                      // ),
 
                       // ~:Photo Section:~
                       DottedRoundedImagePicker(),
@@ -215,7 +333,6 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                 onPressed: () async => await Functions.manageNewHeadStoreAct(
                   context,
                   '00',
-                  desc: descriptionController.text,
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,

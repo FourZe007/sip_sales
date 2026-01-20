@@ -24,6 +24,7 @@ import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordin
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/update_followup/update_fu_dashboard_bloc.dart';
 import 'package:sip_sales_clean/presentation/cubit/attendance_type_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
@@ -54,6 +55,9 @@ class StateManager {
       ),
       BlocProvider<HeadActsMasterCubit>(
         create: (context) => HeadActsMasterCubit(HeadStoreDataImp()),
+      ),
+      BlocProvider<BriefingDescCubit>(
+        create: (context) => BriefingDescCubit(),
       ),
       BlocProvider<DashboardSlidingUpCubit>(
         create: (context) => DashboardSlidingUpCubit(),

@@ -47,7 +47,7 @@ class InsertMorningBriefing extends HeadStoreEvent {
   final BuildContext context;
   // final EmployeeModel employee;
   final String actId;
-  final String desc;
+  final String topic;
   // final ImageState img;
   // final String locationName;
   // final List<int> values;
@@ -57,7 +57,7 @@ class InsertMorningBriefing extends HeadStoreEvent {
     super.activityID = '',
     required this.context,
     required this.actId,
-    required this.desc,
+    required this.topic,
     // required this.img,
     // required this.locationName,
     // required this.values,

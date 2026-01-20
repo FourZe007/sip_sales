@@ -25,6 +25,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
@@ -214,7 +215,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
       final employee =
           (event.context.read<LoginBloc>().state as LoginSuccess).user;
       log('EmployeeId: ${employee.employeeID}');
-      final isDescEmpty = event.desc.isEmpty;
+      final isTopicEmpty = event.topic.isEmpty;
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
       final headActsMaster = event.context.read<HeadActsMasterCubit>().state;
@@ -224,8 +225,13 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         'salesman',
         'others',
       ]);
+      final descriptions = event.context
+          .read<BriefingDescCubit>()
+          .state
+          .map((desc) => desc.text)
+          .toList();
 
-      if (isDescEmpty && isImgInvalid) {
+      if (isTopicEmpty && isImgInvalid) {
         emit(
           HeadStoreInsertFailed(
             HeadStoreActTypes.morningBriefing,
@@ -233,7 +239,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           ),
         );
         return;
-      } else if (isDescEmpty) {
+      } else if (isTopicEmpty) {
         emit(
           HeadStoreInsertFailed(
             HeadStoreActTypes.morningBriefing,
@@ -265,7 +271,8 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           (headActsMaster is HeadActsMasterLoaded)
               ? headActsMaster.briefingMaster[0].bsName
               : employee.bsName,
-          event.desc,
+          event.topic,
+          descriptions,
           counter[0],
           counter[1],
           counter[2],
