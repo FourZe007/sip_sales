@@ -34,7 +34,7 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
   final TextEditingController descriptionController = TextEditingController();
   final ScrollController scrollController = ScrollController();
 
-  int descHeight = 140;
+  int descHeight = 120;
 
   void setDescHeight(int height) {
     setState(() {
@@ -206,11 +206,6 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                           spacing: 4,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Deskripsi',
-                              style: TextThemes.normal.copyWith(fontSize: 16),
-                            ),
-
                             Expanded(
                               child: BlocBuilder<BriefingDescCubit, List<TextEditingController>>(
                                 builder: (context, controllers) {
@@ -232,6 +227,8 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                                                   controller:
                                                       controllers[index],
                                                   decoration: InputDecoration(
+                                                    labelText:
+                                                        'Deskripsi ${index + 1}',
                                                     hintText:
                                                         'Masukkan deskripsi ${index + 1}',
                                                     border: OutlineInputBorder(
@@ -289,7 +286,17 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                                 ),
                                 backgroundColor: Colors.white,
                               ),
-                              child: Icon(Icons.add, size: 32),
+                              child: Row(
+                                spacing: 8,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add, size: 32),
+                                  Text(
+                                    'Tambah Deskripsi',
+                                    style: TextThemes.normal,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

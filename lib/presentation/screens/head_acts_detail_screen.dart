@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.da
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
 import 'package:sip_sales_clean/presentation/screens/image_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
+import 'package:sip_sales_clean/presentation/widgets/cards/performance_card.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/leasing_report.dart';
@@ -164,61 +166,188 @@ Widget briefingDetail(
   BuildContext context,
   HeadBriefingViewModel data,
 ) {
+  final List<Map<String, dynamic>> pieChartList = [
+    {
+      'title': 'Kepala Toko',
+      'number': data.shopManager,
+      'color': Color.lerp(Colors.blue[50], Colors.blue, 0.2)!,
+    },
+    {
+      'title': 'Sales Counter',
+      'number': data.salesCounter,
+      'color': Color.lerp(Colors.blue, Colors.blue[700], 0.5)!,
+    },
+    {
+      'title': 'Salesman',
+      'number': data.salesman,
+      'color': Color.lerp(Colors.blue[700], Colors.blue[900], 0.7)!,
+    },
+    {
+      'title': 'Others',
+      'number': data.others,
+      'color': Color.lerp(Colors.blue[900], Colors.purple[700], 0.5)!,
+    },
+  ]..sort((a, b) => a['number'].compareTo(b['number']));
+
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.symmetric(horizontal: 5.0),
     child: SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Column(
-        spacing: 4,
+        spacing: 8,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ~:Location:~
-          Text(
-            'Lokasi: ${Formatter.toTitleCase(data.locationName)}',
-            style: TextThemes.normal.copyWith(
-              fontSize: 16,
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+              childAspectRatio: 1.3,
+              children: [
+                // ~:Location:~
+                PerformanceCard.base(
+                  'Lokasi',
+                  Formatter.toTitleCase(data.locationName),
+                  boxColor: Colors.lightBlue[100]!,
+                ),
+
+                // ~:Topic:~
+                PerformanceCard.base(
+                  'Topik Kegiatan',
+                  data.description,
+                  boxColor: Colors.purple[100]!,
+                ),
+              ],
             ),
           ),
 
-          // ~:Number of Head Store:~
-          Text(
-            'Kepala Toko: ${data.shopManager}',
-            style: TextThemes.normal.copyWith(
-              fontSize: 16,
+          // ~:Chart:~
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 220,
+            child: Column(
+              children: [
+                // ~:Title:~
+                Text(
+                  'Jumlah Peserta',
+                  style: TextThemes.normal.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                // ~:Chart:~
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // ~:Pie Chart:~
+                      Expanded(
+                        child: PieChart(
+                          PieChartData(
+                            startDegreeOffset: -150,
+                            sections: pieChartList
+                                .map(
+                                  (e) => PieChartSectionData(
+                                    value: double.parse(e['number'].toString()),
+                                    title: '',
+                                    color: e['color'],
+                                    radius: 60,
+                                    titleStyle: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            sectionsSpace: 2,
+                            // centerSpaceRadius: 32,
+                          ),
+                        ),
+                      ),
+
+                      // ~:Chart Legends:~
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: pieChartList.map((e) {
+                            final String title = e['title'];
+                            final int number = e['number'];
+                            final Color color = e['color'];
+
+                            return Row(
+                              spacing: 8,
+                              children: [
+                                // ~:Color Legend:~
+                                Container(
+                                  width: 16,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: color,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+
+                                // ~:Legend Text:~
+                                Text(
+                                  '$number $title',
+                                  style: TextThemes.normal,
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // ~:Number of Sales Counter:~
-          Text(
-            'Sales Counter: ${data.salesCounter}',
-            style: TextThemes.normal.copyWith(
-              fontSize: 16,
-            ),
-          ),
+          // ~:Descriptions:~
+          Column(
+            spacing: 4,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ~:Title:~
+              Text(
+                'Detail Deskripsi',
+                style: TextThemes.normal.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
-          // ~:Number of Salesman:~
-          Text(
-            'Salesman: ${data.salesman}',
-            style: TextThemes.normal.copyWith(
-              fontSize: 16,
-            ),
-          ),
+              // ~:Values:~
+              Column(
+                children: data.details.asMap().entries.map((e) {
+                  final int i = e.key + 1;
+                  final String detail = e.value.detail;
 
-          // ~:Number of Other Participants:~
-          Text(
-            'Lain-lain: ${data.others}',
-            style: TextThemes.normal.copyWith(
-              fontSize: 16,
-            ),
-          ),
-
-          // ~:Description:~
-          Text(
-            'Deskripsi: ${data.description}',
-            style: TextThemes.normal.copyWith(
-              fontSize: 16,
-            ),
+                  return Row(
+                    spacing: 12,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${i.toString()}.'),
+                      Expanded(
+                        child: Text(
+                          detail,
+                          style: TextThemes.normal.copyWith(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ],
           ),
 
           // ~:Image Preview:~
@@ -244,24 +373,39 @@ Widget briefingDetail(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.all(4),
                       backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.grey[600]!,
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20),
-                        ),
-                      ),
+                      // shape: RoundedRectangleBorder(
+                      //   side: BorderSide(
+                      //     color: Colors.grey[600]!,
+                      //     width: 1.5,
+                      //   ),
+                      //   borderRadius: BorderRadius.all(
+                      //     Radius.circular(20),
+                      //   ),
+                      // ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Image.memory(
-                        base64Decode(data.img),
-                        fit: BoxFit.cover,
-                        height: 100,
-                        width: 100,
-                      ),
+                    child: Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ~:Title:~
+                        Text(
+                          'Bukti Foto',
+                          style: TextThemes.normal.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Image.memory(
+                            base64Decode(data.img),
+                            fit: BoxFit.cover,
+                            height: 100,
+                            width: 100,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
