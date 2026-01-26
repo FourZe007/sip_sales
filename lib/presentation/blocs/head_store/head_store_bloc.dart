@@ -230,34 +230,28 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           .state
           .map((desc) => desc.text)
           .toList();
+      final validator = Validator.headStoreAct(
+        isTopicEmpty: isTopicEmpty,
+        isDescEmpty: descriptions.any((desc) => desc.isEmpty),
+        isImgInvalid: isImgInvalid,
+      );
 
-      if (isTopicEmpty && isImgInvalid) {
+      if (!validator.isValid) {
         emit(
           HeadStoreInsertFailed(
             HeadStoreActTypes.morningBriefing,
-            'Deskripsi dan foto tidak boleh kosong',
-          ),
-        );
-        return;
-      } else if (isTopicEmpty) {
-        emit(
-          HeadStoreInsertFailed(
-            HeadStoreActTypes.morningBriefing,
-            'Deskripsi tidak boleh kosong',
-          ),
-        );
-        return;
-      } else if (isImgInvalid) {
-        emit(
-          HeadStoreInsertFailed(
-            HeadStoreActTypes.morningBriefing,
-            img is ImageInitial
-                ? 'Foto tidak boleh kosong'
-                : (img as ImageError).message,
+            validator.errorMessage!,
           ),
         );
         return;
       } else {
+        final descList = descriptions
+            .map((desc) => HeadBriefingViewDetailsModel(detail: desc))
+            .toList();
+        for (var val in descList) {
+          log(val.detail);
+        }
+
         final res = await headStoreRepo.insertNewBriefingActivity(
           '1',
           employee.branch,
@@ -272,7 +266,11 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
               ? headActsMaster.briefingMaster[0].bsName
               : employee.bsName,
           event.topic,
-          descriptions,
+          descriptions
+              .map(
+                (desc) => HeadBriefingViewDetailsModel(detail: desc).toJson(),
+              )
+              .toList(),
           counter[0],
           counter[1],
           counter[2],
@@ -342,12 +340,14 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
       final employee =
           (event.context.read<LoginBloc>().state as LoginSuccess).user;
       final isActEmpty = event.actTypeName.isEmpty;
+      final isLocationEmpty = event.locationName.isEmpty;
       final isUnitDisplayEmpty = event.unitDisplay.isEmpty;
       final isUnitTestEmpty = event.unitTest.isEmpty;
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
-      final validator = Validator.visitMarket(
+      final validator = Validator.headStoreAct(
         isActEmpty: isActEmpty,
+        isLocationEmpty: isLocationEmpty,
         isUnitDisplayEmpty: isUnitDisplayEmpty,
         isUnitTestEmpty: isUnitTestEmpty,
         isImgInvalid: isImgInvalid,
@@ -458,9 +458,9 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
       final isPositionEmpty = event.position.isEmpty;
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
-      final validator = Validator.recruitment(
+      final validator = Validator.headStoreAct(
         isMediaEmpty: isMediaEmpty,
-        isPositionEmtpy: isPositionEmpty,
+        isPositionEmpty: isPositionEmpty,
         isImgInvalid: isImgInvalid,
       );
 
@@ -550,7 +550,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           (event.context.read<LoginBloc>().state as LoginSuccess).user;
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
-      final validator = Validator.interview(isImgInvalid: isImgInvalid);
+      final validator = Validator.headStoreAct(isImgInvalid: isImgInvalid);
 
       if (!validator.isValid) {
         log('Validator failed: ${validator.errorMessage}');
@@ -698,7 +698,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           : <HeadEmployeeMasterModel>[];
       final img = event.context.read<ImageCubit>().state;
       final isImgInvalid = img is ImageInitial || img is ImageError;
-      final validator = Validator.dailyReport(isImgInvalid);
+      final validator = Validator.headStoreAct(isImgInvalid: isImgInvalid);
 
       if (!validator.isValid) {
         emit(

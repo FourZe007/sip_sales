@@ -238,7 +238,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
               padding: EdgeInsets.only(
-                // vertical: MediaQuery.of(context).size.height * 0.015,
                 top: MediaQuery.of(context).size.height * 0.015,
               ),
               child: Column(

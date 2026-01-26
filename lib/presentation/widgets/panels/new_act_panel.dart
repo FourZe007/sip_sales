@@ -12,6 +12,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table
 import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_event.dart';
+import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
@@ -75,6 +76,8 @@ class _NewActPanelState extends State<NewActPanel> {
             ? headActsMaster.briefingMaster[0].contestant
             : 1,
       );
+
+      context.read<BriefingDescCubit>().resetFields();
 
       Navigator.push(
         context,

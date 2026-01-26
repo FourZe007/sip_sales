@@ -92,6 +92,7 @@ class Functions {
     // ~:Morning Briefing:~
     final String topic = '',
     // ~:Visit Market:~
+    final String locationName = '',
     final String actTypeName = '',
     final String unitDisplay = '',
     final String unitTest = '',
@@ -104,7 +105,6 @@ class Functions {
     final List<HeadPaymentMasterModel> paymentList = const [],
     final List<HeadLeasingMasterModel> leasingList = const [],
     final List<HeadEmployeeMasterModel> employeeList = const [],
-    // HeadBriefingCreationModel? briefing,
   }) async {
     log('Activity Code: $actTypeId');
 
@@ -132,8 +132,11 @@ class Functions {
         log(
           'Morning Briefing values: ${counterCubit.getValues(['shop_manager', 'sales_counter', 'salesman', 'others'])}',
         );
+        log('Topik: $topic');
         final descCubit = context.read<BriefingDescCubit>().state;
-        log('Description: $descCubit');
+        log(
+          'Total description: ${descCubit.map((desc) => desc.text).toList().length}',
+        );
         log('Image state: ${context.read<ImageCubit>().state}');
         context.read<HeadStoreBloc>().add(
           InsertMorningBriefing(
@@ -195,6 +198,7 @@ class Functions {
         context.read<HeadStoreBloc>().add(
           InsertVisitMarket(
             context: context,
+            locationName: locationName,
             actTypeName: actTypeName,
             unitDisplay: unitDisplay,
             unitTest: unitTest,

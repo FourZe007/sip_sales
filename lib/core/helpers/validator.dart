@@ -62,19 +62,66 @@ class Validator {
     return null; // No error
   }
 
+  static ValidationResult headStoreAct({
+    bool isTopicEmpty = false,
+    bool isDescEmpty = false,
+    bool isActEmpty = false,
+    bool isLocationEmpty = false,
+    bool isUnitDisplayEmpty = false,
+    bool isUnitTestEmpty = false,
+    bool isMediaEmpty = false,
+    bool isPositionEmpty = false,
+    bool isImgInvalid = false,
+  }) {
+    final errors = <String>[];
+
+    if (isTopicEmpty) errors.add('topik');
+    if (isDescEmpty) errors.add('deskripsi');
+    if (isActEmpty) errors.add('aksi');
+    if (isLocationEmpty) errors.add('lokasi');
+    if (isUnitDisplayEmpty) errors.add('unit display');
+    if (isUnitTestEmpty) errors.add('unit test');
+    if (isMediaEmpty) errors.add('media');
+    if (isPositionEmpty) errors.add('posisi');
+    if (isImgInvalid) errors.add('foto');
+
+    if (errors.isNotEmpty) {
+      log(errors.toString());
+      String message;
+      if (errors.length == 1) {
+        message = '${Formatter.toTitleCase(errors[0])} tidak boleh kosong';
+      } else if (errors.length == 2) {
+        message =
+            '${Formatter.toTitleCase(errors[0])} dan ${errors[1]} tidak boleh kosong';
+      } else {
+        final allButFirst = errors.first;
+        final all = errors.sublist(1, errors.length - 1).join(', ');
+        final allButLast = errors.last;
+        message =
+            '${Formatter.toTitleCase(allButFirst)}, $all, dan $allButLast tidak boleh kosong';
+      }
+
+      return ValidationResult.invalid('$message.');
+    }
+
+    return ValidationResult.valid();
+  }
+
   static ValidationResult morningBriefing({
+    required bool isTopicEmpty,
     required bool isDescEmpty,
     required bool isImgInvalid,
   }) {
     final errors = <String>[];
 
+    if (isTopicEmpty) errors.add('topik');
     if (isDescEmpty) errors.add('deskripsi');
     if (isImgInvalid) errors.add('foto');
 
     if (errors.isNotEmpty) {
       String message;
       if (errors.length == 1) {
-        message = '${errors[0]} tidak boleh kosong';
+        message = '${Formatter.toTitleCase(errors[0])} tidak boleh kosong';
       } else {
         final allButLast = errors.sublist(0, errors.length - 1).join(', ');
         message = '$allButLast, dan ${errors.last} tidak boleh kosong';

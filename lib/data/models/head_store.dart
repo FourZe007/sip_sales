@@ -84,13 +84,6 @@ class HeadActsDetailsModel {
 }
 
 // ~:New:~
-class HeadBriefingCreationModel {
-  final String mode;
-  final String desc;
-
-  HeadBriefingCreationModel(this.mode, this.desc);
-}
-
 class HeadBriefingMasterModel {
   final String bsName;
   final String area;
@@ -188,11 +181,11 @@ class HeadBriefingViewModel {
 }
 
 class HeadBriefingViewDetailsModel {
-  final int line;
+  final int? line;
   final String detail;
 
   HeadBriefingViewDetailsModel({
-    required this.line,
+    this.line = 0,
     required this.detail,
   });
 
@@ -201,6 +194,12 @@ class HeadBriefingViewDetailsModel {
       line: json['line'],
       detail: json['detailTopic'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'DetailTopic': detail,
+    };
   }
 }
 

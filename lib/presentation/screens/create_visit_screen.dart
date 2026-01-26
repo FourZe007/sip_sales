@@ -73,10 +73,7 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 20,
-          ),
+          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
           child: Column(
             spacing: 8,
             children: [
@@ -116,25 +113,22 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
                           // ~:Location Textfield using HeadActsMasterCubit:~
                           BlocBuilder<HeadActsMasterCubit, HeadActsMasterState>(
                             builder: (context, state) {
+                              String shopName = '';
                               if (state is HeadActsMasterLoaded) {
                                 // ~:Set the location controller text:~
-                                locationController.text =
-                                    Formatter.toCompanyAbbForm(
-                                      (state.visitMaster as List)[0].bsName,
-                                    );
+                                shopName = Formatter.toCompanyAbbForm(
+                                  (state.visitMaster as List)[0].bsName,
+                                );
                               }
-                              log(
-                                'Location Controller: ${locationController.text}',
-                              );
+                              log('Location Controller: $shopName');
 
                               return CustomTextFormField(
-                                'your location',
+                                'e.g. $shopName',
                                 'Lokasi',
                                 const Icon(Icons.location_pin),
                                 locationController,
                                 inputFormatters: [Formatter.normalFormatter],
                                 borderRadius: 24,
-                                isEnabled: false,
                               );
                             },
                           ),

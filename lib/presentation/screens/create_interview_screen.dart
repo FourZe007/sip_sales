@@ -56,10 +56,7 @@ class _CreateInterviewScreenState extends State<CreateInterviewScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 20,
-          ),
+          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
           child: Column(
             spacing: 8,
             children: [

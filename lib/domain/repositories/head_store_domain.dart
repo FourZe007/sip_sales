@@ -13,7 +13,7 @@ abstract class HeadStoreRepo {
     String employeeId,
     String locationName,
     String topic,
-    List<String> descriptions,
+    List<Map<String, dynamic>> descriptions,
     int numberOfParticipants,
     int headStore,
     int salesCounter,

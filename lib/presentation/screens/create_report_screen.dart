@@ -249,10 +249,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 20,
-          ),
+          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
           child: Column(
             spacing: 12,
             children: [

@@ -73,7 +73,7 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
           child: Column(
             spacing: 8,
             children: [
@@ -302,33 +302,6 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                         ),
                       ),
 
-                      // ~:Description Textfield:~
-                      // Container(
-                      //   height: 250,
-                      //   padding: const EdgeInsets.only(top: 16),
-                      //   child: TextField(
-                      //     controller: descriptionController,
-                      //     autofocus: false,
-                      //     maxLines: 8,
-                      //     decoration: InputDecoration(
-                      //       filled: true,
-                      //       fillColor: Colors.white,
-                      //       hintText: 'Enter your description',
-                      //       border: OutlineInputBorder(
-                      //         borderSide: const BorderSide(
-                      //           color: Colors.black,
-                      //           width: 2.0,
-                      //         ),
-                      //         borderRadius: BorderRadius.circular(10.0),
-                      //       ),
-                      //       hintStyle: TextThemes.textfieldPlaceholder,
-                      //       labelText: 'Description',
-                      //       labelStyle: TextThemes.textfieldPlaceholder,
-                      //       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      //     ),
-                      //   ),
-                      // ),
-
                       // ~:Photo Section:~
                       DottedRoundedImagePicker(),
                     ],
@@ -340,6 +313,7 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                 onPressed: () async => await Functions.manageNewHeadStoreAct(
                   context,
                   '00',
+                  topic: topicController.text,
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -365,6 +339,9 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                         current is HeadStoreInsertFailed,
                     listener: (context, state) {
                       if (state is HeadStoreInsertFailed) {
+                        log(
+                          'Morning Briefing creation failed due to ${state.message}',
+                        );
                         Functions.customFlutterToast(state.message);
                       } else if (state is HeadStoreInsertSucceed) {
                         Functions.customFlutterToast(

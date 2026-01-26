@@ -23,7 +23,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
     String employeeId,
     String locationName,
     String topic,
-    List<String> descriptions,
+    List<Map<String, dynamic>> descriptions,
     int numberOfParticipants,
     int headStore,
     int salesCounter,
@@ -34,6 +34,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
       APIConstants.baseUrl,
       APIConstants.insertHeadBriefingEndpoint,
     );
+    log('Morning Briefing Uri: $uri');
 
     Map body = {
       "Mode": mode,
@@ -47,12 +48,12 @@ class HeadStoreDataImp implements HeadStoreRepo {
       "EmployeeID": employeeId,
       "Lokasi": locationName,
       "Topic": topic,
-      "Detail": descriptions,
       "peserta": numberOfParticipants,
       "shopManager": headStore,
       "salesCounter": salesCounter,
       "salesman": salesman,
       "others": others,
+      "Detail": descriptions,
     };
     log('Body: $body');
 

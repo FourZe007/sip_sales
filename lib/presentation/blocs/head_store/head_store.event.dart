@@ -68,6 +68,7 @@ class InsertMorningBriefing extends HeadStoreEvent {
 
 class InsertVisitMarket extends HeadStoreEvent {
   final BuildContext context;
+  final String locationName;
   final String actTypeName;
   final String unitDisplay;
   final String unitTest;
@@ -76,6 +77,7 @@ class InsertVisitMarket extends HeadStoreEvent {
     super.employeeID = '',
     super.activityID = '',
     required this.context,
+    required this.locationName,
     required this.actTypeName,
     required this.unitDisplay,
     required this.unitTest,

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sip_sales_clean/data/models/result_message_2.dart';
 import 'package:sip_sales_clean/domain/repositories/image_domain.dart';
+import 'package:sip_sales_clean/presentation/widgets/image/detector.dart';
 
 class ImageCubit extends Cubit<ImageState> {
   final ImageRepo imageRepo;
@@ -12,19 +13,25 @@ class ImageCubit extends Cubit<ImageState> {
 
   ImageCubit(this.imageRepo) : super(ImageInitial());
 
-  Future<void> uploadImage(
-    String employeeId,
-  ) async {
+  Future<void> uploadImage(String employeeId) async {
     try {
       emit(ImageLoading());
 
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         imageQuality: 70, // Adjust quality as needed
-        maxWidth: 800, // Adjust max width as needed
+        // maxWidth: 800, // Adjust max width as needed
       );
 
       if (image != null) {
+        // ~:add ML process to check either the photo contains face or not
+        // if (await ImageDetector.hasFace(image)) {
+        // } else {
+        //   emit(
+        //     const ImageError('Tidak ada wajah yang terdeteksi dalam gambar'),
+        //   );
+        // }
+
         final res = await imageRepo.uploadProfilePicture(
           '1',
           employeeId,
@@ -39,7 +46,9 @@ class ImageCubit extends Cubit<ImageState> {
                 'sukses') {
           emit(ImageCaptured(image));
         } else {
-          emit(ImageError((res['data'] as ResultMessageModel2).resultMessage));
+          emit(
+            ImageError((res['data'] as ResultMessageModel2).resultMessage),
+          );
         }
       } else {
         emit(const ImageError('No image selected'));

@@ -19,6 +19,11 @@ class BriefingDescCubit extends Cubit<List<TextEditingController>> {
     }
   }
 
+  void resetFields() {
+    final newState = [TextEditingController()];
+    emit(newState);
+  }
+
   @override
   Future<void> close() {
     // Dispose all controllers when cubit is closed

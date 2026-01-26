@@ -6,11 +6,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
+import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/screens/image_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/cards/performance_card.dart';
@@ -51,6 +55,23 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
             'Detail Kegiatan',
             style: TextThemes.normal.copyWith(fontSize: 16),
           ),
+          actions: [
+            IconButton(
+              onPressed: () => context.read<HeadStoreBloc>().add(
+                LoadHeadActsDetail(
+                  activityID: widget.actId,
+                  employee:
+                      (context.read<LoginBloc>().state as LoginSuccess).user,
+                  date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                ),
+              ),
+              icon: Icon(
+                Icons.refresh_rounded,
+                size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 36.0,
+                color: Colors.black,
+              ),
+            ),
+          ],
         ),
         body: DecoratedBox(
           decoration: BoxDecoration(
@@ -66,7 +87,7 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                 topRight: Radius.circular(20),
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            padding: EdgeInsets.fromLTRB(12, 20, 12, 0),
             child: BlocBuilder<HeadStoreBloc, HeadStoreState>(
               builder: (context, state) {
                 if (state is HeadStoreLoading &&
@@ -150,7 +171,7 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                   }
                 } else {
                   return const Center(
-                    child: Text('Data Tidak Ditemukan'),
+                    child: Text('No data available'),
                   );
                 }
               },
@@ -227,9 +248,10 @@ Widget briefingDetail(
           ),
 
           // ~:Chart:~
-          SizedBox(
+          Container(
             width: MediaQuery.of(context).size.width,
             height: 220,
+            margin: EdgeInsets.only(top: 8),
             child: Column(
               children: [
                 // ~:Title:~
