@@ -1,4 +1,6 @@
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/special_char.dart';
 
 class Formatter {
@@ -60,6 +62,11 @@ class Formatter {
     String bln = tanggal.substring(5, 7);
     String tgl = tanggal.substring(8, 10);
     return tanggal.replaceRange(0, 10, '$tgl-$bln-$thn');
+  }
+
+  static String specialDateFormat(String tanggal) {
+    initializeDateFormatting('id_ID', null);
+    return DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.parse(tanggal));
   }
 
   static String dayFormat(String tanggal) {

@@ -25,31 +25,49 @@ class ImageCubit extends Cubit<ImageState> {
 
       if (image != null) {
         // ~:add ML process to check either the photo contains face or not
-        // if (await ImageDetector.hasFace(image)) {
-        // } else {
-        //   emit(
-        //     const ImageError('Tidak ada wajah yang terdeteksi dalam gambar'),
-        //   );
-        // }
+        if (await ImageDetector.hasFace(image)) {
+          final res = await imageRepo.uploadProfilePicture(
+            '1',
+            employeeId,
+            base64Encode(await image.readAsBytes()),
+          );
 
-        final res = await imageRepo.uploadProfilePicture(
-          '1',
-          employeeId,
-          base64Encode(await image.readAsBytes()),
-        );
-
-        if (res['status'] == 'success' &&
-            res['code'] == '100' &&
-            (res['data'] as ResultMessageModel2).resultMessage
-                    .toString()
-                    .toLowerCase() ==
-                'sukses') {
-          emit(ImageCaptured(image));
+          if (res['status'] == 'success' &&
+              res['code'] == '100' &&
+              (res['data'] as ResultMessageModel2).resultMessage
+                      .toString()
+                      .toLowerCase() ==
+                  'sukses') {
+            emit(ImageCaptured(image));
+          } else {
+            emit(
+              ImageError((res['data'] as ResultMessageModel2).resultMessage),
+            );
+          }
         } else {
           emit(
-            ImageError((res['data'] as ResultMessageModel2).resultMessage),
+            const ImageError('Tidak ada wajah yang terdeteksi dalam gambar'),
           );
         }
+
+        // final res = await imageRepo.uploadProfilePicture(
+        //   '1',
+        //   employeeId,
+        //   base64Encode(await image.readAsBytes()),
+        // );
+
+        // if (res['status'] == 'success' &&
+        //     res['code'] == '100' &&
+        //     (res['data'] as ResultMessageModel2).resultMessage
+        //             .toString()
+        //             .toLowerCase() ==
+        //         'sukses') {
+        //   emit(ImageCaptured(image));
+        // } else {
+        //   emit(
+        //     ImageError((res['data'] as ResultMessageModel2).resultMessage),
+        //   );
+        // }
       } else {
         emit(const ImageError('No image selected'));
       }
