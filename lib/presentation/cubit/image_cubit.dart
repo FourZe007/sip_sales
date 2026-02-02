@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,49 +27,48 @@ class ImageCubit extends Cubit<ImageState> {
 
       if (image != null) {
         // ~:add ML process to check either the photo contains face or not
-        if (await ImageDetector.hasFace(image)) {
-          final res = await imageRepo.uploadProfilePicture(
-            '1',
-            employeeId,
-            base64Encode(await image.readAsBytes()),
-          );
+        final deviceInfoPlugin = DeviceInfoPlugin();
+        bool shouldCheckFace = false;
 
-          if (res['status'] == 'success' &&
-              res['code'] == '100' &&
-              (res['data'] as ResultMessageModel2).resultMessage
-                      .toString()
-                      .toLowerCase() ==
-                  'sukses') {
-            emit(ImageCaptured(image));
-          } else {
-            emit(
-              ImageError((res['data'] as ResultMessageModel2).resultMessage),
-            );
-          }
+        if (Platform.isIOS) {
+          final iosInfo = (await deviceInfoPlugin.iosInfo).systemVersion;
+          final double iosVersion = double.parse(iosInfo);
+          shouldCheckFace = iosVersion >= 15.5;
         } else {
-          emit(
-            const ImageError('Tidak ada wajah yang terdeteksi dalam gambar'),
-          );
+          final android = (await deviceInfoPlugin.androidInfo).version.sdkInt
+              .toString();
+          final double androidVersion = double.parse(android);
+          shouldCheckFace = androidVersion >= 21;
         }
 
-        // final res = await imageRepo.uploadProfilePicture(
-        //   '1',
-        //   employeeId,
-        //   base64Encode(await image.readAsBytes()),
-        // );
+        if (shouldCheckFace) {
+          if (!(await ImageDetector.hasFace(image))) {
+            emit(ImageError('Tidak ada wajah yang terdeteksi dalam gambar.'));
+            return;
+          }
+        }
 
-        // if (res['status'] == 'success' &&
-        //     res['code'] == '100' &&
-        //     (res['data'] as ResultMessageModel2).resultMessage
-        //             .toString()
-        //             .toLowerCase() ==
-        //         'sukses') {
-        //   emit(ImageCaptured(image));
-        // } else {
-        //   emit(
-        //     ImageError((res['data'] as ResultMessageModel2).resultMessage),
-        //   );
-        // }
+        // ~:API call with its if-else statement:~
+        final res = await imageRepo.uploadProfilePicture(
+          '1',
+          employeeId,
+          base64Encode(await image.readAsBytes()),
+        );
+
+        if (res['status'] == 'success' &&
+            res['code'] == '100' &&
+            (res['data'] as ResultMessageModel2).resultMessage
+                    .toString()
+                    .toLowerCase() ==
+                'sukses') {
+          emit(ImageCaptured(image));
+        } else {
+          emit(
+            ImageError(
+              (res['data'] as ResultMessageModel2).resultMessage,
+            ),
+          );
+        }
       } else {
         emit(const ImageError('No image selected'));
       }
