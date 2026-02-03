@@ -395,15 +395,7 @@ Widget briefingDetail(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.all(4),
                       backgroundColor: Colors.white,
-                      // shape: RoundedRectangleBorder(
-                      //   side: BorderSide(
-                      //     color: Colors.grey[600]!,
-                      //     width: 1.5,
-                      //   ),
-                      //   borderRadius: BorderRadius.all(
-                      //     Radius.circular(20),
-                      //   ),
-                      // ),
+                      elevation: 0.0,
                     ),
                     child: Column(
                       spacing: 8,
@@ -634,15 +626,7 @@ Widget visitDetail(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.all(4),
                       backgroundColor: Colors.white,
-                      // shape: RoundedRectangleBorder(
-                      //   side: BorderSide(
-                      //     color: Colors.grey[600]!,
-                      //     width: 1.5,
-                      //   ),
-                      //   borderRadius: BorderRadius.all(
-                      //     Radius.circular(20),
-                      //   ),
-                      // ),
+                      elevation: 0.0,
                     ),
                     child: Column(
                       spacing: 8,
@@ -756,15 +740,7 @@ Widget recruitmentDetail(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.all(4),
                       backgroundColor: Colors.white,
-                      // shape: RoundedRectangleBorder(
-                      //   side: BorderSide(
-                      //     color: Colors.grey[600]!,
-                      //     width: 1.5,
-                      //   ),
-                      //   borderRadius: BorderRadius.all(
-                      //     Radius.circular(20),
-                      //   ),
-                      // ),
+                      elevation: 0.0,
                     ),
                     child: Column(
                       spacing: 8,
@@ -1086,15 +1062,7 @@ Widget interviewDetail(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.all(4),
                       backgroundColor: Colors.white,
-                      // shape: RoundedRectangleBorder(
-                      //   side: BorderSide(
-                      //     color: Colors.grey[600]!,
-                      //     width: 1.5,
-                      //   ),
-                      //   borderRadius: BorderRadius.all(
-                      //     Radius.circular(20),
-                      //   ),
-                      // ),
+                      elevation: 0.0,
                     ),
                     child: Column(
                       spacing: 8,
@@ -1263,15 +1231,7 @@ Widget reportDetail(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.all(4),
                       backgroundColor: Colors.white,
-                      // shape: RoundedRectangleBorder(
-                      //   side: BorderSide(
-                      //     color: Colors.grey[600]!,
-                      //     width: 1.5,
-                      //   ),
-                      //   borderRadius: BorderRadius.all(
-                      //     Radius.circular(20),
-                      //   ),
-                      // ),
+                      elevation: 0.0,
                     ),
                     child: Column(
                       spacing: 8,

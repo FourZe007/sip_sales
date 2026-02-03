@@ -224,6 +224,7 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
                 onPressed: () async => await Functions.manageNewHeadStoreAct(
                   context,
                   '01',
+                  locationName: locationController.text,
                   actTypeName: actTypeController.text,
                   unitDisplay: displayUnitController.text,
                   unitTest: testRideUnitController.text,
