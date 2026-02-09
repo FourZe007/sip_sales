@@ -4,4 +4,11 @@ abstract class ImageRepo {
     String employeeId,
     String img,
   );
+
+  Future<Map<String, dynamic>> getHDImage(
+    String branch,
+    String shop,
+    String actId,
+    String date,
+  );
 }

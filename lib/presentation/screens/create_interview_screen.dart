@@ -43,209 +43,218 @@ class _CreateInterviewScreenState extends State<CreateInterviewScreen> {
         ),
       ),
       body: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.blue,
-        ),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+        decoration: BoxDecoration(color: Colors.white),
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          minimum: EdgeInsets.only(bottom: 20),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.blue,
             ),
-          ),
-          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
-          child: Column(
-            spacing: 8,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    spacing: 12,
-                    children: [
-                      // ~:Header:~
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ~:Screen Title:~
-                            CustomText(
-                              'Informasi Laporan',
-                              fontSize: 16,
-                            ),
-
-                            // ~:Screen Subtitle:~
-                            CustomText(
-                              'Masukkan data untuk membuat laporan interview.',
-                              fontSize: 12,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // ~:Body:~
-                      Column(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+              child: Column(
+                spacing: 8,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        spacing: 12,
                         children: [
-                          // ~:Counter Section:~
+                          // ~:Header:~
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // ~:Screen Title:~
+                                CustomText(
+                                  'Informasi Laporan',
+                                  fontSize: 16,
+                                ),
+
+                                // ~:Screen Subtitle:~
+                                CustomText(
+                                  'Masukkan data untuk membuat laporan interview.',
+                                  fontSize: 12,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // ~:Body:~
                           Column(
-                            spacing: 8,
                             children: [
-                              Counter.person(
-                                context,
-                                'called',
-                                'Jumlah yg dipanggil',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'came',
-                                'Jumlah yg datang',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'acc',
-                                'Jumlah yg diterima',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'fb_itv',
-                                'Facebook',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'ig_itv',
-                                'Instagram',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'training_itv',
-                                'Balai Latihan Kerja',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'cv_itv',
-                                'Kirim CV langsung',
-                                defaultNumber: 0,
-                              ),
-                              Counter.person(
-                                context,
-                                'other_itv',
-                                'Other',
-                                defaultNumber: 0,
-                              ),
-                              Counter.automaticPerson(
-                                context,
-                                'Jumlah lamaran kerja',
-                                [
-                                  'fb_itv',
-                                  'ig_itv',
-                                  'training_itv',
-                                  'cv_itv',
-                                  'other_itv',
+                              // ~:Counter Section:~
+                              Column(
+                                spacing: 8,
+                                children: [
+                                  Counter.person(
+                                    context,
+                                    'called',
+                                    'Jumlah yg dipanggil',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.person(
+                                    context,
+                                    'came',
+                                    'Jumlah yg datang',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.person(
+                                    context,
+                                    'acc',
+                                    'Jumlah yg diterima',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.person(
+                                    context,
+                                    'fb_itv',
+                                    'Facebook',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.person(
+                                    context,
+                                    'ig_itv',
+                                    'Instagram',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.person(
+                                    context,
+                                    'training_itv',
+                                    'Balai Latihan Kerja',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.person(
+                                    context,
+                                    'cv_itv',
+                                    'Kirim CV langsung',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.person(
+                                    context,
+                                    'other_itv',
+                                    'Other',
+                                    defaultNumber: 0,
+                                  ),
+                                  Counter.automaticPerson(
+                                    context,
+                                    'Jumlah lamaran kerja',
+                                    [
+                                      'fb_itv',
+                                      'ig_itv',
+                                      'training_itv',
+                                      'cv_itv',
+                                      'other_itv',
+                                    ],
+                                  ),
                                 ],
                               ),
+
+                              // ~:Photo Section:~
+                              DottedRoundedImagePicker(),
                             ],
                           ),
-
-                          // ~:Photo Section:~
-                          DottedRoundedImagePicker(),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              ElevatedButton(
-                onPressed: () async => await Functions.manageNewHeadStoreAct(
-                  context,
-                  '03',
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 20,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 24,
-                  alignment: Alignment.center,
-                  child: BlocConsumer<HeadStoreBloc, HeadStoreState>(
-                    buildWhen: (previous, current) =>
-                        (current is HeadStoreLoading &&
-                            current.isInsert &&
-                            !current.isActs &&
-                            !current.isDashboard) ||
-                        current is HeadStoreInsertSucceed ||
-                        current is HeadStoreInsertFailed,
-                    listener: (context, state) {
-                      if (state is HeadStoreInsertFailed) {
-                        log('Insert Failed: ${state.message}');
-                        Functions.customFlutterToast(state.message);
-                      } else if (state is HeadStoreInsertSucceed) {
-                        Functions.customFlutterToast(
-                          'Aktivitas berhasil dibuat',
-                        );
+                  ElevatedButton(
+                    onPressed: () async =>
+                        await Functions.manageNewHeadStoreAct(
+                          context,
+                          '04',
+                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 24,
+                      alignment: Alignment.center,
+                      child: BlocConsumer<HeadStoreBloc, HeadStoreState>(
+                        buildWhen: (previous, current) =>
+                            (current is HeadStoreLoading &&
+                                current.isInsert &&
+                                !current.isActs &&
+                                !current.isDashboard) ||
+                            current is HeadStoreInsertSucceed ||
+                            current is HeadStoreInsertFailed,
+                        listener: (context, state) {
+                          if (state is HeadStoreInsertFailed) {
+                            log('Insert Failed: ${state.message}');
+                            Functions.customFlutterToast(state.message);
+                          } else if (state is HeadStoreInsertSucceed) {
+                            Functions.customFlutterToast(
+                              'Aktivitas berhasil dibuat',
+                            );
 
-                        context.read<HeadStoreBloc>().add(
-                          LoadHeadActs(
-                            employeeID:
-                                (context.read<LoginBloc>().state
-                                        as LoginSuccess)
-                                    .user
-                                    .employeeID,
-                            date: DateFormat(
-                              'yyyy-MM-dd',
-                            ).format(DateTime.now()),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is HeadStoreLoading &&
-                          state.isInsert &&
-                          !state.isActs &&
-                          !state.isDashboard &&
-                          !state.isActsDetail &&
-                          !state.isDelete) {
-                        if (Platform.isIOS) {
-                          return const CupertinoActivityIndicator(
-                            radius: 12.5,
-                            color: Colors.black,
-                          );
-                        } else {
-                          return const AndroidLoading(
-                            warna: Colors.black,
-                            strokeWidth: 3,
-                          );
-                        }
-                      } else {
-                        return Text(
-                          'Buat',
-                          style: TextThemes.subtitle,
-                          textAlign: TextAlign.center,
-                        );
-                      }
-                    },
+                            context.read<HeadStoreBloc>().add(
+                              LoadHeadActs(
+                                employeeID:
+                                    (context.read<LoginBloc>().state
+                                            as LoginSuccess)
+                                        .user
+                                        .employeeID,
+                                date: DateFormat(
+                                  'yyyy-MM-dd',
+                                ).format(DateTime.now()),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is HeadStoreLoading &&
+                              state.isInsert &&
+                              !state.isActs &&
+                              !state.isDashboard &&
+                              !state.isActsDetail &&
+                              !state.isDelete) {
+                            if (Platform.isIOS) {
+                              return const CupertinoActivityIndicator(
+                                radius: 12.5,
+                                color: Colors.black,
+                              );
+                            } else {
+                              return const AndroidLoading(
+                                warna: Colors.black,
+                                strokeWidth: 3,
+                              );
+                            }
+                          } else {
+                            return Text(
+                              'Buat',
+                              style: TextThemes.subtitle,
+                              textAlign: TextAlign.center,
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

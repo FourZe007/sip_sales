@@ -16,6 +16,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final String deviceOS = await Functions.readDeviceOS();
+  log('Device OS retrieved: $deviceOS');
 
   if (deviceOS.isNotEmpty && Platform.isAndroid) {
     if (int.parse(deviceOS.split('.')[0]) >= 10) {
@@ -62,6 +63,15 @@ class MyApp extends StatelessWidget {
             scrollBehavior: MyCustomScrollBehavior(),
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
+            theme: ThemeData(
+              useMaterial3: true,
+              appBarTheme: AppBarTheme(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  systemNavigationBarColor: Colors.white,
+                  systemNavigationBarIconBrightness: Brightness.light,
+                ),
+              ),
+            ),
             initialRoute: ConstantRoutes.init,
             routes: ConstantRoutes.maps,
           ),

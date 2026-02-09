@@ -809,117 +809,135 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget logout() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 350,
-      alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(25.0),
-          topLeft: Radius.circular(25.0),
+    return SafeArea(
+      top: false,
+      bottom: false,
+      minimum: EdgeInsets.only(bottom: 20),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: getPanelMaxHeight,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          // color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(25.0),
+            topLeft: Radius.circular(25.0),
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.1,
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05,
-              ),
-              child: IconButton(
-                onPressed: () =>
-                    context.read<DashboardSlidingUpCubit>().closePanel(),
-                icon: const Icon(
-                  Icons.close_rounded,
-                  size: 30.0,
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.1,
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                ),
+                child: IconButton(
+                  onPressed: () =>
+                      context.read<DashboardSlidingUpCubit>().closePanel(),
+                  icon: const Icon(
+                    Icons.close_rounded,
+                    size: 30.0,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // ~:Logout Panel:~
-          Container(
-            height: 230,
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // ~:Logout Title:~
-                DefaultTextStyle(
-                  style: TextThemes.normal.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                  child: Text(
-                    'Apakah anda ingin keluar dari akun ini?',
-                  ),
-                ),
-
-                // ~:Logout Description:~
-                DefaultTextStyle(
-                  style: TextThemes.normal.copyWith(
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
-                  child: Text(
-                    'Pastikan anda mengingat username dan password anda.',
-                  ),
-                ),
-
-                // ~:Logout Buttons:~
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // ~:Cancel Button:~
-                    Expanded(
-                      child: ColoredButton(
-                        () => context
-                            .read<DashboardSlidingUpCubit>()
-                            .closePanel(),
-                        'Cancel',
+            // ~:Logout Panel:~
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // ~:Logout Title:~
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: DefaultTextStyle(
+                      style: TextThemes.normal.copyWith(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      child: Text(
+                        'Apakah anda ingin keluar dari akun ini?',
                       ),
                     ),
+                  ),
 
-                    // ~:Logout Button:~
-                    Expanded(
-                      child: BlocListener<LoginBloc, LoginState>(
-                        listenWhen: (previous, current) =>
-                            current is LogoutLoading ||
-                            current is LogoutSuccess ||
-                            current is LogoutFailed,
-                        listener: (context, state) {
-                          if (state is LogoutFailed) {
-                            Functions.customFlutterToast(state.message);
-                          } else if (state is LogoutSuccess) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              '/login',
-                              (route) => false,
-                            );
-                          }
-                        },
-                        child: ColoredButton(
-                          () => context.read<LoginBloc>().add(
-                            LogoutButtonPressed(
-                              context: context,
+                  // ~:Logout Description:~
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: DefaultTextStyle(
+                      style: TextThemes.normal.copyWith(
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                      child: Text(
+                        'Pastikan anda mengingat username dan password anda.',
+                      ),
+                    ),
+                  ),
+
+                  // ~:Logout Buttons:~
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // ~:Cancel Button:~
+                        Expanded(
+                          child: ColoredButton(
+                            () => context
+                                .read<DashboardSlidingUpCubit>()
+                                .closePanel(),
+                            'Cancel',
+                          ),
+                        ),
+
+                        // ~:Logout Button:~
+                        Expanded(
+                          child: BlocListener<LoginBloc, LoginState>(
+                            listenWhen: (previous, current) =>
+                                current is LogoutLoading ||
+                                current is LogoutSuccess ||
+                                current is LogoutFailed,
+                            listener: (context, state) {
+                              if (state is LogoutFailed) {
+                                Functions.customFlutterToast(state.message);
+                              } else if (state is LogoutSuccess) {
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/login',
+                                  (route) => false,
+                                );
+                              }
+                            },
+                            child: ColoredButton(
+                              () => context.read<LoginBloc>().add(
+                                LogoutButtonPressed(
+                                  context: context,
+                                ),
+                              ),
+                              'SIGN OUT',
+                              isCancel: true,
+                              isLoading: true,
                             ),
                           ),
-                          'SIGN OUT',
-                          isCancel: true,
-                          isLoading: true,
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1211,11 +1229,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             } else if (state.type ==
                 DashboardSlidingUpType.newManagerActivity) {
               return NewActPanel();
-            }
-            // else if (state.type == DashboardSlidingUpType.groupDealer) {
-            //   return GroupDealerFilterPanel();
-            // }
-            else if (state.type == DashboardSlidingUpType.dealer) {
+            } else if (state.type == DashboardSlidingUpType.dealer) {
               return DealerFilterPanel();
             } else if (state.type == DashboardSlidingUpType.leasing) {
               return LeasingFilterPanel();
@@ -1242,6 +1256,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 state.type == DashboardSlidingUpType.category) {
               if (state.type == DashboardSlidingUpType.deleteManagerActivity) {
                 setPanelMaxHeight(150);
+              } else if (state.type == DashboardSlidingUpType.logout) {
+                setPanelMaxHeight(400);
               }
               log('Opening Sliding Up Panel - State: ${state.type}');
               slidingPanelController.open();
@@ -1321,42 +1337,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           color: Colors.black,
                         ),
                       ),
-                // : BlocBuilder<DashboardTypeCubit, DashboardType>(
-                //     builder: (context, state) {
-                //       if (state == DashboardType.spk) {
-                //         return IconButton(
-                //           onPressed: () => context
-                //               .read<DashboardSlidingUpCubit>()
-                //               .changeType(DashboardSlidingUpType.leasing),
-                //           icon: Icon(
-                //             Icons.filter_alt_rounded,
-                //             size:
-                //                 (MediaQuery.of(context).size.width < 800)
-                //                 ? 24.0
-                //                 : 40.0,
-                //             color: Colors.black,
-                //           ),
-                //         );
-                //       } else {
-                //         return IconButton(
-                //           onPressed: () => refreshDashboard(
-                //             context,
-                //             employee,
-                //             context.read<DashboardTypeCubit>().state,
-                //             navbarType: context.read<NavbarCubit>().state,
-                //           ),
-                //           icon: Icon(
-                //             Icons.refresh_rounded,
-                //             size:
-                //                 (MediaQuery.of(context).size.width < 800)
-                //                 ? 20.0
-                //                 : 36.0,
-                //             color: Colors.black,
-                //           ),
-                //         );
-                //       }
-                //     },
-                //   ),
               ],
               bottom: PreferredSize(
                 preferredSize: Size.fromHeight(

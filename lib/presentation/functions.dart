@@ -52,16 +52,15 @@ class Functions {
     accessibility: KeychainAccessibility.first_unlock,
   );
 
-  static FlutterSecureStorage? storage;
-  //  = FlutterSecureStorage(
-  //   aOptions: getAndroidOptions(),
-  //   iOptions: getIOSOptions(),
-  // );
+  static FlutterSecureStorage storage = FlutterSecureStorage(
+    aOptions: getAndroidOptions(),
+    iOptions: getIOSOptions(),
+  );
 
   static SharedPreferences? prefs;
 
   static Future<void> clearAllData() async {
-    await storage?.deleteAll(
+    await storage.deleteAll(
       aOptions: getAndroidOptions(),
       iOptions: getIOSOptions(),
     );
@@ -496,12 +495,18 @@ class Functions {
     try {
       if ((int.parse(await readDeviceOS())) >= 10) {
         // Read the existing UUID only once
-        String? existingUuid = await storage?.read(key: 'uuid');
+        String? existingUuid = await storage.read(key: 'uuid');
 
         if (existingUuid == null || existingUuid.isEmpty) {
           // Generate a new UUID if none exists
           uuid = Uuid().v4();
-          await storage?.write(key: 'uuid', value: uuid);
+          await storage.write(
+            key: 'uuid',
+            value: uuid,
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.unlocked_this_device,
+            ),
+          );
 
           // Log the action for debugging
           log("Generated and saved new UUID: $uuid");
@@ -532,7 +537,7 @@ class Functions {
       log("Error reading or writing secure storage: $e");
       // uuid = Uuid().v4();
       if (int.parse(await readDeviceOS()) >= 10) {
-        await storage?.delete(key: 'uuid');
+        await storage.delete(key: 'uuid');
       } else {
         await prefs?.remove('uuid');
       }
@@ -551,13 +556,19 @@ class Functions {
     try {
       if (int.parse(await readDeviceOS()) >= 10) {
         // Read the existing ID only once
-        String? existingId = await storage?.read(key: 'employeeId');
+        String? existingId = await storage.read(key: 'employeeId');
         log('Existing ID: $existingId');
 
         if (existingId == null || existingId.isEmpty || isLogin) {
           // Generate a new ID if none exists
           employeeId = id;
-          await storage?.write(key: 'employeeId', value: id);
+          await storage.write(
+            key: 'employeeId',
+            value: id,
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.unlocked_this_device,
+            ),
+          );
 
           // Log the action for debugging
           log("Employee Id: $employeeId");
@@ -590,7 +601,7 @@ class Functions {
       employeeId = id;
 
       if (int.parse(await readDeviceOS()) >= 10) {
-        await storage?.delete(key: 'employeeId');
+        await storage.delete(key: 'employeeId');
       } else {
         await prefs?.remove('employeeId');
       }
@@ -610,13 +621,19 @@ class Functions {
     try {
       if (int.parse(await readDeviceOS()) >= 10) {
         // Read the existing Password only once
-        String? existingPass = await storage?.read(key: 'pass');
+        String? existingPass = await storage.read(key: 'pass');
         log('Existing Password: $existingPass');
 
         if (existingPass == null || existingPass.isEmpty || isLogin) {
           // Generate a new Password if none exists
           password = pass;
-          await storage?.write(key: 'pass', value: pass);
+          await storage.write(
+            key: 'pass',
+            value: pass,
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.unlocked_this_device,
+            ),
+          );
 
           // Log the action for debugging
           log("Input and saved Password: $password");
@@ -649,7 +666,7 @@ class Functions {
       password = pass;
       // await storage.write(key: 'pass', value: pass);
       if (int.parse(await readDeviceOS()) >= 10) {
-        await storage?.delete(key: 'pass');
+        await storage.delete(key: 'pass');
       } else {
         await prefs?.remove('pass');
       }
@@ -664,9 +681,10 @@ class Functions {
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
     try {
-      if (int.parse(await readDeviceOS()) >= 10) {
+      if (int.parse(await readDeviceOS()) >= 10 &&
+          (await readDeviceOS()).isNotEmpty) {
         // Read the existing ID only once
-        String? deviceConfig = await storage?.read(key: 'deviceConfig');
+        String? deviceConfig = await storage.read(key: 'deviceConfig');
         log('Read Device Config: $deviceConfig');
 
         if (deviceConfig == null || deviceConfig.isEmpty) {
@@ -682,9 +700,12 @@ class Functions {
             // Generate a new ID if none exists
             deviceConfiguration =
                 '${iosInfo.model}, iOS ${iosInfo.systemVersion}';
-            await storage?.write(
+            await storage.write(
               key: 'deviceConfig',
               value: deviceConfiguration,
+              iOptions: IOSOptions(
+                accessibility: KeychainAccessibility.unlocked_this_device,
+              ),
             );
 
             // Log the action for debugging
@@ -701,14 +722,17 @@ class Functions {
             deviceConfiguration =
                 '${androidInfo.model}, Android ${androidInfo.version.release}';
             log('New Android Device Config: $deviceConfiguration');
-            await storage?.write(
+            await storage.write(
               key: 'deviceConfig',
               value: deviceConfiguration,
+              iOptions: IOSOptions(
+                accessibility: KeychainAccessibility.unlocked_this_device,
+              ),
             );
 
             // Log the action for debugging
             log(
-              "Read Saved Android Device Config: ${await storage?.read(key: 'deviceConfig')}",
+              "Read Saved Android Device Config: ${await storage.read(key: 'deviceConfig')}",
             );
           }
         } else {
@@ -767,7 +791,7 @@ class Functions {
       log(e.toString());
       deviceConfiguration = '';
       if (int.parse(await readDeviceOS()) >= 10) {
-        await storage?.delete(key: 'deviceConfig');
+        await storage.delete(key: 'deviceConfig');
       } else {
         await prefs?.remove('deviceConfig');
       }
@@ -775,7 +799,7 @@ class Functions {
       log('Error retrieving device config: $e');
       deviceConfiguration = '';
       if (int.parse(await readDeviceOS()) >= 10) {
-        await storage?.delete(key: 'deviceConfig');
+        await storage.delete(key: 'deviceConfig');
       } else {
         await prefs?.remove('deviceConfig');
       }
@@ -795,12 +819,12 @@ class Functions {
 
         // For iOS devices
         final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        log('iOS Info: $iosInfo');
+        log('readDeviceOS iOS Info: $iosInfo');
         log('iOS System Version: ${iosInfo.systemVersion}');
 
         // Generate a new ID if none exists
-        // deviceOS = iosInfo.systemVersion;
-        deviceOS = '';
+        deviceOS = iosInfo.systemVersion.split('.')[0];
+        // deviceOS = '';
 
         // Log the action for debugging
         log("Wrote New iOS Device OS: $deviceOS");

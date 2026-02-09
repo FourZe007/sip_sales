@@ -292,9 +292,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       'NIP dan Password tidak boleh kosong',
                                     );
                                   } else if (state is LoginFailed) {
-                                    Functions.customFlutterToast(
-                                      state.message,
-                                    );
+                                    log('Login Error: ${state.message}');
+                                    Functions.customFlutterToast(state.message);
                                   } else if (state is LoginSuccess) {
                                     // make sure the user enter the initiated navbar
                                     context

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,30 @@ class ImageCubit extends Cubit<ImageState> {
   final ImagePicker _picker = ImagePicker();
 
   ImageCubit(this.imageRepo) : super(ImageInitial());
+
+  Future<void> showHdImage(
+    String branch,
+    String shop,
+    String actId,
+    String date,
+  ) async {
+    try {
+      emit(ImageLoading());
+
+      final res = await imageRepo.getHDImage(branch, shop, actId, date);
+      log('ShowHdImage: $res');
+
+      if (res['status'] == 'success' &&
+          res['code'] == '100' &&
+          res['data'] != '') {
+        emit(ImageAvailable(res['data']));
+      } else {
+        emit(ImageNotAvailable(res['code']));
+      }
+    } catch (e) {
+      emit(ImageNotAvailable(e.toString()));
+    }
+  }
 
   Future<void> uploadImage(String employeeId) async {
     try {
@@ -31,6 +56,7 @@ class ImageCubit extends Cubit<ImageState> {
             employeeId,
             base64Encode(await image.readAsBytes()),
           );
+          log('image res: $res');
 
           if (res['status'] == 'success' &&
               res['code'] == '100' &&
@@ -38,8 +64,10 @@ class ImageCubit extends Cubit<ImageState> {
                       .toString()
                       .toLowerCase() ==
                   'sukses') {
+            log('Image successfully captured');
             emit(ImageCaptured(image));
           } else {
+            log('Image failed to be captures');
             emit(
               ImageError((res['data'] as ResultMessageModel2).resultMessage),
             );
@@ -49,25 +77,6 @@ class ImageCubit extends Cubit<ImageState> {
             const ImageError('Tidak ada wajah yang terdeteksi dalam gambar'),
           );
         }
-
-        // final res = await imageRepo.uploadProfilePicture(
-        //   '1',
-        //   employeeId,
-        //   base64Encode(await image.readAsBytes()),
-        // );
-
-        // if (res['status'] == 'success' &&
-        //     res['code'] == '100' &&
-        //     (res['data'] as ResultMessageModel2).resultMessage
-        //             .toString()
-        //             .toLowerCase() ==
-        //         'sukses') {
-        //   emit(ImageCaptured(image));
-        // } else {
-        //   emit(
-        //     ImageError((res['data'] as ResultMessageModel2).resultMessage),
-        //   );
-        // }
       } else {
         emit(const ImageError('No image selected'));
       }
@@ -150,6 +159,24 @@ class ImageError extends ImageState {
   final String message;
 
   const ImageError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ImageAvailable extends ImageState {
+  final String image;
+
+  const ImageAvailable(this.image);
+
+  @override
+  List<Object?> get props => [image];
+}
+
+class ImageNotAvailable extends ImageState {
+  final String message;
+
+  const ImageNotAvailable(this.message);
 
   @override
   List<Object?> get props => [message];

@@ -151,6 +151,7 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
     //
     // }
 
+    // ~:Salesman:~
     if (widget.employee.code == 1) {
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -356,7 +357,9 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
           ),
         ),
       );
-    } else {
+    }
+    // ~:Head Store:~
+    else {
       return Container(
         width: MediaQuery.of(context).size.width,
         height: (context.read<LoginBloc>().state as LoginSuccess).user.code == 0

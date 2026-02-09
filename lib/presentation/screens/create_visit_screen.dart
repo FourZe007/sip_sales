@@ -60,249 +60,264 @@ class _CreateVisitScreenState extends State<CreateVisitScreen> {
         ),
       ),
       body: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.blue,
-        ),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+        decoration: BoxDecoration(color: Colors.white),
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          minimum: EdgeInsets.only(bottom: 20),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.blue,
             ),
-          ),
-          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
-          child: Column(
-            spacing: 8,
-            children: [
-              // ~:Page Content:~
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    spacing: 12,
-                    children: [
-                      // ~:Header:~
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ~:Screen Title:~
-                            CustomText(
-                              'Informasi Laporan',
-                              fontSize: 16,
-                            ),
-
-                            // ~:Screen Subtitle:~
-                            CustomText(
-                              'Masukkan data untuk membuat laporan visit market.',
-                              fontSize: 12,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // ~:User Input:~
-                      // includes textfields and counter
-                      Column(
-                        spacing: 4,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+              child: Column(
+                spacing: 8,
+                children: [
+                  // ~:Page Content:~
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        spacing: 12,
                         children: [
-                          // ~:Location Textfield using HeadActsMasterCubit:~
-                          BlocBuilder<HeadActsMasterCubit, HeadActsMasterState>(
-                            builder: (context, state) {
-                              String shopName = '';
-                              if (state is HeadActsMasterLoaded) {
-                                // ~:Set the location controller text:~
-                                shopName = Formatter.toCompanyAbbForm(
-                                  (state.visitMaster as List)[0].bsName,
-                                );
-                              }
-                              log('Location Controller: $shopName');
+                          // ~:Header:~
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // ~:Screen Title:~
+                                CustomText(
+                                  'Informasi Laporan',
+                                  fontSize: 16,
+                                ),
 
-                              return CustomTextFormField(
-                                'e.g. $shopName',
-                                'Lokasi',
-                                const Icon(Icons.location_pin),
-                                locationController,
-                                inputFormatters: [Formatter.normalFormatter],
-                                borderRadius: 24,
-                              );
-                            },
+                                // ~:Screen Subtitle:~
+                                CustomText(
+                                  'Masukkan data untuk membuat laporan visit market.',
+                                  fontSize: 12,
+                                ),
+                              ],
+                            ),
                           ),
 
-                          // ~:Activity Type Textfield:~
-                          CustomTextFormField(
-                            'e.g. Test Ride',
-                            'Jenis Aktivitas',
-                            const Icon(Icons.run_circle_outlined),
-                            actTypeController,
-                            inputFormatters: [Formatter.normalFormatter],
-                            borderRadius: 20,
-                          ),
-
-                          // ~:Display Unit Textfield:~
-                          CustomTextFormField(
-                            'e.g. Filano, Lexi LX, Nmax',
-                            'Unit Display',
-                            const Icon(Icons.garage),
-                            displayUnitController,
-                            inputFormatters: [Formatter.normalFormatter],
-                            borderRadius: 20,
-                          ),
-
-                          // ~:Test Ride Unit Textfield:~
-                          CustomTextFormField(
-                            'e.g. Filano, Lexi LX, Nmax',
-                            'Unit Test Ride',
-                            const Icon(Icons.pedal_bike_sharp),
-                            testRideUnitController,
-                            inputFormatters: [Formatter.normalFormatter],
-                            borderRadius: 20,
-                          ),
-
-                          // ~:Counter Section:~
+                          // ~:User Input:~
+                          // includes textfields and counter
                           Column(
-                            spacing: 8,
+                            spacing: 4,
                             children: [
-                              // ~:Total Sales:~
-                              Counter.person(
-                                context,
-                                'ttl_sales',
-                                'Jumlah Sales',
-                                defaultNumber: 0,
+                              // ~:Location Textfield using HeadActsMasterCubit:~
+                              BlocBuilder<
+                                HeadActsMasterCubit,
+                                HeadActsMasterState
+                              >(
+                                builder: (context, state) {
+                                  String shopName = '';
+                                  if (state is HeadActsMasterLoaded) {
+                                    // ~:Set the location controller text:~
+                                    shopName = Formatter.toCompanyAbbForm(
+                                      (state.visitMaster as List)[0].bsName,
+                                    );
+                                  }
+                                  log('Location Controller: $shopName');
+
+                                  return CustomTextFormField(
+                                    'e.g. $shopName',
+                                    'Lokasi',
+                                    const Icon(Icons.location_pin),
+                                    locationController,
+                                    inputFormatters: [
+                                      Formatter.normalFormatter,
+                                    ],
+                                    borderRadius: 24,
+                                  );
+                                },
                               ),
 
-                              // ~:Database:~
-                              Counter.person(
-                                context,
-                                'db',
-                                'Database',
-                                defaultNumber: 0,
+                              // ~:Activity Type Textfield:~
+                              CustomTextFormField(
+                                'e.g. Test Ride',
+                                'Jenis Aktivitas',
+                                const Icon(Icons.run_circle_outlined),
+                                actTypeController,
+                                inputFormatters: [Formatter.normalFormatter],
+                                borderRadius: 20,
                               ),
 
-                              // ~:Hot Prospect:~
-                              Counter.person(
-                                context,
-                                'hot_pros',
-                                'Hot Prospek',
-                                defaultNumber: 0,
+                              // ~:Display Unit Textfield:~
+                              CustomTextFormField(
+                                'e.g. Filano, Lexi LX, Nmax',
+                                'Unit Display',
+                                const Icon(Icons.garage),
+                                displayUnitController,
+                                inputFormatters: [Formatter.normalFormatter],
+                                borderRadius: 20,
                               ),
 
-                              // ~:Deal:~
-                              Counter.person(
-                                context,
-                                'deal',
-                                'Deal',
-                                defaultNumber: 0,
+                              // ~:Test Ride Unit Textfield:~
+                              CustomTextFormField(
+                                'e.g. Filano, Lexi LX, Nmax',
+                                'Unit Test Ride',
+                                const Icon(Icons.pedal_bike_sharp),
+                                testRideUnitController,
+                                inputFormatters: [Formatter.normalFormatter],
+                                borderRadius: 20,
                               ),
 
-                              // ~:Test Ride Participant:~
-                              Counter.person(
-                                context,
-                                'test_ride_participant',
-                                'Peserta Test Ride',
-                                defaultNumber: 0,
+                              // ~:Counter Section:~
+                              Column(
+                                spacing: 8,
+                                children: [
+                                  // ~:Total Sales:~
+                                  Counter.person(
+                                    context,
+                                    'ttl_sales',
+                                    'Jumlah Sales',
+                                    defaultNumber: 0,
+                                  ),
+
+                                  // ~:Database:~
+                                  Counter.person(
+                                    context,
+                                    'db',
+                                    'Database',
+                                    defaultNumber: 0,
+                                  ),
+
+                                  // ~:Hot Prospect:~
+                                  Counter.person(
+                                    context,
+                                    'hot_pros',
+                                    'Hot Prospek',
+                                    defaultNumber: 0,
+                                  ),
+
+                                  // ~:Deal:~
+                                  Counter.person(
+                                    context,
+                                    'deal',
+                                    'Deal',
+                                    defaultNumber: 0,
+                                  ),
+
+                                  // ~:Test Ride Participant:~
+                                  Counter.person(
+                                    context,
+                                    'test_ride_participant',
+                                    'Peserta Test Ride',
+                                    defaultNumber: 0,
+                                  ),
+                                ],
                               ),
+
+                              // ~:Photo Section:~
+                              DottedRoundedImagePicker(),
                             ],
                           ),
-
-                          // ~:Photo Section:~
-                          DottedRoundedImagePicker(),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              // ~:Page Content - Footer:~
-              // Create Button
-              ElevatedButton(
-                onPressed: () async => await Functions.manageNewHeadStoreAct(
-                  context,
-                  '01',
-                  actTypeName: actTypeController.text,
-                  unitDisplay: displayUnitController.text,
-                  unitTest: testRideUnitController.text,
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 20,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 24,
-                  alignment: Alignment.center,
-                  child: BlocConsumer<HeadStoreBloc, HeadStoreState>(
-                    buildWhen: (previous, current) =>
-                        (current is HeadStoreLoading &&
-                            current.isInsert &&
-                            !current.isActs &&
-                            !current.isDashboard) ||
-                        current is HeadStoreInsertSucceed ||
-                        current is HeadStoreInsertFailed,
-                    listener: (context, state) {
-                      if (state is HeadStoreInsertFailed) {
-                        Functions.customFlutterToast(state.message);
-                      } else if (state is HeadStoreInsertSucceed) {
-                        Functions.customFlutterToast(
-                          'Aktivitas berhasil dibuat',
-                        );
+                  // ~:Page Content - Footer:~
+                  // Create Button
+                  ElevatedButton(
+                    onPressed: () async =>
+                        await Functions.manageNewHeadStoreAct(
+                          context,
+                          '01',
+                          locationName: locationController.text,
+                          actTypeName: actTypeController.text,
+                          unitDisplay: displayUnitController.text,
+                          unitTest: testRideUnitController.text,
+                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 24,
+                      alignment: Alignment.center,
+                      child: BlocConsumer<HeadStoreBloc, HeadStoreState>(
+                        buildWhen: (previous, current) =>
+                            (current is HeadStoreLoading &&
+                                current.isInsert &&
+                                !current.isActs &&
+                                !current.isDashboard) ||
+                            current is HeadStoreInsertSucceed ||
+                            current is HeadStoreInsertFailed,
+                        listener: (context, state) {
+                          if (state is HeadStoreInsertFailed) {
+                            Functions.customFlutterToast(state.message);
+                          } else if (state is HeadStoreInsertSucceed) {
+                            Functions.customFlutterToast(
+                              'Aktivitas berhasil dibuat',
+                            );
 
-                        context.read<HeadStoreBloc>().add(
-                          LoadHeadActs(
-                            employeeID:
-                                (context.read<LoginBloc>().state
-                                        as LoginSuccess)
-                                    .user
-                                    .employeeID,
-                            date: DateFormat(
-                              'yyyy-MM-dd',
-                            ).format(DateTime.now()),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is HeadStoreLoading &&
-                          state.isInsert &&
-                          !state.isActs &&
-                          !state.isDashboard &&
-                          !state.isActsDetail &&
-                          !state.isDelete) {
-                        if (Platform.isIOS) {
-                          return const CupertinoActivityIndicator(
-                            radius: 12.5,
-                            color: Colors.black,
-                          );
-                        } else {
-                          return const AndroidLoading(
-                            warna: Colors.black,
-                            strokeWidth: 3,
-                          );
-                        }
-                      } else {
-                        return Text(
-                          'Buat',
-                          style: TextThemes.subtitle,
-                          textAlign: TextAlign.center,
-                        );
-                      }
-                    },
+                            context.read<HeadStoreBloc>().add(
+                              LoadHeadActs(
+                                employeeID:
+                                    (context.read<LoginBloc>().state
+                                            as LoginSuccess)
+                                        .user
+                                        .employeeID,
+                                date: DateFormat(
+                                  'yyyy-MM-dd',
+                                ).format(DateTime.now()),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is HeadStoreLoading &&
+                              state.isInsert &&
+                              !state.isActs &&
+                              !state.isDashboard &&
+                              !state.isActsDetail &&
+                              !state.isDelete) {
+                            if (Platform.isIOS) {
+                              return const CupertinoActivityIndicator(
+                                radius: 12.5,
+                                color: Colors.black,
+                              );
+                            } else {
+                              return const AndroidLoading(
+                                warna: Colors.black,
+                                strokeWidth: 3,
+                              );
+                            }
+                          } else {
+                            return Text(
+                              'Buat',
+                              style: TextThemes.subtitle,
+                              textAlign: TextAlign.center,
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

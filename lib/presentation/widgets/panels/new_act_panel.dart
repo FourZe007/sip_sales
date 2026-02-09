@@ -17,6 +17,7 @@ import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_act_types.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
+import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/screens/create_briefing_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/create_interview_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/create_recruitment_screen.dart';
@@ -36,6 +37,8 @@ class _NewActPanelState extends State<NewActPanel> {
     BuildContext context,
     HeadActTypesModel actTypes,
   ) async {
+    context.read<ImageCubit>().clearImage();
+
     final headActsMaster = context.read<HeadActsMasterCubit>().state;
     // (context.read<HeadActsMasterCubit>().state is HeadActsMasterLoaded)
     //     ? (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)

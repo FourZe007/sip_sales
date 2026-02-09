@@ -236,415 +236,423 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         ),
       ),
       body: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.blue,
-        ),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+        decoration: BoxDecoration(color: Colors.white),
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          minimum: EdgeInsets.only(bottom: 20),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.blue,
             ),
-          ),
-          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
-          child: Column(
-            spacing: 12,
-            children: [
-              // ~:Page Content:~
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    spacing: 12,
-                    children: [
-                      // ~:Header:~
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ~:Title:~
-                            Text(
-                              'Informasi Laporan',
-                              style: TextThemes.subtitle.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            // ~:Description:~
-                            Text(
-                              'Masukkan data untuk membuat laporan harian.',
-                              style: TextThemes.normal,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // ~:Body:~
-                      Column(
-                        spacing: 8,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+              child: Column(
+                spacing: 12,
+                children: [
+                  // ~:Page Content:~
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        spacing: 12,
                         children: [
-                          // ~:Textfields:~
-                          Column(
-                            spacing: 4,
-                            children: [
-                              // ~:Dealer Textfield:~
-                              BlocBuilder<LoginBloc, LoginState>(
-                                builder: (context, state) {
-                                  if (state is LoginSuccess) {
-                                    // ~:Set the dealer controller text:~
-                                    if (locationController.text.isEmpty) {
-                                      locationController.text =
-                                          Formatter.toTitleCase(
-                                            state.user.bsName,
-                                          );
-                                    }
-                                  }
+                          // ~:Header:~
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // ~:Title:~
+                                Text(
+                                  'Informasi Laporan',
+                                  style: TextThemes.subtitle.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
 
-                                  return CustomTextFormField(
-                                    'your location',
-                                    'Location',
-                                    const Icon(Icons.garage_rounded),
-                                    locationController,
-                                    inputFormatters: [
-                                      Formatter.normalFormatter,
-                                    ],
-                                    borderRadius: 20,
-                                    isEnabled: false,
-                                  );
-                                },
-                              ),
-
-                              // ~:Area Textfield:~
-                              BlocBuilder<LoginBloc, LoginState>(
-                                builder: (context, state) {
-                                  if (state is LoginSuccess) {
-                                    // ~:Set the area controller text:~
-                                    if (areaController.text.isEmpty) {
-                                      areaController.text =
-                                          Formatter.toTitleCase(
-                                            state.user.locationName,
-                                          );
-                                      // '${state.user.branch} ${Formatter.toBranchShopName(state.user.bsName)}';
-                                    }
-                                  }
-
-                                  return CustomTextFormField(
-                                    'your area',
-                                    'Area',
-                                    const Icon(Icons.location_pin),
-                                    areaController,
-                                    isLabelFloat: true,
-                                    inputFormatters: [
-                                      Formatter.normalFormatter,
-                                    ],
-                                    borderRadius: 20,
-                                    isEnabled: false,
-                                  );
-                                },
-                              ),
-
-                              // ~:PIC Textfield:~
-                              // CustomTextFormField(
-                              //   'your PIC name',
-                              //   'PIC',
-                              //   const Icon(Icons.person),
-                              //   personController,
-                              //   isLabelFloat: true,
-                              //   inputFormatters: [
-                              //     Formatter.normalFormatter,
-                              //   ],
-                              //   borderRadius: 20,
-                              // ),
-                            ],
+                                // ~:Description:~
+                                Text(
+                                  'Masukkan data untuk membuat laporan harian.',
+                                  style: TextThemes.normal,
+                                ),
+                              ],
+                            ),
                           ),
 
-                          // ~:Input Tables:~
+                          // ~:Body:~
                           Column(
-                            spacing: 12,
+                            spacing: 8,
                             children: [
-                              // ~:STU Input Table:~
-                              BlocBuilder<StuTableBloc, StuTableState>(
-                                builder: (context, state) {
-                                  stuData = state.data;
-                                  log('Stu length: ${stuData.length}');
-                                  log('Stu height before: $stuTableHeight');
-                                  stuTableHeight =
-                                      (115 +
-                                      double.parse(
-                                        (50 * stuData.length).toString(),
-                                      ));
-                                  log('Stu height after: $stuTableHeight');
-                                  if (state is StuDataModified) {
-                                    stuData = state.newData;
-                                  }
+                              // ~:Textfields:~
+                              Column(
+                                spacing: 4,
+                                children: [
+                                  // ~:Dealer Textfield:~
+                                  BlocBuilder<LoginBloc, LoginState>(
+                                    builder: (context, state) {
+                                      if (state is LoginSuccess) {
+                                        // ~:Set the dealer controller text:~
+                                        if (locationController.text.isEmpty) {
+                                          locationController.text =
+                                              Formatter.toTitleCase(
+                                                state.user.bsName,
+                                              );
+                                        }
+                                      }
 
-                                  return ReportDataGrid(
-                                    dataSource: StuInsertDataSource(
-                                      stuData,
-                                      onCellValueEdited:
-                                          (
-                                            rowIndex,
-                                            columnName,
-                                            newValue,
-                                          ) => editStuValue(
-                                            context.read<StuTableBloc>(),
-                                            rowIndex,
-                                            columnName,
-                                            newValue,
-                                          ),
-                                    ),
-                                    tableHeight: stuTableHeight,
-                                    loadedData: StuType.values
-                                        .map((e) => e.name.toString())
-                                        .toList(),
-                                    allowEditing: true,
-                                    horizontalScrollPhysics:
-                                        const BouncingScrollPhysics(),
-                                    textStyle: TextThemes.normal,
-                                  );
-                                },
+                                      return CustomTextFormField(
+                                        'your location',
+                                        'Location',
+                                        const Icon(Icons.garage_rounded),
+                                        locationController,
+                                        inputFormatters: [
+                                          Formatter.normalFormatter,
+                                        ],
+                                        borderRadius: 20,
+                                        isEnabled: false,
+                                      );
+                                    },
+                                  ),
+
+                                  // ~:Area Textfield:~
+                                  BlocBuilder<LoginBloc, LoginState>(
+                                    builder: (context, state) {
+                                      if (state is LoginSuccess) {
+                                        // ~:Set the area controller text:~
+                                        if (areaController.text.isEmpty) {
+                                          areaController.text =
+                                              Formatter.toTitleCase(
+                                                state.user.locationName,
+                                              );
+                                          // '${state.user.branch} ${Formatter.toBranchShopName(state.user.bsName)}';
+                                        }
+                                      }
+
+                                      return CustomTextFormField(
+                                        'your area',
+                                        'Area',
+                                        const Icon(Icons.location_pin),
+                                        areaController,
+                                        isLabelFloat: true,
+                                        inputFormatters: [
+                                          Formatter.normalFormatter,
+                                        ],
+                                        borderRadius: 20,
+                                        isEnabled: false,
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
 
-                              // ~:Payment Input Table:~
-                              BlocBuilder<PaymentTableBloc, PaymentTableState>(
-                                builder: (context, state) {
-                                  paymentData = state.data;
-                                  paymentTableHeight =
-                                      (115 +
-                                      double.parse(
-                                        (50 * paymentData.length).toString(),
-                                      ));
-                                  if (state is PaymentModified) {
-                                    paymentData = state.newData;
-                                    // log('New Payment length: ${paymentData.length}');
-                                  }
+                              // ~:Input Tables:~
+                              Column(
+                                spacing: 12,
+                                children: [
+                                  // ~:STU Input Table:~
+                                  BlocBuilder<StuTableBloc, StuTableState>(
+                                    builder: (context, state) {
+                                      stuData = state.data;
+                                      log('Stu length: ${stuData.length}');
+                                      log('Stu height before: $stuTableHeight');
+                                      stuTableHeight =
+                                          (115 +
+                                          double.parse(
+                                            (50 * stuData.length).toString(),
+                                          ));
+                                      log('Stu height after: $stuTableHeight');
+                                      if (state is StuDataModified) {
+                                        stuData = state.newData;
+                                      }
 
-                                  return ReportDataGrid(
-                                    dataSource: PaymentInsertDataSource(
-                                      paymentData,
-                                      onCellValueEdited:
-                                          (
-                                            rowIndex,
-                                            columnName,
-                                            newValue,
-                                          ) => editPaymentValue(
-                                            context.read<PaymentTableBloc>(),
-                                            rowIndex,
-                                            columnName,
-                                            newValue,
-                                          ),
-                                    ),
-                                    loadedData: PaymentType.values
-                                        .map((e) => e.name.toString())
-                                        .toList(),
-                                    tableHeight: paymentTableHeight,
-                                    allowEditing: true,
-                                    horizontalScrollPhysics:
-                                        const BouncingScrollPhysics(),
-                                    textStyle: TextThemes.normal,
-                                  );
-                                },
+                                      return ReportDataGrid(
+                                        dataSource: StuInsertDataSource(
+                                          stuData,
+                                          onCellValueEdited:
+                                              (
+                                                rowIndex,
+                                                columnName,
+                                                newValue,
+                                              ) => editStuValue(
+                                                context.read<StuTableBloc>(),
+                                                rowIndex,
+                                                columnName,
+                                                newValue,
+                                              ),
+                                        ),
+                                        tableHeight: stuTableHeight,
+                                        loadedData: StuType.values
+                                            .map((e) => e.name.toString())
+                                            .toList(),
+                                        allowEditing: true,
+                                        horizontalScrollPhysics:
+                                            const BouncingScrollPhysics(),
+                                        textStyle: TextThemes.normal,
+                                      );
+                                    },
+                                  ),
+
+                                  // ~:Payment Input Table:~
+                                  BlocBuilder<
+                                    PaymentTableBloc,
+                                    PaymentTableState
+                                  >(
+                                    builder: (context, state) {
+                                      paymentData = state.data;
+                                      paymentTableHeight =
+                                          (115 +
+                                          double.parse(
+                                            (50 * paymentData.length)
+                                                .toString(),
+                                          ));
+                                      if (state is PaymentModified) {
+                                        paymentData = state.newData;
+                                        // log('New Payment length: ${paymentData.length}');
+                                      }
+
+                                      return ReportDataGrid(
+                                        dataSource: PaymentInsertDataSource(
+                                          paymentData,
+                                          onCellValueEdited:
+                                              (
+                                                rowIndex,
+                                                columnName,
+                                                newValue,
+                                              ) => editPaymentValue(
+                                                context
+                                                    .read<PaymentTableBloc>(),
+                                                rowIndex,
+                                                columnName,
+                                                newValue,
+                                              ),
+                                        ),
+                                        rowHeaderWidth: 64,
+                                        loadedData: PaymentType.values
+                                            .map((e) => e.name.toString())
+                                            .toList(),
+                                        tableHeight: paymentTableHeight,
+                                        allowEditing: true,
+                                        horizontalScrollPhysics:
+                                            const BouncingScrollPhysics(),
+                                        textStyle: TextThemes.normal,
+                                      );
+                                    },
+                                  ),
+
+                                  // ~:Leasing Input Table:~
+                                  BlocBuilder<
+                                    LeasingTableBloc,
+                                    LeasingTableState
+                                  >(
+                                    builder: (context, state) {
+                                      leasingData = state.data;
+                                      leasingTableHeight =
+                                          (115 +
+                                          double.parse(
+                                            (50 * leasingData.length)
+                                                .toString(),
+                                          ));
+
+                                      if (state is AddLeasingData) {
+                                        leasingData = state.newData;
+                                        // Update the existing data source with new data
+                                        _leasingDataSource.updateData(
+                                          leasingData,
+                                        );
+                                      } else if (state is LeasingInitial) {
+                                        // Handle initial state
+                                        _leasingDataSource.updateData(
+                                          leasingData,
+                                        );
+                                      }
+
+                                      log(
+                                        'Leasing length: ${state.data.length}',
+                                      );
+                                      return ReportDataGrid(
+                                        dataSource: _leasingDataSource,
+                                        loadedData: LeasingType.values
+                                            .map((e) => e.name.toString())
+                                            .toList(),
+                                        tableHeight: leasingTableHeight,
+                                        allowEditing: true,
+                                        horizontalScrollPhysics:
+                                            const BouncingScrollPhysics(),
+                                        textStyle: TextThemes.normal,
+                                        rowHeaderWidth: 64,
+                                      );
+                                    },
+                                  ),
+
+                                  // ~:Salesman Input Table:~
+                                  BlocBuilder<
+                                    SalesmanTableBloc,
+                                    SalesmanTableState
+                                  >(
+                                    builder: (context, state) {
+                                      if (state is SalesmanModified) {
+                                        salesmanData = state.newData;
+                                        _salesmanDataSource.updateData(
+                                          salesmanData,
+                                        );
+                                      } else if (state is SalesmanInitial) {
+                                        salesmanData = state.salesmanList;
+                                        _salesmanDataSource.updateData(
+                                          salesmanData,
+                                        );
+                                      }
+
+                                      // salesmanTableHeight = 120;
+                                      if (salesmanData.length <= 5) {
+                                        salesmanTableHeight =
+                                            (120 +
+                                            double.parse(
+                                              (50 * salesmanData.length)
+                                                  .toString(),
+                                            ));
+                                      } else {
+                                        salesmanTableHeight = 410;
+                                      }
+
+                                      // ~:Set a dynamic table height:~
+                                      if (salesmanData.isEmpty) {
+                                        log(
+                                          'Salesman data is empty, ${salesmanData.length}',
+                                        );
+                                        return const SizedBox();
+                                      } else {
+                                        log(
+                                          'Salesman data is not empty, ${salesmanData.length}',
+                                        );
+                                      }
+
+                                      return ReportDataGrid(
+                                        dataSource: _salesmanDataSource,
+                                        loadedData: SalesmanType.values
+                                            .map((e) => e.name.toString())
+                                            .toList(),
+                                        tableHeight: salesmanTableHeight,
+                                        rowHeaderWidth: 75,
+                                        allowEditing: true,
+                                        horizontalScrollPhysics:
+                                            const BouncingScrollPhysics(),
+                                        verticalScrollPhysics:
+                                            salesmanData.length <= 5
+                                            ? const NeverScrollableScrollPhysics()
+                                            : const AlwaysScrollableScrollPhysics(),
+                                        columnWidthMode:
+                                            ColumnWidthMode.fitByCellValue,
+                                        textStyle: TextThemes.normal,
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
 
-                              // ~:Leasing Input Table:~
-                              BlocBuilder<LeasingTableBloc, LeasingTableState>(
-                                builder: (context, state) {
-                                  leasingData = state.data;
-                                  leasingTableHeight =
-                                      (115 +
-                                      double.parse(
-                                        (50 * leasingData.length).toString(),
-                                      ));
-
-                                  if (state is AddLeasingData) {
-                                    leasingData = state.newData;
-                                    // Update the existing data source with new data
-                                    _leasingDataSource.updateData(
-                                      leasingData,
-                                    );
-                                  } else if (state is LeasingInitial) {
-                                    // Handle initial state
-                                    _leasingDataSource.updateData(
-                                      leasingData,
-                                    );
-                                  }
-
-                                  log(
-                                    'Leasing length: ${state.data.length}',
-                                  );
-                                  return ReportDataGrid(
-                                    dataSource: _leasingDataSource,
-                                    loadedData: LeasingType.values
-                                        .map((e) => e.name.toString())
-                                        .toList(),
-                                    tableHeight: leasingTableHeight,
-                                    allowEditing: true,
-                                    horizontalScrollPhysics:
-                                        const BouncingScrollPhysics(),
-                                    textStyle: TextThemes.normal,
-                                  );
-                                },
-                              ),
-
-                              // ~:Salesman Input Table:~
-                              BlocBuilder<
-                                SalesmanTableBloc,
-                                SalesmanTableState
-                              >(
-                                builder: (context, state) {
-                                  if (state is SalesmanModified) {
-                                    salesmanData = state.newData;
-                                    _salesmanDataSource.updateData(
-                                      salesmanData,
-                                    );
-                                  } else if (state is SalesmanInitial) {
-                                    salesmanData = state.salesmanList;
-                                    _salesmanDataSource.updateData(
-                                      salesmanData,
-                                    );
-                                  }
-
-                                  // salesmanTableHeight = 120;
-                                  if (salesmanData.length <= 5) {
-                                    salesmanTableHeight =
-                                        (120 +
-                                        double.parse(
-                                          (50 * salesmanData.length).toString(),
-                                        ));
-                                  } else {
-                                    salesmanTableHeight = 410;
-                                  }
-
-                                  // ~:Set a dynamic table height:~
-                                  if (salesmanData.isEmpty) {
-                                    log(
-                                      'Salesman data is empty, ${salesmanData.length}',
-                                    );
-                                    return const SizedBox();
-                                  } else {
-                                    log(
-                                      'Salesman data is not empty, ${salesmanData.length}',
-                                    );
-                                  }
-
-                                  return ReportDataGrid(
-                                    dataSource: _salesmanDataSource,
-                                    loadedData: SalesmanType.values
-                                        .map((e) => e.name.toString())
-                                        .toList(),
-                                    tableHeight: salesmanTableHeight,
-                                    rowHeaderWidth: 75,
-                                    allowEditing: true,
-                                    horizontalScrollPhysics:
-                                        const BouncingScrollPhysics(),
-                                    verticalScrollPhysics:
-                                        salesmanData.length <= 5
-                                        ? const NeverScrollableScrollPhysics()
-                                        : const AlwaysScrollableScrollPhysics(),
-                                    columnWidthMode:
-                                        ColumnWidthMode.fitByCellValue,
-                                    textStyle: TextThemes.normal,
-                                  );
-                                },
-                              ),
+                              // ~:Photo Section:~
+                              DottedRoundedImagePicker(),
                             ],
                           ),
-
-                          // ~:Photo Section:~
-                          DottedRoundedImagePicker(),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              // ~:Page Content - Footer:~
-              // Create Report Button
-              ElevatedButton(
-                onPressed: () async => await Functions.manageNewHeadStoreAct(
-                  context,
-                  '03',
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 20,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 24,
-                  alignment: Alignment.center,
-                  child: BlocConsumer<HeadStoreBloc, HeadStoreState>(
-                    buildWhen: (previous, current) =>
-                        (current is HeadStoreLoading &&
-                            current.isInsert &&
-                            !current.isActs &&
-                            !current.isDashboard) ||
-                        current is HeadStoreInsertSucceed ||
-                        current is HeadStoreInsertFailed,
-                    listener: (context, state) {
-                      if (state is HeadStoreInsertFailed) {
-                        Functions.customFlutterToast(state.message);
-                      } else if (state is HeadStoreInsertSucceed) {
-                        Functions.customFlutterToast(
-                          'Aktivitas berhasil dibuat',
-                        );
+                  // ~:Page Content - Footer:~
+                  // Create Report Button
+                  ElevatedButton(
+                    onPressed: () async =>
+                        await Functions.manageNewHeadStoreAct(
+                          context,
+                          '03',
+                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 24,
+                      alignment: Alignment.center,
+                      child: BlocConsumer<HeadStoreBloc, HeadStoreState>(
+                        buildWhen: (previous, current) =>
+                            (current is HeadStoreLoading &&
+                                current.isInsert &&
+                                !current.isActs &&
+                                !current.isDashboard) ||
+                            current is HeadStoreInsertSucceed ||
+                            current is HeadStoreInsertFailed,
+                        listener: (context, state) {
+                          if (state is HeadStoreInsertFailed) {
+                            Functions.customFlutterToast(state.message);
+                          } else if (state is HeadStoreInsertSucceed) {
+                            Functions.customFlutterToast(
+                              'Aktivitas berhasil dibuat',
+                            );
 
-                        context.read<HeadStoreBloc>().add(
-                          LoadHeadActs(
-                            employeeID:
-                                (context.read<LoginBloc>().state
-                                        as LoginSuccess)
-                                    .user
-                                    .employeeID,
-                            date: DateFormat(
-                              'yyyy-MM-dd',
-                            ).format(DateTime.now()),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is HeadStoreLoading &&
-                          state.isInsert &&
-                          !state.isActs &&
-                          !state.isDashboard &&
-                          !state.isActsDetail &&
-                          !state.isDelete) {
-                        if (Platform.isIOS) {
-                          return const CupertinoActivityIndicator(
-                            radius: 12.5,
-                            color: Colors.black,
-                          );
-                        } else {
-                          return const AndroidLoading(
-                            warna: Colors.black,
-                            strokeWidth: 3,
-                          );
-                        }
-                      } else {
-                        return Text(
-                          'Buat',
-                          style: TextThemes.subtitle,
-                          textAlign: TextAlign.center,
-                        );
-                      }
-                    },
+                            context.read<HeadStoreBloc>().add(
+                              LoadHeadActs(
+                                employeeID:
+                                    (context.read<LoginBloc>().state
+                                            as LoginSuccess)
+                                        .user
+                                        .employeeID,
+                                date: DateFormat(
+                                  'yyyy-MM-dd',
+                                ).format(DateTime.now()),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is HeadStoreLoading &&
+                              state.isInsert &&
+                              !state.isActs &&
+                              !state.isDashboard &&
+                              !state.isActsDetail &&
+                              !state.isDelete) {
+                            if (Platform.isIOS) {
+                              return const CupertinoActivityIndicator(
+                                radius: 12.5,
+                                color: Colors.black,
+                              );
+                            } else {
+                              return const AndroidLoading(
+                                warna: Colors.black,
+                                strokeWidth: 3,
+                              );
+                            }
+                          } else {
+                            return Text(
+                              'Buat',
+                              style: TextThemes.subtitle,
+                              textAlign: TextAlign.center,
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

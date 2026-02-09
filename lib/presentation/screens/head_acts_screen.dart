@@ -99,7 +99,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
           if (state is HeadStoreLoading) {
             if (Platform.isIOS) {
               return const CupertinoActivityIndicator(
-                radius: 8,
+                radius: 12,
                 color: Colors.black,
               );
             } else {
@@ -187,6 +187,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                       icon: icon,
                       title: data.activityName,
                       time: data.time,
+                      points: [data.point1, data.point2, data.point3],
                       onTap: () {
                         context.read<HeadStoreBloc>().add(
                           LoadHeadActsDetail(
@@ -202,8 +203,10 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                HeadActDetailScreen(data.activityId),
+                            builder: (context) => HeadActDetailScreen(
+                              data.activityId,
+                              date,
+                            ),
                           ),
                         );
                       },
