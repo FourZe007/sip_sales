@@ -1,43 +1,50 @@
-import 'dart:io';
-
-import 'package:camera/camera.dart';
-import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ImageDetector {
-  static final CameraDescription camera = CameraDescription(
-    name: 'Camera 1',
-    lensDirection: CameraLensDirection.back,
-    sensorOrientation: 90,
-  );
-  static final controller = CameraController(
-    camera,
-    ResolutionPreset.max,
-    enableAudio: false,
-    imageFormatGroup: Platform.isAndroid
-        ? ImageFormatGroup
-              .nv21 // for Android
-        : ImageFormatGroup.bgra8888, // for iOS
-  );
+  static Future<bool> hasFace(XFile image) async {
+    // try {
+    //   // final inputImage = await _getInputImage(image);
+    //   // if (inputImage == null) return false;
 
-  static Future<bool> hasFace(XFile? image) async {
-    final inputImage = await _getInputImage(image);
-    if (inputImage == null) return false;
+    //   // final faceDetector = FaceDetector(
+    //   //   options: FaceDetectorOptions(
+    //   //     enableClassification: true,
+    //   //     enableLandmarks: true,
+    //   //     enableTracking: true,
+    //   //     enableContours: true,
+    //   //     performanceMode: FaceDetectorMode.accurate,
+    //   //   ),
+    //   // );
+    //   // log(faceDetector.toString());
 
-    final faceDetector = FaceDetector(
-      options: FaceDetectorOptions(
-        enableClassification: true,
-        enableLandmarks: true,
-      ),
-    );
+    //   // final faces = await faceDetector.processImage(inputImage);
+    //   // log('is image available: ${faces.isNotEmpty}');
+    //   // await faceDetector.close();
 
-    final faces = await faceDetector.processImage(inputImage);
+    //   // return faces.isNotEmpty;
+    //   return false;
+    // } catch (e) {
+    //   log('face detection error: $e');
+    //   return false;
+    // }
 
-    return faces.isNotEmpty;
+    // ~:NEW:~
+    // // Create a GoogleVisionImage object with data from the image we retrieved from the gallery
+    // final googleVisionImage = GoogleVisionImage.fromFilePath(image.path);
+
+    // // Create FaceDetector object
+    // final faceDetector = GoogleVision.instance.faceDetector();
+
+    // // Run the process to detect faces
+    // final faces = await faceDetector.processImage(googleVisionImage);
+
+    // return faces.isNotEmpty;
+    return false;
   }
 
-  static Future<InputImage?> _getInputImage(XFile? image) async {
-    if (image == null) return null;
+  // static Future<InputImage?> _getInputImage(XFile? image) async {
+  //   if (image == null) return null;
 
-    return InputImage.fromFilePath(image.path);
-  }
+  //   return InputImage.fromFilePath(File(image.path).path);
+  // }
 }

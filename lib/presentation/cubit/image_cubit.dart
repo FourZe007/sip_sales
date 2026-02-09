@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sip_sales_clean/data/models/result_message_2.dart';
 import 'package:sip_sales_clean/domain/repositories/image_domain.dart';
-import 'package:sip_sales_clean/presentation/widgets/image/detector.dart';
 
 class ImageCubit extends Cubit<ImageState> {
   final ImageRepo imageRepo;
@@ -46,35 +45,32 @@ class ImageCubit extends Cubit<ImageState> {
         source: ImageSource.camera,
         imageQuality: 70, // Adjust quality as needed
         // maxWidth: 800, // Adjust max width as needed
+        preferredCameraDevice: CameraDevice.front,
       );
 
       if (image != null) {
         // ~:add ML process to check either the photo contains face or not
-        if (await ImageDetector.hasFace(image)) {
-          final res = await imageRepo.uploadProfilePicture(
-            '1',
-            employeeId,
-            base64Encode(await image.readAsBytes()),
-          );
-          log('image res: $res');
+        log('is image path exist: ${image.path.isNotEmpty}');
 
-          if (res['status'] == 'success' &&
-              res['code'] == '100' &&
-              (res['data'] as ResultMessageModel2).resultMessage
-                      .toString()
-                      .toLowerCase() ==
-                  'sukses') {
-            log('Image successfully captured');
-            emit(ImageCaptured(image));
-          } else {
-            log('Image failed to be captures');
-            emit(
-              ImageError((res['data'] as ResultMessageModel2).resultMessage),
-            );
-          }
+        final res = await imageRepo.uploadProfilePicture(
+          '1',
+          employeeId,
+          base64Encode(await image.readAsBytes()),
+        );
+        log('image res: $res');
+
+        if (res['status'] == 'success' &&
+            res['code'] == '100' &&
+            (res['data'] as ResultMessageModel2).resultMessage
+                    .toString()
+                    .toLowerCase() ==
+                'sukses') {
+          log('Image successfully captured');
+          emit(ImageCaptured(image));
         } else {
+          log('Image failed to be captures');
           emit(
-            const ImageError('Tidak ada wajah yang terdeteksi dalam gambar'),
+            ImageError((res['data'] as ResultMessageModel2).resultMessage),
           );
         }
       } else {
