@@ -25,6 +25,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
@@ -599,6 +600,8 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                         Functions.customFlutterToast(
                           'Aktivitas berhasil dibuat',
                         );
+
+                        context.read<DateCubit>().resetDate();
 
                         context.read<HeadStoreBloc>().add(
                           LoadHeadActs(

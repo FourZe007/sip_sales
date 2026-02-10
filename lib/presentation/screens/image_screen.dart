@@ -86,6 +86,7 @@ class ImageScreen extends StatelessWidget {
                                   child: Image.memory(
                                     base64Decode(img),
                                     fit: BoxFit.cover,
+                                    height: MediaQuery.of(context).size.height,
                                   ),
                                 ),
                                 Padding(

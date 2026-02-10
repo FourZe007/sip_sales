@@ -16,6 +16,7 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.d
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_detail_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/cards/head_card.dart';
@@ -31,44 +32,50 @@ class HeadActivityPage extends StatefulWidget {
 }
 
 class _HeadActivityPageState extends State<HeadActivityPage> {
-  String date = DateTime.now().toString().split(' ')[0];
+  // String date = DateTime.now().toString().split(' ')[0];
   bool isDateInit = false;
 
-  void setDate(String value) {
-    date = value;
-  }
+  // void setDate(String value) {
+  //   date = value;
+  // }
 
   void setSelectDate(
-    BuildContext context,
-    String tgl,
-    Function handle, {
+    BuildContext context, {
+    // String tgl,
+    /*Function handle,*/
     bool isStart = false,
     bool isEnd = false,
   }) async {
-    tgl = tgl == '' ? DateTime.now().toString().substring(0, 10) : tgl;
+    // tgl = tgl == '' ? DateTime.now().toString().substring(0, 10) : tgl;
+    final currentDate = context.read<DateCubit>().state;
 
-    DateTime? picked = await showDatePicker(
+    final DateTime picked = (await showDatePicker(
       context: context,
-      currentDate: DateTime.parse(tgl),
-      initialDate: DateTime.parse(tgl),
+      currentDate: DateTime.parse(currentDate),
+      initialDate: DateTime.parse(currentDate),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-    );
+    ))!;
 
-    if (picked != null && picked != DateTime.parse(tgl)) {
-      setState(() {
-        tgl = picked.toString().substring(0, 10);
-      });
-      handle(tgl);
-      log('Fetch Data');
+    context.read<DateCubit>().setDate(picked.toString().substring(0, 10));
+    log('Fetch Data');
 
-      context.read<HeadStoreBloc>().add(
-        LoadHeadActs(
-          employeeID: widget.employeeModel.employeeID,
-          date: tgl,
-        ),
-      );
-    }
+    // if (picked != null &&
+    //     picked != DateTime.parse(picked.toString().substring(0, 10))) {
+    //   // setState(() {
+    //   //   tgl = picked.toString().substring(0, 10);
+    //   // });
+    //   // handle(tgl);
+    //   context.read<DateCubit>().setDate(picked.toString().substring(0, 10));
+    //   log('Fetch Data');
+
+    //   // context.read<HeadStoreBloc>().add(
+    //   //   LoadHeadActs(
+    //   //     employeeID: widget.employeeModel.employeeID,
+    //   //     date: currentDate,
+    //   //   ),
+    //   // );
+    // } else {}
   }
 
   @override
@@ -187,6 +194,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                       icon: icon,
                       title: data.activityName,
                       time: data.time,
+                      points: [data.point1, data.point2, data.point3],
                       onTap: () {
                         context.read<HeadStoreBloc>().add(
                           LoadHeadActsDetail(
@@ -195,15 +203,17 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                                 (context.read<LoginBloc>().state
                                         as LoginSuccess)
                                     .user,
-                            date: date,
+                            date: context.read<DateCubit>().state,
                           ),
                         );
 
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                HeadActDetailScreen(data.activityId),
+                            builder: (context) => HeadActDetailScreen(
+                              data.activityId,
+                              context.read<DateCubit>().state,
+                            ),
                           ),
                         );
                       },
@@ -277,11 +287,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
 
                 // Modify Begin Date
                 InkWell(
-                  onTap: () => setSelectDate(
-                    context,
-                    date,
-                    setDate,
-                  ),
+                  onTap: () => setSelectDate(context),
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
@@ -290,9 +296,22 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      'Tgl ${Formatter.dateFormat(date)}',
-                      style: TextThemes.normal.copyWith(fontSize: 16),
+                    child: BlocConsumer<DateCubit, String>(
+                      listenWhen: (previous, current) => previous != current,
+                      listener: (context, state) {
+                        context.read<HeadStoreBloc>().add(
+                          LoadHeadActs(
+                            employeeID: widget.employeeModel.employeeID,
+                            date: state,
+                          ),
+                        );
+                      },
+                      builder: (context, state) {
+                        return Text(
+                          'Tgl ${Formatter.dateFormat(state)}',
+                          style: TextThemes.normal.copyWith(fontSize: 16),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -314,7 +333,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                               context.read<HeadStoreBloc>().add(
                                 LoadHeadActs(
                                   employeeID: widget.employeeModel.employeeID,
-                                  date: date,
+                                  date: context.read<DateCubit>().state,
                                 ),
                               ),
                         ),
@@ -331,7 +350,7 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
                       onRefresh: () async => context.read<HeadStoreBloc>().add(
                         LoadHeadActs(
                           employeeID: widget.employeeModel.employeeID,
-                          date: date,
+                          date: context.read<DateCubit>().state,
                         ),
                       ),
                       child: SingleChildScrollView(

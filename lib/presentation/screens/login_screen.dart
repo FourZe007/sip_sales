@@ -181,7 +181,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         body: Scaffold(
-          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             backgroundColor: Colors.grey[300],
             toolbarHeight: 0.0,
@@ -201,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // ~:Header & Body:~
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.825,
+                  height: MediaQuery.of(context).size.height * 0.85,
                   padding: EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 40,

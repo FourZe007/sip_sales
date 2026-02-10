@@ -15,10 +15,13 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.da
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
+import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/screens/image_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/cards/performance_card.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/leasing_report.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/payment_report.dart';
@@ -26,9 +29,10 @@ import 'package:sip_sales_clean/presentation/widgets/insertation/salesman_report
 import 'package:sip_sales_clean/presentation/widgets/insertation/stu_report.dart';
 
 class HeadActDetailScreen extends StatefulWidget {
-  const HeadActDetailScreen(this.actId, {super.key});
+  const HeadActDetailScreen(this.actId, this.date, {super.key});
 
   final String actId;
+  final String date;
 
   @override
   State<HeadActDetailScreen> createState() => _HeadActDetailScreenState();
@@ -115,7 +119,11 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                     case '00':
                       log('Morning Briefing');
                       if (state.briefingDetail.isNotEmpty) {
-                        return briefingDetail(context, state.briefingDetail[0]);
+                        return briefingDetail(
+                          context,
+                          widget.date,
+                          state.briefingDetail[0],
+                        );
                       } else {
                         return Center(
                           child: Text('No data available'),
@@ -124,7 +132,11 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                     case '01':
                       log('Visit Market');
                       if (state.visitDetail.isNotEmpty) {
-                        return visitDetail(context, state.visitDetail[0]);
+                        return visitDetail(
+                          context,
+                          widget.date,
+                          state.visitDetail[0],
+                        );
                       } else {
                         return Center(
                           child: Text('No data available'),
@@ -135,6 +147,7 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                       if (state.recruitmentDetail.isNotEmpty) {
                         return recruitmentDetail(
                           context,
+                          widget.date,
                           state.recruitmentDetail[0],
                         );
                       } else {
@@ -145,7 +158,11 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                     case '03':
                       log('Daily Report');
                       if (state.reportDetail.isNotEmpty) {
-                        return reportDetail(context, state.reportDetail[0]);
+                        return reportDetail(
+                          context,
+                          widget.date,
+                          state.reportDetail[0],
+                        );
                       } else {
                         return Center(
                           child: Text('No data available'),
@@ -156,6 +173,7 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                       if (state.interviewDetail.isNotEmpty) {
                         return interviewDetail(
                           context,
+                          widget.date,
                           state.interviewDetail[0],
                         );
                       } else {
@@ -185,6 +203,7 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
 
 Widget briefingDetail(
   BuildContext context,
+  String date,
   HeadBriefingViewModel data,
 ) {
   final List<Map<String, dynamic>> pieChartList = [
@@ -373,59 +392,88 @@ Widget briefingDetail(
           ),
 
           // ~:Image Preview:~
-          Builder(
-            builder: (context) {
-              if (data.img.isEmpty) {
-                return SizedBox.shrink();
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ImageScreen(
-                          img: data.img,
-                          lat: data.lat,
-                          lng: data.lng,
-                          time: data.time,
-                        ),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.all(4),
-                      backgroundColor: Colors.white,
-                      elevation: 0.0,
-                    ),
-                    child: Column(
-                      spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ~:Title:~
-                        Text(
-                          'Bukti Foto',
-                          style: TextThemes.normal.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        // ~:Photo:~
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.memory(
-                            base64Decode(data.img),
-                            fit: BoxFit.cover,
-                            height: 100,
-                            width: 100,
-                          ),
-                        ),
-                      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ~:Title:~
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'Bukti Foto',
+                    style: TextThemes.normal.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              }
-            },
+                ),
+
+                // ~:Button:~
+                ElevatedButton(
+                  onPressed: () async => context.read<ImageCubit>().showHdImage(
+                    (context.read<LoginBloc>().state as LoginSuccess)
+                        .user
+                        .branch,
+                    (context.read<LoginBloc>().state as LoginSuccess).user.shop,
+                    '00',
+                    date,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.all(4),
+                    backgroundColor: Colors.white,
+                    elevation: 0.0,
+                  ),
+                  child: BlocConsumer<ImageCubit, ImageState>(
+                    listener: (context, state) {
+                      log('Is Image Available: $state');
+                      if (state is ImageNotAvailable) {
+                        Functions.customFlutterToast(state.message);
+                      } else if (state is ImageAvailable) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageScreen(
+                              img: state.image,
+                              lat: data.lat,
+                              lng: data.lng,
+                              time: data.time,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.memory(
+                                base64Decode(data.img),
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+
+                            (state is ImageLoading)
+                                ? AndroidIosLoading(
+                                    indicatorColor: Colors.grey[300]!,
+                                  )
+                                : SizedBox.shrink(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -435,6 +483,7 @@ Widget briefingDetail(
 
 Widget visitDetail(
   BuildContext context,
+  String date,
   HeadVisitViewModel data,
 ) {
   final List<Map<String, dynamic>> pieChartList = [
@@ -604,58 +653,88 @@ Widget visitDetail(
           ),
 
           // ~:Image Preview:~
-          Builder(
-            builder: (context) {
-              if (data.img.isEmpty) {
-                return SizedBox.shrink();
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ImageScreen(
-                          img: data.img,
-                          lat: data.lat,
-                          lng: data.lng,
-                          time: data.time,
-                        ),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.all(4),
-                      backgroundColor: Colors.white,
-                      elevation: 0.0,
-                    ),
-                    child: Column(
-                      spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ~:Title:~
-                        Text(
-                          'Bukti Foto',
-                          style: TextThemes.normal.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.memory(
-                            base64Decode(data.img),
-                            fit: BoxFit.cover,
-                            height: 100,
-                            width: 100,
-                          ),
-                        ),
-                      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ~:Title:~
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'Bukti Foto',
+                    style: TextThemes.normal.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              }
-            },
+                ),
+
+                // ~:Button:~
+                ElevatedButton(
+                  onPressed: () async => context.read<ImageCubit>().showHdImage(
+                    (context.read<LoginBloc>().state as LoginSuccess)
+                        .user
+                        .branch,
+                    (context.read<LoginBloc>().state as LoginSuccess).user.shop,
+                    '00',
+                    date,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.all(4),
+                    backgroundColor: Colors.white,
+                    elevation: 0.0,
+                  ),
+                  child: BlocConsumer<ImageCubit, ImageState>(
+                    listener: (context, state) {
+                      log('Is Image Available: $state');
+                      if (state is ImageNotAvailable) {
+                        Functions.customFlutterToast(state.message);
+                      } else if (state is ImageAvailable) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageScreen(
+                              img: state.image,
+                              lat: data.lat,
+                              lng: data.lng,
+                              time: data.time,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.memory(
+                                base64Decode(data.img),
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+
+                            (state is ImageLoading)
+                                ? AndroidIosLoading(
+                                    indicatorColor: Colors.grey[300]!,
+                                  )
+                                : SizedBox.shrink(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -665,6 +744,7 @@ Widget visitDetail(
 
 Widget recruitmentDetail(
   BuildContext context,
+  String date,
   HeadRecruitmentViewModel data,
 ) {
   return Container(
@@ -718,59 +798,88 @@ Widget recruitmentDetail(
           ),
 
           // ~:Image Preview:~
-          Builder(
-            builder: (context) {
-              if (data.img.isEmpty) {
-                return SizedBox.shrink();
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ImageScreen(
-                          img: data.img,
-                          lat: data.lat,
-                          lng: data.lng,
-                          time: data.time,
-                        ),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.all(4),
-                      backgroundColor: Colors.white,
-                      elevation: 0.0,
-                    ),
-                    child: Column(
-                      spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ~:Title:~
-                        Text(
-                          'Bukti Foto',
-                          style: TextThemes.normal.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        // ~:Photo:~
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.memory(
-                            base64Decode(data.img),
-                            fit: BoxFit.cover,
-                            height: 100,
-                            width: 100,
-                          ),
-                        ),
-                      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ~:Title:~
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'Bukti Foto',
+                    style: TextThemes.normal.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              }
-            },
+                ),
+
+                // ~:Button:~
+                ElevatedButton(
+                  onPressed: () async => context.read<ImageCubit>().showHdImage(
+                    (context.read<LoginBloc>().state as LoginSuccess)
+                        .user
+                        .branch,
+                    (context.read<LoginBloc>().state as LoginSuccess).user.shop,
+                    '00',
+                    date,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.all(4),
+                    backgroundColor: Colors.white,
+                    elevation: 0.0,
+                  ),
+                  child: BlocConsumer<ImageCubit, ImageState>(
+                    listener: (context, state) {
+                      log('Is Image Available: $state');
+                      if (state is ImageNotAvailable) {
+                        Functions.customFlutterToast(state.message);
+                      } else if (state is ImageAvailable) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageScreen(
+                              img: state.image,
+                              lat: data.lat,
+                              lng: data.lng,
+                              time: data.time,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.memory(
+                                base64Decode(data.img),
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+
+                            (state is ImageLoading)
+                                ? AndroidIosLoading(
+                                    indicatorColor: Colors.grey[300]!,
+                                  )
+                                : SizedBox.shrink(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -780,6 +889,7 @@ Widget recruitmentDetail(
 
 Widget interviewDetail(
   BuildContext context,
+  String date,
   HeadInterviewViewModel data,
 ) {
   final List<Map<String, dynamic>> participantPieChartList = [
@@ -1040,59 +1150,88 @@ Widget interviewDetail(
           ),
 
           // ~:Image Preview:~
-          Builder(
-            builder: (context) {
-              if (data.img.isEmpty) {
-                return SizedBox.shrink();
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ImageScreen(
-                          img: data.img,
-                          lat: data.lat,
-                          lng: data.lng,
-                          time: data.currentTime,
-                        ),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.all(4),
-                      backgroundColor: Colors.white,
-                      elevation: 0.0,
-                    ),
-                    child: Column(
-                      spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ~:Title:~
-                        Text(
-                          'Bukti Foto',
-                          style: TextThemes.normal.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        // ~:Photo:~
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.memory(
-                            base64Decode(data.img),
-                            fit: BoxFit.cover,
-                            height: 100,
-                            width: 100,
-                          ),
-                        ),
-                      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ~:Title:~
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'Bukti Foto',
+                    style: TextThemes.normal.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              }
-            },
+                ),
+
+                // ~:Button:~
+                ElevatedButton(
+                  onPressed: () async => context.read<ImageCubit>().showHdImage(
+                    (context.read<LoginBloc>().state as LoginSuccess)
+                        .user
+                        .branch,
+                    (context.read<LoginBloc>().state as LoginSuccess).user.shop,
+                    '00',
+                    date,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.all(4),
+                    backgroundColor: Colors.white,
+                    elevation: 0.0,
+                  ),
+                  child: BlocConsumer<ImageCubit, ImageState>(
+                    listener: (context, state) {
+                      log('Is Image Available: $state');
+                      if (state is ImageNotAvailable) {
+                        Functions.customFlutterToast(state.message);
+                      } else if (state is ImageAvailable) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageScreen(
+                              img: state.image,
+                              lat: data.lat,
+                              lng: data.lng,
+                              time: data.currentTime,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.memory(
+                                base64Decode(data.img),
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+
+                            (state is ImageLoading)
+                                ? AndroidIosLoading(
+                                    indicatorColor: Colors.grey[300]!,
+                                  )
+                                : SizedBox.shrink(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -1102,6 +1241,7 @@ Widget interviewDetail(
 
 Widget reportDetail(
   BuildContext context,
+  String date,
   HeadReportViewModel data,
 ) {
   return Container(
@@ -1209,59 +1349,88 @@ Widget reportDetail(
           ),
 
           // ~:Image Preview Box:~
-          Builder(
-            builder: (context) {
-              if (data.img.isEmpty) {
-                return SizedBox.shrink();
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ImageScreen(
-                          img: data.img,
-                          lat: data.lat,
-                          lng: data.lng,
-                          time: data.currentTime,
-                        ),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.all(4),
-                      backgroundColor: Colors.white,
-                      elevation: 0.0,
-                    ),
-                    child: Column(
-                      spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ~:Title:~
-                        Text(
-                          'Bukti Foto',
-                          style: TextThemes.normal.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        // ~:Photo:~
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.memory(
-                            base64Decode(data.img),
-                            fit: BoxFit.cover,
-                            height: 100,
-                            width: 100,
-                          ),
-                        ),
-                      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ~:Title:~
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'Bukti Foto',
+                    style: TextThemes.normal.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              }
-            },
+                ),
+
+                // ~:Button:~
+                ElevatedButton(
+                  onPressed: () async => context.read<ImageCubit>().showHdImage(
+                    (context.read<LoginBloc>().state as LoginSuccess)
+                        .user
+                        .branch,
+                    (context.read<LoginBloc>().state as LoginSuccess).user.shop,
+                    '00',
+                    date,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.all(4),
+                    backgroundColor: Colors.white,
+                    elevation: 0.0,
+                  ),
+                  child: BlocConsumer<ImageCubit, ImageState>(
+                    listener: (context, state) {
+                      log('Is Image Available: $state');
+                      if (state is ImageNotAvailable) {
+                        Functions.customFlutterToast(state.message);
+                      } else if (state is ImageAvailable) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageScreen(
+                              img: state.image,
+                              lat: data.lat,
+                              lng: data.lng,
+                              time: data.currentTime,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.memory(
+                                base64Decode(data.img),
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+
+                            (state is ImageLoading)
+                                ? AndroidIosLoading(
+                                    indicatorColor: Colors.grey[300]!,
+                                  )
+                                : SizedBox.shrink(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -24,6 +24,8 @@ class APIConstants {
       '/DBapi/DBSPKLeasing/MMotorCategory';
   static const String insertProfilePictureEndpoint =
       '/api/SIPSales/UploadPhoto';
+  static const String showHdImage =
+      '/DealerActivity/DealerActivity/DealerActivityPic';
   static const String salesmanAttendanceEndpoint =
       '/api/SIPSales/AttendanceHistory';
   static const String radiusCheckerEndpoint = '/api/SIPSales/CheckRadius';

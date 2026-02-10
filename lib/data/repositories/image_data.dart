@@ -63,4 +63,58 @@ class ImageRepoImp implements ImageRepo {
       };
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> getHDImage(
+    String branch,
+    String shop,
+    String actId,
+    String date,
+  ) async {
+    // Simulate a network call
+    Uri uri = Uri.https(APIConstants.baseUrl, APIConstants.showHdImage);
+
+    Map body = {
+      "Branch": branch,
+      "Shop": shop,
+      "ActivityId": actId,
+      "CurrentDate": date,
+    };
+    log('getHDImage Map Body: $body');
+
+    final response = await http.post(
+      uri,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(body),
+    );
+    log('Response: $response');
+
+    if (response.statusCode <= 200) {
+      log('Response: ${response.statusCode}');
+      final res = jsonDecode(response.body);
+      log("${res['msg']}, ${res['code']}");
+      if (res['msg'] == 'Sukses' && res['code'] == '100') {
+        log('Success');
+        return {
+          'status': 'success',
+          'code': res['code'],
+          'data': ((res['data'] as List)[0]['pic1']).toString(),
+        };
+      } else {
+        log('Fail');
+        return {
+          'status': 'fail',
+          'code': res['code'],
+          'data': '',
+        };
+      }
+    } else {
+      log('Response: ${response.statusCode}');
+      return {
+        'status': 'fail',
+        'code': response.statusCode,
+        'data': '',
+      };
+    }
+  }
 }

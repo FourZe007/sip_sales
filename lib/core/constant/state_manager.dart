@@ -28,6 +28,7 @@ import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
+import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/forgot_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_cubit.dart';
@@ -43,6 +44,9 @@ class StateManager {
     return [
       BlocProvider<CounterCubit>(
         create: (context) => CounterCubit(),
+      ),
+      BlocProvider<DateCubit>(
+        create: (context) => DateCubit(),
       ),
       BlocProvider<ImageCubit>(
         create: (context) => ImageCubit(ImageRepoImp()),

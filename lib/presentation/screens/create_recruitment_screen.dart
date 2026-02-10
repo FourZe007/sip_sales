@@ -10,6 +10,7 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.da
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
+import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/image/dotted_rounded_image_picker.dart';
@@ -163,6 +164,8 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
                         Functions.customFlutterToast(
                           'Aktivitas berhasil dibuat',
                         );
+
+                        context.read<DateCubit>().resetDate();
 
                         context.read<HeadStoreBloc>().add(
                           LoadHeadActs(

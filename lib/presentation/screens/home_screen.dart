@@ -20,6 +20,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_event.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_type.dart';
+import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/fu_controls_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/navbar_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
@@ -91,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }) {
     log('Home Screen Refresh Dashboard');
     final salesmanId = employee.employeeID;
-    final date = DateTime.now().toIso8601String().substring(0, 10);
+    // final date = DateTime.now().toIso8601String().substring(0, 10);
     // ~:Debug Purposes:~
     // log('Salesman Id: $salesmanId');
     // log('Employee Code: ${employee.code}');
@@ -107,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         context.read<HeadStoreBloc>().add(
           LoadHeadActs(
             employeeID: salesmanId,
-            date: date,
+            date: context.read<DateCubit>().getDate(),
           ),
         );
       } else if (navbarType == NavbarType.report) {
@@ -134,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           context.read<HeadStoreBloc>().add(
             LoadHeadDashboard(
               employeeID: salesmanId,
-              date: date,
+              date: context.read<DateCubit>().getDate(),
             ),
           );
         }
@@ -157,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           context.read<SalesmanBloc>().add(
             SalesmanDashboardButtonPressed(
               salesmanId: salesmanId,
-              endDate: date,
+              endDate: context.read<DateCubit>().getDate(),
             ),
           );
         } else if (dashboardState.name == 'followup') {
@@ -174,12 +175,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           if (activeFilters['notFollowedUp'] == true) {
             log('notFollowedUp');
             context.read<FollowupDashboardBloc>().add(
-              LoadFollowupDashboard(salesmanId, date, sortByName),
+              LoadFollowupDashboard(
+                salesmanId,
+                context.read<DateCubit>().getDate(),
+                sortByName,
+              ),
             );
           } else if (activeFilters['deal'] == true) {
             log('deal');
             context.read<FollowupDashboardBloc>().add(
-              LoadFollowupDealDashboard(salesmanId, date, sortByName),
+              LoadFollowupDealDashboard(
+                salesmanId,
+                context.read<DateCubit>().getDate(),
+                sortByName,
+              ),
             );
           }
         }
@@ -1211,11 +1220,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             } else if (state.type ==
                 DashboardSlidingUpType.newManagerActivity) {
               return NewActPanel();
-            }
-            // else if (state.type == DashboardSlidingUpType.groupDealer) {
-            //   return GroupDealerFilterPanel();
-            // }
-            else if (state.type == DashboardSlidingUpType.dealer) {
+            } else if (state.type == DashboardSlidingUpType.dealer) {
               return DealerFilterPanel();
             } else if (state.type == DashboardSlidingUpType.leasing) {
               return LeasingFilterPanel();

@@ -14,6 +14,10 @@ class HeadActsModel {
   String activityId;
   String activityName;
   String activityDesc;
+  int targetQty;
+  int point1;
+  int point2;
+  int point3;
   // String img;
 
   HeadActsModel({
@@ -29,6 +33,10 @@ class HeadActsModel {
     required this.activityId,
     required this.activityName,
     required this.activityDesc,
+    required this.targetQty,
+    required this.point1,
+    required this.point2,
+    required this.point3,
     // required this.img,
   });
 
@@ -47,6 +55,10 @@ class HeadActsModel {
       activityName: json['activityName'],
       // ~:New:~
       activityDesc: json['activityDescription'],
+      targetQty: json['targetQty'],
+      point1: json['point1'],
+      point2: json['point2'],
+      point3: json['point3'],
       // img: json['pic1'],
       // ~:New:~
     );
@@ -567,7 +579,6 @@ class InterviewMediaModel {
   Map<String, dynamic> toJson() {
     return {
       'mediaCode': mediaCode,
-      'mediaName': mediaName,
       'qty': qty,
     };
   }

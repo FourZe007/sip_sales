@@ -12,6 +12,7 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_state.d
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
+import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
@@ -347,6 +348,8 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                         Functions.customFlutterToast(
                           'Aktivitas berhasil dibuat',
                         );
+
+                        context.read<DateCubit>().resetDate();
 
                         context.read<HeadStoreBloc>().add(
                           LoadHeadActs(

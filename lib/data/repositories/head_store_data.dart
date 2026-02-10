@@ -171,6 +171,7 @@ class HeadStoreDataImp implements HeadStoreRepo {
         };
       } else {
         log('Fail');
+        log((res['data'] as List<ResultMessageModel>)[0].resultMessage);
         return {
           'status': 'fail',
           'code': res['code'],
