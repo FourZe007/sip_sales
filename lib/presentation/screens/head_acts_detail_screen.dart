@@ -267,91 +267,100 @@ Widget briefingDetail(
           ),
 
           // ~:Chart:~
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 220,
-            margin: EdgeInsets.only(top: 8),
-            child: Column(
-              children: [
-                // ~:Title:~
-                Text(
-                  'Jumlah Peserta',
-                  style: TextThemes.normal.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                // ~:Chart:~
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          (data.shopManager != 0 &&
+                  data.salesCounter != 0 &&
+                  data.salesman != 0 &&
+                  data.others != 0)
+              ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 220,
+                  margin: EdgeInsets.only(top: 8),
+                  child: Column(
                     children: [
-                      // ~:Pie Chart:~
-                      Expanded(
-                        child: PieChart(
-                          PieChartData(
-                            startDegreeOffset: -150,
-                            sections: pieChartList
-                                .map(
-                                  (e) => PieChartSectionData(
-                                    value: double.parse(e['number'].toString()),
-                                    title: '',
-                                    color: e['color'],
-                                    radius: 60,
-                                    titleStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            sectionsSpace: 2,
-                            // centerSpaceRadius: 32,
-                          ),
+                      // ~:Title:~
+                      Text(
+                        'Jumlah Peserta',
+                        style: TextThemes.normal.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      // ~:Chart Legends:~
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: pieChartList.map((e) {
-                            final String title = e['title'];
-                            final int number = e['number'];
-                            final Color color = e['color'];
-
-                            return Row(
-                              spacing: 8,
-                              children: [
-                                // ~:Color Legend:~
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                      // ~:Chart:~
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // ~:Pie Chart:~
+                            Expanded(
+                              child: PieChart(
+                                PieChartData(
+                                  startDegreeOffset: -150,
+                                  sections: pieChartList
+                                      .map(
+                                        (e) => PieChartSectionData(
+                                          value: double.parse(
+                                            e['number'].toString(),
+                                          ),
+                                          title: '',
+                                          color: e['color'],
+                                          radius: 60,
+                                          titleStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  sectionsSpace: 2,
+                                  // centerSpaceRadius: 32,
                                 ),
+                              ),
+                            ),
 
-                                // ~:Legend Text:~
-                                Text(
-                                  '$number $title',
-                                  style: TextThemes.normal,
-                                ),
-                              ],
-                            );
-                          }).toList(),
+                            // ~:Chart Legends:~
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: pieChartList.map((e) {
+                                  final String title = e['title'];
+                                  final int number = e['number'];
+                                  final Color color = e['color'];
+
+                                  return Row(
+                                    spacing: 8,
+                                    children: [
+                                      // ~:Color Legend:~
+                                      Container(
+                                        width: 16,
+                                        height: 16,
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // ~:Legend Text:~
+                                      Text(
+                                        '$number $title',
+                                        style: TextThemes.normal,
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                )
+              : SizedBox.shrink(),
 
           // ~:Descriptions:~
           Column(
@@ -566,91 +575,101 @@ Widget visitDetail(
           ),
 
           // ~:Chart:~
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 180,
-            margin: EdgeInsets.only(top: 8),
-            child: Column(
-              children: [
-                // ~:Title:~
-                Text(
-                  'Jumlah Peserta',
-                  style: TextThemes.normal.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                // ~:Chart:~
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          (data.salesman != 0 &&
+                  data.database != 0 &&
+                  data.hotProspek != 0 &&
+                  data.deal != 0 &&
+                  data.pesertaTestRide != 0)
+              ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 180,
+                  margin: EdgeInsets.only(top: 8),
+                  child: Column(
                     children: [
-                      // ~:Pie Chart:~
-                      Expanded(
-                        child: PieChart(
-                          PieChartData(
-                            startDegreeOffset: -150,
-                            sections: pieChartList
-                                .map(
-                                  (e) => PieChartSectionData(
-                                    value: double.parse(e['number'].toString()),
-                                    title: '',
-                                    color: e['color'],
-                                    radius: 60,
-                                    titleStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            sectionsSpace: 2,
-                            // centerSpaceRadius: 32,
-                          ),
+                      // ~:Title:~
+                      Text(
+                        'Jumlah Peserta',
+                        style: TextThemes.normal.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      // ~:Chart Legends:~
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: pieChartList.map((e) {
-                            final String title = e['title'];
-                            final int number = e['number'];
-                            final Color color = e['color'];
-
-                            return Row(
-                              spacing: 8,
-                              children: [
-                                // ~:Color Legend:~
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                      // ~:Chart:~
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // ~:Pie Chart:~
+                            Expanded(
+                              child: PieChart(
+                                PieChartData(
+                                  startDegreeOffset: -150,
+                                  sections: pieChartList
+                                      .map(
+                                        (e) => PieChartSectionData(
+                                          value: double.parse(
+                                            e['number'].toString(),
+                                          ),
+                                          title: '',
+                                          color: e['color'],
+                                          radius: 60,
+                                          titleStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  sectionsSpace: 2,
+                                  // centerSpaceRadius: 32,
                                 ),
+                              ),
+                            ),
 
-                                // ~:Legend Text:~
-                                Text(
-                                  '$number $title',
-                                  style: TextThemes.normal,
-                                ),
-                              ],
-                            );
-                          }).toList(),
+                            // ~:Chart Legends:~
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: pieChartList.map((e) {
+                                  final String title = e['title'];
+                                  final int number = e['number'];
+                                  final Color color = e['color'];
+
+                                  return Row(
+                                    spacing: 8,
+                                    children: [
+                                      // ~:Color Legend:~
+                                      Container(
+                                        width: 16,
+                                        height: 16,
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // ~:Legend Text:~
+                                      Text(
+                                        '$number $title',
+                                        style: TextThemes.normal,
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                )
+              : SizedBox.shrink(),
 
           // ~:Image Preview:~
           Padding(
@@ -678,7 +697,7 @@ Widget visitDetail(
                         .user
                         .branch,
                     (context.read<LoginBloc>().state as LoginSuccess).user.shop,
-                    '00',
+                    '01',
                     date,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -823,7 +842,7 @@ Widget recruitmentDetail(
                         .user
                         .branch,
                     (context.read<LoginBloc>().state as LoginSuccess).user.shop,
-                    '00',
+                    '02',
                     date,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -975,179 +994,195 @@ Widget interviewDetail(
           ),
 
           // ~:Participant Chart:~
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 180,
-            margin: EdgeInsets.only(top: 8),
-            child: Column(
-              children: [
-                // ~:Title:~
-                Text(
-                  'Jumlah Peserta',
-                  style: TextThemes.normal.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                // ~:Chart:~
-                Expanded(
-                  child: Row(
-                    spacing: 4,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          (data.dipanggil != 0 && data.datang != 0 && data.diterima != 0)
+              ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 180,
+                  margin: EdgeInsets.only(top: 8),
+                  child: Column(
                     children: [
-                      // ~:Pie Chart:~
-                      Expanded(
-                        child: PieChart(
-                          PieChartData(
-                            startDegreeOffset: -150,
-                            sections: participantPieChartList
-                                .map(
-                                  (e) => PieChartSectionData(
-                                    value: double.parse(e['number'].toString()),
-                                    title: '',
-                                    color: e['color'],
-                                    radius: 40,
-                                    titleStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            sectionsSpace: 2,
-                            // centerSpaceRadius: 32,
-                          ),
+                      // ~:Title:~
+                      Text(
+                        'Jumlah Peserta',
+                        style: TextThemes.normal.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      // ~:Chart Legends:~
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: participantPieChartList.map((e) {
-                            final String title = e['title'];
-                            final int number = e['number'];
-                            final Color color = e['color'];
-
-                            return Row(
-                              spacing: 8,
-                              children: [
-                                // ~:Color Legend:~
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                      // ~:Chart:~
+                      Expanded(
+                        child: Row(
+                          spacing: 4,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // ~:Pie Chart:~
+                            Expanded(
+                              child: PieChart(
+                                PieChartData(
+                                  startDegreeOffset: -150,
+                                  sections: participantPieChartList
+                                      .map(
+                                        (e) => PieChartSectionData(
+                                          value: double.parse(
+                                            e['number'].toString(),
+                                          ),
+                                          title: '',
+                                          color: e['color'],
+                                          radius: 40,
+                                          titleStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  sectionsSpace: 2,
+                                  // centerSpaceRadius: 32,
                                 ),
+                              ),
+                            ),
 
-                                // ~:Legend Text:~
-                                Text(
-                                  '$number $title',
-                                  style: TextThemes.normal,
-                                ),
-                              ],
-                            );
-                          }).toList(),
+                            // ~:Chart Legends:~
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: participantPieChartList.map((e) {
+                                  final String title = e['title'];
+                                  final int number = e['number'];
+                                  final Color color = e['color'];
+
+                                  return Row(
+                                    spacing: 8,
+                                    children: [
+                                      // ~:Color Legend:~
+                                      Container(
+                                        width: 16,
+                                        height: 16,
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // ~:Legend Text:~
+                                      Text(
+                                        '$number $title',
+                                        style: TextThemes.normal,
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                )
+              : SizedBox.shrink(),
 
           // ~:Media Chart:~
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 180,
-            child: Column(
-              children: [
-                // ~:Title:~
-                Text(
-                  'Media',
-                  style: TextThemes.normal.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                // ~:Chart:~
-                Expanded(
-                  child: Row(
-                    spacing: 4,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          (data.listMedia[0].qty != 0 &&
+                  data.listMedia[1].qty != 0 &&
+                  data.listMedia[2].qty != 0 &&
+                  data.listMedia[3].qty != 0 &&
+                  data.listMedia[4].qty != 0)
+              ? SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 180,
+                  child: Column(
                     children: [
-                      // ~:Pie Chart:~
-                      Expanded(
-                        child: PieChart(
-                          PieChartData(
-                            startDegreeOffset: -150,
-                            sections: mediaPieChartList
-                                .map(
-                                  (e) => PieChartSectionData(
-                                    value: double.parse(e['number'].toString()),
-                                    title: '',
-                                    color: e['color'],
-                                    radius: 40,
-                                    titleStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            sectionsSpace: 2,
-                            // centerSpaceRadius: 32,
-                          ),
+                      // ~:Title:~
+                      Text(
+                        'Media',
+                        style: TextThemes.normal.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      // ~:Chart Legends:~
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: mediaPieChartList.map((e) {
-                            final String title = e['title'];
-                            final int number = e['number'];
-                            final Color color = e['color'];
-
-                            return Row(
-                              spacing: 8,
-                              children: [
-                                // ~:Color Legend:~
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                      // ~:Chart:~
+                      Expanded(
+                        child: Row(
+                          spacing: 4,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // ~:Pie Chart:~
+                            Expanded(
+                              child: PieChart(
+                                PieChartData(
+                                  startDegreeOffset: -150,
+                                  sections: mediaPieChartList
+                                      .map(
+                                        (e) => PieChartSectionData(
+                                          value: double.parse(
+                                            e['number'].toString(),
+                                          ),
+                                          title: '',
+                                          color: e['color'],
+                                          radius: 40,
+                                          titleStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  sectionsSpace: 2,
+                                  // centerSpaceRadius: 32,
                                 ),
+                              ),
+                            ),
 
-                                // ~:Legend Text:~
-                                Text(
-                                  '$number $title',
-                                  style: TextThemes.normal,
-                                ),
-                              ],
-                            );
-                          }).toList(),
+                            // ~:Chart Legends:~
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: mediaPieChartList.map((e) {
+                                  final String title = e['title'];
+                                  final int number = e['number'];
+                                  final Color color = e['color'];
+
+                                  return Row(
+                                    spacing: 8,
+                                    children: [
+                                      // ~:Color Legend:~
+                                      Container(
+                                        width: 16,
+                                        height: 16,
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // ~:Legend Text:~
+                                      Text(
+                                        '$number $title',
+                                        style: TextThemes.normal,
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                )
+              : SizedBox.shrink(),
 
           // ~:Image Preview:~
           Padding(
@@ -1175,7 +1210,7 @@ Widget interviewDetail(
                         .user
                         .branch,
                     (context.read<LoginBloc>().state as LoginSuccess).user.shop,
-                    '00',
+                    '03',
                     date,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -1374,7 +1409,7 @@ Widget reportDetail(
                         .user
                         .branch,
                     (context.read<LoginBloc>().state as LoginSuccess).user.shop,
-                    '00',
+                    '04',
                     date,
                   ),
                   style: ElevatedButton.styleFrom(

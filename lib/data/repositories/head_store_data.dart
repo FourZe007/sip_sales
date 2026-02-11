@@ -77,7 +77,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       } else {
         log('Fail');
@@ -86,7 +87,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       }
     } else {
@@ -167,17 +169,18 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       } else {
         log('Fail');
-        log((res['data'] as List<ResultMessageModel>)[0].resultMessage);
         return {
           'status': 'fail',
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       }
     } else {
@@ -244,7 +247,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       } else {
         log('Fail');
@@ -253,7 +257,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       }
     } else {
@@ -324,7 +329,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       } else {
         log('Fail');
@@ -333,7 +339,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       }
     } else {
@@ -404,7 +411,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       } else {
         log('Fail');
@@ -413,7 +421,8 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       }
     } else {
@@ -465,14 +474,18 @@ class HeadStoreDataImp implements HeadStoreRepo {
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => ResultMessageModel.fromJson(e))
-              .toList(),
+              .toList()[0]
+              .resultMessage,
         };
       } else {
         log('Fail');
         return {
           'status': 'fail',
           'code': res['code'],
-          'data': ([]).map((e) => ResultMessageModel.fromJson(e)).toList(),
+          'data': (res['data'] as List)
+              .map((e) => ResultMessageModel.fromJson(e))
+              .toList()[0]
+              .resultMessage,
         };
       }
     } else {

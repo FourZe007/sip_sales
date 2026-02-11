@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -44,6 +45,7 @@ import 'package:sip_sales_clean/presentation/widgets/panels/leasing_filter_panel
 import 'package:sip_sales_clean/presentation/widgets/panels/new_act_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/user_profile.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:upgrader/upgrader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -455,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         bottom: 20,
                       ),
                       child: Text(
-                        'Versi 1.2.2',
+                        'Versi 1.2.3',
                         style: TextThemes.normal.copyWith(
                           fontSize: 16,
                         ),
@@ -1749,13 +1751,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
 
     tabController = TabController(length: 2, vsync: this);
-
-    // if (Platform.isIOS) {
-    //   SystemChrome.setEnabledSystemUIMode(
-    //     SystemUiMode.manual,
-    //     overlays: SystemUiOverlay.values,
-    //   );
-    // }
   }
 
   @override
@@ -1767,36 +1762,67 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: BlocBuilder<LoginBloc, LoginState>(
-        buildWhen: (previous, current) =>
-            current is LoginSuccess || current is LoginFailed,
-        builder: (context, state) {
-          if (state is LoginSuccess) {
-            log('Login success with code: ${state.user.code}');
-            log('User info: ${state.user}');
+    DateTime? currentBackPressTime;
 
-            // ~:Code Zero for Head Store:~
-            if (state.user.code == 0) {
-              return shopHead(state.user);
-            }
-            // ~:Code One for Salesman:~
-            else if (state.user.code == 1) {
-              return salesman(state.user);
-            }
-            // ~:Code Two for Shop Coordinator:~
-            else if (state.user.code == 2) {
-              return CoordinatorScreen(
-                applyUserProfile: false,
-                employee: state.user,
-                openProfile: openProfile,
-              );
-            }
+    return UpgradeAlert(
+      showIgnore: false,
+      showLater: false,
+      dialogStyle: (Platform.isIOS)
+          ? UpgradeDialogStyle.cupertino
+          : UpgradeDialogStyle.material,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (bool didPop, _) {
+          if (didPop) {
+            return; // If pop happened (e.g. via system gesture after canPop was true), do nothing here
           }
 
-          return SizedBox.shrink();
+          final DateTime now = DateTime.now();
+          final Duration difference = now.difference(
+            currentBackPressTime ?? DateTime.now(),
+          );
+          const Duration timeout = Duration(
+            seconds: 2,
+          ); // Time allowed between clicks
+
+          if (currentBackPressTime == null || difference > timeout) {
+            currentBackPressTime = now;
+            // Show a message to the user
+            Functions.customFlutterToast('Press back again to exit!');
+          } else {
+            // Second press within the timeout, exit the app
+            SystemNavigator.pop(); // Closes the app
+          }
         },
+        child: BlocBuilder<LoginBloc, LoginState>(
+          buildWhen: (previous, current) =>
+              current is LoginSuccess || current is LoginFailed,
+          builder: (context, state) {
+            if (state is LoginSuccess) {
+              log('Login success with code: ${state.user.code}');
+              log('User info: ${state.user}');
+
+              // ~:Code Zero for Head Store:~
+              if (state.user.code == 0) {
+                return shopHead(state.user);
+              }
+              // ~:Code One for Salesman:~
+              else if (state.user.code == 1) {
+                return salesman(state.user);
+              }
+              // ~:Code Two for Shop Coordinator:~
+              else if (state.user.code == 2) {
+                return CoordinatorScreen(
+                  applyUserProfile: false,
+                  employee: state.user,
+                  openProfile: openProfile,
+                );
+              }
+            }
+
+            return SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

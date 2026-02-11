@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:sip_sales_clean/core/constant/api.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
+import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/core/helpers/validator.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/domain/repositories/followup_domain.dart';
@@ -72,7 +73,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         emit(HeadStoreDataFailed('Data tidak tersedia.'));
       } else {
         log('Failed');
-        emit(HeadStoreDataFailed(res['msg']));
+        emit(HeadStoreDataFailed(res['data']));
       }
     } catch (e) {
       log('Load Head Acts failed: $e');
@@ -167,7 +168,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         emit(HeadStoreDataDetailFailed('Data tidak tersedia.'));
       } else {
         log('Failed');
-        emit(HeadStoreDataDetailFailed(result['msg']));
+        emit(HeadStoreDataDetailFailed(result['data']));
       }
     } catch (e) {
       log('Load Head Acts Detail failed: $e');
@@ -197,7 +198,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         emit(HeadStoreDashboardFailed('Data tidak tersedia.'));
       } else {
         log('Failed');
-        emit(HeadStoreDashboardFailed(res['msg']));
+        emit(HeadStoreDashboardFailed(res['data']));
       }
     } catch (e) {
       log('Load Head Dashboard failed: $e');
@@ -297,7 +298,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.morningBriefing,
-              res['msg'],
+              Formatter.toTitleCase(res['data']),
             ),
           );
         }
@@ -399,9 +400,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(HeadStoreInsertSucceed(HeadStoreActTypes.visitMarket));
         } else if (res['status'] == 'fail' &&
             res['code'] == '200' &&
-            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
-              'duplicate key',
-            )) {
+            res['data'].toString().toLowerCase().contains('duplicate key')) {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.visitMarket,
@@ -412,7 +411,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.visitMarket,
-              res['msg'],
+              Formatter.toTitleCase(res['data']),
             ),
           );
         }
@@ -493,9 +492,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(HeadStoreInsertSucceed(HeadStoreActTypes.recruitment));
         } else if (res['status'] == 'fail' &&
             res['code'] == '200' &&
-            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
-              'duplicate key',
-            )) {
+            res['data'].toString().toLowerCase().contains('duplicate key')) {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.recruitment,
@@ -506,7 +503,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.recruitment,
-              res['msg'],
+              Formatter.toTitleCase(res['data']),
             ),
           );
         }
@@ -618,9 +615,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(HeadStoreInsertSucceed(HeadStoreActTypes.interview));
         } else if (res['status'] == 'fail' &&
             res['code'] == '200' &&
-            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
-              'duplicate key',
-            )) {
+            res['data'].toString().toLowerCase().contains('duplicate key')) {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.interview,
@@ -631,7 +626,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.interview,
-              res['msg'],
+              Formatter.toTitleCase(res['data']),
             ),
           );
         }
@@ -744,7 +739,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.dailyReport,
-              res['msg'],
+              Formatter.toTitleCase(res['data']),
             ),
           );
         }
@@ -825,7 +820,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
         emit(HeadStoreDeleteSucceed('Aktivitas berhasil dihapus.'));
       } else {
         log('Failed');
-        emit(HeadStoreDeleteFailed(res['msg']));
+        emit(HeadStoreDeleteFailed(Formatter.toTitleCase(res['data'])));
       }
     } catch (e) {
       emit(HeadStoreDeleteFailed(e.toString()));

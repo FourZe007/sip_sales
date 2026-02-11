@@ -120,6 +120,10 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
               child: Text(state.message),
             );
           } else if (state is HeadStoreDataLoaded) {
+            for (var element in state.headActs) {
+              log(element.activityId);
+            }
+
             return ListView(
               physics: NeverScrollableScrollPhysics(),
               children: state.headActs.asMap().entries.map((e) {
