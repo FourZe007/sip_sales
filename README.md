@@ -6,6 +6,57 @@ A new Flutter project.
 
 ## Version History
 
+### 🚀 v1.2.3 - "Display & Reporting Update"
+
+**What's New:**
+
+📱 **Device Compatibility & UX**
+
+- Fixed display issues on new Android devices
+- Press back twice to exit the app for a smoother navigation experience
+
+📊 **Reporting & Store Management**
+
+- New report features for store managers
+- Better image quality with full-screen viewing support
+- Added new parameters and widgets for each head store activity
+- Enlarged head store activity images for better visibility
+
+🐛 **Bug Fixes**
+
+- Fixed head store activities display (confused between activity 03 and 04)
+- Visit market insertion bug fixed
+- Image preview background color removed
+- Fixed refresh and date filter bug in home page
+
+### 🚀 v1.2.1 - "Head Store Activity Overhaul"
+
+**What's New:**
+
+📝 **New Head Store Report System**
+
+- Completely new input method for Head Store report insertion
+- Morning Briefing UI with advanced configuration
+- New screens for Daily Report data insertion
+- Added Visit Market, Recruitment, and Interview screens for Head Store
+- Head Store activities model restructured for better data handling
+- Redesigned Head Store activity details UI
+
+🔧 **System Improvements**
+
+- Face detector added for profile image upload
+- Internet connection check
+- API data submission for leasing and salesman data
+- Master data added to report tables
+- New API endpoints and formatter for special characters
+
+🐛 **Bug Fixes**
+
+- Fixed `flutter_secure_storage` bug on Android 8 devices
+- Fixed storage management for older Android OS versions
+- Briefing creation, display, and validation fixes
+- Head Store activities validator fixed
+
 ### 🚀 v1.2.0 - "Enhanced Access Control & Authentication"
 
 **What's New:**
