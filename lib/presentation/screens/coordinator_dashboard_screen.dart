@@ -193,6 +193,42 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
               ),
             ],
           );
+        } else if (state is CoordinatorDashboardEmpty) {
+          return Column(
+            spacing: 8,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // ~:Empty Text:~
+              Text(
+                'Tidak ada data yang ditemukan',
+                textAlign: TextAlign.center,
+                style: TextThemes.normal.copyWith(
+                  fontSize: 16,
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+
+              // ~:Reload Button:~
+              ElevatedButton(
+                onPressed: () async => context.read<ShopCoordinatorBloc>().add(
+                  LoadCoordinatorDashboard(
+                    widget.employeeId,
+                    DateTime.now().toIso8601String().split('T')[0],
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(120, 40),
+                ),
+                child: Text(
+                  'Refresh',
+                  style: TextThemes.normalTextButton.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ),
+            ],
+          );
         } else if (state is CoordinatorDashboardLoaded) {
           log('Coordinator length: ${state.coordData.length}');
 

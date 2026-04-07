@@ -46,4 +46,22 @@ class EmployeeModel {
       code: json['Kode'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'flag': flag,
+      'memo': memo,
+      'employeeID': employeeID,
+      'employeeName': employeeName,
+      'branch': branch,
+      'shop': shop,
+      'bsName': bsName,
+      'locationID': locationID,
+      'locationName': locationName,
+      'latitude': latitude,
+      'longitude': longitude,
+      'profilePicture': profilePicture,
+      'code': code,
+    };
+  }
 }

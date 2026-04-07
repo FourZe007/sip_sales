@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
+import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/domain/repositories/login_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
@@ -46,15 +47,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       if (event.id.isNotEmpty && event.pass.isNotEmpty) {
         log('Event id & password are not empty');
-        // Explicit login attempt: save provided credentials
-        savedEmployeeId = await Functions.readAndWriteEmployeeId(
-          id: event.id,
-          isLogin: true,
-        );
-        savedUserPass = await Functions.readAndWriteUserPass(
-          pass: event.pass,
-          isLogin: true,
-        );
+        // Use provided credentials but do NOT save yet — save only after success
+        savedEmployeeId = event.id;
+        savedUserPass = event.pass;
       } else {
         log('Event id & password are empty');
         // Auto-login attempt from stored secure storage
@@ -77,11 +72,20 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         log(loginRes.toString());
         log('Flag: ${loginRes['data'].flag}');
         if (loginRes['status'] == 'success') {
-          log('Login Success');
-          if (loginRes['data'].flag == 1) {
+          log('Is Flagged: ${(loginRes['data'] as EmployeeModel).flag == 1}');
+          if ((loginRes['data'] as EmployeeModel).flag == 1) {
             log('Account is available');
+            // Save credentials only after confirmed success
+            await Functions.readAndWriteEmployeeId(
+              id: savedEmployeeId,
+              isLogin: true,
+            );
+            await Functions.readAndWriteUserPass(
+              pass: savedUserPass,
+              isLogin: true,
+            );
             // event.appState.setUserAccountList(res);
-            switch (loginRes['data'].code) {
+            switch ((loginRes['data'] as EmployeeModel).code) {
               // ~:Head Store:~
               case 0:
                 log('Head Store');
@@ -92,8 +96,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                   event.context
                       .read<HeadActsMasterCubit>()
                       .fetchHeadActsMasterData(
-                        loginRes['data'].branch,
-                        loginRes['data'].shop,
+                        (loginRes['data'] as EmployeeModel).branch,
+                        (loginRes['data'] as EmployeeModel).shop,
                       );
                 }
                 break;
@@ -167,7 +171,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
                   event.context.read<ShopCoordinatorBloc>().add(
                     LoadCoordinatorDashboard(
-                      loginRes['data'].employeeID,
+                      (loginRes['data'] as EmployeeModel).employeeID,
                       DateTime.now().toIso8601String().substring(0, 10),
                     ),
                   );
@@ -176,13 +180,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             }
 
             emit(
-              LoginSuccess(user: loginRes['data'], isRefresh: event.isRefresh),
+              LoginSuccess(
+                user: (loginRes['data'] as EmployeeModel),
+                isRefresh: event.isRefresh,
+              ),
             );
           } else {
             log('Account is not available');
             emit(
               LoginFailed(
-                message: Formatter.toTitleCase(loginRes['data'].memo),
+                message: Formatter.toTitleCase(
+                  (loginRes['data'] as EmployeeModel).memo,
+                ),
                 isRefresh: event.isRefresh,
               ),
             );
@@ -192,7 +201,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           log('Login failed');
           emit(
             LoginFailed(
-              message: Formatter.toTitleCase(loginRes['data'].memo),
+              message: Formatter.toTitleCase(
+                (loginRes['data'] as EmployeeModel).memo,
+              ),
               isRefresh: event.isRefresh,
             ),
           );

@@ -422,7 +422,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         // ~:App Version:~
                         Text(
-                          'v1.2.3',
+                          'v1.2.4',
                           style: TextThemes.normal,
                         ),
 

@@ -7,13 +7,11 @@ class DailyAttendance extends AttendanceEvent {
   final EmployeeModel employee;
   final String date;
   final String time;
-  final Position coordinate;
 
   DailyAttendance({
     required this.employee,
     required this.date,
     required this.time,
-    required this.coordinate,
   });
 }
 

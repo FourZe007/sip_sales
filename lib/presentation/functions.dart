@@ -40,7 +40,7 @@ import 'package:geolocator/geolocator.dart';
 class Functions {
   // ~:Connection Check:~
   static Future<bool> checkConnection() async {
-    final result = await InternetAddress.lookup('wsip.yamaha-jatim.co.id');
+    final result = await InternetAddress.lookup('basra.yamaha-jatim.co.id');
     return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
   }
 
@@ -52,11 +52,10 @@ class Functions {
     accessibility: KeychainAccessibility.first_unlock,
   );
 
-  static FlutterSecureStorage? storage;
-  //  = FlutterSecureStorage(
-  //   aOptions: getAndroidOptions(),
-  //   iOptions: getIOSOptions(),
-  // );
+  static FlutterSecureStorage? storage = FlutterSecureStorage(
+    aOptions: getAndroidOptions(),
+    iOptions: getIOSOptions(),
+  );
 
   static SharedPreferences? prefs;
 
@@ -65,6 +64,7 @@ class Functions {
       aOptions: getAndroidOptions(),
       iOptions: getIOSOptions(),
     );
+    await prefs?.clear();
   }
 
   static Future<void> initStorageConfig(
@@ -407,12 +407,14 @@ class Functions {
   }
 
   static void displayProminentDisclosure(BuildContext context) async {
-    final result = await Navigator.push(
-      (context.mounted) ? context : context,
-      MaterialPageRoute(
-        builder: (context) => const TermsConditionScreen(),
-      ),
-    );
+    final result =
+        await Navigator.push(
+          (context.mounted) ? context : context,
+          MaterialPageRoute(
+            builder: (context) => const TermsConditionScreen(),
+          ),
+        ) ??
+        false;
 
     if (result) {
       // await storage.write(key: 'isUserAgree', value: '1');
@@ -552,7 +554,7 @@ class Functions {
       if (int.parse(await readDeviceOS()) >= 10) {
         // Read the existing ID only once
         String? existingId = await storage?.read(key: 'employeeId');
-        log('Existing ID: $existingId');
+        // log('Existing ID: $existingId');
 
         if (existingId == null || existingId.isEmpty || isLogin) {
           // Generate a new ID if none exists
@@ -560,16 +562,16 @@ class Functions {
           await storage?.write(key: 'employeeId', value: id);
 
           // Log the action for debugging
-          log("Employee Id: $employeeId");
+          // log("Employee Id: $employeeId");
         } else {
           // Use the existing ID
           employeeId = existingId;
-          log("Employee Id: $employeeId");
+          // log("Employee Id: $employeeId");
         }
       } else {
         // Read the existing ID only once
         String? existingId = prefs?.getString('employeeId');
-        log('Existing ID: $existingId');
+        // log('Existing ID: $existingId');
 
         if (existingId == null || existingId.isEmpty || isLogin) {
           // Generate a new ID if none exists
@@ -577,11 +579,11 @@ class Functions {
           await prefs?.setString('employeeId', id);
 
           // Log the action for debugging
-          log("Employee Id: $employeeId");
+          // log("Employee Id: $employeeId");
         } else {
           // Use the existing ID
           employeeId = existingId;
-          log("Employee Id: $employeeId");
+          // log("Employee Id: $employeeId");
         }
       }
     } catch (e) {
@@ -611,7 +613,7 @@ class Functions {
       if (int.parse(await readDeviceOS()) >= 10) {
         // Read the existing Password only once
         String? existingPass = await storage?.read(key: 'pass');
-        log('Existing Password: $existingPass');
+        // log('Existing Password: $existingPass');
 
         if (existingPass == null || existingPass.isEmpty || isLogin) {
           // Generate a new Password if none exists
@@ -619,28 +621,28 @@ class Functions {
           await storage?.write(key: 'pass', value: pass);
 
           // Log the action for debugging
-          log("Input and saved Password: $password");
+          // log("Input and saved Password: $password");
         } else {
           // Use the existing Password
           password = existingPass;
-          log("Input and saved Password: $password");
+          // log("Input and saved Password: $password");
         }
       } else {
         // Read the existing Password only once
         String? existingPass = prefs?.getString('pass');
-        log('Existing Password: $existingPass');
+        // log('Existing Password: $existingPass');
 
         if (existingPass == null || existingPass.isEmpty || isLogin) {
           // Generate a new Password if none exists
           password = pass;
-          await prefs?.setString('pass', pass);
+          // await prefs?.setString('pass', pass);
 
           // Log the action for debugging
-          log("Input and saved Password: $password");
+          // log("Input and saved Password: $password");
         } else {
           // Use the existing Password
           password = existingPass;
-          log("Input and saved Password: $password");
+          // log("Input and saved Password: $password");
         }
       }
     } catch (e) {

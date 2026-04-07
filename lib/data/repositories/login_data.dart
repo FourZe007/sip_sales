@@ -21,6 +21,7 @@ class LoginRepoImp implements LoginRepo {
       APIConstants.baseUrl,
       APIConstants.loginEndpoint,
     );
+    log('Uri: $uri');
 
     Map body = {
       "EmployeeID": username,
@@ -39,25 +40,72 @@ class LoginRepoImp implements LoginRepo {
 
     // return LoginModel.fromJson(jsonDecode(res.body));
 
-    if (response.statusCode <= 200) {
+    if (response.statusCode == 200) {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['Msg']}, ${res['Code']}");
-      if (res['Msg'].toLowerCase() == 'sukses' && res['Code'] == '100') {
-        log('Login Success');
-        return {
-          'status': 'success',
-          'data': (res['Data'] as List)
-              .map((e) => EmployeeModel.fromJson(e))
-              .toList()[0],
-        };
+      if (res['Msg'].toString().toLowerCase() == 'sukses' &&
+          res['Code'] == '100') {
+        final dataList =
+            (res['Data'] as List?)
+                ?.map((e) => EmployeeModel.fromJson(e))
+                .toList() ??
+            [];
+        if (dataList.isEmpty) {
+          return {
+            'status': 'fail',
+            'data': EmployeeModel(
+              flag: 0,
+              memo: 'Data tidak ditemukan',
+              employeeID: '',
+              employeeName: '',
+              branch: '',
+              shop: '',
+              bsName: '',
+              locationID: '',
+              locationName: '',
+              latitude: 0,
+              longitude: 0,
+              profilePicture: '',
+              code: 0,
+            ),
+          };
+        } else {
+          final creds = dataList[0];
+          log('Creds jsonEncoder: ${jsonEncode(creds.toJson())}');
+
+          if (creds.flag == 1) {
+            log('Creds flag is equal to 1');
+            return {
+              'status': 'success',
+              'data': (res['Data'] as List)
+                  .map((e) => EmployeeModel.fromJson(e))
+                  .toList()[0],
+            };
+          } else {
+            log('Creds flag is not equal to 1');
+            return {
+              'status': 'fail',
+              'data': (res['Data'] as List)
+                  .map((e) => EmployeeModel.fromJson(e))
+                  .toList()[0],
+            };
+          }
+        }
       } else {
         log('Login Fail');
+        final failData = res['Data'];
+        final failMemo = (failData != null && (failData as List).isNotEmpty)
+            ? EmployeeModel.fromJson(failData[0]).memo
+            : res['Msg']?.toString() ?? 'Login gagal';
+        final failFlag = (failData != null && (failData as List).isNotEmpty)
+            ? EmployeeModel.fromJson(failData[0]).flag
+            : 0;
         return {
           'status': 'fail',
           'data': EmployeeModel(
-            flag: 0,
-            memo: EmployeeModel.fromJson(res['Data'][0]).memo,
+            flag: failFlag,
+            memo: failMemo,
             employeeID: '',
             employeeName: '',
             branch: '',

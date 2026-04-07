@@ -121,7 +121,7 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                             .user
                             .longitude,
                       ),
-                      radius: 60, // Radius in meters
+                      radius: 30, // Radius in meters
                       color: Colors.blue.withAlpha(51), // Fill color
                       borderColor: Colors.blue, // Border color
                       borderStrokeWidth: 2.0, // Border thickness

@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/radius_checker.dart';
 import 'package:sip_sales_clean/domain/repositories/attendance_domain.dart';
 import 'package:sip_sales_clean/domain/repositories/radius_checker_domain.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_state.dart';
+import 'package:safe_device/safe_device.dart';
 
 class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
   final AttendanceRepo attendanceRepo;
@@ -30,22 +32,52 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
         return;
       }
 
+      final coordinate = await Geolocator.getCurrentPosition();
+
       final radChecker = await radiusCheckerRepo.checkRadius(
         event.employee.latitude,
         event.employee.longitude,
-        event.coordinate.latitude,
-        event.coordinate.longitude,
+        coordinate.latitude,
+        coordinate.longitude,
       );
 
       final isClose = (radChecker['data'] as RadiusCheckerModel).isClose;
       final isSuccess = radChecker['status'] == 'success';
+
+      // --- Security checks ---
+      final isRealDevice = await SafeDevice.isRealDevice; // false on emulator
+      final isMockLocation =
+          await SafeDevice.isMockLocation; // true if fake GPS on
+      final isJailBroken = await SafeDevice.isJailBroken; // rooted/jailbroken
+
+      if (!isRealDevice) {
+        emit(
+          DailyAttendanceError(
+            message: 'Emulator terdeteksi. Harap matikan emulator.',
+          ),
+        );
+        return;
+      }
+      if (isMockLocation) {
+        emit(
+          DailyAttendanceError(
+            message: 'GPS palsu terdeteksi. Harap matikan mock location.',
+          ),
+        );
+        return;
+      }
+      if (isJailBroken) {
+        emit(DailyAttendanceError(message: 'Perangkat tidak aman (rooted).'));
+        return;
+      }
+      // --- End security checks ---
 
       if (isSuccess && isClose == 'OK') {
         final res = await attendanceRepo.dailyAttendance(
           event.employee,
           event.date,
           event.time,
-          event.coordinate,
+          coordinate,
         );
 
         final isAttendanceSuccess =

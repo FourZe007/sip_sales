@@ -33,10 +33,16 @@ class Formatter {
     final result = <String>[];
     for (final word in words) {
       if (word.isEmpty) continue;
-      result.add(
-        word[0].toUpperCase() +
-            (word.length > 1 ? word.substring(1).toLowerCase() : ''),
-      );
+      if (SpecialCharacter.ltdCompany.any(
+        (special) => special.toUpperCase() == word.toUpperCase(),
+      )) {
+        result.add(word.toUpperCase());
+      } else {
+        result.add(
+          word[0].toUpperCase() +
+              (word.length > 1 ? word.substring(1).toLowerCase() : ''),
+        );
+      }
     }
 
     return result.join(' ');

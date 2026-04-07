@@ -10,6 +10,7 @@ import 'package:sip_sales_clean/core/constant/state_manager.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/routes.dart';
+import 'package:upgrader/upgrader.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -66,23 +67,31 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-      child: MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: const TextScaler.linear(1.0)),
-        child: MultiBlocProvider(
-          providers: StateManager.getBlocProviders(),
-          child: ChangeNotifierProvider(
-            create: (context) => FilterStateProvider(),
-            child: MaterialApp(
-              title: 'SIP Sales',
-              scrollBehavior: MyCustomScrollBehavior(),
-              debugShowCheckedModeBanner: false,
-              navigatorKey: navigatorKey,
-              initialRoute: ConstantRoutes.init,
-              routes: ConstantRoutes.maps,
+    return UpgradeAlert(
+      barrierDismissible: false, // ← force update (can't tap outside to close)
+      showIgnore: false, // ← removes "Ignore" button
+      showLater: false, // ← removes "Later" button
+      upgrader: Upgrader(
+        durationUntilAlertAgain: const Duration(days: 1),
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        child: MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.0)),
+          child: MultiBlocProvider(
+            providers: StateManager.getBlocProviders(),
+            child: ChangeNotifierProvider(
+              create: (context) => FilterStateProvider(),
+              child: MaterialApp(
+                title: 'SIP Sales',
+                scrollBehavior: MyCustomScrollBehavior(),
+                debugShowCheckedModeBanner: false,
+                navigatorKey: navigatorKey,
+                initialRoute: ConstantRoutes.init,
+                routes: ConstantRoutes.maps,
+              ),
             ),
           ),
         ),

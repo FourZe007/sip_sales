@@ -74,34 +74,11 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
       );
     } else {
       log('Daily Attendance');
-      // final radiusCheckerState = context.read<RadiusCheckerBloc>().state;
-      // if (radiusCheckerState is RadiusCheckerInit) {
-      //   log('RadiusCheckerInit');
-      //   context.read<RadiusCheckerBloc>().add(
-      //     RadiusCheckerEventCheck(
-      //       userLat:
-      //           (context.read<LoginBloc>().state as LoginSuccess).user.latitude,
-      //       userLng: (context.read<LoginBloc>().state as LoginSuccess)
-      //           .user
-      //           .longitude,
-      //       currentLat: (await Geolocator.getCurrentPosition()).latitude,
-      //       currentLng: (await Geolocator.getCurrentPosition()).longitude,
-      //       isInit: true,
-      //     ),
-      //   );
-      // } else if (radiusCheckerState is RadiusCheckerError) {
-      //   log(radiusCheckerState.message);
-      //   log(radiusCheckerState.isRefresh.toString());
-      // } else if (radiusCheckerState is RadiusCheckerSuccess) {
-      //   log(radiusCheckerState.isRefresh.toString());
-      // }
-
       context.read<AttendanceBloc>().add(
         DailyAttendance(
           employee: (context.read<LoginBloc>().state as LoginSuccess).user,
           date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
           time: DateFormat('HH:mm').format(DateTime.now()),
-          coordinate: await Geolocator.getCurrentPosition(),
         ),
       );
     }

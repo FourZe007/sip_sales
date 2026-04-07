@@ -1,3 +1,3 @@
 class SpecialCharacter {
-  static List<String> ltdCompany = ['RSSM', 'SIP', 'BASRA'];
+  static List<String> ltdCompany = ['RSSM', 'SIP', 'BASRA', 'NIP'];
 }

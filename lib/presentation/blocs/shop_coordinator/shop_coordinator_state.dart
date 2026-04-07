@@ -13,6 +13,8 @@ class CoordinatorDashboardLoaded extends ShopCoordinatorState {
   CoordinatorDashboardLoaded(this.coordData);
 }
 
+class CoordinatorDashboardEmpty extends ShopCoordinatorState {}
+
 class CoordinatorDashboardError extends ShopCoordinatorState {
   final String message;
 

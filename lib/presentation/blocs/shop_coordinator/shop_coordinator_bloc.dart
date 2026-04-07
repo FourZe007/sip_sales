@@ -20,13 +20,17 @@ class ShopCoordinatorBloc
       await DashboardDataImp()
           .fetchCoordinatorDashboard(event.salesmanId, event.date)
           .then((response) {
-            if (response['status'] == 'success' && response['code'] == '100') {
+            final status = response['status'].toString().toLowerCase().trim();
+            final code = response['code'].toString();
+
+            if (status == 'success' && code == '100') {
               emit(CoordinatorDashboardLoaded(response['data']));
-            } else if (response['status'] == 'fail' &&
-                response['code'] != '100') {
-              emit(CoordinatorDashboardError(response['code']));
+            } else if (status == 'no data' && code == '100') {
+              emit(CoordinatorDashboardEmpty());
+            } else if (status == 'fail') {
+              emit(CoordinatorDashboardError(code));
             } else {
-              emit(CoordinatorDashboardError('Terjadi kesalahan'));
+              emit(CoordinatorDashboardError(response['status'].toString()));
             }
           });
     } catch (e) {

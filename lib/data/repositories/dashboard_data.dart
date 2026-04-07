@@ -37,23 +37,24 @@ class DashboardDataImp implements DashboardRepo {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['msg']}, ${res['code']}");
-      if (res['msg'] == 'Sukses' && res['code'] == '100') {
-        log('Success');
+      if (res['code'] == '100') {
+        final msg = res['msg'].toString().toLowerCase();
+        log(
+          msg == 'sukses' ? 'Success' : 'No Data / Something went wrong: $msg',
+        );
         return {
-          'status': 'success',
+          'status': msg == 'sukses' ? 'success' : msg,
           'code': res['code'],
           'data': (res['data'] as List)
               .map((e) => CoordinatorDashboardModel.fromJson(e))
               .toList(),
         };
       } else {
-        log('Fail');
+        log('Fail: ${res['code']}');
         return {
           'status': 'fail',
           'code': res['code'],
-          'data': ([])
-              .map((e) => CoordinatorDashboardModel.fromJson(e))
-              .toList(),
+          'data': <CoordinatorDashboardModel>[],
         };
       }
     } else {
@@ -61,7 +62,7 @@ class DashboardDataImp implements DashboardRepo {
       return {
         'status': 'fail',
         'code': response.statusCode,
-        'data': ([]).map((e) => CoordinatorDashboardModel.fromJson(e)).toList(),
+        'data': <CoordinatorDashboardModel>[],
       };
     }
   }
