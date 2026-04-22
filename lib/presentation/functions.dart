@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:safe_device/safe_device.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store.event.dart';
@@ -14,6 +15,7 @@ import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.da
 import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_event.dart';
@@ -36,8 +38,65 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:geolocator/geolocator.dart';
+import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
+import 'package:sip_sales_clean/data/models/employee.dart';
+import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 
 class Functions {
+  static Future<void> runSecurityCheck(BuildContext context) async {
+    final isRealDevice = await SafeDevice.isRealDevice;
+    final isJailBroken = await SafeDevice.isJailBroken;
+
+    if (!context.mounted) return;
+
+    if (!isRealDevice) {
+      context.read<LoginBloc>().add(
+        LoginButtonPressed(
+          context: context,
+          id: '',
+          pass: '',
+          isRealDevice: true,
+        ),
+      );
+      return;
+    }
+    if (isJailBroken) {
+      context.read<LoginBloc>().add(
+        LoginButtonPressed(
+          context: context,
+          id: '',
+          pass: '',
+          isJailBroken: true,
+        ),
+      );
+      return;
+    }
+
+    log('Device is safe to be used');
+    context.read<LoginBloc>().add(
+      LoginButtonPressed(context: context, id: '', pass: '', isNewLogin: false),
+    );
+  }
+
+  static Future<void> enrollFaceIfNeeded(
+    BuildContext context,
+    EmployeeModel user,
+  ) async {
+    try {
+      final deps = FaceRecognitionDependencies.instance;
+      if (deps.datasource.hasEmbedding(user.employeeID)) {
+        log('Face already enrolled for ${user.employeeID}');
+        return;
+      }
+      log('Face not enrolled yet — dispatching EnrollFace event');
+      context.read<FaceRecognitionBloc>().add(
+        EnrollFace(userId: user.employeeID, base64Image: user.profilePicture),
+      );
+    } catch (e) {
+      log('enrollFaceIfNeeded error: $e');
+    }
+  }
+
   // ~:Connection Check:~
   static Future<bool> checkConnection() async {
     final result = await InternetAddress.lookup('basra.yamaha-jatim.co.id');
@@ -554,7 +613,7 @@ class Functions {
       if (int.parse(await readDeviceOS()) >= 10) {
         // Read the existing ID only once
         String? existingId = await storage?.read(key: 'employeeId');
-        // log('Existing ID: $existingId');
+        log('Existing ID: $existingId');
 
         if (existingId == null || existingId.isEmpty || isLogin) {
           // Generate a new ID if none exists
@@ -571,7 +630,7 @@ class Functions {
       } else {
         // Read the existing ID only once
         String? existingId = prefs?.getString('employeeId');
-        // log('Existing ID: $existingId');
+        log('Existing ID: $existingId');
 
         if (existingId == null || existingId.isEmpty || isLogin) {
           // Generate a new ID if none exists
@@ -579,11 +638,11 @@ class Functions {
           await prefs?.setString('employeeId', id);
 
           // Log the action for debugging
-          // log("Employee Id: $employeeId");
+          // log("Set employee id: $employeeId");
         } else {
           // Use the existing ID
           employeeId = existingId;
-          // log("Employee Id: $employeeId");
+          // log("Use existing employee id: $employeeId");
         }
       }
     } catch (e) {
@@ -613,7 +672,7 @@ class Functions {
       if (int.parse(await readDeviceOS()) >= 10) {
         // Read the existing Password only once
         String? existingPass = await storage?.read(key: 'pass');
-        // log('Existing Password: $existingPass');
+        log('Existing Password: $existingPass');
 
         if (existingPass == null || existingPass.isEmpty || isLogin) {
           // Generate a new Password if none exists
@@ -630,12 +689,12 @@ class Functions {
       } else {
         // Read the existing Password only once
         String? existingPass = prefs?.getString('pass');
-        // log('Existing Password: $existingPass');
+        log('Existing Password: $existingPass');
 
         if (existingPass == null || existingPass.isEmpty || isLogin) {
           // Generate a new Password if none exists
           password = pass;
-          // await prefs?.setString('pass', pass);
+          await prefs?.setString('pass', pass);
 
           // Log the action for debugging
           // log("Input and saved Password: $password");

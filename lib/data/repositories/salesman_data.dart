@@ -17,6 +17,7 @@ class SalesmanDataImp implements SalesmanRepo {
       APIConstants.baseUrl,
       APIConstants.salesmanAttendanceEndpoint,
     );
+    log('loadAttendance Uri: $uri');
 
     Map body = {
       "EmployeeID": salesmanId,
@@ -37,10 +38,12 @@ class SalesmanDataImp implements SalesmanRepo {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['Msg']}, ${res['Code']}");
-      if (res['Msg'] == 'Sukses' && res['Code'] == '100') {
-        log('Fetch succeed');
+      final msg = res['Msg'].toString().toLowerCase();
+
+      if (res['Code'] == '100') {
+        log('loadAttendance Fetched');
         return {
-          'status': 'success',
+          'status': msg == 'sukses' ? 'success' : msg,
           'code': res['Code'],
           'data': (res['Data'] as List)
               .map((e) => SalesmanAttendanceModel.fromJson(e))
@@ -48,15 +51,15 @@ class SalesmanDataImp implements SalesmanRepo {
               .toList(),
         };
       } else {
-        log('Fail');
+        log('loadAttendance failed to fetch');
         return {
-          'status': 'fail',
+          'status': msg,
           'code': res['Code'],
-          'data': ([]).map((e) => SalesmanAttendanceModel.fromJson(e)).toList(),
+          'data': <SalesmanAttendanceModel>[],
         };
       }
     } else {
-      log('Response: ${response.statusCode}');
+      log('loadAttendance Response: ${response.statusCode}');
       return {
         'status': 'fail',
         'code': response.statusCode,

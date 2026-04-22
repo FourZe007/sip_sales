@@ -30,9 +30,14 @@ class ImageDetector {
       ),
     );
 
-    final faces = await faceDetector.processImage(inputImage);
-
-    return faces.isNotEmpty;
+    try {
+      final faces = await faceDetector.processImage(inputImage);
+      return faces.isNotEmpty;
+    } catch (_) {
+      return false;
+    } finally {
+      faceDetector.close();
+    }
   }
 
   static Future<InputImage?> _getInputImage(XFile? image) async {

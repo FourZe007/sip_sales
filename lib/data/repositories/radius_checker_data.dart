@@ -41,7 +41,8 @@ class RadiusCheckerRepoImp implements RadiusCheckerRepo {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['Msg']}, ${res['Code']}");
-      if (res['Msg'].toLowerCase() == 'sukses' && res['Code'] == '100') {
+      if (res['Msg'].toString().toLowerCase() == 'sukses' &&
+          res['Code'] == '100') {
         log('Radius Success');
         return {
           'status': 'success',

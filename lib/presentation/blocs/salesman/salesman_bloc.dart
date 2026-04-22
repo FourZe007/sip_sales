@@ -32,7 +32,7 @@ class SalesmanBloc extends Bloc<SalesmanEvent, SalesmanState> {
       if (status == 'success' && code == '100') {
         emit(SalesmanAttendanceSuccess(data));
       } else {
-        emit(SalesmanAttendanceFailed(code));
+        emit(SalesmanAttendanceFailed(status));
       }
     } catch (e) {
       emit(SalesmanAttendanceFailed(e.toString()));

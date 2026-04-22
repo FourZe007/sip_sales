@@ -21,6 +21,7 @@ class AttendanceRepoImp implements AttendanceRepo {
       APIConstants.baseUrl,
       APIConstants.dailyAttendanceEndpoint,
     );
+    log('dailyAttendance Uri: $uri');
 
     Map body = {
       "Mode": "1",

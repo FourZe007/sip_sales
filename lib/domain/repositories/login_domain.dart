@@ -4,6 +4,7 @@ abstract class LoginRepo {
     String password,
     String uuid,
     String device,
+    bool isNewLogin,
   );
   Future<Map<String, dynamic>> logout();
   Future<Map<String, dynamic>> forgotPassword(

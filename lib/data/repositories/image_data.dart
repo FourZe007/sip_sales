@@ -13,53 +13,65 @@ class ImageRepoImp implements ImageRepo {
     String employeeId,
     String img,
   ) async {
-    // Simulate a network call
-    Uri uri = Uri.https(
-      APIConstants.baseUrl,
-      APIConstants.insertProfilePictureEndpoint,
-    );
+    try {
+      // Simulate a network call
+      Uri uri = Uri.https(
+        APIConstants.baseUrl,
+        APIConstants.insertProfilePictureEndpoint,
+      );
+      log('Uri: $uri');
 
-    Map body = {
-      "Mode": mode,
-      "EmployeeID": employeeId,
-      'Photo': img,
-    };
-    log('Map Body: $body');
+      Map body = {
+        "Mode": mode,
+        "EmployeeID": employeeId,
+        'Photo': img,
+      };
+      log('Map Body: $body');
 
-    final response = await http.post(
-      uri,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(body),
-    );
-    log('Response: $response');
+      final response = await http.post(
+        uri,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(body),
+      );
+      log('Response: $response');
 
-    if (response.statusCode <= 200) {
-      log('Response: ${response.statusCode}');
-      final res = jsonDecode(response.body);
-      log("${res['Msg']}, ${res['Code']}");
-      if (res['Msg'] == 'Sukses' && res['Code'] == '100') {
-        log('Success');
-        return {
-          'status': 'success',
-          'code': res['Code'],
-          'data': (res['Data'] as List)
-              .map((e) => ResultMessageModel2.fromJson(e))
-              .toList()[0],
-        };
+      if (response.statusCode <= 200) {
+        log('Response: ${response.statusCode}');
+        final res = jsonDecode(response.body);
+        log("${res['Msg']}, ${res['Code']}");
+        if (res['Msg'] == 'Sukses' && res['Code'] == '100') {
+          log('Success');
+          return {
+            'status': 'success',
+            'code': res['Code'],
+            'data': (res['Data'] as List)
+                .map((e) => ResultMessageModel2.fromJson(e))
+                .toList()[0],
+          };
+        } else {
+          log('Fail');
+          return {
+            'status': 'fail',
+            'code': res['Code'],
+            'data': ([])
+                .map((e) => ResultMessageModel2.fromJson(e))
+                .toList()[0],
+          };
+        }
       } else {
-        log('Fail');
+        log('Response: ${response.statusCode}');
         return {
           'status': 'fail',
-          'code': res['Code'],
+          'code': response.statusCode,
           'data': ([]).map((e) => ResultMessageModel2.fromJson(e)).toList()[0],
         };
       }
-    } else {
-      log('Response: ${response.statusCode}');
+    } catch (e) {
+      log('Error: $e');
       return {
         'status': 'fail',
-        'code': response.statusCode,
-        'data': ([]).map((e) => ResultMessageModel2.fromJson(e)).toList()[0],
+        'code': '404',
+        'data': <ResultMessageModel2>[],
       };
     }
   }

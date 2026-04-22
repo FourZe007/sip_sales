@@ -29,6 +29,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     try {
+      if (event.isRealDevice || event.isJailBroken) {
+        emit(
+          LoginBlocked(
+            message: event.isRealDevice
+                ? 'Emulator terdeteksi. Harap gunakan perangkat nyata.'
+                : 'Perangkat tidak aman (rooted/jailbroken).',
+            isEmulator: event.isRealDevice,
+          ),
+        );
+        return;
+      }
       // if (!await Functions.checkConnection()) {
       //   emit(
       //     LoginFailed(
@@ -55,6 +66,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         // Auto-login attempt from stored secure storage
         savedEmployeeId = await Functions.readAndWriteEmployeeId();
         savedUserPass = await Functions.readAndWriteUserPass();
+
+        log('Saved id: $savedEmployeeId');
+        log('Saved password: $savedUserPass');
       }
 
       if (savedEmployeeId.isNotEmpty && savedUserPass.isNotEmpty) {
@@ -67,23 +81,33 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           savedUserPass,
           uuid,
           deviceConfig,
+          event.isNewLogin,
         );
 
         log(loginRes.toString());
         log('Flag: ${loginRes['data'].flag}');
         if (loginRes['status'] == 'success') {
           log('Is Flagged: ${(loginRes['data'] as EmployeeModel).flag == 1}');
-          if ((loginRes['data'] as EmployeeModel).flag == 1) {
+          if ((loginRes['data'] as EmployeeModel).isLoginAllowed == 0) {
+            emit(
+              LoginBlocked(
+                message: 'Akun dideteksi terbuka di perangkat lain.',
+                isEmulator: false,
+              ),
+            );
+          } else if ((loginRes['data'] as EmployeeModel).flag == 1) {
             log('Account is available');
             // Save credentials only after confirmed success
             await Functions.readAndWriteEmployeeId(
               id: savedEmployeeId,
               isLogin: true,
             );
+            log('id credential saved');
             await Functions.readAndWriteUserPass(
               pass: savedUserPass,
               isLogin: true,
             );
+            log('pass credential saved');
             // event.appState.setUserAccountList(res);
             switch ((loginRes['data'] as EmployeeModel).code) {
               // ~:Head Store:~

@@ -32,6 +32,8 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
         return;
       }
 
+      // ~:face recognition:~
+
       final coordinate = await Geolocator.getCurrentPosition();
 
       final radChecker = await radiusCheckerRepo.checkRadius(
@@ -45,19 +47,19 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       final isSuccess = radChecker['status'] == 'success';
 
       // --- Security checks ---
-      final isRealDevice = await SafeDevice.isRealDevice; // false on emulator
+      // final isRealDevice = await SafeDevice.isRealDevice; // false on emulator
       final isMockLocation =
           await SafeDevice.isMockLocation; // true if fake GPS on
-      final isJailBroken = await SafeDevice.isJailBroken; // rooted/jailbroken
+      // final isJailBroken = await SafeDevice.isJailBroken; // rooted/jailbroken
 
-      if (!isRealDevice) {
-        emit(
-          DailyAttendanceError(
-            message: 'Emulator terdeteksi. Harap matikan emulator.',
-          ),
-        );
-        return;
-      }
+      // if (!isRealDevice) {
+      //   emit(
+      //     DailyAttendanceError(
+      //       message: 'Emulator terdeteksi. Harap matikan emulator.',
+      //     ),
+      //   );
+      //   return;
+      // }
       if (isMockLocation) {
         emit(
           DailyAttendanceError(
@@ -66,10 +68,10 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
         );
         return;
       }
-      if (isJailBroken) {
-        emit(DailyAttendanceError(message: 'Perangkat tidak aman (rooted).'));
-        return;
-      }
+      // if (isJailBroken) {
+      //   emit(DailyAttendanceError(message: 'Perangkat tidak aman (rooted).'));
+      //   return;
+      // }
       // --- End security checks ---
 
       if (isSuccess && isClose == 'OK') {

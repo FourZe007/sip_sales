@@ -15,6 +15,7 @@ class LoginRepoImp implements LoginRepo {
     String password,
     String uuid,
     String device,
+    bool isNewlogin,
   ) async {
     // Simulate a network call
     Uri uri = Uri.https(
@@ -28,6 +29,7 @@ class LoginRepoImp implements LoginRepo {
       "DecryptedPassword": password,
       'DeviceID': uuid,
       'DeviceName': device,
+      'LoginBaru': isNewlogin ? 1 : 0,
     };
     log('Map Body: $body');
 
@@ -68,6 +70,7 @@ class LoginRepoImp implements LoginRepo {
               longitude: 0,
               profilePicture: '',
               code: 0,
+              isLoginAllowed: 0,
             ),
           };
         } else {
@@ -117,6 +120,7 @@ class LoginRepoImp implements LoginRepo {
             longitude: 0,
             profilePicture: '',
             code: 0,
+            isLoginAllowed: 0,
           ),
         };
       }
@@ -138,6 +142,7 @@ class LoginRepoImp implements LoginRepo {
           longitude: 0,
           profilePicture: '',
           code: 0,
+          isLoginAllowed: 0,
         ),
       };
     }

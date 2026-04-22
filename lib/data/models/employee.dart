@@ -12,6 +12,7 @@ class EmployeeModel {
   double longitude;
   String profilePicture;
   int code;
+  int isLoginAllowed;
 
   EmployeeModel({
     required this.flag,
@@ -27,6 +28,7 @@ class EmployeeModel {
     required this.longitude,
     required this.profilePicture,
     required this.code,
+    required this.isLoginAllowed,
   });
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +46,7 @@ class EmployeeModel {
       longitude: json['Lng'],
       profilePicture: json['PhotoThumb'],
       code: json['Kode'],
+      isLoginAllowed: json['LoginOK'],
     );
   }
 
@@ -62,6 +65,7 @@ class EmployeeModel {
       'longitude': longitude,
       'profilePicture': profilePicture,
       'code': code,
+      'isLoginAllowed': isLoginAllowed,
     };
   }
 }

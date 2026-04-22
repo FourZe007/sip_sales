@@ -43,7 +43,6 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
           elevation: 0.0,
           scrolledUnderElevation: 0.0,
           systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.black,
             statusBarIconBrightness: Brightness.dark,
           ),
           leading: IconButton(
@@ -111,6 +110,7 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
 
                 // ~:Circle:~
                 CircleLayer(
+                  optimizeRadiusInMeters: true,
                   circles: [
                     CircleMarker(
                       point: LatLng(
@@ -149,13 +149,11 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                     ),
                     child: BlocBuilder<RadiusCheckerBloc, RadiusCheckerState>(
                       buildWhen: (previous, current) =>
-                          (current is RadiusCheckerLoading &&
-                              current.isRefresh) ||
-                          (current is RadiusCheckerSuccess &&
-                              current.isRefresh) ||
-                          (current is RadiusCheckerError && current.isRefresh),
+                          (current is RadiusCheckerLoading) ||
+                          (current is RadiusCheckerSuccess) ||
+                          (current is RadiusCheckerError),
                       builder: (context, state) {
-                        if (state is RadiusCheckerLoading && state.isRefresh) {
+                        if (state is RadiusCheckerLoading) {
                           return Container(
                             alignment: Alignment.center,
                             child: Text(
@@ -166,8 +164,7 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                               ),
                             ),
                           );
-                        } else if (state is RadiusCheckerError &&
-                            state.isRefresh) {
+                        } else if (state is RadiusCheckerError) {
                           return Row(
                             spacing: 12,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -187,18 +184,18 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                                 onPressed: () async =>
                                     context.read<RadiusCheckerBloc>().add(
                                       RadiusCheckerEventCheck(
-                                        userLat: widget.lat,
-                                        userLng: widget.lng,
-                                        currentLat:
+                                        userLat:
                                             (context.read<LoginBloc>().state
                                                     as LoginSuccess)
                                                 .user
                                                 .latitude,
-                                        currentLng:
+                                        userLng:
                                             (context.read<LoginBloc>().state
                                                     as LoginSuccess)
                                                 .user
                                                 .longitude,
+                                        currentLat: widget.lat,
+                                        currentLng: widget.lng,
                                         isRefresh: true,
                                       ),
                                     ),
@@ -210,9 +207,8 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                               ),
                             ],
                           );
-                        } else if (state is RadiusCheckerSuccess &&
-                            state.isRefresh) {
-                          log(state.isClose.toString());
+                        } else if (state is RadiusCheckerSuccess) {
+                          log('isClose? ${state.isClose.toString()}');
                           return Row(
                             spacing: 12,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -240,18 +236,18 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                                 onPressed: () async =>
                                     context.read<RadiusCheckerBloc>().add(
                                       RadiusCheckerEventCheck(
-                                        userLat: widget.lat,
-                                        userLng: widget.lng,
-                                        currentLat:
+                                        userLat:
                                             (context.read<LoginBloc>().state
                                                     as LoginSuccess)
                                                 .user
                                                 .latitude,
-                                        currentLng:
+                                        userLng:
                                             (context.read<LoginBloc>().state
                                                     as LoginSuccess)
                                                 .user
                                                 .longitude,
+                                        currentLat: widget.lat,
+                                        currentLng: widget.lng,
                                         isRefresh: true,
                                       ),
                                     ),
@@ -270,7 +266,7 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                             children: [
                               // ~:Status:~
                               Text(
-                                'Anda berada di luar radius.',
+                                'Anda berada di luar radius :)',
                                 style: TextThemes.normal.copyWith(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -283,18 +279,18 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                                 onPressed: () async =>
                                     context.read<RadiusCheckerBloc>().add(
                                       RadiusCheckerEventCheck(
-                                        userLat: widget.lat,
-                                        userLng: widget.lng,
-                                        currentLat:
+                                        userLat:
                                             (context.read<LoginBloc>().state
                                                     as LoginSuccess)
                                                 .user
                                                 .latitude,
-                                        currentLng:
+                                        userLng:
                                             (context.read<LoginBloc>().state
                                                     as LoginSuccess)
                                                 .user
                                                 .longitude,
+                                        currentLat: widget.lat,
+                                        currentLng: widget.lng,
                                         isRefresh: true,
                                       ),
                                     ),

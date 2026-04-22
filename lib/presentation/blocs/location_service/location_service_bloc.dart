@@ -52,6 +52,7 @@ class LocationServiceBloc
           }
           // ~:Salesman:~
           else if (loginState.user.code == 1) {
+            log('Load Attendance data...');
             event.context.read<SalesmanBloc>().add(
               SalesmanButtonPressed(
                 salesmanId: loginState.user.employeeID,

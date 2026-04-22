@@ -205,9 +205,15 @@ class _SalesmanAttendanceMoreScreenState
                     );
                   }
                 } else if (state is SalesmanAttendanceFailed) {
-                  return Center(
-                    child: Text(state.message),
-                  );
+                  if (state.message == 'no data') {
+                    return const Center(
+                      child: Text('Tidak ada data.'),
+                    );
+                  } else {
+                    return Center(
+                      child: Text('Terjadi kesalahan! ${state.message}'),
+                    );
+                  }
                 } else if (state is SalesmanAttendanceSuccess) {
                   return Column(
                     spacing: 12,

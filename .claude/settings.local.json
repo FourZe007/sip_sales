@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"distance\\\\|Distance\")",
+      "Read(//c/Users/Joseph Angelus/AppData/Local/Pub/Cache/hosted/pub.dev/camera_platform_interface-2.13.0/lib/src/types/**)",
+      "Read(//c/Users/Joseph Angelus/AppData/Local/Pub/Cache/hosted/pub.dev/**)"
+    ]
+  }
+}

@@ -155,6 +155,7 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
       return Container(
         width: MediaQuery.of(context).size.width,
         height: 98,
+        // height: 140,
         alignment: Alignment.center,
         margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.025,
@@ -319,35 +320,19 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                         }
                       },
                     ),
-                    Builder(
-                      builder: (context) {
-                        if (widget.employee.employeeID.isNotEmpty) {
-                          return Text(
-                            widget.employee.employeeID,
-                            style: TextThemes.subtitle.copyWith(fontSize: 18),
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        } else {
-                          return Text(
-                            'XXXXX/XXXXXX',
-                            style: TextThemes.subtitle.copyWith(fontSize: 18),
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        }
-                      },
+                    Text(
+                      widget.employee.employeeID.isNotEmpty
+                          ? widget.employee.employeeID
+                          : 'XXXX/XXXXXX',
+                      style: TextThemes.subtitle.copyWith(fontSize: 18),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    BlocBuilder<LoginBloc, LoginState>(
-                      builder: (context, state) {
-                        if (state is LoginSuccess && state.user.code == 0) {
-                          return Text(
-                            '${widget.employee.bsName}, ${Formatter.toTitleCase(widget.employee.locationName)}',
-                            style: TextThemes.subtitle.copyWith(fontSize: 18),
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        } else {
-                          return SizedBox.shrink();
-                        }
-                      },
+                    Text(
+                      Formatter.toTitleCase(widget.employee.bsName),
+                      style: TextThemes.subtitle.copyWith(
+                        fontSize: 18,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

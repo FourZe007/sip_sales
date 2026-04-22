@@ -24,6 +24,13 @@ class LoginFailed extends LoginState {
   LoginFailed({this.isRefresh = false, required this.message});
 }
 
+class LoginBlocked extends LoginState {
+  final String message;
+  final bool isEmulator; // true = emulator, false = jailbroken/rooted
+
+  LoginBlocked({required this.message, required this.isEmulator});
+}
+
 class LoginUnauthenticated extends LoginState {}
 
 class LogoutLoading extends LoginState {}

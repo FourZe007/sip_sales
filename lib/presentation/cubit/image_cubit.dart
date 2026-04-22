@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:sip_sales_clean/data/models/result_message_2.dart';
 import 'package:sip_sales_clean/domain/repositories/image_domain.dart';
-import 'package:sip_sales_clean/presentation/widgets/image/detector.dart';
 
 class ImageCubit extends Cubit<ImageState> {
   final ImageRepo imageRepo;
@@ -43,41 +46,83 @@ class ImageCubit extends Cubit<ImageState> {
   Future<void> uploadImage(String employeeId) async {
     try {
       emit(ImageLoading());
+      log('uploading image');
 
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         imageQuality: 70, // Adjust quality as needed
         // maxWidth: 800, // Adjust max width as needed
       );
+      log('image taken from camera');
 
       if (image != null) {
+        log('Image is not null');
         // ~:add ML process to check either the photo contains face or not
-        final deviceInfoPlugin = DeviceInfoPlugin();
-        bool shouldCheckFace = false;
-
-        if (Platform.isIOS) {
-          final iosInfo = (await deviceInfoPlugin.iosInfo).systemVersion;
-          final double iosVersion = double.parse(iosInfo);
-          shouldCheckFace = iosVersion >= 15.5;
-        } else {
-          final android = (await deviceInfoPlugin.androidInfo).version.sdkInt
-              .toString();
-          final double androidVersion = double.parse(android);
-          shouldCheckFace = androidVersion >= 21;
+        // Step 1 — Decode JPEG to img.Image (mirrors convertCameraImage for raw frames)
+        final bytes = await image.readAsBytes();
+        final decodedImage = img.decodeImage(Uint8List.fromList(bytes));
+        if (decodedImage == null) {
+          emit(
+            const ImageError('Tidak ada wajah yang terdeteksi dalam gambar.'),
+          );
+          return;
         }
+        log(
+          'Decode JPEG to img.Image (mirrors convertCameraImage for raw frames)',
+        );
 
-        if (shouldCheckFace) {
-          if (!(await ImageDetector.hasFace(image))) {
-            emit(ImageError('Tidak ada wajah yang terdeteksi dalam gambar.'));
+        // Step 2 — Build InputImage from decoded bytes (mirrors InputImage.fromBytes in onProcessCameraFrame)
+        final bgraBytes = Uint8List.fromList(
+          decodedImage.getBytes(order: img.ChannelOrder.bgra),
+        );
+        final inputImage = InputImage.fromBytes(
+          bytes: bgraBytes,
+          metadata: InputImageMetadata(
+            size: Size(
+              decodedImage.width.toDouble(),
+              decodedImage.height.toDouble(),
+            ),
+            rotation: InputImageRotation.rotation0deg,
+            format: switch (Platform.isIOS) {
+              true => InputImageFormat.bgra8888,
+              false => InputImageFormat.nv21,
+            },
+            bytesPerRow: decodedImage.width * 4,
+          ),
+        );
+        log('Build InputImage from decoded bytes');
+
+        // Step 3 — Detect face (mirrors _faceDetector.processImage)
+        final faceDetector = FaceDetector(
+          options: FaceDetectorOptions(enableClassification: true),
+        );
+
+        try {
+          final faces = await faceDetector.processImage(inputImage);
+          if (faces.isEmpty) {
+            emit(
+              const ImageError('Tidak ada wajah yang terdeteksi dalam gambar.'),
+            );
             return;
           }
+        } catch (e) {
+          // fail safe — if detection throws, allow upload to proceed
+          log('Face detector error: $e');
+          emit(ImageError('Face Detector error: $e'));
+          return;
+        } finally {
+          faceDetector.close();
         }
+        log('face detected');
 
         // ~:API call with its if-else statement:~
         final res = await imageRepo.uploadProfilePicture(
           '1',
           employeeId,
           base64Encode(await image.readAsBytes()),
+        );
+        log(
+          'API call result: ${res['status']}, ${res['code']}, ${(res['data'] as ResultMessageModel2).resultMessage}',
         );
 
         if (res['status'] == 'success' &&
@@ -86,8 +131,10 @@ class ImageCubit extends Cubit<ImageState> {
                     .toString()
                     .toLowerCase() ==
                 'sukses') {
+          log('Image successfully captured');
           emit(ImageCaptured(image));
         } else {
+          log('Image failed to capture');
           emit(
             ImageError(
               (res['data'] as ResultMessageModel2).resultMessage,
@@ -98,6 +145,7 @@ class ImageCubit extends Cubit<ImageState> {
         emit(const ImageError('No image selected'));
       }
     } catch (e) {
+      log('UploadImage Error: $e');
       emit(ImageError(e.toString()));
     }
   }

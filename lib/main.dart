@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/constant/state_manager.dart';
+import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/routes.dart';
@@ -18,6 +19,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final String deviceOS = await Functions.readDeviceOS();
 
+  await FaceRecognitionDependencies.initialize();
+
   if (deviceOS.isNotEmpty && Platform.isAndroid) {
     if (int.parse(deviceOS.split('.')[0]) >= 10) {
       log('Device OS $deviceOS is above OS 10.');
@@ -27,31 +30,6 @@ void main() async {
         SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
       );
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-      // await SystemChrome.setEnabledSystemUIMode(
-      //   SystemUiMode.manual,
-      //   overlays: const [SystemUiOverlay.top],
-      // );
-
-      // Optional: customize status bar look (transparent background, dark icons)
-      // SystemChrome.setSystemUIOverlayStyle(
-      //   SystemUiOverlayStyle(
-      //     // statusBarColor: Colors.transparent,
-      //     statusBarIconBrightness: Brightness.light,
-      //     // systemNavigationBarColor: Colors.transparent,
-      //     systemNavigationBarIconBrightness: Brightness.light,
-      //   ),
-      // );
-
-      // SystemUiOverlayStyle(
-      //   systemNavigationBarColor: Colors.transparent,
-      //   systemNavigationBarIconBrightness:
-      //       switch (PlatformDispatcher.instance.platformBrightness) {
-      //         Brightness.light => Brightness.light,
-      //         Brightness.dark => Brightness.dark,
-      //       },
-      //   systemNavigationBarContrastEnforced: false,
-      // );
     } else {
       log('Device OS $deviceOS is below OS 10.');
       await Functions.initStorageConfig(true);

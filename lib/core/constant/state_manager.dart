@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
 import 'package:sip_sales_clean/data/repositories/attendance_data.dart';
 import 'package:sip_sales_clean/data/repositories/followup_data.dart';
 import 'package:sip_sales_clean/data/repositories/head_store_data.dart';
@@ -11,6 +12,7 @@ import 'package:sip_sales_clean/data/repositories/salesman_data.dart';
 import 'package:sip_sales_clean/data/repositories/spk_leasing_filter_data.dart';
 import 'package:sip_sales_clean/data/repositories/update_followup_data.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/head_store/head_store_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_bloc.dart';
@@ -137,6 +139,9 @@ class StateManager {
       BlocProvider<UpdateFollowupDashboardBloc>(
         create: (context) =>
             UpdateFollowupDashboardBloc(followupRepo: UpdateFollowupDataImp()),
+      ),
+      BlocProvider<FaceRecognitionBloc>(
+        create: (_) => FaceRecognitionDependencies.instance.createBloc(),
       ),
     ];
   }

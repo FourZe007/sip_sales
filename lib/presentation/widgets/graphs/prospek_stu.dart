@@ -20,7 +20,7 @@ class ProspekStuCharts extends StatelessWidget {
         child: SfCartesianChart(
           enableMultiSelection: true,
           title: ChartTitle(
-            text: 'Prospek & STU by Day',
+            text: 'Prospek & SPK by Day',
             textStyle: TextStyle(
               fontSize: 14,
               color: Colors.black,
@@ -53,7 +53,7 @@ class ProspekStuCharts extends StatelessWidget {
               dataLabelSettings: const DataLabelSettings(isVisible: true),
               color: Colors.orange[300],
               legendIconType: LegendIconType.rectangle,
-              legendItemText: 'STU',
+              legendItemText: 'SPK',
               dataLabelMapper: (DailyModel sales, _) =>
                   sales.stud == 0 ? '' : sales.stud.toString(),
             ),

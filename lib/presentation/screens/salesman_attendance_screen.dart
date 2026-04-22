@@ -43,20 +43,21 @@ class SalesmanAttendanceScreen extends StatefulWidget {
 }
 
 class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
-  void openMap(BuildContext context) async {
-    final loginState = (context.read<LoginBloc>().state as LoginSuccess);
-    final position = await Geolocator.getCurrentPosition();
+  Position? _userPosition;
 
-    if (context.mounted) {
-      context.read<RadiusCheckerBloc>().add(
-        RadiusCheckerEventCheck(
-          userLat: loginState.user.latitude,
-          userLng: loginState.user.longitude,
-          currentLat: position.latitude,
-          currentLng: position.longitude,
-        ),
-      );
-    }
+  void openMap(BuildContext context) async {
+    log('Opening Map');
+    final loginState = (context.read<LoginBloc>().state as LoginSuccess);
+    _userPosition = await Geolocator.getCurrentPosition();
+
+    context.read<RadiusCheckerBloc>().add(
+      RadiusCheckerEventCheck(
+        userLat: loginState.user.latitude,
+        userLng: loginState.user.longitude,
+        currentLat: _userPosition!.latitude,
+        currentLng: _userPosition!.longitude,
+      ),
+    );
   }
 
   void attendance(BuildContext context, bool isEvent) async {
@@ -73,6 +74,7 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
         ),
       );
     } else {
+      // ~:Non-User Face Verification:~
       log('Daily Attendance');
       context.read<AttendanceBloc>().add(
         DailyAttendance(
@@ -81,6 +83,31 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
           time: DateFormat('HH:mm').format(DateTime.now()),
         ),
       );
+
+      // ~:User Face Verification:~
+      // final user = (context.read<LoginBloc>().state as LoginSuccess).user;
+      // final deps = FaceRecognitionDependencies.instance;
+      //
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => BlocProvider(
+      //       create: (_) => deps.createBloc(),
+      //       child: FaceVerificationScreen(
+      //         userId: user.employeeID,
+      //         onVerificationSuccess: () {
+      //           context.read<AttendanceBloc>().add(
+      //             DailyAttendance(
+      //               employee: user,
+      //               date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      //               time: DateFormat('HH:mm').format(DateTime.now()),
+      //             ),
+      //           );
+      //         },
+      //       ),
+      //     ),
+      //   ),
+      // );
     }
   }
 
@@ -280,17 +307,14 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                                 log(
                                   'isRefresh: ${state.isRefresh.toString()}',
                                 );
-                                final position =
-                                    await Geolocator.getCurrentPosition();
-
-                                if (context.mounted) {
+                                if (context.mounted && _userPosition != null) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           SalesmanLocationScreen(
-                                            lat: position.latitude,
-                                            lng: position.longitude,
+                                            lat: _userPosition!.latitude,
+                                            lng: _userPosition!.longitude,
                                           ),
                                     ),
                                   );
@@ -388,9 +412,15 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                           );
                         }
                       } else if (state is SalesmanAttendanceFailed) {
-                        return const Center(
-                          child: Text('Something went wrong'),
-                        );
+                        if (state.message == 'no data') {
+                          return const Center(
+                            child: Text('Tidak ada data.'),
+                          );
+                        } else {
+                          return Center(
+                            child: Text('Terjadi kesalahan! ${state.message}'),
+                          );
+                        }
                       } else if (state is SalesmanAttendanceSuccess) {
                         return ListView.builder(
                           itemCount: state.data.length,
