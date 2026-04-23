@@ -1,6 +1,9 @@
 import 'dart:developer';
+import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:image/image.dart' as img;
 import 'package:sip_sales_clean/domain/repositories/face_recognition_domain.dart';
 
 import '../../core/helpers/image_helper.dart';
@@ -28,17 +31,30 @@ class EnrollFaceUseCase {
       throw EnrollmentException('Failed to decode image from base64');
     }
 
-    // 2. Detect face — we need InputImage, but since we have raw bytes,
-    //    we encode to PNG and use InputImage.fromFilePath or fromBytes.
-    //    For enrollment, we work with the decoded img.Image directly
-    //    and extract embedding without ML Kit (since we have the full image).
-    //
-    //    NOTE: For enrollment from a stored image, we skip ML Kit detection
-    //    and assume the uploaded photo is a clear face photo.
-    //    If you want stricter enrollment, add ML Kit validation here too.
+    // 2. Detect face to get bounding box — must match the verification path
+    final bgraBytes = Uint8List.fromList(
+      image.getBytes(order: img.ChannelOrder.bgra),
+    );
+    final inputImage = InputImage.fromBytes(
+      bytes: bgraBytes,
+      metadata: InputImageMetadata(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        rotation: InputImageRotation.rotation0deg,
+        format: InputImageFormat.bgra8888,
+        bytesPerRow: image.width * 4,
+      ),
+    );
 
-    // 3. Extract embedding
-    final embedding = await _repository.extractEmbedding(image);
+    final faces = await _faceDetector.processImage(inputImage);
+    if (faces.isEmpty) {
+      throw EnrollmentException('No face detected in the uploaded photo');
+    }
+
+    // 3. Crop face — identical to verification preprocessing
+    final croppedFace = ImageHelper.cropFace(image, faces.first.boundingBox);
+
+    // 4. Extract embedding from the cropped face (not the full photo)
+    final embedding = await _repository.extractEmbedding(croppedFace);
     if (embedding.isEmpty) {
       throw EnrollmentException('Failed to extract face embedding');
     }
@@ -50,7 +66,8 @@ class EnrollFaceUseCase {
       enrolledAt: DateTime.now(),
     );
 
-    await _repository.saveReferenceEmbedding(entity);
+    // await _repository.saveReferenceEmbedding(entity);
+    await _repository.saveReferenceImage(userId, base64Image);
     log('Image Reference saved');
 
     return entity;

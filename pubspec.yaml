@@ -67,6 +67,7 @@ dependencies:
   safe_device: ^1.3.8
   tflite_flutter: ^0.12.1
   image: ^4.8.0
+  flutter_face_api: ^8.2.971
 
 dev_dependencies:
   flutter_test:

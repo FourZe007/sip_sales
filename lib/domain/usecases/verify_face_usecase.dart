@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
+import 'package:image/image.dart' as img;
 import 'package:sip_sales_clean/core/constant/face_recognition_constants.dart';
 import 'package:sip_sales_clean/domain/repositories/face_recognition_domain.dart';
 
 import '../../core/helpers/image_helper.dart';
-import 'package:image/image.dart' as img;
 
 enum VerificationResult {
   match,
@@ -17,34 +19,59 @@ class VerifyFaceUseCase {
   VerifyFaceUseCase({required FaceRecognitionRepository repository})
     : _repository = repository;
 
-  /// Compares a live cropped face against the stored reference embedding.
-  /// Returns [VerificationResult] and the similarity score.
+  /// Compares a live cropped face against the stored reference.
+  /// [method] selects TFLite cosine similarity (default) or Regula SDK.
   Future<({VerificationResult result, double score})> call({
     required String userId,
-    // required String storedImage,
     required img.Image croppedFace,
+    VerificationMethod method = VerificationMethod.tflite,
   }) async {
-    // 1. Get stored reference
+    if (method == VerificationMethod.regula) {
+      return _verifyWithRegula(userId, croppedFace);
+    }
+    return _verifyWithTflite(userId, croppedFace);
+  }
+
+  // ── TFLite path (Method 1 — original, unchanged) ──
+
+  Future<({VerificationResult result, double score})> _verifyWithTflite(
+    String userId,
+    img.Image croppedFace,
+  ) async {
     final reference = await _repository.getReferenceEmbedding(userId);
-    // ask claude, what if the reference directly uses the stored image from LoginBloc status
     if (reference == null) {
       return (result: VerificationResult.noReferenceFound, score: 0.0);
     }
-
-    // 2. Extract embedding from live capture
     final liveEmbedding = await _repository.extractEmbedding(croppedFace);
     if (liveEmbedding.isEmpty) {
       return (result: VerificationResult.extractionFailed, score: 0.0);
     }
-
-    // 3. Compare
     final score = ImageHelper.cosineSimilarity(
       liveEmbedding,
       reference.embedding,
     );
-
     final isMatch = score >= FaceRecognitionConstants.similarityThreshold;
+    return (
+      result: isMatch ? VerificationResult.match : VerificationResult.noMatch,
+      score: score,
+    );
+  }
 
+  // ── Regula path (Method 2) ──
+
+  Future<({VerificationResult result, double score})> _verifyWithRegula(
+    String userId,
+    img.Image croppedFace,
+  ) async {
+    final refBase64 = await _repository.getReferenceImage(userId);
+    if (refBase64 == null) {
+      return (result: VerificationResult.noReferenceFound, score: 0.0);
+    }
+    final liveBytes = Uint8List.fromList(img.encodeJpg(croppedFace));
+    final (:score, :isMatch) = await _repository.matchWithRegula(
+      referenceBase64: refBase64,
+      liveImageBytes: liveBytes,
+    );
     return (
       result: isMatch ? VerificationResult.match : VerificationResult.noMatch,
       score: score,

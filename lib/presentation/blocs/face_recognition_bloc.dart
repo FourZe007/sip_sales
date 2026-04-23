@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -38,10 +37,16 @@ class ProcessCameraFrame extends FaceRecognitionEvent {
 
 class StartVerification extends FaceRecognitionEvent {
   final String userId;
-  StartVerification({required this.userId});
+  final VerificationMethod method;
+  StartVerification({
+    required this.userId,
+    this.method = VerificationMethod.regula,
+  });
 }
 
 class StopVerification extends FaceRecognitionEvent {}
+
+class StartProfileCapture extends FaceRecognitionEvent {}
 
 // ── States ──
 
@@ -84,6 +89,8 @@ class VerificationFailure extends FaceRecognitionState {
   VerificationFailure({required this.reason, this.score});
 }
 
+class FaceReadyForCapture extends FaceRecognitionState {}
+
 // ── BLoC ──
 
 class FaceRecognitionBloc
@@ -94,6 +101,8 @@ class FaceRecognitionBloc
 
   String? _activeUserId;
   bool _isProcessing = false;
+  bool _captureMode = false;
+  VerificationMethod _activeMethod = VerificationMethod.regula;
 
   FaceRecognitionBloc({
     required EnrollFaceUseCase enrollFaceUseCase,
@@ -105,6 +114,7 @@ class FaceRecognitionBloc
        super(FaceRecognitionInitial()) {
     on<EnrollFace>(_onEnrollFace);
     on<StartVerification>(_onStartVerification);
+    on<StartProfileCapture>(_onStartProfileCapture);
     on<StopVerification>(_onStopVerification);
     on<ProcessCameraFrame>(_onProcessCameraFrame);
   }
@@ -138,6 +148,19 @@ class FaceRecognitionBloc
     Emitter<FaceRecognitionState> emit,
   ) async {
     _activeUserId = event.userId;
+    _activeMethod = event.method;
+    log('Verification method: $_activeMethod');
+    emit(
+      VerificationInProgress(instruction: 'Position your face in the frame'),
+    );
+  }
+
+  void _onStartProfileCapture(
+    StartProfileCapture event,
+    Emitter<FaceRecognitionState> emit,
+  ) {
+    _captureMode = true;
+    _activeUserId = ''; // non-null so the frame guard passes
     emit(
       VerificationInProgress(instruction: 'Position your face in the frame'),
     );
@@ -148,6 +171,7 @@ class FaceRecognitionBloc
     Emitter<FaceRecognitionState> emit,
   ) {
     _activeUserId = null;
+    _captureMode = false;
     _isProcessing = false;
     emit(FaceRecognitionInitial());
   }
@@ -241,6 +265,13 @@ class FaceRecognitionBloc
         ),
       );
 
+      // Capture mode: face + liveness validated — let the screen take the photo
+      if (_captureMode) {
+        emit(FaceReadyForCapture());
+        _isProcessing = false;
+        return;
+      }
+
       // 5. Crop face and verify
       final croppedCameraFace = ImageHelper.cropFace(
         fullCameraImage,
@@ -250,8 +281,8 @@ class FaceRecognitionBloc
 
       final (:result, :score) = await _verifyFaceUseCase(
         userId: _activeUserId!,
-        // storedImage: '',
         croppedFace: croppedCameraFace,
+        method: _activeMethod,
       );
 
       switch (result) {

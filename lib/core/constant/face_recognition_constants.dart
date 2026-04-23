@@ -1,3 +1,5 @@
+enum VerificationMethod { tflite, regula }
+
 class FaceRecognitionConstants {
   FaceRecognitionConstants._();
 
@@ -6,10 +8,11 @@ class FaceRecognitionConstants {
   static const int inputSize = 112; // MobileFaceNet expects 112x112
   static const int embeddingSize = 192; // MobileFaceNet outputs 192-d vector
 
-  // ── Similarity Threshold ──
+  // ── Similarity Thresholds ──
   // TUNE THIS with real data. Test 50+ genuine pairs and 50+ impostor pairs.
   // Too high = employees rejected. Too low = spoofing gets through.
-  static const double similarityThreshold = 0.6;
+  static const double similarityThreshold = 0.6;       // TFLite cosine similarity
+  static const double regulaSimilarityThreshold = 0.75; // Regula SDK (0–1 scale)
 
   // ── Liveness Thresholds ──
   static const double eyeOpenThreshold = 0.5;

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:image/image.dart' as img;
 
 import '../entities/face_embedding_entity.dart';
@@ -17,4 +19,18 @@ abstract class FaceRecognitionRepository {
 
   /// Check if a reference embedding exists for the user.
   Future<bool> hasReferenceEmbedding(String userId);
+
+  // ── Regula methods ──
+
+  /// Save the raw reference photo (base64) for Regula matching.
+  Future<void> saveReferenceImage(String userId, String base64Image);
+
+  /// Retrieve the raw reference photo (base64) for Regula matching.
+  Future<String?> getReferenceImage(String userId);
+
+  /// Match two face images using the Regula SDK.
+  Future<({double score, bool isMatch})> matchWithRegula({
+    required String referenceBase64,
+    required Uint8List liveImageBytes,
+  });
 }

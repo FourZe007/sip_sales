@@ -11,7 +11,11 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
+import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
+import 'package:sip_sales_clean/presentation/screens/profile_photo_capture_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
 
@@ -246,16 +250,24 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                                 'Foto berhasil diupload.',
                               );
 
-                              context.read<LoginBloc>().add(
-                                LoginButtonPressed(
-                                  context: (context.mounted)
-                                      ? context
-                                      : context,
-                                  id: await Functions.readAndWriteEmployeeId(),
-                                  pass: await Functions.readAndWriteUserPass(),
-                                  isRefresh: true,
-                                ),
+                              await Functions.enrollFaceIfNeeded(
+                                context,
+                                widget.employee,
                               );
+
+                              if (context.mounted) {
+                                context.read<LoginBloc>().add(
+                                  LoginButtonPressed(
+                                    context: (context.mounted)
+                                        ? context
+                                        : context,
+                                    id: await Functions.readAndWriteEmployeeId(),
+                                    pass:
+                                        await Functions.readAndWriteUserPass(),
+                                    isRefresh: true,
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: Positioned(
@@ -277,10 +289,33 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                                 color: Colors.black,
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
-                                onPressed: () async =>
-                                    context.read<ImageCubit>().uploadImage(
-                                      await Functions.readAndWriteEmployeeId(),
+                                onPressed: () async {
+                                  log('uploading photo');
+                                  final employeeId =
+                                      await Functions.readAndWriteEmployeeId();
+                                  if (!context.mounted) return;
+                                  final XFile?
+                                  photo = await Navigator.push<XFile>(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider(
+                                        create: (_) =>
+                                            FaceRecognitionDependencies.instance
+                                                .createBloc(),
+                                        child:
+                                            const ProfilePhotoCaptureScreen(),
+                                      ),
                                     ),
+                                  );
+                                  if (photo != null && context.mounted) {
+                                    context
+                                        .read<ImageCubit>()
+                                        .uploadCapturedImage(
+                                          employeeId,
+                                          photo,
+                                        );
+                                  }
+                                },
                               ),
                             ),
                           ),

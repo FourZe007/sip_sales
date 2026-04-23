@@ -150,6 +150,30 @@ class ImageCubit extends Cubit<ImageState> {
     }
   }
 
+  Future<void> uploadCapturedImage(String employeeId, XFile image) async {
+    try {
+      emit(ImageLoading());
+      final res = await imageRepo.uploadProfilePicture(
+        '1',
+        employeeId,
+        base64Encode(await image.readAsBytes()),
+      );
+      if (res['status'] == 'success' &&
+          res['code'] == '100' &&
+          (res['data'] as ResultMessageModel2).resultMessage
+                  .toString()
+                  .toLowerCase() ==
+              'sukses') {
+        emit(ImageCaptured(image));
+      } else {
+        emit(ImageError((res['data'] as ResultMessageModel2).resultMessage));
+      }
+    } catch (e) {
+      log('uploadCapturedImage error: $e');
+      emit(ImageError(e.toString()));
+    }
+  }
+
   Future<void> captureImage() async {
     try {
       emit(ImageLoading());

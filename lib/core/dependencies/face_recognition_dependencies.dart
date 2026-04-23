@@ -1,6 +1,7 @@
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/data/datasources/face_recognition_local_datasource.dart';
+import 'package:sip_sales_clean/data/datasources/face_recognition_regula_datasource.dart';
 import 'package:sip_sales_clean/data/repositories/face_recognition_data.dart';
 import 'package:sip_sales_clean/domain/usecases/enroll_face_usecase.dart';
 import 'package:sip_sales_clean/domain/usecases/verify_face_usecase.dart';
@@ -13,6 +14,7 @@ class FaceRecognitionDependencies {
   static FaceRecognitionDependencies get instance => _instance!;
 
   final FaceRecognitionLocalDatasource datasource;
+  final FaceRecognitionRegulaDatasource regulaDatasource;
   final FaceRecognitionRepositoryImpl repository;
   final FaceDetector faceDetector;
   final EnrollFaceUseCase enrollFaceUseCase;
@@ -20,6 +22,7 @@ class FaceRecognitionDependencies {
 
   FaceRecognitionDependencies._({
     required this.datasource,
+    required this.regulaDatasource,
     required this.repository,
     required this.faceDetector,
     required this.enrollFaceUseCase,
@@ -31,12 +34,17 @@ class FaceRecognitionDependencies {
     // 1. SharedPreferences (you might already have this — reuse it)
     final prefs = await SharedPreferences.getInstance();
 
-    // 2. Datasource — owns the TFLite interpreter and local cache
+    // 2. TFLite datasource — owns the TFLite interpreter and local cache
     final datasource = FaceRecognitionLocalDatasource(prefs: prefs);
 
-    // 3. Repository
+    // 3. Regula datasource — wraps flutter_face_api SDK
+    final regulaDatasource = FaceRecognitionRegulaDatasource(prefs: prefs);
+    await regulaDatasource.initialize();
+
+    // 4. Repository
     final repository = FaceRecognitionRepositoryImpl(
       localDatasource: datasource,
+      regulaDatasource: regulaDatasource,
     );
 
     // Load the TFLite model into memory — do this at startup, not at verification time
@@ -65,6 +73,7 @@ class FaceRecognitionDependencies {
       datasource: datasource,
       repository: repository,
       faceDetector: faceDetector,
+      regulaDatasource: regulaDatasource,
       enrollFaceUseCase: enrollFaceUseCase,
       verifyFaceUseCase: verifyFaceUseCase,
     );

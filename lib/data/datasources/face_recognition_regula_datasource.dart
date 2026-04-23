@@ -1,0 +1,83 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:typed_data';
+
+import 'package:flutter_face_api/flutter_face_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sip_sales_clean/core/constant/face_recognition_constants.dart';
+
+class FaceRecognitionRegulaDatasource {
+  final SharedPreferences _prefs;
+  static const String _keyPrefix = 'face_regula_ref_';
+
+  bool _isAvailable = false;
+
+  /// Whether the Regula SDK initialized successfully.
+  bool get isAvailable => _isAvailable;
+
+  FaceRecognitionRegulaDatasource({required SharedPreferences prefs})
+      : _prefs = prefs;
+
+  /// Initialize the Regula SDK. Call once at app startup.
+  /// Never throws — a failed init sets [isAvailable] to false and logs the reason.
+  Future<void> initialize() async {
+    try {
+      final (success, error) = await FaceSDK.instance.initialize();
+      if (success) {
+        _isAvailable = true;
+        log('Regula SDK initialized successfully');
+      } else {
+        log('Regula SDK init failed: ${error?.message}');
+      }
+    } catch (e) {
+      log('Regula SDK init exception: $e');
+    }
+  }
+
+  /// Store the profile photo base64 as the reference for Regula matching.
+  Future<void> saveReferenceImage(String userId, String base64Image) async {
+    await _prefs.setString('$_keyPrefix$userId', base64Image);
+  }
+
+  /// Retrieve the stored reference photo base64, or null if not enrolled.
+  Future<String?> getReferenceImage(String userId) async {
+    return _prefs.getString('$_keyPrefix$userId');
+  }
+
+  /// Compare two face images using the Regula SDK.
+  /// [referenceBase64] — stored profile photo (base64 string).
+  /// [liveBytes] — JPEG bytes of the current live face capture.
+  Future<({double score, bool isMatch})> matchFaces({
+    required String referenceBase64,
+    required Uint8List liveBytes,
+  }) async {
+    if (!_isAvailable) {
+      log('Regula SDK not available — skipping match');
+      return (score: 0.0, isMatch: false);
+    }
+
+    try {
+      final refBytes = Uint8List.fromList(base64Decode(referenceBase64));
+      final image1 = MatchFacesImage(refBytes, ImageType.EXTERNAL);
+      final image2 = MatchFacesImage(liveBytes, ImageType.LIVE);
+
+      final response = await FaceSDK.instance.matchFaces(
+        MatchFacesRequest([image1, image2]),
+      );
+
+      if (response.error != null || response.results.isEmpty) {
+        log('Regula matchFaces error: ${response.error?.message}');
+        return (score: 0.0, isMatch: false);
+      }
+
+      final score = response.results.first.similarity;
+      return (
+        score: score,
+        isMatch: score >= FaceRecognitionConstants.regulaSimilarityThreshold,
+      );
+    } catch (e) {
+      log('Regula matchFaces exception: $e');
+      return (score: 0.0, isMatch: false);
+    }
+  }
+}

@@ -3,7 +3,12 @@
     "allow": [
       "Bash(xargs grep -l \"distance\\\\|Distance\")",
       "Read(//c/Users/Joseph Angelus/AppData/Local/Pub/Cache/hosted/pub.dev/camera_platform_interface-2.13.0/lib/src/types/**)",
-      "Read(//c/Users/Joseph Angelus/AppData/Local/Pub/Cache/hosted/pub.dev/**)"
+      "Read(//c/Users/Joseph Angelus/AppData/Local/Pub/Cache/hosted/pub.dev/**)",
+      "WebFetch(domain:pub.dev)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.regulaforensics.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(flutter pub *)"
     ]
   }
 }
