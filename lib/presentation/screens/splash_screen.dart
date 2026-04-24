@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
@@ -133,13 +134,34 @@ class _SplashScreenState extends State<SplashScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () => SystemNavigator.pop(),
-                      child: const Text(
-                        'Tutup Aplikasi',
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                      onPressed: () => context.read<LoginBloc>().add(
+                        LogoutButtonPressed(
+                          context: context,
+                        ),
+                      ),
+                      child: BlocListener<LoginBloc, LoginState>(
+                        listenWhen: (previous, current) =>
+                            current is LogoutLoading ||
+                            current is LogoutSuccess ||
+                            current is LogoutFailed,
+                        listener: (context, state) {
+                          if (state is LogoutFailed) {
+                            Functions.customFlutterToast(state.message);
+                          } else if (state is LogoutSuccess) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/login',
+                              (route) => false,
+                            );
+                          }
+                        },
+                        child: const Text(
+                          'Tutup Aplikasi',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
