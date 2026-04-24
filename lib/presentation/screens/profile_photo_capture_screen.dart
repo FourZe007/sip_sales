@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
+import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/widgets/camera/camera_preview_widget.dart';
 import 'package:sip_sales_clean/presentation/widgets/camera/liveness_instruction_widget.dart';
 
@@ -17,8 +19,11 @@ class ProfilePhotoCaptureScreen extends StatefulWidget {
 
 class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
   CameraController? _cameraController;
+  CameraDescription? _frontCamera;
   bool _isCameraReady = false;
-  bool _isCapturing = false;
+
+  final PanelController _panelController = PanelController();
+  XFile? _capturedPhoto;
 
   @override
   void initState() {
@@ -29,13 +34,13 @@ class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
   Future<void> _initCamera() async {
     final cameras = await availableCameras();
 
-    final frontCamera = cameras.firstWhere(
+    _frontCamera = cameras.firstWhere(
       (c) => c.lensDirection == CameraLensDirection.front,
       orElse: () => cameras.first,
     );
 
     _cameraController = CameraController(
-      frontCamera,
+      _frontCamera!,
       ResolutionPreset.medium,
       enableAudio: false,
       imageFormatGroup: Platform.isIOS
@@ -55,116 +60,261 @@ class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
       context.read<FaceRecognitionBloc>().add(
         ProcessCameraFrame(
           image: image,
-          sensorOrientation: frontCamera.sensorOrientation,
+          sensorOrientation: _frontCamera!.sensorOrientation,
           isFrontCamera: true,
         ),
       );
     });
   }
 
-  Future<void> _capturePhoto() async {
-    if (_cameraController == null || _isCapturing) return;
-    setState(() => _isCapturing = true);
+  Future<void> _capturePhoto(bool isFaceDetected) async {
+    if (!isFaceDetected) {
+      Functions.customFlutterToast('Coba lagi! Wajah tidak terdeteksi.');
+      return;
+    }
+    if (_cameraController == null) return;
+    _cameraController?.stopImageStream();
     final photo = await _cameraController!.takePicture();
-    if (mounted) Navigator.of(context).pop(photo);
+    setState(() => _capturedPhoto = photo);
+    _panelController.open();
+  }
+
+  void _confirmPhoto() => Navigator.of(context).pop(_capturedPhoto);
+
+  Future<void> _retryPhoto() async {
+    _panelController.close();
+    setState(() => _capturedPhoto = null);
+    context.read<FaceRecognitionBloc>().add(StartProfileCapture());
+    await _cameraController!.startImageStream((image) {
+      context.read<FaceRecognitionBloc>().add(
+        ProcessCameraFrame(
+          image: image,
+          sensorOrientation: _frontCamera!.sensorOrientation,
+          isFrontCamera: true,
+        ),
+      );
+    });
   }
 
   void _close() {
+    _cameraController?.stopImageStream();
     context.read<FaceRecognitionBloc>().add(StopVerification());
     Navigator.of(context).pop();
   }
 
   @override
   void dispose() {
-    // _cameraController?.stopImageStream();
     _cameraController?.dispose();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'Foto Profil',
-          style: TextStyle(color: Colors.white),
+  Widget _buildConfirmationPanel() {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: _close,
-        ),
-      ),
-      body: SafeArea(
+        padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
         child: Column(
-          spacing: 12,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 16,
           children: [
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: _isCameraReady && _cameraController != null
-                    ? CameraPreviewWidget(controller: _cameraController!)
-                    : const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      ),
+            // Drag handle
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
 
+            const Text(
+              'Konfirmasi Foto',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A2340),
+              ),
+            ),
+
+            // Photo preview
+            if (_capturedPhoto != null)
+              CircleAvatar(
+                radius: 72,
+                backgroundImage: FileImage(File(_capturedPhoto!.path)),
+              ),
+
+            const Text(
+              'Pastikan wajah Anda terlihat jelas dalam lingkaran!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+
+            Row(
+              spacing: 12,
+              children: [
+                // ~:Retry button:~
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF1A2340),
+                      side: const BorderSide(color: Color(0xFF1A2340)),
+                      elevation: 0.5,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _retryPhoto,
+                    child: const Text(
+                      'Coba Lagi',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // ~:Confirm button:~
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      elevation: 0.5,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _confirmPhoto,
+                    child: const Text(
+                      'Gunakan Foto',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SlidingUpPanel(
+      controller: _panelController,
+      minHeight: 0,
+      maxHeight: 360,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      backdropEnabled: true,
+      backdropColor: Colors.black,
+      backdropOpacity: 0.5,
+      isDraggable: false,
+      panel: _buildConfirmationPanel(),
+      body: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: const Text(
+            'Foto Profil',
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.close, color: Colors.white),
+            onPressed: _close,
+          ),
+        ),
+        body: Column(
+          children: [
+            // ~:Camera:~
             Expanded(
-              flex: 1,
-              child: BlocConsumer<FaceRecognitionBloc, FaceRecognitionState>(
-                listener: (context, state) {
-                  if (state is FaceReadyForCapture) {
-                    // Stop the stream — face is validated, freeze the preview
-                    _cameraController?.stopImageStream();
-                  }
-                },
-                builder: (context, state) {
-                  if (state is FaceReadyForCapture) {
-                    return Center(
-                      child: SizedBox(
-                        width: 200,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+              child: _isCameraReady && _cameraController != null
+                  ? CameraPreviewWidget(controller: _cameraController!)
+                  : const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+
+            // ~:Face Recognition:~
+            BlocBuilder<FaceRecognitionBloc, FaceRecognitionState>(
+              builder: (context, state) {
+                return Column(
+                  spacing: 8,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // ~:Status:~
+                    switch (state) {
+                      VerificationInProgress(
+                        :final instruction,
+                        :final faceDetected,
+                        :final livenessOk,
+                      ) =>
+                        LivenessInstructionWidget(
+                          instruction: instruction,
+                          faceDetected: faceDetected,
+                          livenessOk: livenessOk,
+                        ),
+                      FaceReadyForCapture() => LivenessInstructionWidget(
+                        instruction: 'Wajah terdeteksi! Siap mengambil foto.',
+                        faceDetected: true,
+                        livenessOk: true,
+                      ),
+                      _ => const SizedBox.shrink(),
+                    },
+
+                    // ~:Button:~
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: (state is FaceReadyForCapture)
+                              ? Colors.green
+                              : Colors.grey,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
                           ),
-                          onPressed: _isCapturing ? null : _capturePhoto,
-                          icon: const Icon(Icons.camera_alt),
-                          label: const Text(
-                            'Ambil Foto',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () =>
+                            _capturePhoto(state is FaceReadyForCapture),
+                        icon: Icon(
+                          Icons.camera_alt,
+                          color: (state is FaceReadyForCapture)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                        label: Text(
+                          'Ambil Foto',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: (state is FaceReadyForCapture)
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                       ),
-                    );
-                  }
-
-                  return switch (state) {
-                    VerificationInProgress(
-                      :final instruction,
-                      :final faceDetected,
-                      :final livenessOk,
-                    ) =>
-                      LivenessInstructionWidget(
-                        instruction: instruction,
-                        faceDetected: faceDetected,
-                        livenessOk: livenessOk,
-                      ),
-                    _ => const SizedBox.shrink(),
-                  };
-                },
-              ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),

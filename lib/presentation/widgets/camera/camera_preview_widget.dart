@@ -12,26 +12,29 @@ class CameraPreviewWidget extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Camera feed
-          AspectRatio(
-            aspectRatio: 3 / 4,
-            child: CameraPreview(controller),
-          ),
-
-          // Face guide overlay — oval cutout
-          AspectRatio(
-            aspectRatio: 3 / 4,
-            child: CustomPaint(
-              painter: _FaceGuidePainter(),
-              child: const SizedBox.expand(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Camera feed
+            AspectRatio(
+              aspectRatio: 3 / 4,
+              child: CameraPreview(controller),
             ),
-          ),
-        ],
+
+            // Face guide overlay — oval cutout
+            AspectRatio(
+              aspectRatio: 3 / 4,
+              child: CustomPaint(
+                painter: _FaceGuidePainter(),
+                child: const SizedBox.expand(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -55,7 +58,7 @@ class _FaceGuidePainter extends CustomPainter {
 
     canvas.drawPath(
       overlayPath,
-      Paint()..color = Colors.black.withOpacity(0.5),
+      Paint()..color = Colors.black.withValues(alpha: 0.5),
     );
 
     // Oval border
@@ -63,7 +66,7 @@ class _FaceGuidePainter extends CustomPainter {
       ovalRect,
       Paint()
         ..style = PaintingStyle.stroke
-        ..color = Colors.white.withOpacity(0.8)
+        ..color = Colors.white.withValues(alpha: 0.8)
         ..strokeWidth = 2.5,
     );
   }

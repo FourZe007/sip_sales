@@ -29,7 +29,7 @@ class LivenessInstructionWidget extends StatelessWidget {
 
           Flexible(
             child: Text(
-              'Instruction: $instruction',
+              instruction,
               style: TextStyle(
                 color: _textColor,
                 fontSize: 15,

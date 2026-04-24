@@ -457,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         bottom: 20,
                       ),
                       child: Text(
-                        'Versi 1.2.4',
+                        'Versi 1.2.4 Beta',
                         style: TextThemes.normal.copyWith(
                           fontSize: 16,
                         ),

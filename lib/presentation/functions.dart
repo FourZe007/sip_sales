@@ -992,7 +992,7 @@ class Functions {
       //
       // final reqLoc = await Geolocator.requestPermission();
       // log('Location permission status after request: $reqLoc');
-
+      //
       // // If service is disabled, try to enable it
       // if (!serviceEnabled) {
       //   Position? position = await Geolocator.getCurrentPosition();
