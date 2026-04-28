@@ -211,112 +211,119 @@ class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SlidingUpPanel(
-      controller: _panelController,
-      minHeight: 0,
-      maxHeight: 360,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      backdropEnabled: true,
-      backdropColor: Colors.black,
-      backdropOpacity: 0.5,
-      isDraggable: false,
-      panel: _buildConfirmationPanel(),
-      body: Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: const Text(
-            'Foto Profil',
-            style: TextStyle(color: Colors.white),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.close, color: Colors.white),
-            onPressed: _close,
-          ),
-        ),
-        body: Column(
-          children: [
-            // ~:Camera:~
-            Expanded(
-              child: _isCameraReady && _cameraController != null
-                  ? CameraPreviewWidget(controller: _cameraController!)
-                  : const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    ),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          _close();
+        }
+      },
+      child: SlidingUpPanel(
+        controller: _panelController,
+        minHeight: 0,
+        maxHeight: 360,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        backdropEnabled: true,
+        backdropColor: Colors.black,
+        backdropOpacity: 0.5,
+        isDraggable: false,
+        panel: _buildConfirmationPanel(),
+        body: Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: const Text(
+              'Foto Profil',
+              style: TextStyle(color: Colors.white),
             ),
-
-            // ~:Face Recognition:~
-            BlocBuilder<FaceRecognitionBloc, FaceRecognitionState>(
-              builder: (context, state) {
-                return Column(
-                  spacing: 8,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // ~:Status:~
-                    switch (state) {
-                      VerificationInProgress(
-                        :final instruction,
-                        :final faceDetected,
-                        :final livenessOk,
-                      ) =>
-                        LivenessInstructionWidget(
-                          instruction: instruction,
-                          faceDetected: faceDetected,
-                          livenessOk: livenessOk,
+            leading: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: _close,
+            ),
+          ),
+          body: Column(
+            children: [
+              // ~:Camera:~
+              Expanded(
+                child: _isCameraReady && _cameraController != null
+                    ? CameraPreviewWidget(controller: _cameraController!)
+                    : const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
                         ),
-                      FaceReadyForCapture() => LivenessInstructionWidget(
-                        instruction: 'Wajah terdeteksi! Siap mengambil foto.',
-                        faceDetected: true,
-                        livenessOk: true,
                       ),
-                      _ => const SizedBox.shrink(),
-                    },
+              ),
 
-                    // ~:Button:~
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: (state is FaceReadyForCapture)
-                              ? Colors.green
-                              : Colors.grey,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 14,
+              // ~:Face Recognition:~
+              BlocBuilder<FaceRecognitionBloc, FaceRecognitionState>(
+                builder: (context, state) {
+                  return Column(
+                    spacing: 8,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // ~:Status:~
+                      switch (state) {
+                        VerificationInProgress(
+                          :final instruction,
+                          :final faceDetected,
+                          :final livenessOk,
+                        ) =>
+                          LivenessInstructionWidget(
+                            instruction: instruction,
+                            faceDetected: faceDetected,
+                            livenessOk: livenessOk,
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        FaceReadyForCapture() => LivenessInstructionWidget(
+                          instruction: 'Wajah terdeteksi! Siap mengambil foto.',
+                          faceDetected: true,
+                          livenessOk: true,
+                        ),
+                        _ => const SizedBox.shrink(),
+                      },
+
+                      // ~:Button:~
+                      Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: (state is FaceReadyForCapture)
+                                ? Colors.green
+                                : Colors.grey,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                        ),
-                        onPressed: () =>
-                            _capturePhoto(state is FaceReadyForCapture),
-                        icon: Icon(
-                          Icons.camera_alt,
-                          color: (state is FaceReadyForCapture)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                        label: Text(
-                          'Ambil Foto',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                          onPressed: () =>
+                              _capturePhoto(state is FaceReadyForCapture),
+                          icon: Icon(
+                            Icons.camera_alt,
                             color: (state is FaceReadyForCapture)
                                 ? Colors.white
                                 : Colors.black,
                           ),
+                          label: Text(
+                            'Ambil Foto',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: (state is FaceReadyForCapture)
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -184,16 +184,7 @@ class FaceRecognitionBloc
     _isProcessing = true;
 
     try {
-      // 1. Convert camera image
-      final fullCameraImage = ImageHelper.convertCameraImage(event.image);
-      if (fullCameraImage == null) {
-        log('fullImage is null');
-        _isProcessing = false;
-        return;
-      }
-      log('Phase 1 passed');
-
-      // 2. Build InputImage for ML Kit — combine all planes (Y + UV for NV21)
+      // 1. Build InputImage for ML Kit directly from raw camera planes (fast)
       final imageBytes = Uint8List.fromList(
         event.image.planes.expand((plane) => plane.bytes).toList(),
       );
@@ -214,9 +205,8 @@ class FaceRecognitionBloc
           bytesPerRow: event.image.planes[0].bytesPerRow,
         ),
       );
-      log('Phase 2 passed');
 
-      // 3. Detect faces
+      // 2. Detect faces
       final faces = await _faceDetector.processImage(inputImage);
       if (faces.isEmpty) {
         emit(
@@ -239,9 +229,21 @@ class FaceRecognitionBloc
         _isProcessing = false;
         return;
       }
-      log('Phase 3 passed');
 
       final face = faces.first;
+
+      // 3. Oval position check
+      if (!_isFaceInsideOval(face, event.image, event.sensorOrientation)) {
+        emit(
+          VerificationInProgress(
+            instruction: 'Posisikan wajah di dalam lingkaran.',
+            faceDetected: true,
+            livenessOk: false,
+          ),
+        );
+        _isProcessing = false;
+        return;
+      }
 
       // 4. Liveness check
       if (!_passesLivenessCheck(face)) {
@@ -255,7 +257,6 @@ class FaceRecognitionBloc
         _isProcessing = false;
         return;
       }
-      log('Phase 4 passed. emitting the verification result.');
 
       emit(
         VerificationInProgress(
@@ -265,14 +266,22 @@ class FaceRecognitionBloc
         ),
       );
 
-      // Capture mode: face + liveness validated — let the screen take the photo
+      // Capture mode: all checks passed — no image conversion needed
       if (_captureMode) {
         emit(FaceReadyForCapture());
         _isProcessing = false;
         return;
       }
 
-      // 5. Crop face and verify
+      // 5. Convert image — deferred until all checks pass to avoid running
+      //    the expensive YUV→RGB pixel loop on frames that would be rejected.
+      final fullCameraImage = ImageHelper.convertCameraImage(event.image);
+      if (fullCameraImage == null) {
+        _isProcessing = false;
+        return;
+      }
+
+      // 6. Crop face and verify
       final croppedCameraFace = ImageHelper.cropFace(
         fullCameraImage,
         face.boundingBox,
@@ -310,6 +319,39 @@ class FaceRecognitionBloc
     } finally {
       _isProcessing = false;
     }
+  }
+
+  /// Returns true if the face center falls inside the oval guide overlay.
+  /// Converts face bounding box from raw sensor coordinates to normalized
+  /// portrait display coordinates, then checks the ellipse equation.
+  bool _isFaceInsideOval(Face face, CameraImage image, int sensorOrientation) {
+    final double normX;
+    final double normY;
+
+    // Map raw sensor coords → normalized portrait [0,1] based on rotation
+    switch (sensorOrientation) {
+      case 90:
+        normX = 1.0 - face.boundingBox.center.dy / image.height;
+        normY = face.boundingBox.center.dx / image.width;
+      case 270:
+        normX = face.boundingBox.center.dy / image.height;
+        normY = 1.0 - face.boundingBox.center.dx / image.width;
+      default: // 0° or 180°
+        normX = face.boundingBox.center.dx / image.width;
+        normY = face.boundingBox.center.dy / image.height;
+    }
+
+    // Oval from _FaceGuidePainter: center (0.5, 0.42), semi-axes both 0.3
+    // in normalized [0,1] space (3:4 widget ratio makes them equal).
+    // r=0.4 adds ~33% tolerance over the drawn oval edge (0.3) to absorb
+    // minor head movement and per-device calibration differences.
+    const cx = 0.5, cy = 0.42, r = 0.4;
+    final dx = (normX - cx) / r;
+    final dy = (normY - cy) / r;
+    log(
+      'NormX: ${normX.toString()}; NormY: ${normY.toString()}; dx: ${dx.toString()}; dy: ${dy.toString()}; result: ${(dx * dx + dy * dy) <= 1.0}',
+    );
+    return (dx * dx + dy * dy) <= 1.0;
   }
 
   bool _passesLivenessCheck(Face face) {

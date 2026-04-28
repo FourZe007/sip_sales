@@ -401,10 +401,29 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                 CircleAvatar(
                   radius: 30.0,
                   backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.person,
-                    size: 25.0,
-                    color: Colors.black,
+                  child: BlocBuilder<LoginBloc, LoginState>(
+                    builder: (context, state) {
+                      if (state is LoginSuccess &&
+                          state.user.profilePicture.isNotEmpty) {
+                        return ClipOval(
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(28),
+                            child: Image.memory(
+                              base64Decode(
+                                state.user.profilePicture,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Icon(
+                          Icons.person,
+                          size: 25.0,
+                          color: Colors.black,
+                        );
+                      }
+                    },
                   ),
                 ),
 
