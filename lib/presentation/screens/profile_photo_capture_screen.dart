@@ -73,17 +73,22 @@ class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
       return;
     }
     if (_cameraController == null) return;
-    _cameraController?.stopImageStream();
+    _cameraController!.stopImageStream();
+    _cameraController!.pausePreview();
     final photo = await _cameraController!.takePicture();
     setState(() => _capturedPhoto = photo);
     _panelController.open();
   }
 
-  void _confirmPhoto() => Navigator.of(context).pop(_capturedPhoto);
+  void _confirmPhoto() {
+    context.read<FaceRecognitionBloc>().add(StopVerification());
+    Navigator.of(context).pop(_capturedPhoto);
+  }
 
   Future<void> _retryPhoto() async {
     _panelController.close();
     setState(() => _capturedPhoto = null);
+    _cameraController!.resumePreview();
     context.read<FaceRecognitionBloc>().add(StartProfileCapture());
     await _cameraController!.startImageStream((image) {
       context.read<FaceRecognitionBloc>().add(
@@ -212,11 +217,6 @@ class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop) {
-          _close();
-        }
-      },
       child: SlidingUpPanel(
         controller: _panelController,
         minHeight: 0,
@@ -238,7 +238,7 @@ class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
             ),
             leading: IconButton(
               icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: _close,
+              onPressed: () => _close(),
             ),
           ),
           body: Column(

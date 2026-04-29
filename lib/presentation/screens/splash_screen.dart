@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
@@ -72,7 +73,12 @@ class _SplashScreenState extends State<SplashScreen> {
                 Navigator.pushReplacementNamed(context, ConstantRoutes.login);
               }
             } else if (state is LoginSuccess) {
-              await Functions.enrollFaceIfNeeded(context, state.user);
+              await Functions.enrollFaceIfNeeded(context, state.user).then((_) {
+                log(
+                  'FaceRecognitionBloc state: ${context.read<FaceRecognitionBloc>().state}',
+                );
+                log('Face enrolled');
+              });
               if (context.mounted) {
                 Navigator.pushReplacementNamed(
                   context,

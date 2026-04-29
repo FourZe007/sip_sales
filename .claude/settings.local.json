@@ -8,7 +8,8 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:docs.regulaforensics.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(flutter pub *)"
+      "Bash(flutter pub *)",
+      "Bash(grep -E \"\\\\.\\(dart\\)$\")"
     ]
   }
 }

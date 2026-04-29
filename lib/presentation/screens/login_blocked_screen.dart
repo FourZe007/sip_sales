@@ -45,10 +45,6 @@ class LoginBlockedScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 20,
                   children: [
-                    Image.asset(
-                      'assets/SIP.png',
-                      width: MediaQuery.of(context).size.width * 0.4,
-                    ),
                     const Icon(
                       Icons.security_outlined,
                       size: 80,
@@ -94,7 +90,10 @@ class LoginBlockedScreen extends StatelessWidget {
                               current is LogoutSuccess ||
                               current is LogoutFailed,
                           builder: (context, state) => state is LogoutLoading
-                              ? const AndroidLoading(strokeWidth: 3)
+                              ? const AndroidLoading(
+                                  strokeWidth: 3,
+                                  warna: Colors.white,
+                                )
                               : const Text(
                                   'Kembali ke Login',
                                   style: TextStyle(

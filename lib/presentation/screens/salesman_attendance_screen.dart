@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/attendance/attendance_state.dart';
@@ -22,6 +23,7 @@ import 'package:sip_sales_clean/presentation/blocs/salesman/salesman_state.dart'
 import 'package:sip_sales_clean/presentation/cubit/attendance_type_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
+import 'package:sip_sales_clean/presentation/screens/face_verification_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/salesman_attendance_more_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/salesman_attendance_event_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/salesman_location_screen.dart';
@@ -76,39 +78,39 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
     } else {
       // ~:Non-User Face Verification:~
       log('Daily Attendance');
-      context.read<AttendanceBloc>().add(
-        DailyAttendance(
-          employee: (context.read<LoginBloc>().state as LoginSuccess).user,
-          date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-          time: DateFormat('HH:mm').format(DateTime.now()),
-        ),
-      );
-
-      // ~:User Face Verification:~
-      // log('User Face Verification');
-      // final user = (context.read<LoginBloc>().state as LoginSuccess).user;
-      // final deps = FaceRecognitionDependencies.instance;
-
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (_) => BlocProvider(
-      //       create: (_) => deps.createBloc(),
-      //       child: FaceVerificationScreen(
-      //         userId: user.employeeID,
-      //         onVerificationSuccess: () {
-      //           context.read<AttendanceBloc>().add(
-      //             DailyAttendance(
-      //               employee: user,
-      //               date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-      //               time: DateFormat('HH:mm').format(DateTime.now()),
-      //             ),
-      //           );
-      //         },
-      //       ),
-      //     ),
+      // context.read<AttendanceBloc>().add(
+      //   DailyAttendance(
+      //     employee: (context.read<LoginBloc>().state as LoginSuccess).user,
+      //     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      //     time: DateFormat('HH:mm').format(DateTime.now()),
       //   ),
       // );
+
+      // ~:User Face Verification:~
+      log('User Face Verification');
+      final user = (context.read<LoginBloc>().state as LoginSuccess).user;
+      final deps = FaceRecognitionDependencies.instance;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => deps.createBloc(),
+            child: FaceVerificationScreen(
+              userId: user.employeeID,
+              onVerificationSuccess: () {
+                context.read<AttendanceBloc>().add(
+                  DailyAttendance(
+                    employee: user,
+                    date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                    time: DateFormat('HH:mm').format(DateTime.now()),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
     }
   }
 

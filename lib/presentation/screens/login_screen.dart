@@ -323,10 +323,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                             state.message,
                                           );
                                         } else if (state is LoginSuccess) {
-                                          Functions.enrollFaceIfNeeded(
+                                          await Functions.enrollFaceIfNeeded(
                                             context,
                                             state.user,
                                           );
+
                                           // make sure the user enter the initiated navbar
                                           context
                                               .read<NavbarCubit>()

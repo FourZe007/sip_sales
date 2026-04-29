@@ -121,7 +121,9 @@ class FaceRecognitionBloc
 
   @override
   Future<void> close() async {
-    await _faceDetector.close();
+    // Do NOT close _faceDetector here — it is a shared instance owned by
+    // FaceRecognitionDependencies. Closing it here would break enrollment
+    // and any subsequent verification in the global bloc after screen pop.
     return super.close();
   }
 
@@ -135,10 +137,13 @@ class FaceRecognitionBloc
         userId: event.userId,
         base64Image: event.base64Image,
       );
+      log('Enrollment success');
       emit(EnrollmentSuccess());
     } on EnrollmentException catch (e) {
+      log('Enrollment failed: $e');
       emit(EnrollmentFailure(error: e.message));
     } catch (e) {
+      log('Enrollment failed: $e');
       emit(EnrollmentFailure(error: 'Unexpected error: $e'));
     }
   }
@@ -205,6 +210,7 @@ class FaceRecognitionBloc
           bytesPerRow: event.image.planes[0].bytesPerRow,
         ),
       );
+      log('Verification phase 1 passed');
 
       // 2. Detect faces
       final faces = await _faceDetector.processImage(inputImage);
@@ -229,6 +235,7 @@ class FaceRecognitionBloc
         _isProcessing = false;
         return;
       }
+      log('Verification phase 2 passed');
 
       final face = faces.first;
 
@@ -244,6 +251,7 @@ class FaceRecognitionBloc
         _isProcessing = false;
         return;
       }
+      log('Verification phase 3 passed');
 
       // 4. Liveness check
       if (!_passesLivenessCheck(face)) {
@@ -272,6 +280,7 @@ class FaceRecognitionBloc
         _isProcessing = false;
         return;
       }
+      log('Verification phase 4 passed');
 
       // 5. Convert image — deferred until all checks pass to avoid running
       //    the expensive YUV→RGB pixel loop on frames that would be rejected.
@@ -280,13 +289,14 @@ class FaceRecognitionBloc
         _isProcessing = false;
         return;
       }
+      log('Verification phase 6 passed');
 
       // 6. Crop face and verify
       final croppedCameraFace = ImageHelper.cropFace(
         fullCameraImage,
         face.boundingBox,
       );
-      log('Phase 5 passed');
+      log('Verification phase 6 passed');
 
       final (:result, :score) = await _verifyFaceUseCase(
         userId: _activeUserId!,

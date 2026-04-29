@@ -1,6 +1,5 @@
 import 'dart:developer';
-import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image/image.dart' as img;
@@ -31,46 +30,34 @@ class EnrollFaceUseCase {
       throw EnrollmentException('Failed to decode image from base64');
     }
 
-    // 2. Detect face to get bounding box — must match the verification path
-    final bgraBytes = Uint8List.fromList(
-      image.getBytes(order: img.ChannelOrder.bgra),
+    // 2. Detect face — encode to JPEG temp file so ML Kit handles the format
+    //    natively on both Android and iOS (avoids bgra8888 Android rejection).
+    final tempFile = File(
+      '${Directory.systemTemp.path}/enroll_${DateTime.now().millisecondsSinceEpoch}.jpg',
     );
-    final inputImage = InputImage.fromBytes(
-      bytes: bgraBytes,
-      metadata: InputImageMetadata(
-        size: Size(image.width.toDouble(), image.height.toDouble()),
-        rotation: InputImageRotation.rotation0deg,
-        format: InputImageFormat.bgra8888,
-        bytesPerRow: image.width * 4,
-      ),
-    );
+    await tempFile.writeAsBytes(img.encodeJpg(image));
 
-    final faces = await _faceDetector.processImage(inputImage);
+    final List<Face> faces;
+    try {
+      faces = await _faceDetector.processImage(
+        InputImage.fromFilePath(tempFile.path),
+      );
+    } finally {
+      await tempFile.delete();
+    }
     if (faces.isEmpty) {
       throw EnrollmentException('No face detected in the uploaded photo');
     }
 
-    // 3. Crop face — identical to verification preprocessing
-    final croppedFace = ImageHelper.cropFace(image, faces.first.boundingBox);
-
-    // 4. Extract embedding from the cropped face (not the full photo)
-    final embedding = await _repository.extractEmbedding(croppedFace);
-    if (embedding.isEmpty) {
-      throw EnrollmentException('Failed to extract face embedding');
-    }
-
-    // 4. Store
-    final entity = FaceEmbeddingEntity(
-      userId: userId,
-      embedding: embedding,
-      enrolledAt: DateTime.now(),
-    );
-
-    // await _repository.saveReferenceEmbedding(entity);
+    // 3. Save reference image for Regula matching
     await _repository.saveReferenceImage(userId, base64Image);
     log('Image Reference saved');
 
-    return entity;
+    return FaceEmbeddingEntity(
+      userId: userId,
+      embedding: const [],
+      enrolledAt: DateTime.now(),
+    );
   }
 }
 

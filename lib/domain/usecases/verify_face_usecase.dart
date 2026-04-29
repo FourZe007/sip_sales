@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
@@ -15,16 +16,20 @@ enum VerificationResult {
 
 class VerifyFaceUseCase {
   final FaceRecognitionRepository _repository;
+  // final FaceRecognitionRegulaDatasource _regulaRepository;
 
-  VerifyFaceUseCase({required FaceRecognitionRepository repository})
-    : _repository = repository;
+  VerifyFaceUseCase({
+    required FaceRecognitionRepository repository,
+    // required FaceRecognitionRegulaDatasource regulaRepository,
+  }) : _repository = repository;
+  //  _regulaRepository = regulaRepository;
 
   /// Compares a live cropped face against the stored reference.
   /// [method] selects TFLite cosine similarity (default) or Regula SDK.
   Future<({VerificationResult result, double score})> call({
     required String userId,
     required img.Image croppedFace,
-    VerificationMethod method = VerificationMethod.tflite,
+    VerificationMethod method = VerificationMethod.regula,
   }) async {
     if (method == VerificationMethod.regula) {
       return _verifyWithRegula(userId, croppedFace);
@@ -65,6 +70,7 @@ class VerifyFaceUseCase {
   ) async {
     final refBase64 = await _repository.getReferenceImage(userId);
     if (refBase64 == null) {
+      log('Image reference is empty or null');
       return (result: VerificationResult.noReferenceFound, score: 0.0);
     }
     final liveBytes = Uint8List.fromList(img.encodeJpg(croppedFace));

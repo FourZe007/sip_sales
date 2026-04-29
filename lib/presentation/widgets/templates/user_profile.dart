@@ -253,7 +253,9 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
                               await Functions.enrollFaceIfNeeded(
                                 context,
                                 widget.employee,
-                              );
+                              ).then((_) {
+                                log('Face enrolled');
+                              });
 
                               if (context.mounted) {
                                 context.read<LoginBloc>().add(

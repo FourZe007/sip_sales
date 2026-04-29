@@ -65,7 +65,7 @@ class _FaceVerificationScreenState extends State<FaceVerificationScreen> {
       StartVerification(userId: widget.userId),
     );
 
-    _cameraController!.startImageStream((image) {
+    await _cameraController!.startImageStream((image) {
       context.read<FaceRecognitionBloc>().add(
         ProcessCameraFrame(
           image: image,
@@ -109,14 +109,11 @@ class _FaceVerificationScreenState extends State<FaceVerificationScreen> {
             // Camera preview with face guide
             Expanded(
               flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: _isCameraReady && _cameraController != null
-                    ? CameraPreviewWidget(controller: _cameraController!)
-                    : const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      ),
-              ),
+              child: _isCameraReady && _cameraController != null
+                  ? CameraPreviewWidget(controller: _cameraController!)
+                  : const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
             ),
 
             // Status / instruction area

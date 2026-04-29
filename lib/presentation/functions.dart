@@ -82,14 +82,25 @@ class Functions {
     BuildContext context,
     EmployeeModel user,
   ) async {
+    if (user.profilePicture.isEmpty) {
+      log('enrollFaceIfNeeded: no profile picture for ${user.employeeID} — skipping');
+      return;
+    }
     try {
       final deps = FaceRecognitionDependencies.instance;
-      if (deps.datasource.hasEmbedding(user.employeeID)) {
-        log('Face already enrolled for ${user.employeeID}');
+      // Capture bloc before any await — avoids BuildContext across async gap.
+      final bloc = context.read<FaceRecognitionBloc>();
+      // Guard against the Regula reference key — verification uses Regula by
+      // default, so we must confirm that key exists, not just the TFLite key.
+      final regulaRef = await deps.regulaDatasource.getReferenceImage(
+        user.employeeID,
+      );
+      if (regulaRef != null) {
+        log('enrollFaceIfNeeded: already enrolled for ${user.employeeID}');
         return;
       }
-      log('Face not enrolled yet — dispatching EnrollFace event');
-      context.read<FaceRecognitionBloc>().add(
+      log('enrollFaceIfNeeded: enrolling ${user.employeeID}');
+      bloc.add(
         EnrollFace(userId: user.employeeID, base64Image: user.profilePicture),
       );
     } catch (e) {
