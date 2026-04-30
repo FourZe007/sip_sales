@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
@@ -9,7 +7,7 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/screens/login_blocked_screen.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/routes.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -101,10 +99,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     width: MediaQuery.of(context).size.width * 0.55,
                     fit: BoxFit.cover,
                   ),
-                  if (Platform.isIOS)
-                    const CupertinoActivityIndicator(radius: 12)
-                  else
-                    const AndroidLoading(strokeWidth: 3),
+                  const AndroidIosLoading(strokeWidth: 3),
                 ],
               ),
             );

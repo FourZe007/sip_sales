@@ -16,7 +16,12 @@
       "Bash(git -C c:/dev/sip_sales_clean diff)",
       "Bash(git -C c:/dev/sip_sales_clean log --oneline -5)",
       "Bash(git -C c:/dev/sip_sales_clean add android/app/build.gradle ios/Podfile ios/Runner/Info.plist ios/Runner/PrivacyInfo.xcprivacy README.md lib/core/dependencies/face_recognition_dependencies.dart lib/data/datasources/face_recognition_local_datasource.dart lib/data/datasources/face_recognition_regula_datasource.dart lib/data/repositories/attendance_data.dart lib/data/repositories/face_recognition_data.dart lib/presentation/blocs/login/login_bloc.dart 'lib/presentation/screens/head_new_acts \\(not used\\).dart' 'lib/presentation/screens/head_store_screen \\(not used\\).dart' lib/presentation/screens/home_screen.dart lib/presentation/screens/login_screen.dart lib/presentation/screens/profile_screen.dart lib/presentation/widgets/templates/profile_body.dart)",
-      "Bash(git -C c:/dev/sip_sales_clean commit -m ' *)"
+      "Bash(git -C c:/dev/sip_sales_clean commit -m ' *)",
+      "Bash(git -C c:/dev/sip_sales_clean ls-files android/key.properties android/*.jks android/*.keystore)",
+      "Bash(grep -v \"const AndroidLoading\\(\\)$\\\\|const AndroidLoading\\(\\),$\\\\|const AndroidLoading\\(\\);\\\\|return const AndroidLoading\\(\\)\")",
+      "Bash(grep -v \"^\\\\-\\\\-$\")",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)"
     ]
   }
 }

@@ -13,6 +13,7 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -489,19 +490,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   builder: (context, state) {
                     if (state is LogoutLoading) {
-                      return Builder(
-                        builder: (context) {
-                          if (Platform.isIOS) {
-                            return const CupertinoActivityIndicator(
-                              radius: 12.5,
-                              color: Colors.white,
-                            );
-                          } else {
-                            return const CircularProgressIndicator(
-                              color: Colors.white,
-                            );
-                          }
-                        },
+                      return const AndroidIosLoading(
+                        indicatorColor: Colors.white,
                       );
                     } else {
                       return Text(

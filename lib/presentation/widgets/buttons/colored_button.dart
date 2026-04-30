@@ -1,15 +1,13 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 
 class ColoredButton extends StatefulWidget {
   const ColoredButton(
@@ -73,19 +71,12 @@ class _ColoredButtonState extends State<ColoredButton> {
                   },
                   builder: (context, state) {
                     if (state is LogoutLoading) {
-                      if (Platform.isIOS) {
-                        return const CupertinoActivityIndicator(
-                          radius: 10.0,
-                          color: Colors.black,
-                        );
-                      } else {
-                        return const AndroidLoading(
-                          warna: Colors.black,
+                        return const AndroidIosLoading(
+                          indicatorColor: Colors.black,
                           customizedHeight: 20.0,
                           customizedWidth: 20.0,
                           strokeWidth: 3,
                         );
-                      }
                     } else {
                       return Text(
                         widget.buttonName,
@@ -151,19 +142,12 @@ class _ColoredButtonState extends State<ColoredButton> {
                   },
                   builder: (context, state) {
                     if (state is LogoutLoading) {
-                      if (Platform.isIOS) {
-                        return const CupertinoActivityIndicator(
-                          radius: 10.0,
-                          color: Colors.black,
-                        );
-                      } else {
-                        return const AndroidLoading(
-                          warna: Colors.black,
+                        return const AndroidIosLoading(
+                          indicatorColor: Colors.black,
                           customizedHeight: 20.0,
                           customizedWidth: 20.0,
                           strokeWidth: 3,
                         );
-                      }
                     } else {
                       return Text(
                         widget.buttonName,

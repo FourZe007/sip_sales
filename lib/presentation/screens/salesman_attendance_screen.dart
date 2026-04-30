@@ -1,9 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -31,7 +29,7 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/attendance_list.dart';
 import 'package:sip_sales_clean/presentation/widgets/date_time/digital_clock.dart';
 import 'package:sip_sales_clean/presentation/widgets/dropdown/salesman_attandance_type.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:device_type/device_type.dart';
 
 class SalesmanAttendanceScreen extends StatefulWidget {
@@ -235,17 +233,10 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                                   builder: (context, state) {
                                     if (state is DailyAttendanceLoading ||
                                         state is EventAttendanceLoading) {
-                                      if (Platform.isIOS) {
-                                        return const CupertinoActivityIndicator(
-                                          radius: 12.5,
-                                          color: Colors.black,
-                                        );
-                                      } else {
-                                        return const AndroidLoading(
-                                          warna: Colors.black,
+                                        return const AndroidIosLoading(
+                                          indicatorColor: Colors.black,
                                           strokeWidth: 3,
                                         );
-                                      }
                                     } else {
                                       return Text(
                                         'Clock In',
@@ -327,17 +318,10 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                             builder: (context, state) {
                               if (state is RadiusCheckerLoading &&
                                   !state.isRefresh) {
-                                if (Platform.isIOS) {
-                                  return const CupertinoActivityIndicator(
-                                    radius: 12.5,
-                                    color: Colors.black,
-                                  );
-                                } else {
-                                  return const AndroidLoading(
-                                    warna: Colors.black,
+                                  return const AndroidIosLoading(
+                                    indicatorColor: Colors.black,
                                     strokeWidth: 3,
                                   );
-                                }
                               } else {
                                 return Text(
                                   'Lokasi Anda',
@@ -403,17 +387,10 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                         current is SalesmanAttendanceFailed,
                     builder: (context, state) {
                       if (state is SalesmanLoading) {
-                        if (Platform.isIOS) {
-                          return const CupertinoActivityIndicator(
-                            radius: 12.5,
-                            color: Colors.black,
-                          );
-                        } else {
-                          return const AndroidLoading(
-                            warna: Colors.black,
+                          return const AndroidIosLoading(
+                            indicatorColor: Colors.black,
                             strokeWidth: 3,
                           );
-                        }
                       } else if (state is SalesmanAttendanceFailed) {
                         if (state.message == 'no data') {
                           return const Center(

@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +20,7 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/cards/performance_card.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/leasing_report.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/payment_report.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/salesman_report.dart';
@@ -99,17 +97,10 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                     !state.isActs &&
                     !state.isDashboard &&
                     !state.isInsert) {
-                  if (Platform.isIOS) {
-                    return const CupertinoActivityIndicator(
-                      radius: 12,
-                      color: Colors.black,
-                    );
-                  } else {
-                    return const AndroidLoading(
-                      warna: Colors.black,
+                    return const AndroidIosLoading(
+                      indicatorColor: Colors.black,
                       strokeWidth: 3,
                     );
-                  }
                 } else if (state is HeadStoreDataDetailFailed) {
                   return Center(
                     child: Text(state.message),

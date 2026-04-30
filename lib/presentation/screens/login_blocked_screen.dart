@@ -4,7 +4,7 @@ import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/routes.dart';
 
 class LoginBlockedScreen extends StatelessWidget {
@@ -90,9 +90,9 @@ class LoginBlockedScreen extends StatelessWidget {
                               current is LogoutSuccess ||
                               current is LogoutFailed,
                           builder: (context, state) => state is LogoutLoading
-                              ? const AndroidLoading(
+                              ? const AndroidIosLoading(
                                   strokeWidth: 3,
-                                  warna: Colors.white,
+                                  indicatorColor: Colors.white,
                                 )
                               : const Text(
                                   'Kembali ke Login',

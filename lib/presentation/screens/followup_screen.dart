@@ -1,9 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:sip_sales_clean/core/constant/enum.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/presentation/blocs/followup/fu_dashboard_bloc.dart';
@@ -16,7 +14,7 @@ import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dar
 import 'package:sip_sales_clean/presentation/cubit/fu_cubit.dart';
 import 'package:sip_sales_clean/presentation/screens/followup_details_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/fu_dashboard_header.dart';
 
 class FollowupDashboard extends StatelessWidget {
@@ -34,17 +32,10 @@ class FollowupDashboard extends StatelessWidget {
     return BlocBuilder<FollowupDashboardBloc, FollowupDashboardState>(
       builder: (context, state) {
         if (state is FollowupDashboardLoading) {
-          if (Platform.isIOS) {
-            return const CupertinoActivityIndicator(
-              radius: 12.5,
-              color: Colors.black,
-            );
-          } else {
-            return const AndroidLoading(
-              warna: Colors.black,
+            return const AndroidIosLoading(
+              indicatorColor: Colors.black,
               strokeWidth: 3,
             );
-          }
         } else if (state is FollowupDashboardError) {
           if (state.message == 'empty') {
             return const Center(

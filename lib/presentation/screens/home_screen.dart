@@ -38,7 +38,7 @@ import 'package:sip_sales_clean/presentation/screens/sales_report_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/salesman_attendance_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/category_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/dealer_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/leasing_filter_panel.dart';
@@ -474,96 +474,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget profileTemplate() {
-    if (Platform.isIOS) {
-      return CustomScrollView(
-        slivers: [
-          CupertinoSliverRefreshControl(
-            onRefresh: () async => context.read<LoginBloc>().add(
-              LoginButtonPressed(
-                context: (context.mounted) ? context : context,
-                id: await Functions.readAndWriteEmployeeId(),
-                pass: await Functions.readAndWriteUserPass(),
-                isRefresh: true,
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, _) => Container(
-                width: MediaQuery.of(context).size.width,
-                height:
-                    MediaQuery.of(context).size.height -
-                    kBottomNavigationBarHeight -
-                    28,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                  color: Colors.white,
-                ),
-                child: BlocBuilder<LoginBloc, LoginState>(
-                  buildWhen: (previous, current) =>
-                      (current is LoginLoading && current.isRefresh) ||
-                      (current is LoginFailed && current.isRefresh) ||
-                      (current is LoginSuccess && current.isRefresh),
-                  builder: (context, state) {
-                    if (state is LoginLoading) {
-                      if (Platform.isIOS) {
-                        return const CupertinoActivityIndicator(
-                          radius: 8,
-                          color: Colors.black,
-                        );
-                      } else {
-                        return const AndroidLoading(
-                          warna: Colors.black,
-                          strokeWidth: 3,
-                        );
-                      }
-                    } else if (state is LoginFailed) {
-                      return Center(
-                        child: Column(
-                          children: [
-                            Text(state.message),
-
-                            ElevatedButton(
-                              onPressed: () async => context.read<LoginBloc>().add(
-                                LoginButtonPressed(
-                                  context: (context.mounted)
-                                      ? context
-                                      : context,
-                                  id: await Functions.readAndWriteEmployeeId(),
-                                  pass: await Functions.readAndWriteUserPass(),
-                                  isRefresh: true,
-                                ),
-                              ),
-                              child: Text(
-                                'Refresh',
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else if (state is LoginSuccess) {
-                      return profileTemplateBody(
-                        context,
-                        state.user,
-                      );
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  },
-                ),
-              ),
-              childCount: 1,
-            ),
-          ),
-        ],
-      );
-    } else {
       return RefreshIndicator(
         onRefresh: () async => context.read<LoginBloc>().add(
           LoginButtonPressed(
@@ -588,17 +498,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   (current is LoginSuccess && current.isRefresh),
               builder: (context, state) {
                 if (state is LoginLoading) {
-                  if (Platform.isIOS) {
-                    return const CupertinoActivityIndicator(
-                      radius: 8,
-                      color: Colors.black,
-                    );
-                  } else {
-                    return const AndroidLoading(
-                      warna: Colors.black,
-                      strokeWidth: 3,
-                    );
-                  }
+                  return const AndroidIosLoading(
+                    customizedHeight: 16,
+                    customizedWidth: 16,
+                  );
                 } else if (state is LoginFailed) {
                   return Center(
                     child: Column(
@@ -637,7 +540,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
       );
-    }
   }
 
   Widget deleteActs(final String activityId) {
@@ -756,17 +658,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           !state.isActsDetail &&
                           !state.isDashboard &&
                           !state.isInsert) {
-                        if (Platform.isIOS) {
-                          return const CupertinoActivityIndicator(
-                            radius: 8,
-                            color: Colors.black,
-                          );
-                        } else {
-                          return const AndroidLoading(
-                            warna: Colors.black,
+                          return const AndroidIosLoading(
+                            indicatorColor: Colors.black,
                             strokeWidth: 3,
                           );
-                        }
                       } else {
                         return Text(
                           'Hapus',

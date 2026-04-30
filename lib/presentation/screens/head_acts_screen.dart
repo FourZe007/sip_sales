@@ -20,7 +20,7 @@ import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
 import 'package:sip_sales_clean/presentation/screens/head_acts_detail_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/cards/head_card.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 
 class HeadActivityPage extends StatefulWidget {
   const HeadActivityPage({required this.employeeModel, super.key});
@@ -104,17 +104,10 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
             current is HeadStoreDataFailed,
         builder: (context, state) {
           if (state is HeadStoreLoading) {
-            if (Platform.isIOS) {
-              return const CupertinoActivityIndicator(
-                radius: 8,
-                color: Colors.black,
-              );
-            } else {
-              return const AndroidLoading(
-                warna: Colors.black,
+              return const AndroidIosLoading(
+                indicatorColor: Colors.black,
                 strokeWidth: 3,
               );
-            }
           } else if (state is HeadStoreDataFailed) {
             return Center(
               child: Text(state.message),

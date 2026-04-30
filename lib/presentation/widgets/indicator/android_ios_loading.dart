@@ -10,6 +10,9 @@ class AndroidIosLoading extends StatelessWidget {
     this.indicatorWidth = 100,
     this.indicatorHeight = 100,
     this.indicatorColor = Colors.black,
+    this.customizedWidth = 0,
+    this.customizedHeight = 0,
+    this.strokeWidth = 3,
     super.key,
   });
 
@@ -17,25 +20,40 @@ class AndroidIosLoading extends StatelessWidget {
   final double indicatorWidth;
   final double indicatorHeight;
   final Color indicatorColor;
+  final double customizedWidth;
+  final double customizedHeight;
+  final double strokeWidth;
 
   @override
   Widget build(BuildContext context) {
     if (indicatorOnly) {
-      return Builder(
-        builder: (context) {
-          if (Platform.isIOS) {
-            return CupertinoActivityIndicator(
-              radius: 12.5,
-              color: indicatorColor,
-            );
-          } else {
-            return AndroidLoading(
-              warna: indicatorColor,
-              strokeWidth: 3,
-            );
-          }
-        },
-      );
+      if (Platform.isIOS) {
+        final hasCustomSize = customizedWidth != 0 || customizedHeight != 0;
+        final radius = customizedHeight != 0 ? customizedHeight / 2 : 12.5;
+        final indicator = CupertinoActivityIndicator(
+          radius: radius,
+          color: indicatorColor,
+        );
+        if (hasCustomSize) {
+          return Center(
+            heightFactor: 1,
+            widthFactor: 1,
+            child: SizedBox(
+              width: customizedWidth != 0 ? customizedWidth : null,
+              height: customizedHeight != 0 ? customizedHeight : null,
+              child: indicator,
+            ),
+          );
+        }
+        return indicator;
+      } else {
+        return AndroidLoading(
+          warna: indicatorColor,
+          strokeWidth: strokeWidth,
+          customizedWidth: customizedWidth,
+          customizedHeight: customizedHeight,
+        );
+      }
     } else {
       return Builder(
         builder: (context) {
@@ -66,7 +84,7 @@ class AndroidIosLoading extends StatelessWidget {
               ),
               child: AndroidLoading(
                 warna: indicatorColor,
-                strokeWidth: 3,
+                strokeWidth: strokeWidth,
               ),
             );
           }

@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +9,7 @@ import 'package:sip_sales_clean/presentation/blocs/location_service/location_ser
 import 'package:sip_sales_clean/presentation/blocs/location_service/location_service_state.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 
 class LocationScreen extends StatefulWidget {
   const LocationScreen({super.key});
@@ -176,19 +174,12 @@ class _LocationScreenState extends State<LocationScreen> {
                                 },
                                 builder: (context, state) {
                                   if (state is LocationServiceLoading) {
-                                    if (Platform.isIOS) {
-                                      return const CupertinoActivityIndicator(
-                                        radius: 10.0,
-                                        color: Colors.white,
-                                      );
-                                    } else {
-                                      return const AndroidLoading(
-                                        warna: Colors.white,
+                                      return const AndroidIosLoading(
+                                        indicatorColor: Colors.white,
                                         customizedHeight: 20.0,
                                         customizedWidth: 20.0,
                                         strokeWidth: 3,
                                       );
-                                    }
                                   } else {
                                     return Text(
                                       'Continue',

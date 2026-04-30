@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -18,7 +16,7 @@ import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_category.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_per_leasing.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/detail_reject.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/widgets.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -506,17 +504,10 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
             child: BlocBuilder<SpkLeasingDataCubit, SpkLeasingDataState>(
               builder: (context, state) {
                 if (state is SpkLeasingDataLoading) {
-                  if (Platform.isIOS) {
-                    return const CupertinoActivityIndicator(
-                      radius: 12.5,
-                      color: Colors.black,
-                    );
-                  } else {
-                    return const AndroidLoading(
-                      warna: Colors.black,
+                    return const AndroidIosLoading(
+                      indicatorColor: Colors.black,
                       strokeWidth: 3,
                     );
-                  }
                 } else if (state is SpkLeasingDataFailed) {
                   return Column(
                     spacing: 8,

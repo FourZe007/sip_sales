@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -20,7 +19,7 @@ import 'package:sip_sales_clean/presentation/cubit/fu_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/date_time/follow_up.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 
 class FollowupDashboardDetail extends StatefulWidget {
   const FollowupDashboardDetail({
@@ -414,17 +413,10 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
               builder: (context, state) {
                 log('Builder State: $state');
                 if (state is UpdateFollowupDashboardLoading) {
-                  if (Platform.isIOS) {
-                    return const CupertinoActivityIndicator(
-                      radius: 12.5,
-                      color: Colors.black,
-                    );
-                  } else {
-                    return const AndroidLoading(
-                      warna: Colors.black,
+                    return const AndroidIosLoading(
+                      indicatorColor: Colors.black,
                       strokeWidth: 3,
                     );
-                  }
                 } else if (state is UpdateFollowupDashboardError) {
                   log('Error: ${state.message}');
                   if (state.message.contains('[]')) {
@@ -532,20 +524,13 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                     builder: (context, state) {
                                                       if (state
                                                           is SaveFollowupLoading) {
-                                                        if (Platform.isIOS) {
-                                                          return const CupertinoActivityIndicator(
-                                                            radius: 8,
-                                                            color: Colors.white,
-                                                          );
-                                                        } else {
-                                                          return const AndroidLoading(
+                                                          return const AndroidIosLoading(
                                                             customizedHeight:
                                                                 16,
                                                             customizedWidth: 16,
-                                                            warna: Colors.white,
+                                                            indicatorColor: Colors.white,
                                                             strokeWidth: 2,
                                                           );
-                                                        }
                                                       } else {
                                                         return Text(
                                                           'Save',
@@ -1008,26 +993,12 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                                 builder: (context, state) {
                                                                   if (state
                                                                       is SaveFollowupLoading) {
-                                                                    if (Platform
-                                                                        .isIOS) {
-                                                                      return const CupertinoActivityIndicator(
-                                                                        radius:
-                                                                            8,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      );
-                                                                    } else {
-                                                                      return const AndroidLoading(
-                                                                        warna: Colors
-                                                                            .white,
-                                                                        customizedHeight:
-                                                                            16,
-                                                                        customizedWidth:
-                                                                            16,
-                                                                        strokeWidth:
-                                                                            2,
-                                                                      );
-                                                                    }
+                                                                    return const AndroidIosLoading(
+                                                                      indicatorColor: Colors.white,
+                                                                      customizedHeight: 16,
+                                                                      customizedWidth: 16,
+                                                                      strokeWidth: 2,
+                                                                    );
                                                                   } else {
                                                                     return Text(
                                                                       'Save',

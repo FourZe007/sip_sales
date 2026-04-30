@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +16,7 @@ import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/counter.dart';
 import 'package:sip_sales_clean/presentation/widgets/image/dotted_rounded_image_picker.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/textfields/custom_textformfield.dart';
 import 'package:sip_sales_clean/presentation/widgets/texts/title.dart';
 
@@ -373,17 +371,10 @@ class _CreateBriefingScreenState extends State<CreateBriefingScreen> {
                           !state.isDashboard &&
                           !state.isActsDetail &&
                           !state.isDelete) {
-                        if (Platform.isIOS) {
-                          return const CupertinoActivityIndicator(
-                            radius: 12.5,
-                            color: Colors.black,
-                          );
-                        } else {
-                          return const AndroidLoading(
-                            warna: Colors.black,
+                          return const AndroidIosLoading(
+                            indicatorColor: Colors.black,
                             strokeWidth: 3,
                           );
-                        }
                       } else {
                         return Text(
                           'Buat',

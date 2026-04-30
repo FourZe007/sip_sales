@@ -1,13 +1,12 @@
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/cubit/image_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 
 class DottedRoundedImagePicker extends StatelessWidget {
   const DottedRoundedImagePicker({this.isUploadWithGallery = false, super.key});
@@ -50,17 +49,10 @@ class DottedRoundedImagePicker extends StatelessWidget {
             },
             builder: (context, state) {
               if (state is ImageLoading) {
-                if (Platform.isIOS) {
-                  return const CupertinoActivityIndicator(
-                    radius: 12.5,
-                    color: Colors.black,
-                  );
-                } else {
-                  return const AndroidLoading(
-                    warna: Colors.black,
-                    strokeWidth: 3,
-                  );
-                }
+                return const AndroidIosLoading(
+                  indicatorColor: Colors.black,
+                  strokeWidth: 3,
+                );
               } else if (state is ImageCaptured) {
                 return Padding(
                   padding: const EdgeInsets.all(2.0),

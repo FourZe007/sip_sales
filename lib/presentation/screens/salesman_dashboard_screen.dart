@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -13,7 +11,7 @@ import 'package:sip_sales_clean/presentation/widgets/datagrids/leasing_condition
 import 'package:sip_sales_clean/presentation/widgets/datagrids/sales_category.dart';
 import 'package:sip_sales_clean/presentation/widgets/graphs/db_stu.dart';
 import 'package:sip_sales_clean/presentation/widgets/graphs/prospek_stu.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/templates/widgets.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -56,17 +54,10 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
     return BlocBuilder<SalesmanBloc, SalesmanState>(
       builder: (context, state) {
         if (state is SalesmanDashboardLoading) {
-          if (Platform.isIOS) {
-            return const CupertinoActivityIndicator(
-              radius: 12.5,
-              color: Colors.black,
-            );
-          } else {
-            return const AndroidLoading(
-              warna: Colors.black,
+            return const AndroidIosLoading(
+              indicatorColor: Colors.black,
               strokeWidth: 3,
             );
-          }
         } else if (state is SalesmanDashboardFailed) {
           return Center(
             child: Text(
