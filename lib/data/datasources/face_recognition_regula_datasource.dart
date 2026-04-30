@@ -18,17 +18,26 @@ class FaceRecognitionRegulaDatasource {
   FaceRecognitionRegulaDatasource({required FlutterSecureStorage storage})
       : _storage = storage;
 
-  /// Initialize the Regula SDK. Call once at app startup.
-  /// Never throws — a failed init sets [isAvailable] to false and logs the reason.
+  /// Initialize the Regula SDK. Safe to call more than once: subsequent calls
+  /// no-op when the SDK is already up. A "Core already running" error is also
+  /// treated as success — this happens after a Flutter hot restart, where the
+  /// Dart VM resets but the native Regula process keeps running.
   Future<void> initialize() async {
+    if (_isAvailable) return;
     try {
       final (success, error) = await FaceSDK.instance.initialize();
       if (success) {
         _isAvailable = true;
         log('Regula SDK initialized successfully');
-      } else {
-        log('Regula SDK init failed: ${error?.message}');
+        return;
       }
+      final message = error?.message ?? '';
+      if (message.toLowerCase().contains('already running')) {
+        _isAvailable = true;
+        log('Regula SDK already running — reusing existing native instance');
+        return;
+      }
+      log('Regula SDK init failed: $message');
     } catch (e) {
       log('Regula SDK init exception: $e');
     }
