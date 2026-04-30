@@ -211,335 +211,350 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
-  Widget profileTemplateBody(
-    BuildContext context,
-    EmployeeModel employee,
-  ) {
-    return DecoratedBox(
-      decoration: BoxDecoration(color: Colors.blue),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: UserProfileTemplate(employee: employee)),
-
-              IconButton(
-                onPressed: () =>
-                    context.read<DashboardSlidingUpCubit>().changeType(
-                      DashboardSlidingUpType.logout,
-                    ),
-                tooltip: 'Keluar',
-                icon: Icon(
-                  Icons.logout_rounded,
-                  size: 28,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-
-          Expanded(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.015,
-              ),
-              child: Column(
-                spacing: 8,
-                children: [
-                  // ~:Settings Title:~
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 8,
-                    ),
-                    child: Text(
-                      'Pengaturan',
-                      style: TextThemes.normal.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  // ~:Privacy Policy Section:~
-                  InkWell(
-                    onTap: () => launchLink(
-                      'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: const Icon(
-                              Icons.privacy_tip_rounded,
-                              size: 30.0,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 5,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.025,
-                              ),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.75,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Privasi Akun',
-                                      style: TextThemes.normal.copyWith(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Penggunaan data pribadi',
-                                      style: TextThemes.normal.copyWith(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // ~:Change Password Section:~
-                  InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ForgotPasswordScreen(),
-                      ),
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: const Icon(
-                                Icons.lock_rounded,
-                                size: 30.0,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 5,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.025,
-                              ),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.75,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Keamanan Sandi',
-                                      style: TextThemes.normal.copyWith(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Ubah kata sandi akun anda',
-                                      style: TextThemes.normal.copyWith(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // ~:User Guideline:~
-                  InkWell(
-                    // onTap: () => openUserGuideline(),
-                    onTap: () {
-                      log('Access rights: ${employee.code}');
-                      if (employee.code == 0) {
-                        launchLink(
-                          'https://www.canva.com/design/DAG4dHLK334/E6wuxXY9Cp4jm5uAqMg81A/edit?utm_content=DAG4dHLK334&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
-                        );
-                      } else if (employee.code == 1) {
-                        launchLink(
-                          'https://www.canva.com/design/DAGfnPUa7_Q/nE2tAQYp5NGFOTKE_SrzvQ/edit?utm_content=DAGfnPUa7_Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
-                        );
-                      } else if (employee.code == 2) {
-                        launchLink(
-                          'https://www.canva.com/design/DAG4dDoYceE/daSw9Etw8rUdfbbVFeZ4xw/edit?utm_content=DAG4dDoYceE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
-                        );
-                      } else {
-                        Functions.customFlutterToast(
-                          'Hak akses tidak ditemukan',
-                        );
-                      }
-                    },
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: const Icon(
-                              Icons.menu_book_rounded,
-                              size: 30.0,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 5,
-                            child: Container(
-                              // width: MediaQuery.of(context).size.width * 0.75,
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(
-                                      context,
-                                    ).size.width *
-                                    0.025,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Manual Book',
-                                    style: TextThemes.normal.copyWith(
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Cara menggunakan setiap fitur aplikasi',
-                                    style: TextThemes.normal.copyWith(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // ~:App Version Section:~
-                  Expanded(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.bottomCenter,
-                      margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.05,
-                        right: MediaQuery.of(context).size.width * 0.05,
-                        top: MediaQuery.of(context).size.height * 0.01,
-                        bottom: 20,
-                      ),
-                      child: Text(
-                        'Versi 1.2.4',
-                        style: TextThemes.normal.copyWith(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget profileTemplate() {
-      return RefreshIndicator(
-        onRefresh: () async => context.read<LoginBloc>().add(
-          LoginButtonPressed(
-            context: (context.mounted) ? context : context,
-            id: await Functions.readAndWriteEmployeeId(),
-            pass: await Functions.readAndWriteUserPass(),
-            isRefresh: true,
-          ),
-        ),
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height:
-                MediaQuery.of(context).size.height -
-                kBottomNavigationBarHeight -
-                28,
-            child: BlocBuilder<LoginBloc, LoginState>(
-              buildWhen: (previous, current) =>
-                  (current is LoginLoading && current.isRefresh) ||
-                  (current is LoginFailed && current.isRefresh) ||
-                  (current is LoginSuccess && current.isRefresh),
-              builder: (context, state) {
-                if (state is LoginLoading) {
-                  return const AndroidIosLoading(
-                    customizedHeight: 16,
-                    customizedWidth: 16,
-                  );
-                } else if (state is LoginFailed) {
-                  return Center(
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (previous, current) =>
+          (current is LoginLoading && current.isRefresh) ||
+          (current is LoginFailed && current.isRefresh) ||
+          (current is LoginSuccess && current.isRefresh),
+      builder: (context, state) {
+        if (state is LoginLoading) {
+          return const AndroidIosLoading(
+            customizedHeight: 16,
+            customizedWidth: 16,
+          );
+        } else if (state is LoginFailed) {
+          return Center(
+            child: Column(
+              children: [
+                Text(state.message),
+
+                ElevatedButton(
+                  onPressed: () async => context.read<LoginBloc>().add(
+                    LoginButtonPressed(
+                      context: (context.mounted) ? context : context,
+                      id: await Functions.readAndWriteEmployeeId(),
+                      pass: await Functions.readAndWriteUserPass(),
+                      isRefresh: true,
+                    ),
+                  ),
+                  child: Text(
+                    'Refresh',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else if (state is LoginSuccess) {
+          return DecoratedBox(
+            decoration: const BoxDecoration(color: Colors.blue),
+            child: Column(
+              children: [
+                // Sticky top: header + logout
+                Row(
+                  children: [
+                    Expanded(child: UserProfileTemplate(employee: state.user)),
+                    IconButton(
+                      onPressed: () =>
+                          context.read<DashboardSlidingUpCubit>().changeType(
+                            DashboardSlidingUpType.logout,
+                          ),
+                      tooltip: 'Keluar',
+                      icon: Icon(
+                        Icons.logout_rounded,
+                        size: 28,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Middle: white card, fills remaining space
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    padding: EdgeInsets.all(8),
                     child: Column(
                       children: [
-                        Text(state.message),
+                        // Scrollable settings list — pull-to-refresh lives here
+                        Expanded(
+                          child: RefreshIndicator(
+                            onRefresh: () async => context.read<LoginBloc>().add(
+                              LoginButtonPressed(
+                                context: (context.mounted) ? context : context,
+                                id: await Functions.readAndWriteEmployeeId(),
+                                pass: await Functions.readAndWriteUserPass(),
+                                isRefresh: true,
+                              ),
+                            ),
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: SizedBox(
+                                height: MediaQuery.of(context).size.height,
+                                child: Column(
+                                  spacing: 8,
+                                  children: [
+                                    // ~:Settings Title:~
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 8,
+                                      ),
+                                      child: Text(
+                                        'Pengaturan',
+                                        style: TextThemes.normal.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
 
-                        ElevatedButton(
-                          onPressed: () async => context.read<LoginBloc>().add(
-                            LoginButtonPressed(
-                              context: (context.mounted) ? context : context,
-                              id: await Functions.readAndWriteEmployeeId(),
-                              pass: await Functions.readAndWriteUserPass(),
-                              isRefresh: true,
+                                    // ~:Privacy Policy Section:~
+                                    InkWell(
+                                      onTap: () => launchLink(
+                                        'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                                      ),
+                                      child: SizedBox(
+                                        width: MediaQuery.of(
+                                          context,
+                                        ).size.width,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: const Icon(
+                                                Icons.privacy_tip_rounded,
+                                                size: 30.0,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 5,
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).size.width *
+                                                      0.025,
+                                                ),
+                                                child: SizedBox(
+                                                  width:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).size.width *
+                                                      0.75,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Privasi Akun',
+                                                        style: TextThemes.normal
+                                                            .copyWith(
+                                                              fontSize: 20,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        'Penggunaan data pribadi',
+                                                        style: TextThemes.normal
+                                                            .copyWith(
+                                                              fontSize: 16,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                    // ~:Change Password Section:~
+                                    InkWell(
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ForgotPasswordScreen(),
+                                        ),
+                                      ),
+                                      child: SizedBox(
+                                        width: MediaQuery.of(
+                                          context,
+                                        ).size.width,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Align(
+                                                alignment: Alignment.center,
+                                                child: const Icon(
+                                                  Icons.lock_rounded,
+                                                  size: 30.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 5,
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).size.width *
+                                                      0.025,
+                                                ),
+                                                child: SizedBox(
+                                                  width:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).size.width *
+                                                      0.75,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Keamanan Sandi',
+                                                        style: TextThemes.normal
+                                                            .copyWith(
+                                                              fontSize: 20,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        'Ubah kata sandi akun anda',
+                                                        style: TextThemes.normal
+                                                            .copyWith(
+                                                              fontSize: 16,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                    // ~:User Guideline:~
+                                    InkWell(
+                                      // onTap: () => openUserGuideline(),
+                                      onTap: () {
+                                        final employee = state.user;
+                                        log('Access rights: ${employee.code}');
+                                        if (employee.code == 0) {
+                                          launchLink(
+                                            'https://www.canva.com/design/DAG4dHLK334/E6wuxXY9Cp4jm5uAqMg81A/edit?utm_content=DAG4dHLK334&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                                          );
+                                        } else if (employee.code == 1) {
+                                          launchLink(
+                                            'https://www.canva.com/design/DAGfnPUa7_Q/nE2tAQYp5NGFOTKE_SrzvQ/edit?utm_content=DAGfnPUa7_Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                                          );
+                                        } else if (employee.code == 2) {
+                                          launchLink(
+                                            'https://www.canva.com/design/DAG4dDoYceE/daSw9Etw8rUdfbbVFeZ4xw/edit?utm_content=DAG4dDoYceE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                                          );
+                                        } else {
+                                          Functions.customFlutterToast(
+                                            'Hak akses tidak ditemukan',
+                                          );
+                                        }
+                                      },
+                                      child: SizedBox(
+                                        width: MediaQuery.of(
+                                          context,
+                                        ).size.width,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: const Icon(
+                                                Icons.menu_book_rounded,
+                                                size: 30.0,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 5,
+                                              child: Container(
+                                                // width: MediaQuery.of(context).size.width * 0.75,
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).size.width *
+                                                      0.025,
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Manual Book',
+                                                      style: TextThemes.normal
+                                                          .copyWith(
+                                                            fontSize: 20,
+                                                          ),
+                                                    ),
+                                                    Text(
+                                                      'Cara menggunakan setiap fitur aplikasi',
+                                                      style: TextThemes.normal
+                                                          .copyWith(
+                                                            fontSize: 16,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                          child: Text(
-                            'Refresh',
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
+                        ),
+
+                        // Sticky bottom: version, never scrolls, never clipped
+                        Text(
+                          'Versi 1.2.4',
+                          style: TextThemes.normal.copyWith(fontSize: 16),
                         ),
                       ],
                     ),
-                  );
-                } else if (state is LoginSuccess) {
-                  return profileTemplateBody(
-                    context,
-                    state.user,
-                  );
-                } else {
-                  return SizedBox.shrink();
-                }
-              },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ),
-      );
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
   }
 
   Widget deleteActs(final String activityId) {
@@ -658,10 +673,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           !state.isActsDetail &&
                           !state.isDashboard &&
                           !state.isInsert) {
-                          return const AndroidIosLoading(
-                            indicatorColor: Colors.black,
-                            strokeWidth: 3,
-                          );
+                        return const AndroidIosLoading(
+                          indicatorColor: Colors.black,
+                          strokeWidth: 3,
+                        );
                       } else {
                         return Text(
                           'Hapus',
