@@ -34,8 +34,12 @@
 	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>SIP Sales would like to access your location to be able to create activities. You can disable location access at any time in Settings.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>SIP Sales uses Face ID for secure employee face verification during clock-in and clock-out.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>SIP Sales would like to access to your photo gallery to allow you to select and upload images for your daily reports. These images will be used to provide visual documentation and support for your sales activities.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

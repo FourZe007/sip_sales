@@ -230,7 +230,7 @@ class ProfileBodyScreen extends StatelessWidget {
                 bottom: 12,
               ),
               child: Text(
-                'Versi 1.2.4 Beta',
+                'Versi 1.2.4',
                 style: TextThemes.normal.copyWith(
                   fontSize: 16,
                 ),

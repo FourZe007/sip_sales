@@ -2,8 +2,8 @@
 
 import 'dart:developer';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image/image.dart' as img;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/core/constant/face_recognition_constants.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -12,12 +12,12 @@ import '../models/face_embedding_model.dart';
 
 class FaceRecognitionLocalDatasource {
   Interpreter? _interpreter;
-  final SharedPreferences _prefs;
+  final FlutterSecureStorage _storage;
 
   static const String _embeddingKeyPrefix = 'face_embedding_';
 
-  FaceRecognitionLocalDatasource({required SharedPreferences prefs})
-    : _prefs = prefs;
+  FaceRecognitionLocalDatasource({required FlutterSecureStorage storage})
+    : _storage = storage;
 
   // ── TFLite Model ──
 
@@ -83,26 +83,26 @@ class FaceRecognitionLocalDatasource {
     _interpreter = null;
   }
 
-  // ── Local Cache (SharedPreferences) ──
+  // ── Local Cache (FlutterSecureStorage) ──
 
   Future<void> saveEmbedding(FaceEmbeddingModel model) async {
-    await _prefs.setString(
-      '$_embeddingKeyPrefix${model.userId}',
-      model.toJsonString(),
+    await _storage.write(
+      key: '$_embeddingKeyPrefix${model.userId}',
+      value: model.toJsonString(),
     );
   }
 
-  FaceEmbeddingModel? getEmbedding(String userId) {
-    final json = _prefs.getString('$_embeddingKeyPrefix$userId');
+  Future<FaceEmbeddingModel?> getEmbedding(String userId) async {
+    final json = await _storage.read(key: '$_embeddingKeyPrefix$userId');
     if (json == null) return null;
     return FaceEmbeddingModel.fromJsonString(json);
   }
 
   Future<void> deleteEmbedding(String userId) async {
-    await _prefs.remove('$_embeddingKeyPrefix$userId');
+    await _storage.delete(key: '$_embeddingKeyPrefix$userId');
   }
 
-  bool hasEmbedding(String userId) {
-    return _prefs.containsKey('$_embeddingKeyPrefix$userId');
+  Future<bool> hasEmbedding(String userId) async {
+    return _storage.containsKey(key: '$_embeddingKeyPrefix$userId');
   }
 }

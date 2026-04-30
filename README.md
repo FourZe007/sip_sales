@@ -5,22 +5,37 @@ A new Flutter project.
 ## Update Notes
 What should developers do whenever they pull new changes
 
-**v1.2.4** — Run `flutter pub get` to pull the new `upgrader` dependency.
-Breaking: `CoordinatorDashboardEmpty` is a new BLoC state — any screen listening to `ShopCoordinatorBloc` must now handle this state to avoid unhandled state warnings.
+**v1.2.4** — Run `flutter pub get` to pull the new `upgrader` and `flutter_secure_storage` dependencies.
+- Create `android/key.properties` locally (gitignored) with your keystore credentials — see the signing config in `build.gradle` for required keys.
+- Breaking: `CoordinatorDashboardEmpty` is a new BLoC state — any screen listening to `ShopCoordinatorBloc` must handle this state.
+- Breaking: `FaceRecognitionLocalDatasource` and `FaceRecognitionRegulaDatasource` constructors now take `FlutterSecureStorage storage` instead of `SharedPreferences prefs` — update any manual instantiation.
 
 ## Version History
 
-### 🚀 v1.2.4 - "Stability & Security Improvements"
+### 🚀 v1.2.4 - "Face Recognition & Security Hardening"
 
 **What's New:**
 
+🔒 **Security & Authentication**
+
+- **Face Recognition Login** — Full biometric face enrollment and verification flow integrated into the login and attendance pipeline using a dual-method approach (TFLite embeddings + Regula SDK matching)
+- **Real-time Face Capture** — Live camera preview with real-time face detection during both enrollment and verification; oval position guide overlays the camera feed for better alignment accuracy
+- **Dedicated Blocked Screen** — New full-screen UI shown when login is blocked due to emulator detection, rooted/jailbroken device, or account being opened on another device
+- **Device Binding** — `isLoginAllowed` check added: if the account is already active on another device, the session is blocked and the user is auto-logged out with a clear message
+- **Encrypted Biometric Storage** — Face embeddings and reference images migrated from plain `SharedPreferences` to `FlutterSecureStorage` with `encryptedSharedPreferences` on Android and Keychain on iOS — biometric data is now stored encrypted at rest
+- **Keystore Credentials Secured** — Removed hardcoded signing passwords from `build.gradle`; credentials are now loaded from `key.properties` which is gitignored and never committed to source control
+- **Internet Connectivity Check Restored** — Login now shows a clear `"Tidak ada koneksi internet."` message before attempting the API call when there is no network, instead of throwing a cryptic HTTP exception
+
 🐛 **Bug Fixes**
 
-- Fixed a critical login bug where users could be auto-logged in with a previously valid account after logging out and attempting to log in with a non-existent account — credentials are now only saved to secure storage after the API confirms a successful login
-- Fixed logout not fully clearing credentials on Android devices running Android < 10 — `clearAllData()` now correctly wipes both `FlutterSecureStorage` and `SharedPreferences`
-- Fixed incorrect HTTP status code check (`<= 200` → `== 200`) in the login API handler that could misclassify responses
+- Fixed face detection on profile photo upload failing entirely — detection pipeline refactored so ML Kit runs correctly on the captured image before enrollment proceeds
+- Fixed face enrollment pipeline not completing — Regula SDK initialization sequence and verification flow corrected end-to-end
+- Fixed a critical login bug where users could be auto-logged in with a previously valid account after logging out — credentials are now only saved to secure storage after the API confirms a successful login
+- Fixed logout not fully clearing credentials on Android < 10 — `clearAllData()` now correctly wipes both `FlutterSecureStorage` and `SharedPreferences`
+- Fixed incorrect HTTP status code check in the **attendance** API handler (`<= 200` → `>= 200 && < 300`) — previously only codes 100–200 were treated as success; codes 201–299 were incorrectly rejected
+- Fixed incorrect HTTP status code check in the **login** API handler (`<= 200` → `== 200`)
 - Fixed a crash (`RangeError`) when the login API returned an empty or null `Data` array — null and length guards added before accessing `Data[0]`
-- Fixed `FlutterSecureStorage` being uninitialized before `initStorageConfig` was called by eagerly initializing the field at declaration
+- Fixed `FlutterSecureStorage` being uninitialized before `initStorageConfig` was called
 
 ✨ **New Features**
 
@@ -29,9 +44,12 @@ Breaking: `CoordinatorDashboardEmpty` is a new BLoC state — any screen listeni
 
 🔧 **Improvements**
 
+- Release APK now has `minifyEnabled` and `shrinkResources` turned on — smaller download size and obfuscated code for production builds
+- Removed iOS `BYPASS_PERMISSION_LOCATION_ALWAYS` preprocessor flag that was circumventing the standard iOS location permission model
 - `toTitleCase()` formatter now forces words matching the `SpecialCharacter.ltdCompany` list (e.g. `SIP`, `BASRA`, `RSSM`) to uppercase instead of title case
-- Shop Coordinator BLoC now explicitly handles all four API response statuses (`success`, `nodata`, `fail`, unknown) instead of falling through to a generic error
-- Simplified `fetchCoordinatorDashboard` response parsing — merged three identical return branches into one and replaced redundant empty-list `.map()` calls with typed empty list literals
+- Shop Coordinator BLoC now explicitly handles all four API response statuses (`success`, `nodata`, `fail`, unknown)
+- Simplified `fetchCoordinatorDashboard` response parsing — merged three identical return branches into one
+- Removed two dead screen files (`head_new_acts`, `head_store_screen`) that were never wired to navigation
 
 ### 🚀 v1.2.3 - "Display & Reporting Update"
 

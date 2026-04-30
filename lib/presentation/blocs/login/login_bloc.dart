@@ -40,15 +40,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         );
         return;
       }
-      // if (!await Functions.checkConnection()) {
-      //   emit(
-      //     LoginFailed(
-      //       message: 'No internet connection',
-      //       isRefresh: event.isRefresh,
-      //     ),
-      //   );
-      //   return;
-      // }
+      if (!await Functions.checkConnection()) {
+        emit(
+          LoginFailed(
+            message: 'Tidak ada koneksi internet.',
+            isRefresh: event.isRefresh,
+          ),
+        );
+        return;
+      }
 
       emit(LoginLoading(isRefresh: event.isRefresh));
 

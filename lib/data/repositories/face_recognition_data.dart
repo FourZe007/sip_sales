@@ -51,7 +51,7 @@ class FaceRecognitionRepositoryImpl implements FaceRecognitionRepository {
 
   @override
   Future<bool> hasReferenceEmbedding(String userId) async {
-    return _localDatasource.hasEmbedding(userId);
+    return await _localDatasource.hasEmbedding(userId);
   }
 
   @override

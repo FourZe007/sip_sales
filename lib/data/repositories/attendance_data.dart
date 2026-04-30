@@ -46,7 +46,7 @@ class AttendanceRepoImp implements AttendanceRepo {
     );
     log('Response: $response');
 
-    if (response.statusCode <= 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['Msg']}, ${res['Code']}");
@@ -121,7 +121,7 @@ class AttendanceRepoImp implements AttendanceRepo {
     );
     log('Response: $response');
 
-    if (response.statusCode <= 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       log('Response: ${response.statusCode}');
       final res = jsonDecode(response.body);
       log("${res['Msg']}, ${res['Code']}");

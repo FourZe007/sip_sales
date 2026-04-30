@@ -1,5 +1,5 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/data/datasources/face_recognition_local_datasource.dart';
 import 'package:sip_sales_clean/data/datasources/face_recognition_regula_datasource.dart';
 import 'package:sip_sales_clean/data/repositories/face_recognition_data.dart';
@@ -31,14 +31,17 @@ class FaceRecognitionDependencies {
 
   /// Call this once at app startup. It loads the TFLite model.
   static Future<FaceRecognitionDependencies> initialize() async {
-    // 1. SharedPreferences (you might already have this — reuse it)
-    final prefs = await SharedPreferences.getInstance();
+    // 1. Secure storage for biometric data
+    const storage = FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+    );
 
     // 2. TFLite datasource — owns the TFLite interpreter and local cache
-    final datasource = FaceRecognitionLocalDatasource(prefs: prefs);
+    final datasource = FaceRecognitionLocalDatasource(storage: storage);
 
     // 3. Regula datasource — wraps flutter_face_api SDK
-    final regulaDatasource = FaceRecognitionRegulaDatasource(prefs: prefs);
+    final regulaDatasource = FaceRecognitionRegulaDatasource(storage: storage);
     await regulaDatasource.initialize();
 
     // 4. Repository

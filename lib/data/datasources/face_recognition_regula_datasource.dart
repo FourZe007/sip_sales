@@ -3,11 +3,11 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter_face_api/flutter_face_api.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sip_sales_clean/core/constant/face_recognition_constants.dart';
 
 class FaceRecognitionRegulaDatasource {
-  final SharedPreferences _prefs;
+  final FlutterSecureStorage _storage;
   static const String _keyPrefix = 'face_regula_ref_';
 
   bool _isAvailable = false;
@@ -15,8 +15,8 @@ class FaceRecognitionRegulaDatasource {
   /// Whether the Regula SDK initialized successfully.
   bool get isAvailable => _isAvailable;
 
-  FaceRecognitionRegulaDatasource({required SharedPreferences prefs})
-      : _prefs = prefs;
+  FaceRecognitionRegulaDatasource({required FlutterSecureStorage storage})
+      : _storage = storage;
 
   /// Initialize the Regula SDK. Call once at app startup.
   /// Never throws — a failed init sets [isAvailable] to false and logs the reason.
@@ -36,12 +36,12 @@ class FaceRecognitionRegulaDatasource {
 
   /// Store the profile photo base64 as the reference for Regula matching.
   Future<void> saveReferenceImage(String userId, String base64Image) async {
-    await _prefs.setString('$_keyPrefix$userId', base64Image);
+    await _storage.write(key: '$_keyPrefix$userId', value: base64Image);
   }
 
   /// Retrieve the stored reference photo base64, or null if not enrolled.
   Future<String?> getReferenceImage(String userId) async {
-    return _prefs.getString('$_keyPrefix$userId');
+    return _storage.read(key: '$_keyPrefix$userId');
   }
 
   /// Compare two face images using the Regula SDK.
