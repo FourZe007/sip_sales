@@ -19,9 +19,11 @@ class FaceRecognitionRepositoryImpl implements FaceRecognitionRepository {
        _regulaDatasource = regulaDatasource;
 
   /// Must be called before any embedding operations.
+  /// Regula SDK init is owned by [FaceRecognitionDependencies.initialize] —
+  /// do not re-initialize it here, calling FaceSDK.initialize() twice fails
+  /// on iOS with "Core already running" and disables matchFaces.
   Future<void> initialize() async {
     // await _localDatasource.loadModel();
-    await _regulaDatasource.initialize();
   }
 
   @override
