@@ -359,7 +359,7 @@ class FaceRecognitionBloc
     final dx = (normX - cx) / r;
     final dy = (normY - cy) / r;
     log(
-      'NormX: ${normX.toString()}; NormY: ${normY.toString()}; dx: ${dx.toString()}; dy: ${dy.toString()}; result: ${(dx * dx + dy * dy) <= 1.0}',
+      'NormX: ${normX.toString()}; NormY: ${normY.toString()}; dx: ${dx.toString()}; dy: ${dy.toString()}; result: ${(dx * dx + dy * dy)}, ${(dx * dx + dy * dy) <= 1.0}',
     );
     return (dx * dx + dy * dy) <= 1.0;
   }

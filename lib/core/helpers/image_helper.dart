@@ -116,11 +116,39 @@ class ImageHelper {
   }
 
   static img.Image _convertBGRA8888(CameraImage image) {
-    final bytes = image.planes[0].bytes;
+    final plane = image.planes[0];
+    final width = image.width;
+    final height = image.height;
+    final bytesPerRow = plane.bytesPerRow;
+    final src = plane.bytes;
+    final expectedRow = width * 4;
+
+    dev.log(
+      'BGRA8888 convert: width=$width height=$height '
+      'bytesPerRow=$bytesPerRow expectedRow=$expectedRow '
+      'srcLength=${src.lengthInBytes} srcOffset=${src.offsetInBytes}',
+    );
+
+    // iOS BGRA frames are usually padded so bytesPerRow > width * 4 for
+    // 16-byte stride alignment, and `src` is often a view into a larger
+    // buffer with a non-zero offset. We must strip the row padding and
+    // copy into a fresh, tightly-packed Uint8List so the image package
+    // reads the correct bytes.
+    final packed = Uint8List(expectedRow * height);
+    if (bytesPerRow == expectedRow) {
+      packed.setRange(0, packed.length, src);
+    } else {
+      for (var row = 0; row < height; row++) {
+        final srcStart = row * bytesPerRow;
+        final dstStart = row * expectedRow;
+        packed.setRange(dstStart, dstStart + expectedRow, src, srcStart);
+      }
+    }
+
     return img.Image.fromBytes(
-      width: image.width,
-      height: image.height,
-      bytes: bytes.buffer,
+      width: width,
+      height: height,
+      bytes: packed.buffer,
       order: img.ChannelOrder.bgra,
     );
   }

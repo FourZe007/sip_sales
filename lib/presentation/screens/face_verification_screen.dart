@@ -103,122 +103,127 @@ class _FaceVerificationScreenState extends State<FaceVerificationScreen> {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          spacing: 12,
-          children: [
-            // Camera preview with face guide
-            Expanded(
-              flex: 3,
-              child: _isCameraReady && _cameraController != null
-                  ? CameraPreviewWidget(controller: _cameraController!)
-                  : const Center(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    ),
-            ),
-
-            // Status / instruction area
-            Expanded(
-              flex: 1,
-              child: BlocConsumer<FaceRecognitionBloc, FaceRecognitionState>(
-                listener: (context, state) {
-                  if (state is VerificationSuccess) {
-                    widget.onVerificationSuccess();
-                    Navigator.of(context).pop();
-                  } else if (state is VerificationFailure) {
-                    log('Face Verification failed: ${state.reason}');
-                  }
-                },
-                builder: (context, state) {
-                  return switch (state) {
-                    // Case 1
-                    VerificationInProgress(
-                      :final instruction, // equal to state.instruction
-                      :final faceDetected, // equal to state.faceDetected
-                      :final livenessOk, // equal to state.livenessOk
-                    ) =>
-                      LivenessInstructionWidget(
-                        instruction: instruction,
-                        faceDetected: faceDetected,
-                        livenessOk: livenessOk,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom,
+          ),
+          child: Column(
+            spacing: 12,
+            children: [
+              // Camera preview with face guide
+              Expanded(
+                flex: 3,
+                child: _isCameraReady && _cameraController != null
+                    ? CameraPreviewWidget(controller: _cameraController!)
+                    : const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
                       ),
+              ),
 
-                    // Case 2
-                    VerificationFailure(:final reason, :final score) =>
-                      SingleChildScrollView(
-                        child: Column(
-                          spacing: 8,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            LivenessInstructionWidget(
-                              instruction: reason,
-                              faceDetected: false,
-                            ),
-                            if (score != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
+              // Status / instruction area
+              Expanded(
+                flex: 1,
+                child: BlocConsumer<FaceRecognitionBloc, FaceRecognitionState>(
+                  listener: (context, state) {
+                    if (state is VerificationSuccess) {
+                      widget.onVerificationSuccess();
+                      Navigator.of(context).pop();
+                    } else if (state is VerificationFailure) {
+                      log('Face Verification failed: ${state.reason}');
+                    }
+                  },
+                  builder: (context, state) {
+                    return switch (state) {
+                      // Case 1
+                      VerificationInProgress(
+                        :final instruction, // equal to state.instruction
+                        :final faceDetected, // equal to state.faceDetected
+                        :final livenessOk, // equal to state.livenessOk
+                      ) =>
+                        LivenessInstructionWidget(
+                          instruction: instruction,
+                          faceDetected: faceDetected,
+                          livenessOk: livenessOk,
+                        ),
+
+                      // Case 2
+                      VerificationFailure(:final reason, :final score) =>
+                        SingleChildScrollView(
+                          child: Column(
+                            spacing: 8,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              LivenessInstructionWidget(
+                                instruction: reason,
+                                faceDetected: false,
+                              ),
+                              if (score != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    'Similarity: ${(score * 100).toStringAsFixed(1)}%',
+                                    style: TextStyle(
+                                      color: Colors.white.withAlpha(100),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+
+                              TextButton(
+                                onPressed: () {
+                                  context.read<FaceRecognitionBloc>().add(
+                                    StartVerification(userId: widget.userId),
+                                  );
+                                },
                                 child: Text(
-                                  'Similarity: ${(score * 100).toStringAsFixed(1)}%',
+                                  'Retry',
                                   style: TextStyle(
                                     color: Colors.white.withAlpha(100),
                                     fontSize: 12,
                                   ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
 
-                            TextButton(
-                              onPressed: () {
-                                context.read<FaceRecognitionBloc>().add(
-                                  StartVerification(userId: widget.userId),
-                                );
-                              },
-                              child: Text(
-                                'Retry',
-                                style: TextStyle(
-                                  color: Colors.white.withAlpha(100),
-                                  fontSize: 12,
-                                ),
+                      // Case 3
+                      VerificationSuccess(:final score) => SingleChildScrollView(
+                        child: Column(
+                          spacing: 8,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 48,
+                            ),
+
+                            Text(
+                              'Verified! (${(score * 100).toStringAsFixed(1)}%)',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                    // Case 3
-                    VerificationSuccess(:final score) => SingleChildScrollView(
-                      child: Column(
-                        spacing: 8,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                            size: 48,
-                          ),
-
-                          Text(
-                            'Verified! (${(score * 100).toStringAsFixed(1)}%)',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
+                      // Case 4
+                      FaceRecognitionLoading(:final message) => Center(
+                        child: Text(
+                          message,
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-
-                    // Case 4
-                    FaceRecognitionLoading(:final message) => Center(
-                      child: Text(
-                        message,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    _ => const SizedBox.shrink(), // default case
-                  };
-                },
+                      _ => const SizedBox.shrink(), // default case
+                    };
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

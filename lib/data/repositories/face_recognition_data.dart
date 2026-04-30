@@ -21,7 +21,7 @@ class FaceRecognitionRepositoryImpl implements FaceRecognitionRepository {
   /// Must be called before any embedding operations.
   Future<void> initialize() async {
     // await _localDatasource.loadModel();
-    await _regulaDatasource.initialize();
+    // await _regulaDatasource.initialize();
   }
 
   @override

@@ -83,7 +83,9 @@ class Functions {
     EmployeeModel user,
   ) async {
     if (user.profilePicture.isEmpty) {
-      log('enrollFaceIfNeeded: no profile picture for ${user.employeeID} — skipping');
+      log(
+        'enrollFaceIfNeeded: no profile picture for ${user.employeeID} — skipping',
+      );
       return;
     }
     try {
@@ -871,8 +873,8 @@ class Functions {
         log('iOS System Version: ${iosInfo.systemVersion}');
 
         // Generate a new ID if none exists
-        // deviceOS = iosInfo.systemVersion;
-        deviceOS = '';
+        deviceOS = iosInfo.systemVersion.split('.')[0];
+        // deviceOS = '';
 
         // Log the action for debugging
         log("Wrote New iOS Device OS: $deviceOS");

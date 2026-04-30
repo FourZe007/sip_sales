@@ -16,7 +16,7 @@ class FaceRecognitionRegulaDatasource {
   bool get isAvailable => _isAvailable;
 
   FaceRecognitionRegulaDatasource({required FlutterSecureStorage storage})
-      : _storage = storage;
+    : _storage = storage;
 
   /// Initialize the Regula SDK. Call once at app startup.
   /// Never throws — a failed init sets [isAvailable] to false and logs the reason.
@@ -26,8 +26,16 @@ class FaceRecognitionRegulaDatasource {
       if (success) {
         _isAvailable = true;
         log('Regula SDK initialized successfully');
+        return;
       } else {
-        log('Regula SDK init failed: ${error?.message}');
+        // log('Regula SDK init failed: ${error?.message}');
+        final message = error?.message ?? '';
+        if (message.toLowerCase().contains('already running')) {
+          _isAvailable = true;
+          log('Regula SDK already running — reusing existing native instance');
+          return;
+        }
+        log('Regula SDK init failed: $message');
       }
     } catch (e) {
       log('Regula SDK init exception: $e');
@@ -71,6 +79,11 @@ class FaceRecognitionRegulaDatasource {
       }
 
       final score = response.results.first.similarity;
+      log(
+        'Regula matchFaces: score=$score '
+        'threshold=${FaceRecognitionConstants.regulaSimilarityThreshold} '
+        'liveBytes=${liveBytes.length} refBytes=${refBytes.length}',
+      );
       return (
         score: score,
         isMatch: score >= FaceRecognitionConstants.regulaSimilarityThreshold,
