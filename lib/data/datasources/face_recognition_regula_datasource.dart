@@ -71,6 +71,11 @@ class FaceRecognitionRegulaDatasource {
       }
 
       final score = response.results.first.similarity;
+      log(
+        'Regula matchFaces: score=$score '
+        'threshold=${FaceRecognitionConstants.regulaSimilarityThreshold} '
+        'liveBytes=${liveBytes.length} refBytes=${refBytes.length}',
+      );
       return (
         score: score,
         isMatch: score >= FaceRecognitionConstants.regulaSimilarityThreshold,
