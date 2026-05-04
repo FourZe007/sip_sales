@@ -196,57 +196,64 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                                     ),
                                   ],
                                 ),
-                                child: BlocConsumer<AttendanceBloc, AttendanceState>(
-                                  // buildWhen: (previous, current) =>
-                                  //     current is DailyAttendanceLoading ||
-                                  //     current is DailyAttendanceSuccess ||
-                                  //     current is DailyAttendanceError,
-                                  listener: (context, state) {
-                                    if (state is DailyAttendanceError ||
-                                        state is EventAttendanceError) {
-                                      if (state is DailyAttendanceError) {
-                                        Functions.customFlutterToast(
-                                          state.message,
-                                        );
-                                      } else if (state
-                                          is EventAttendanceError) {
-                                        Functions.customFlutterToast(
-                                          state.message,
-                                        );
-                                      }
-                                    } else if (state
-                                            is DailyAttendanceSuccess ||
-                                        state is EventAttendanceSuccess) {
-                                      Functions.customFlutterToast(
-                                        'Anda berhasil absen.',
-                                      );
+                                child:
+                                    BlocConsumer<
+                                      AttendanceBloc,
+                                      AttendanceState
+                                    >(
+                                      // buildWhen: (previous, current) =>
+                                      //     current is DailyAttendanceLoading ||
+                                      //     current is DailyAttendanceSuccess ||
+                                      //     current is DailyAttendanceError,
+                                      listener: (context, state) {
+                                        if (state is DailyAttendanceError ||
+                                            state is EventAttendanceError) {
+                                          if (state is DailyAttendanceError) {
+                                            Functions.customFlutterToast(
+                                              state.message,
+                                            );
+                                          } else if (state
+                                              is EventAttendanceError) {
+                                            Functions.customFlutterToast(
+                                              state.message,
+                                            );
+                                          }
+                                        } else if (state
+                                                is DailyAttendanceSuccess ||
+                                            state is EventAttendanceSuccess) {
+                                          Functions.customFlutterToast(
+                                            'Anda berhasil absen.',
+                                          );
 
-                                      context.read<SalesmanBloc>().add(
-                                        SalesmanButtonPressed(
-                                          salesmanId: widget.salesmanId,
-                                          startDate: '',
-                                          endDate: '',
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  builder: (context, state) {
-                                    if (state is DailyAttendanceLoading ||
-                                        state is EventAttendanceLoading) {
-                                        return const AndroidIosLoading(
-                                          indicatorColor: Colors.black,
-                                          strokeWidth: 3,
-                                        );
-                                    } else {
-                                      return Text(
-                                        'Clock In',
-                                        style: TextThemes.normal.copyWith(
-                                          fontSize: 16,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
+                                          context.read<SalesmanBloc>().add(
+                                            SalesmanButtonPressed(
+                                              salesmanId: widget.salesmanId,
+                                              startDate: '',
+                                              endDate: '',
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      builder: (context, state) {
+                                        if (state is DailyAttendanceLoading ||
+                                            state is EventAttendanceLoading) {
+                                          return const AndroidIosLoading(
+                                            indicatorColor: Colors.black,
+                                            strokeWidth: 3,
+                                            iosRadius: 12,
+                                            customizedHeight: 24,
+                                            customizedWidth: 24,
+                                          );
+                                        } else {
+                                          return Text(
+                                            'Clock In',
+                                            style: TextThemes.normal.copyWith(
+                                              fontSize: 16,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                               ),
                             );
                           },
@@ -318,10 +325,13 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                             builder: (context, state) {
                               if (state is RadiusCheckerLoading &&
                                   !state.isRefresh) {
-                                  return const AndroidIosLoading(
-                                    indicatorColor: Colors.black,
-                                    strokeWidth: 3,
-                                  );
+                                return const AndroidIosLoading(
+                                  indicatorColor: Colors.black,
+                                  strokeWidth: 3,
+                                  iosRadius: 12,
+                                  customizedHeight: 24,
+                                  customizedWidth: 24,
+                                );
                               } else {
                                 return Text(
                                   'Lokasi Anda',
@@ -387,10 +397,13 @@ class _SalesmanAttendanceScreenState extends State<SalesmanAttendanceScreen> {
                         current is SalesmanAttendanceFailed,
                     builder: (context, state) {
                       if (state is SalesmanLoading) {
-                          return const AndroidIosLoading(
-                            indicatorColor: Colors.black,
-                            strokeWidth: 3,
-                          );
+                        return const AndroidIosLoading(
+                          indicatorColor: Colors.black,
+                          strokeWidth: 3,
+                          customizedHeight: 24,
+                          customizedWidth: 24,
+                          iosRadius: 12,
+                        );
                       } else if (state is SalesmanAttendanceFailed) {
                         if (state.message == 'no data') {
                           return const Center(

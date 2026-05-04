@@ -144,10 +144,13 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
     return BlocBuilder<ShopCoordinatorBloc, ShopCoordinatorState>(
       builder: (context, state) {
         if (state is CoordinatorDashboardLoading) {
-            return const AndroidIosLoading(
-              indicatorColor: Colors.black,
-              strokeWidth: 3,
-            );
+          return const AndroidIosLoading(
+            indicatorColor: Colors.black,
+            strokeWidth: 3,
+            iosRadius: 12,
+            customizedHeight: 24,
+            customizedWidth: 24,
+          );
         } else if (state is CoordinatorDashboardError) {
           return Column(
             spacing: 8,
@@ -187,6 +190,7 @@ class _CoordinatorDashboardState extends State<CoordinatorDashboard> {
         } else if (state is CoordinatorDashboardEmpty) {
           return Column(
             spacing: 8,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // ~:Empty Text:~

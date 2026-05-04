@@ -324,15 +324,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                           await Functions.enrollFaceIfNeeded(
                                             context,
                                             state.user,
+                                            // isEnrollmentRequired: true,
                                           );
 
-                                          // make sure the user enter the initiated navbar
-                                          context
-                                              .read<NavbarCubit>()
-                                              .changeNavbarType(0);
+                                          if (context.mounted) {
+                                            // make sure the user enter the initiated navbar
+                                            context
+                                                .read<NavbarCubit>()
+                                                .changeNavbarType(0);
 
-                                          if (state.user.code == 2) {
-                                            if (context.mounted) {
+                                            if (state.user.code == 2) {
                                               context
                                                   .read<ShopCoordinatorBloc>()
                                                   .add(
@@ -354,28 +355,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 context,
                                                 '/home',
                                               );
-                                            }
-                                          } else {
-                                            if (state.user.code == 0) {
-                                              context
-                                                  .read<NavbarCubit>()
-                                                  .changeNavbarType(0);
-                                            }
+                                            } else {
+                                              if (state.user.code == 0) {
+                                                context
+                                                    .read<NavbarCubit>()
+                                                    .changeNavbarType(0);
+                                              }
 
-                                            Functions.displayProminentDisclosure(
-                                              context,
-                                            );
+                                              Functions.displayProminentDisclosure(
+                                                context,
+                                              );
+                                            }
                                           }
                                         }
                                       },
                                       builder: (context, state) {
                                         if (state is LoginLoading) {
-                                            return const AndroidIosLoading(
-                                              indicatorColor: Colors.white,
-                                              customizedHeight: 20,
-                                              customizedWidth: 20,
-                                              strokeWidth: 3,
-                                            );
+                                          return const AndroidIosLoading(
+                                            indicatorColor: Colors.white,
+                                            customizedHeight: 20,
+                                            customizedWidth: 20,
+                                            strokeWidth: 3,
+                                          );
                                         } else {
                                           return CustomText(
                                             'SIGN IN',
@@ -402,10 +403,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: MediaQuery.of(context).size.width,
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 8),
-                  // margin: EdgeInsets.symmetric(vertical: 4),
-                  // decoration: BoxDecoration(
-                  //   border: Border.all(color: Colors.black),
-                  // ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

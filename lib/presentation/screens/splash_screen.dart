@@ -71,11 +71,17 @@ class _SplashScreenState extends State<SplashScreen> {
                 Navigator.pushReplacementNamed(context, ConstantRoutes.login);
               }
             } else if (state is LoginSuccess) {
-              await Functions.enrollFaceIfNeeded(context, state.user).then((_) {
-                log(
-                  'FaceRecognitionBloc state: ${context.read<FaceRecognitionBloc>().state}',
-                );
-                log('Face enrolled');
+              await Functions.enrollFaceIfNeeded(
+                context,
+                state.user,
+                // isEnrollmentRequired: true,
+              ).then((_) {
+                if (context.mounted) {
+                  log(
+                    'FaceRecognitionBloc state: ${context.read<FaceRecognitionBloc>().state}',
+                  );
+                  log('Face enrolled');
+                }
               });
               if (context.mounted) {
                 Navigator.pushReplacementNamed(
@@ -89,17 +95,27 @@ class _SplashScreenState extends State<SplashScreen> {
           },
           buildWhen: (_, __) => false,
           builder: (context, state) {
-            return Center(
+            return Container(
+              color: Colors.white,
+              alignment: Alignment.center,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 20,
                 children: [
+                  // ~:App Logo:~
                   Image(
                     image: const AssetImage('assets/SIP.png'),
                     width: MediaQuery.of(context).size.width * 0.55,
                     fit: BoxFit.cover,
                   ),
-                  const AndroidIosLoading(strokeWidth: 3),
+
+                  // ~:Loading Indicator:~
+                  AndroidIosLoading(
+                    strokeWidth: 3,
+                    customizedHeight: 24,
+                    customizedWidth: 24,
+                    iosRadius: 12,
+                  ),
                 ],
               ),
             );

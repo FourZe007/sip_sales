@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -187,10 +186,13 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
                           !state.isDashboard &&
                           !state.isActsDetail &&
                           !state.isDelete) {
-                          return const AndroidIosLoading(
-                            indicatorColor: Colors.black,
-                            strokeWidth: 3,
-                          );
+                        return const AndroidIosLoading(
+                          indicatorColor: Colors.black,
+                          strokeWidth: 3,
+                          customizedHeight: 24,
+                          customizedWidth: 24,
+                          iosRadius: 12,
+                        );
                       } else {
                         return Text(
                           'Buat',

@@ -504,10 +504,13 @@ class _HeadSpkScreenState extends State<HeadSpkScreen> {
             child: BlocBuilder<SpkLeasingDataCubit, SpkLeasingDataState>(
               builder: (context, state) {
                 if (state is SpkLeasingDataLoading) {
-                    return const AndroidIosLoading(
-                      indicatorColor: Colors.black,
-                      strokeWidth: 3,
-                    );
+                  return const AndroidIosLoading(
+                    indicatorColor: Colors.black,
+                    strokeWidth: 3,
+                    customizedHeight: 24,
+                    customizedWidth: 24,
+                    iosRadius: 12,
+                  );
                 } else if (state is SpkLeasingDataFailed) {
                   return Column(
                     spacing: 8,

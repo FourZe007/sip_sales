@@ -1,12 +1,10 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/shop_coordinator/shop_coordinator_event.dart';
 import 'package:sip_sales_clean/presentation/screens/coordinator_dashboard_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/platform_refresh.dart';
 
 class Widgets {
   static Widget shopCoordinatorBody(
@@ -15,7 +13,6 @@ class Widgets {
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -25,41 +22,20 @@ class Widgets {
         color: Colors.white,
       ),
       padding: EdgeInsets.fromLTRB(12, 16, 12, 8),
-      child: (Platform.isIOS)
-          ? CustomScrollView(
-              slivers: [
-                CupertinoSliverRefreshControl(
-                  onRefresh: () async =>
-                      context.read<ShopCoordinatorBloc>().add(
-                        LoadCoordinatorDashboard(
-                          employeeId,
-                          DateTime.now().toIso8601String().split(
-                            'T',
-                          )[0],
-                        ),
-                      ),
-                ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, _) => CoordinatorDashboard(
-                      employeeId: employeeId,
-                    ),
-                    childCount: 1,
-                  ),
-                ),
-              ],
-            )
-          : RefreshIndicator(
-              onRefresh: () async => context.read<ShopCoordinatorBloc>().add(
-                LoadCoordinatorDashboard(
-                  employeeId,
-                  DateTime.now().toIso8601String().split(
-                    'T',
-                  )[0],
-                ),
-              ),
-              child: CoordinatorDashboard(employeeId: employeeId),
+      child: LayoutBuilder(
+        builder: (context, constraints) => PlatformRefresh(
+          onRefresh: () async => context.read<ShopCoordinatorBloc>().add(
+            LoadCoordinatorDashboard(
+              employeeId,
+              DateTime.now().toIso8601String().split('T')[0],
             ),
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: CoordinatorDashboard(employeeId: employeeId),
+          ),
+        ),
+      ),
     );
   }
 

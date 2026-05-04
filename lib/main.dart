@@ -21,15 +21,12 @@ void main() async {
 
   await FaceRecognitionDependencies.initialize();
 
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   if (deviceOS.isNotEmpty && Platform.isAndroid) {
     if (int.parse(deviceOS.split('.')[0]) >= 10) {
       log('Device OS $deviceOS is above OS 10.');
       await Functions.initStorageConfig(false);
-
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
-      );
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     } else {
       log('Device OS $deviceOS is below OS 10.');
       await Functions.initStorageConfig(true);
@@ -52,24 +49,21 @@ class MyApp extends StatelessWidget {
       upgrader: Upgrader(
         durationUntilAlertAgain: const Duration(days: 1),
       ),
-      child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-        child: MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: const TextScaler.linear(1.0)),
-          child: MultiBlocProvider(
-            providers: StateManager.getBlocProviders(),
-            child: ChangeNotifierProvider(
-              create: (context) => FilterStateProvider(),
-              child: MaterialApp(
-                title: 'SIP Sales',
-                scrollBehavior: MyCustomScrollBehavior(),
-                debugShowCheckedModeBanner: false,
-                navigatorKey: navigatorKey,
-                initialRoute: ConstantRoutes.init,
-                routes: ConstantRoutes.maps,
-              ),
+      child: MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: const TextScaler.linear(1.0)),
+        child: MultiBlocProvider(
+          providers: StateManager.getBlocProviders(),
+          child: ChangeNotifierProvider(
+            create: (context) => FilterStateProvider(),
+            child: MaterialApp(
+              title: 'SIP Sales',
+              scrollBehavior: MyCustomScrollBehavior(),
+              debugShowCheckedModeBanner: false,
+              navigatorKey: navigatorKey,
+              initialRoute: ConstantRoutes.init,
+              routes: ConstantRoutes.maps,
             ),
           ),
         ),

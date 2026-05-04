@@ -413,10 +413,13 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
               builder: (context, state) {
                 log('Builder State: $state');
                 if (state is UpdateFollowupDashboardLoading) {
-                    return const AndroidIosLoading(
-                      indicatorColor: Colors.black,
-                      strokeWidth: 3,
-                    );
+                  return const AndroidIosLoading(
+                    indicatorColor: Colors.black,
+                    strokeWidth: 3,
+                    customizedHeight: 24,
+                    customizedWidth: 24,
+                    iosRadius: 12,
+                  );
                 } else if (state is UpdateFollowupDashboardError) {
                   log('Error: ${state.message}');
                   if (state.message.contains('[]')) {
@@ -524,13 +527,14 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                     builder: (context, state) {
                                                       if (state
                                                           is SaveFollowupLoading) {
-                                                          return const AndroidIosLoading(
-                                                            customizedHeight:
-                                                                16,
-                                                            customizedWidth: 16,
-                                                            indicatorColor: Colors.white,
-                                                            strokeWidth: 2,
-                                                          );
+                                                        return const AndroidIosLoading(
+                                                          customizedHeight: 24,
+                                                          customizedWidth: 24,
+                                                          iosRadius: 12,
+                                                          indicatorColor:
+                                                              Colors.white,
+                                                          strokeWidth: 2,
+                                                        );
                                                       } else {
                                                         return Text(
                                                           'Save',
@@ -994,10 +998,17 @@ class _FollowupDashboardDetailState extends State<FollowupDashboardDetail> {
                                                                   if (state
                                                                       is SaveFollowupLoading) {
                                                                     return const AndroidIosLoading(
-                                                                      indicatorColor: Colors.white,
-                                                                      customizedHeight: 16,
-                                                                      customizedWidth: 16,
-                                                                      strokeWidth: 2,
+                                                                      indicatorColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      customizedHeight:
+                                                                          24,
+                                                                      customizedWidth:
+                                                                          24,
+                                                                      iosRadius:
+                                                                          12,
+                                                                      strokeWidth:
+                                                                          2,
                                                                     );
                                                                   } else {
                                                                     return Text(

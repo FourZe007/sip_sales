@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,6 @@ import 'package:sip_sales_clean/presentation/screens/image_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/cards/performance_card.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
-import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/leasing_report.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/payment_report.dart';
@@ -97,10 +97,13 @@ class _HeadActDetailScreenState extends State<HeadActDetailScreen> {
                     !state.isActs &&
                     !state.isDashboard &&
                     !state.isInsert) {
-                    return const AndroidIosLoading(
-                      indicatorColor: Colors.black,
-                      strokeWidth: 3,
-                    );
+                  return const AndroidIosLoading(
+                    indicatorColor: Colors.black,
+                    strokeWidth: 3,
+                    customizedHeight: 24,
+                    customizedWidth: 24,
+                    iosRadius: 12,
+                  );
                 } else if (state is HeadStoreDataDetailFailed) {
                   return Center(
                     child: Text(state.message),
@@ -267,6 +270,7 @@ Widget briefingDetail(
                   height: 220,
                   margin: EdgeInsets.only(top: 8),
                   child: Column(
+                    spacing: 8,
                     children: [
                       // ~:Title:~
                       Text(
@@ -284,27 +288,34 @@ Widget briefingDetail(
                           children: [
                             // ~:Pie Chart:~
                             Expanded(
-                              child: PieChart(
-                                PieChartData(
-                                  startDegreeOffset: -150,
-                                  sections: pieChartList
-                                      .map(
-                                        (e) => PieChartSectionData(
-                                          value: double.parse(
-                                            e['number'].toString(),
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutBack,
+                                builder: (context, value, child) =>
+                                    Transform.scale(scale: value, child: child),
+                                child: PieChart(
+                                  PieChartData(
+                                    startDegreeOffset: -150,
+                                    sections: pieChartList
+                                        .map(
+                                          (e) => PieChartSectionData(
+                                            value: double.parse(
+                                              e['number'].toString(),
+                                            ),
+                                            title: '',
+                                            color: e['color'],
+                                            radius: 60,
+                                            titleStyle: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
                                           ),
-                                          title: '',
-                                          color: e['color'],
-                                          radius: 60,
-                                          titleStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  sectionsSpace: 2,
-                                  // centerSpaceRadius: 32,
+                                        )
+                                        .toList(),
+                                    sectionsSpace: 2,
+                                    // centerSpaceRadius: 32,
+                                  ),
                                 ),
                               ),
                             ),
@@ -424,6 +435,10 @@ Widget briefingDetail(
                     padding: EdgeInsets.all(4),
                     backgroundColor: Colors.white,
                     elevation: 0.0,
+                    overlayColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                   child: BlocConsumer<ImageCubit, ImageState>(
                     listener: (context, state) {
@@ -464,6 +479,9 @@ Widget briefingDetail(
                             (state is ImageLoading)
                                 ? AndroidIosLoading(
                                     indicatorColor: Colors.grey[300]!,
+                                    customizedHeight: 24,
+                                    customizedWidth: 24,
+                                    iosRadius: 12,
                                   )
                                 : SizedBox.shrink(),
                           ],
@@ -593,27 +611,34 @@ Widget visitDetail(
                           children: [
                             // ~:Pie Chart:~
                             Expanded(
-                              child: PieChart(
-                                PieChartData(
-                                  startDegreeOffset: -150,
-                                  sections: pieChartList
-                                      .map(
-                                        (e) => PieChartSectionData(
-                                          value: double.parse(
-                                            e['number'].toString(),
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutBack,
+                                builder: (context, value, child) =>
+                                    Transform.scale(scale: value, child: child),
+                                child: PieChart(
+                                  PieChartData(
+                                    startDegreeOffset: -150,
+                                    sections: pieChartList
+                                        .map(
+                                          (e) => PieChartSectionData(
+                                            value: double.parse(
+                                              e['number'].toString(),
+                                            ),
+                                            title: '',
+                                            color: e['color'],
+                                            radius: 60,
+                                            titleStyle: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
                                           ),
-                                          title: '',
-                                          color: e['color'],
-                                          radius: 60,
-                                          titleStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  sectionsSpace: 2,
-                                  // centerSpaceRadius: 32,
+                                        )
+                                        .toList(),
+                                    sectionsSpace: 2,
+                                    // centerSpaceRadius: 32,
+                                  ),
                                 ),
                               ),
                             ),
@@ -695,6 +720,10 @@ Widget visitDetail(
                     padding: EdgeInsets.all(4),
                     backgroundColor: Colors.white,
                     elevation: 0.0,
+                    overlayColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                   child: BlocConsumer<ImageCubit, ImageState>(
                     listener: (context, state) {
@@ -735,6 +764,9 @@ Widget visitDetail(
                             (state is ImageLoading)
                                 ? AndroidIosLoading(
                                     indicatorColor: Colors.grey[300]!,
+                                    customizedHeight: 24,
+                                    customizedWidth: 24,
+                                    iosRadius: 12,
                                   )
                                 : SizedBox.shrink(),
                           ],
@@ -840,6 +872,10 @@ Widget recruitmentDetail(
                     padding: EdgeInsets.all(4),
                     backgroundColor: Colors.white,
                     elevation: 0.0,
+                    overlayColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                   child: BlocConsumer<ImageCubit, ImageState>(
                     listener: (context, state) {
@@ -880,6 +916,9 @@ Widget recruitmentDetail(
                             (state is ImageLoading)
                                 ? AndroidIosLoading(
                                     indicatorColor: Colors.grey[300]!,
+                                    customizedHeight: 24,
+                                    customizedWidth: 24,
+                                    iosRadius: 12,
                                   )
                                 : SizedBox.shrink(),
                           ],
@@ -1009,27 +1048,34 @@ Widget interviewDetail(
                           children: [
                             // ~:Pie Chart:~
                             Expanded(
-                              child: PieChart(
-                                PieChartData(
-                                  startDegreeOffset: -150,
-                                  sections: participantPieChartList
-                                      .map(
-                                        (e) => PieChartSectionData(
-                                          value: double.parse(
-                                            e['number'].toString(),
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutBack,
+                                builder: (context, value, child) =>
+                                    Transform.scale(scale: value, child: child),
+                                child: PieChart(
+                                  PieChartData(
+                                    startDegreeOffset: -150,
+                                    sections: participantPieChartList
+                                        .map(
+                                          (e) => PieChartSectionData(
+                                            value: double.parse(
+                                              e['number'].toString(),
+                                            ),
+                                            title: '',
+                                            color: e['color'],
+                                            radius: 40,
+                                            titleStyle: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
                                           ),
-                                          title: '',
-                                          color: e['color'],
-                                          radius: 40,
-                                          titleStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  sectionsSpace: 2,
-                                  // centerSpaceRadius: 32,
+                                        )
+                                        .toList(),
+                                    sectionsSpace: 2,
+                                    // centerSpaceRadius: 32,
+                                  ),
                                 ),
                               ),
                             ),
@@ -1106,27 +1152,34 @@ Widget interviewDetail(
                           children: [
                             // ~:Pie Chart:~
                             Expanded(
-                              child: PieChart(
-                                PieChartData(
-                                  startDegreeOffset: -150,
-                                  sections: mediaPieChartList
-                                      .map(
-                                        (e) => PieChartSectionData(
-                                          value: double.parse(
-                                            e['number'].toString(),
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutBack,
+                                builder: (context, value, child) =>
+                                    Transform.scale(scale: value, child: child),
+                                child: PieChart(
+                                  PieChartData(
+                                    startDegreeOffset: -150,
+                                    sections: mediaPieChartList
+                                        .map(
+                                          (e) => PieChartSectionData(
+                                            value: double.parse(
+                                              e['number'].toString(),
+                                            ),
+                                            title: '',
+                                            color: e['color'],
+                                            radius: 40,
+                                            titleStyle: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
                                           ),
-                                          title: '',
-                                          color: e['color'],
-                                          radius: 40,
-                                          titleStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  sectionsSpace: 2,
-                                  // centerSpaceRadius: 32,
+                                        )
+                                        .toList(),
+                                    sectionsSpace: 2,
+                                    // centerSpaceRadius: 32,
+                                  ),
                                 ),
                               ),
                             ),
@@ -1208,6 +1261,10 @@ Widget interviewDetail(
                     padding: EdgeInsets.all(4),
                     backgroundColor: Colors.white,
                     elevation: 0.0,
+                    overlayColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                   child: BlocConsumer<ImageCubit, ImageState>(
                     listener: (context, state) {
@@ -1248,6 +1305,9 @@ Widget interviewDetail(
                             (state is ImageLoading)
                                 ? AndroidIosLoading(
                                     indicatorColor: Colors.grey[300]!,
+                                    customizedHeight: 24,
+                                    customizedWidth: 24,
+                                    iosRadius: 12,
                                   )
                                 : SizedBox.shrink(),
                           ],
@@ -1407,6 +1467,10 @@ Widget reportDetail(
                     padding: EdgeInsets.all(4),
                     backgroundColor: Colors.white,
                     elevation: 0.0,
+                    overlayColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                   child: BlocConsumer<ImageCubit, ImageState>(
                     listener: (context, state) {
@@ -1447,6 +1511,9 @@ Widget reportDetail(
                             (state is ImageLoading)
                                 ? AndroidIosLoading(
                                     indicatorColor: Colors.grey[300]!,
+                                    customizedHeight: 24,
+                                    customizedWidth: 24,
+                                    iosRadius: 12,
                                   )
                                 : SizedBox.shrink(),
                           ],

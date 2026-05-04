@@ -14,6 +14,7 @@ import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/platform_refresh.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -492,6 +493,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (state is LogoutLoading) {
                       return const AndroidIosLoading(
                         indicatorColor: Colors.white,
+                        customizedHeight: 24,
+                        customizedWidth: 24,
+                        iosRadius: 12,
                       );
                     } else {
                       return Text(
@@ -703,54 +707,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 color: Colors.white,
               ),
-              child: Builder(
-                builder: (context) {
-                  if (Platform.isIOS) {
-                    return CustomScrollView(
-                      slivers: [
-                        CupertinoSliverRefreshControl(
-                          onRefresh: () async => context.read<LoginBloc>().add(
-                            LoginButtonPressed(
-                              context: (context.mounted) ? context : context,
-                              id: await Functions.readAndWriteEmployeeId(),
-                              pass: await Functions.readAndWriteUserPass(),
-                              isRefresh: true,
-                            ),
-                          ),
-                        ),
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, _) => SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.825,
-                              child: profileTemplate(),
-                            ),
-                            childCount: 1,
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return RefreshIndicator(
-                      onRefresh: () async => context.read<LoginBloc>().add(
-                        LoginButtonPressed(
-                          context: (context.mounted) ? context : context,
-                          id: await Functions.readAndWriteEmployeeId(),
-                          pass: await Functions.readAndWriteUserPass(),
-                          isRefresh: true,
-                        ),
-                      ),
-                      child: SingleChildScrollView(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.825,
-                          child: profileTemplate(),
-                        ),
-                      ),
-                    );
-                  }
-                },
+              child: PlatformRefresh(
+                onRefresh: () async => context.read<LoginBloc>().add(
+                  LoginButtonPressed(
+                    context: (context.mounted) ? context : context,
+                    id: await Functions.readAndWriteEmployeeId(),
+                    pass: await Functions.readAndWriteUserPass(),
+                    isRefresh: true,
+                  ),
+                ),
+                child: profileTemplate(),
               ),
+              // child: Builder(
+              //   builder: (context) {
+              //     if (Platform.isIOS) {
+              //       return CustomScrollView(
+              //         slivers: [
+              //           CupertinoSliverRefreshControl(
+              //             onRefresh: () async => context.read<LoginBloc>().add(
+              //               LoginButtonPressed(
+              //                 context: (context.mounted) ? context : context,
+              //                 id: await Functions.readAndWriteEmployeeId(),
+              //                 pass: await Functions.readAndWriteUserPass(),
+              //                 isRefresh: true,
+              //               ),
+              //             ),
+              //           ),
+              //           SliverList(
+              //             delegate: SliverChildBuilderDelegate(
+              //               (context, _) => SizedBox(
+              //                 height:
+              //                     MediaQuery.of(context).size.height * 0.825,
+              //                 child: profileTemplate(),
+              //               ),
+              //               childCount: 1,
+              //             ),
+              //           ),
+              //         ],
+              //       );
+              //     } else {
+              //       return RefreshIndicator(
+              //         onRefresh: () async => context.read<LoginBloc>().add(
+              //           LoginButtonPressed(
+              //             context: (context.mounted) ? context : context,
+              //             id: await Functions.readAndWriteEmployeeId(),
+              //             pass: await Functions.readAndWriteUserPass(),
+              //             isRefresh: true,
+              //           ),
+              //         ),
+              //         child: SingleChildScrollView(
+              //           physics: AlwaysScrollableScrollPhysics(),
+              //           child: SizedBox(
+              //             height: MediaQuery.of(context).size.height * 0.825,
+              //             child: profileTemplate(),
+              //           ),
+              //         ),
+              //       );
+              //     }
+              //   },
+              // ),
             ),
           ),
         ),

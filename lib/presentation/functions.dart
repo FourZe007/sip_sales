@@ -88,6 +88,7 @@ class Functions {
       );
       return;
     }
+
     try {
       final deps = FaceRecognitionDependencies.instance;
       // Capture bloc before any await — avoids BuildContext across async gap.

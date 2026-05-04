@@ -93,6 +93,9 @@ class LoginBlockedScreen extends StatelessWidget {
                               ? const AndroidIosLoading(
                                   strokeWidth: 3,
                                   indicatorColor: Colors.white,
+                                  customizedHeight: 24,
+                                  customizedWidth: 24,
+                                  iosRadius: 12,
                                 )
                               : const Text(
                                   'Kembali ke Login',

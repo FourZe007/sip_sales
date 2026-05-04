@@ -167,19 +167,18 @@ class _LocationScreenState extends State<LocationScreen> {
                                       '/home',
                                     );
                                   } else if (state is LocationServiceFailed) {
-                                    Functions.customFlutterToast(
-                                      state.message,
-                                    );
+                                    Functions.customFlutterToast(state.message);
                                   }
                                 },
                                 builder: (context, state) {
                                   if (state is LocationServiceLoading) {
-                                      return const AndroidIosLoading(
-                                        indicatorColor: Colors.white,
-                                        customizedHeight: 20.0,
-                                        customizedWidth: 20.0,
-                                        strokeWidth: 3,
-                                      );
+                                    return const AndroidIosLoading(
+                                      indicatorColor: Colors.white,
+                                      customizedHeight: 20.0,
+                                      customizedWidth: 20.0,
+                                      strokeWidth: 3,
+                                      iosRadius: 12,
+                                    );
                                   } else {
                                     return Text(
                                       'Continue',

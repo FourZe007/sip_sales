@@ -39,6 +39,7 @@ import 'package:sip_sales_clean/presentation/screens/salesman_attendance_screen.
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/buttons/colored_button.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/platform_refresh.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/category_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/dealer_filter_panel.dart';
 import 'package:sip_sales_clean/presentation/widgets/panels/leasing_filter_panel.dart';
@@ -219,9 +220,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           (current is LoginSuccess && current.isRefresh),
       builder: (context, state) {
         if (state is LoginLoading) {
-          return const AndroidIosLoading(
-            customizedHeight: 16,
-            customizedWidth: 16,
+          return Center(
+            child: const AndroidIosLoading(
+              customizedHeight: 24,
+              customizedWidth: 24,
+              iosRadius: 12,
+            ),
           );
         } else if (state is LoginFailed) {
           return Center(
@@ -287,223 +291,70 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       children: [
                         // Scrollable settings list — pull-to-refresh lives here
                         Expanded(
-                          child: RefreshIndicator(
+                          child: PlatformRefresh(
                             onRefresh: () async => context.read<LoginBloc>().add(
                               LoginButtonPressed(
-                                context: (context.mounted) ? context : context,
+                                context: context.mounted ? context : context,
                                 id: await Functions.readAndWriteEmployeeId(),
                                 pass: await Functions.readAndWriteUserPass(),
                                 isRefresh: true,
                               ),
                             ),
-                            child: SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: SizedBox(
-                                height: MediaQuery.of(context).size.height,
-                                child: Column(
-                                  spacing: 8,
-                                  children: [
-                                    // ~:Settings Title:~
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 8,
-                                      ),
-                                      child: Text(
-                                        'Pengaturan',
-                                        style: TextThemes.normal.copyWith(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              child: Column(
+                                spacing: 8,
+                                children: [
+                                  // ~:Settings Title:~
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 8,
+                                    ),
+                                    child: Text(
+                                      'Pengaturan',
+                                      style: TextThemes.normal.copyWith(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                  ),
 
-                                    // ~:Privacy Policy Section:~
-                                    InkWell(
-                                      onTap: () => launchLink(
-                                        'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-                                      ),
-                                      child: SizedBox(
-                                        width: MediaQuery.of(
-                                          context,
-                                        ).size.width,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: const Icon(
-                                                Icons.privacy_tip_rounded,
-                                                size: 30.0,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 5,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MediaQuery.of(
-                                                        context,
-                                                      ).size.width *
-                                                      0.025,
-                                                ),
-                                                child: SizedBox(
-                                                  width:
-                                                      MediaQuery.of(
-                                                        context,
-                                                      ).size.width *
-                                                      0.75,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Privasi Akun',
-                                                        style: TextThemes.normal
-                                                            .copyWith(
-                                                              fontSize: 20,
-                                                            ),
-                                                      ),
-                                                      Text(
-                                                        'Penggunaan data pribadi',
-                                                        style: TextThemes.normal
-                                                            .copyWith(
-                                                              fontSize: 16,
-                                                            ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                  // ~:Privacy Policy Section:~
+                                  InkWell(
+                                    onTap: () => launchLink(
+                                      'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
                                     ),
-
-                                    // ~:Change Password Section:~
-                                    InkWell(
-                                      onTap: () => Navigator.push(
+                                    child: SizedBox(
+                                      width: MediaQuery.of(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ForgotPasswordScreen(),
-                                        ),
-                                      ),
-                                      child: SizedBox(
-                                        width: MediaQuery.of(
-                                          context,
-                                        ).size.width,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: const Icon(
-                                                  Icons.lock_rounded,
-                                                  size: 30.0,
-                                                ),
-                                              ),
+                                      ).size.width,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: const Icon(
+                                              Icons.privacy_tip_rounded,
+                                              size: 30.0,
                                             ),
-                                            Expanded(
-                                              flex: 5,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MediaQuery.of(
-                                                        context,
-                                                      ).size.width *
-                                                      0.025,
-                                                ),
-                                                child: SizedBox(
-                                                  width:
-                                                      MediaQuery.of(
-                                                        context,
-                                                      ).size.width *
-                                                      0.75,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Keamanan Sandi',
-                                                        style: TextThemes.normal
-                                                            .copyWith(
-                                                              fontSize: 20,
-                                                            ),
-                                                      ),
-                                                      Text(
-                                                        'Ubah kata sandi akun anda',
-                                                        style: TextThemes.normal
-                                                            .copyWith(
-                                                              fontSize: 16,
-                                                            ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                          ),
+                                          Expanded(
+                                            flex: 5,
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.025,
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-
-                                    // ~:User Guideline:~
-                                    InkWell(
-                                      // onTap: () => openUserGuideline(),
-                                      onTap: () {
-                                        final employee = state.user;
-                                        log('Access rights: ${employee.code}');
-                                        if (employee.code == 0) {
-                                          launchLink(
-                                            'https://www.canva.com/design/DAG4dHLK334/E6wuxXY9Cp4jm5uAqMg81A/edit?utm_content=DAG4dHLK334&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
-                                          );
-                                        } else if (employee.code == 1) {
-                                          launchLink(
-                                            'https://www.canva.com/design/DAGfnPUa7_Q/nE2tAQYp5NGFOTKE_SrzvQ/edit?utm_content=DAGfnPUa7_Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
-                                          );
-                                        } else if (employee.code == 2) {
-                                          launchLink(
-                                            'https://www.canva.com/design/DAG4dDoYceE/daSw9Etw8rUdfbbVFeZ4xw/edit?utm_content=DAG4dDoYceE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
-                                          );
-                                        } else {
-                                          Functions.customFlutterToast(
-                                            'Hak akses tidak ditemukan',
-                                          );
-                                        }
-                                      },
-                                      child: SizedBox(
-                                        width: MediaQuery.of(
-                                          context,
-                                        ).size.width,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: const Icon(
-                                                Icons.menu_book_rounded,
-                                                size: 30.0,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 5,
-                                              child: Container(
-                                                // width: MediaQuery.of(context).size.width * 0.75,
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      MediaQuery.of(
-                                                        context,
-                                                      ).size.width *
-                                                      0.025,
-                                                ),
+                                              child: SizedBox(
+                                                width:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.75,
                                                 child: Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
@@ -511,14 +362,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      'Manual Book',
+                                                      'Privasi Akun',
                                                       style: TextThemes.normal
                                                           .copyWith(
                                                             fontSize: 20,
                                                           ),
                                                     ),
                                                     Text(
-                                                      'Cara menggunakan setiap fitur aplikasi',
+                                                      'Penggunaan data pribadi',
                                                       style: TextThemes.normal
                                                           .copyWith(
                                                             fontSize: 16,
@@ -528,12 +379,158 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+
+                                  // ~:Change Password Section:~
+                                  InkWell(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ForgotPasswordScreen(),
+                                      ),
+                                    ),
+                                    child: SizedBox(
+                                      width: MediaQuery.of(
+                                        context,
+                                      ).size.width,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: const Icon(
+                                                Icons.lock_rounded,
+                                                size: 30.0,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 5,
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.025,
+                                              ),
+                                              child: SizedBox(
+                                                width:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.75,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Keamanan Sandi',
+                                                      style: TextThemes.normal
+                                                          .copyWith(
+                                                            fontSize: 20,
+                                                          ),
+                                                    ),
+                                                    Text(
+                                                      'Ubah kata sandi akun anda',
+                                                      style: TextThemes.normal
+                                                          .copyWith(
+                                                            fontSize: 16,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  // ~:User Guideline:~
+                                  InkWell(
+                                    // onTap: () => openUserGuideline(),
+                                    onTap: () {
+                                      final employee = state.user;
+                                      log('Access rights: ${employee.code}');
+                                      if (employee.code == 0) {
+                                        launchLink(
+                                          'https://www.canva.com/design/DAG4dHLK334/E6wuxXY9Cp4jm5uAqMg81A/edit?utm_content=DAG4dHLK334&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                                        );
+                                      } else if (employee.code == 1) {
+                                        launchLink(
+                                          'https://www.canva.com/design/DAGfnPUa7_Q/nE2tAQYp5NGFOTKE_SrzvQ/edit?utm_content=DAGfnPUa7_Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                                        );
+                                      } else if (employee.code == 2) {
+                                        launchLink(
+                                          'https://www.canva.com/design/DAG4dDoYceE/daSw9Etw8rUdfbbVFeZ4xw/edit?utm_content=DAG4dDoYceE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton',
+                                        );
+                                      } else {
+                                        Functions.customFlutterToast(
+                                          'Hak akses tidak ditemukan',
+                                        );
+                                      }
+                                    },
+                                    child: SizedBox(
+                                      width: MediaQuery.of(
+                                        context,
+                                      ).size.width,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: const Icon(
+                                              Icons.menu_book_rounded,
+                                              size: 30.0,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 5,
+                                            child: Container(
+                                              // width: MediaQuery.of(context).size.width * 0.75,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.025,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Manual Book',
+                                                    style: TextThemes.normal
+                                                        .copyWith(
+                                                          fontSize: 20,
+                                                        ),
+                                                  ),
+                                                  Text(
+                                                    'Cara menggunakan setiap fitur aplikasi',
+                                                    style: TextThemes.normal
+                                                        .copyWith(
+                                                          fontSize: 16,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -1704,34 +1701,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             SystemNavigator.pop(); // Closes the app
           }
         },
-        child: BlocBuilder<LoginBloc, LoginState>(
-          buildWhen: (previous, current) =>
-              current is LoginSuccess || current is LoginFailed,
-          builder: (context, state) {
-            if (state is LoginSuccess) {
-              log('Login success with code: ${state.user.code}');
-              log('User info: ${state.user}');
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarContrastEnforced: false,
+          ),
+          child: BlocBuilder<LoginBloc, LoginState>(
+            buildWhen: (previous, current) =>
+                current is LoginSuccess || current is LoginFailed,
+            builder: (context, state) {
+              if (state is LoginSuccess) {
+                log('Login success with code: ${state.user.code}');
+                log('User info: ${state.user}');
 
-              // ~:Code Zero for Head Store:~
-              if (state.user.code == 0) {
-                return shopHead(state.user);
+                // ~:Code Zero for Head Store:~
+                if (state.user.code == 0) {
+                  return shopHead(state.user);
+                }
+                // ~:Code One for Salesman:~
+                else if (state.user.code == 1) {
+                  return salesman(state.user);
+                }
+                // ~:Code Two for Shop Coordinator:~
+                else if (state.user.code == 2) {
+                  return CoordinatorScreen(
+                    applyUserProfile: false,
+                    employee: state.user,
+                    openProfile: openProfile,
+                  );
+                }
               }
-              // ~:Code One for Salesman:~
-              else if (state.user.code == 1) {
-                return salesman(state.user);
-              }
-              // ~:Code Two for Shop Coordinator:~
-              else if (state.user.code == 2) {
-                return CoordinatorScreen(
-                  applyUserProfile: false,
-                  employee: state.user,
-                  openProfile: openProfile,
-                );
-              }
-            }
 
-            return SizedBox.shrink();
-          },
+              return SizedBox.shrink();
+            },
+          ),
         ),
       ),
     );

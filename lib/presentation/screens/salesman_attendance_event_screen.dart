@@ -173,6 +173,9 @@ class _SalesmanAttendanceEventScreenState
                                           return const AndroidIosLoading(
                                             indicatorColor: Colors.black,
                                             strokeWidth: 3,
+                                            customizedHeight: 24,
+                                            customizedWidth: 24,
+                                            iosRadius: 12,
                                           );
                                         } else if (state is ImageError) {
                                           return Center(
@@ -258,6 +261,9 @@ class _SalesmanAttendanceEventScreenState
                           return const AndroidIosLoading(
                             indicatorColor: Colors.black,
                             strokeWidth: 3,
+                            customizedHeight: 24,
+                            customizedWidth: 24,
+                            iosRadius: 12,
                           );
                         } else {
                           return Text(

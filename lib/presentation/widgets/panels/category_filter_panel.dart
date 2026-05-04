@@ -54,10 +54,13 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
       child: BlocBuilder<SpkLeasingFilterCubit, SpkLeasingFilterState>(
         builder: (context, state) {
           if (state is SpkLeasingFilterLoading) {
-              return const AndroidIosLoading(
-                indicatorColor: Colors.black,
-                strokeWidth: 3,
-              );
+            return const AndroidIosLoading(
+              indicatorColor: Colors.black,
+              strokeWidth: 3,
+              customizedHeight: 24,
+              customizedWidth: 24,
+              iosRadius: 12,
+            );
           } else if (state is SpkLeasingFilterLoaded) {
             return Column(
               children: [

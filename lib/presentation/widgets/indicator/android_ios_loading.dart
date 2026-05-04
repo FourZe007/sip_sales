@@ -13,6 +13,7 @@ class AndroidIosLoading extends StatelessWidget {
     this.customizedWidth = 0,
     this.customizedHeight = 0,
     this.strokeWidth = 3,
+    this.iosRadius = 8,
     super.key,
   });
 
@@ -23,15 +24,16 @@ class AndroidIosLoading extends StatelessWidget {
   final double customizedWidth;
   final double customizedHeight;
   final double strokeWidth;
+  final double iosRadius;
 
   @override
   Widget build(BuildContext context) {
     if (indicatorOnly) {
       if (Platform.isIOS) {
         final hasCustomSize = customizedWidth != 0 || customizedHeight != 0;
-        final radius = customizedHeight != 0 ? customizedHeight / 2 : 12.5;
+        // final radius = customizedHeight != 0 ? customizedHeight / 2 : 12.5;
         final indicator = CupertinoActivityIndicator(
-          radius: radius,
+          radius: iosRadius,
           color: indicatorColor,
         );
         if (hasCustomSize) {
@@ -68,7 +70,7 @@ class AndroidIosLoading extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.0),
               ),
               child: CupertinoActivityIndicator(
-                radius: 12.5,
+                radius: iosRadius,
                 color: indicatorColor,
               ),
             );

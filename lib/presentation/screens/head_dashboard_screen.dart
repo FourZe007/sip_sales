@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -178,13 +177,7 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
         ),
         color: Colors.white,
       ),
-      padding: EdgeInsets.fromLTRB(
-        16,
-        20,
-        16,
-        // (Platform.isIOS) ? 8 : 16,
-        0,
-      ),
+      padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
       child: BlocBuilder<HeadStoreBloc, HeadStoreState>(
         buildWhen: (previous, current) =>
             (current is HeadStoreLoading && current.isDashboard) ||
@@ -193,10 +186,13 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
         builder: (context, state) {
           log(state.toString());
           if (state is HeadStoreLoading && state.isDashboard) {
-              return const AndroidIosLoading(
-                indicatorColor: Colors.black,
-                strokeWidth: 3,
-              );
+            return const AndroidIosLoading(
+              indicatorColor: Colors.black,
+              strokeWidth: 3,
+              customizedHeight: 24,
+              customizedWidth: 24,
+              iosRadius: 12,
+            );
           } else if (state is HeadStoreDashboardFailed) {
             return Center(
               child: Text(

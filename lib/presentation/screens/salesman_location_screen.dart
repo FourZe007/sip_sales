@@ -218,14 +218,14 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                                   ? Text(
                                       'Anda berada dalam radius.',
                                       style: TextThemes.normal.copyWith(
-                                        fontSize: 20,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     )
                                   : Text(
                                       'Anda berada di luar radius.',
                                       style: TextThemes.normal.copyWith(
-                                        fontSize: 20,
+                                        fontSize: 16,
                                         color: Colors.red,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -268,7 +268,7 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                               Text(
                                 'Anda berada di luar radius :)',
                                 style: TextThemes.normal.copyWith(
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red,
                                 ),

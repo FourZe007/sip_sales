@@ -21,6 +21,7 @@ import 'package:sip_sales_clean/presentation/screens/head_acts_detail_screen.dar
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/cards/head_card.dart';
 import 'package:sip_sales_clean/presentation/widgets/indicator/android_ios_loading.dart';
+import 'package:sip_sales_clean/presentation/widgets/indicator/platform_refresh.dart';
 
 class HeadActivityPage extends StatefulWidget {
   const HeadActivityPage({required this.employeeModel, super.key});
@@ -104,10 +105,13 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
             current is HeadStoreDataFailed,
         builder: (context, state) {
           if (state is HeadStoreLoading) {
-              return const AndroidIosLoading(
-                indicatorColor: Colors.black,
-                strokeWidth: 3,
-              );
+            return const AndroidIosLoading(
+              indicatorColor: Colors.black,
+              strokeWidth: 3,
+              iosRadius: 12,
+              customizedHeight: 24,
+              customizedWidth: 24,
+            );
           } else if (state is HeadStoreDataFailed) {
             return Center(
               child: Text(state.message),
@@ -319,45 +323,55 @@ class _HeadActivityPageState extends State<HeadActivityPage> {
           // ~:Body:~
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Builder(
-                builder: (context) {
-                  if (Platform.isIOS) {
-                    return CustomScrollView(
-                      slivers: [
-                        CupertinoSliverRefreshControl(
-                          onRefresh: () async =>
-                              context.read<HeadStoreBloc>().add(
-                                LoadHeadActs(
-                                  employeeID: widget.employeeModel.employeeID,
-                                  date: context.read<DateCubit>().state,
-                                ),
-                              ),
-                        ),
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, _) => activityView(context),
-                            childCount: 1,
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return RefreshIndicator(
-                      onRefresh: () async => context.read<HeadStoreBloc>().add(
-                        LoadHeadActs(
-                          employeeID: widget.employeeModel.employeeID,
-                          date: context.read<DateCubit>().state,
-                        ),
-                      ),
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: activityView(context),
-                      ),
-                    );
-                  }
-                },
+              padding: EdgeInsets.zero,
+              child: PlatformRefresh(
+                onRefresh: () async => context.read<HeadStoreBloc>().add(
+                  LoadHeadActs(
+                    employeeID: widget.employeeModel.employeeID,
+                    date: context.read<DateCubit>().state,
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: activityView(context),
               ),
+              // child: Builder(
+              //   builder: (context) {
+              //     if (Platform.isIOS) {
+              //       return CustomScrollView(
+              //         slivers: [
+              //           CupertinoSliverRefreshControl(
+              //             onRefresh: () async =>
+              //                 context.read<HeadStoreBloc>().add(
+              //                   LoadHeadActs(
+              //                     employeeID: widget.employeeModel.employeeID,
+              //                     date: context.read<DateCubit>().state,
+              //                   ),
+              //                 ),
+              //           ),
+              //           SliverList(
+              //             delegate: SliverChildBuilderDelegate(
+              //               (context, _) => activityView(context),
+              //               childCount: 1,
+              //             ),
+              //           ),
+              //         ],
+              //       );
+              //     } else {
+              //       return RefreshIndicator(
+              //         onRefresh: () async => context.read<HeadStoreBloc>().add(
+              //           LoadHeadActs(
+              //             employeeID: widget.employeeModel.employeeID,
+              //             date: context.read<DateCubit>().state,
+              //           ),
+              //         ),
+              //         child: SingleChildScrollView(
+              //           physics: const AlwaysScrollableScrollPhysics(),
+              //           child: activityView(context),
+              //         ),
+              //       );
+              //     }
+              //   },
+              // ),
             ),
           ),
         ],
