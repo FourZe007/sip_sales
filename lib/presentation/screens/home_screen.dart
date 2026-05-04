@@ -213,7 +213,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget profileTemplate() {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocConsumer<LoginBloc, LoginState>(
+      listenWhen: (_, current) => current is LoginSuccess && current.isRefresh,
+      listener: (context, state) async {
+        if (state is LoginSuccess) {
+          log('Enrolling face...');
+          await Functions.enrollFaceIfNeeded(context, state.user).then((_) {
+            log('Face enrolled');
+          });
+        }
+      },
       buildWhen: (previous, current) =>
           (current is LoginLoading && current.isRefresh) ||
           (current is LoginFailed && current.isRefresh) ||
