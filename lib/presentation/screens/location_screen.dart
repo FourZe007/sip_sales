@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/location_service/location_service_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/location_service/location_service_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/location_service/location_service_state.dart';
@@ -47,10 +46,12 @@ class _LocationScreenState extends State<LocationScreen> {
           SystemNavigator.pop(); // Closes the app
         }
       },
-      child: BlocListener<FaceRecognitionBloc, FaceRecognitionState>(
-        listener: (context, state) {
-          log('FaceRecognitionBloc state: $state');
-        },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarContrastEnforced: false,
+        ),
         child: FutureBuilder(
           future: Functions.requestPermission(),
           builder: (context, snapshot) {
@@ -63,139 +64,134 @@ class _LocationScreenState extends State<LocationScreen> {
             //     height: MediaQuery.of(context).size.height,
             //   );
             // }
-            return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-              ),
-              child: Scaffold(
-                backgroundColor: Colors.grey[300],
-                body: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  alignment: Alignment.center,
-                  color: Colors.grey[300],
-                  child: Column(
-                    spacing: 24,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        spacing: 12,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // ~:Location Icon:~
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 3.0,
-                              ),
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                            child: const Icon(
-                              Icons.location_on,
-                              size: 80.0,
-                            ),
-                          ),
-
-                          // ~:Location Text:~
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            child: Text(
-                              'Dimana kamu berada?',
-                              style: TextThemes.subtitle.copyWith(
-                                fontSize: 24,
-                                fontFamily: TextFontFamily.rubik,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-
-                          // ~:Location Description:~
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            child: Text(
-                              'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
-                              style: TextThemes.subtitle.copyWith(
-                                fontFamily: TextFontFamily.rubik,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // ~:Continue Button:~
-                      InkWell(
-                        onTap: () async =>
-                            context.read<LocationServiceBloc>().add(
-                              LocationServiceButtonPressed(
-                                (context.mounted) ? context : context,
-                                await Functions.requestPermission(),
-                              ),
-                            ),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          height: 50,
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(
-                            vertical: 12,
-                          ),
+            return Scaffold(
+              backgroundColor: Colors.grey[300],
+              body: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                alignment: Alignment.center,
+                color: Colors.grey[300],
+                child: Column(
+                  spacing: 24,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      spacing: 12,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // ~:Location Icon:~
+                        DecoratedBox(
                           decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(25.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                // Adjust shadow color as needed
-                                color: Colors.grey,
-                                // Adjust shadow blur radius
-                                blurRadius: 5.0,
-                                // Adjust shadow spread radius
-                                spreadRadius: 1.0,
-                              ),
-                            ],
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 3.0,
+                            ),
+                            borderRadius: BorderRadius.circular(50.0),
                           ),
-                          child:
-                              BlocConsumer<
-                                LocationServiceBloc,
-                                LocationServiceState
-                              >(
-                                listener: (context, state) {
-                                  log('State: $state');
-                                  if (state is LocationServiceSuccess) {
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      '/home',
-                                    );
-                                  } else if (state is LocationServiceFailed) {
-                                    Functions.customFlutterToast(state.message);
-                                  }
-                                },
-                                builder: (context, state) {
-                                  if (state is LocationServiceLoading) {
-                                    return const AndroidIosLoading(
-                                      indicatorColor: Colors.white,
-                                      customizedHeight: 20.0,
-                                      customizedWidth: 20.0,
-                                      strokeWidth: 3,
-                                      iosRadius: 12,
-                                    );
-                                  } else {
-                                    return Text(
-                                      'Continue',
-                                      style: TextThemes.title2.copyWith(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                        fontFamily: TextFontFamily.rubik,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
+                          child: const Icon(
+                            Icons.location_on,
+                            size: 80.0,
+                          ),
                         ),
+
+                        // ~:Location Text:~
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.75,
+                          child: Text(
+                            'Dimana kamu berada?',
+                            style: TextThemes.subtitle.copyWith(
+                              fontSize: 24,
+                              fontFamily: TextFontFamily.rubik,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+
+                        // ~:Location Description:~
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.75,
+                          child: Text(
+                            'Lokasi Anda perlu diaktifkan agar aplikasi ini berfungsi.',
+                            style: TextThemes.subtitle.copyWith(
+                              fontFamily: TextFontFamily.rubik,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // ~:Continue Button:~
+                    InkWell(
+                      onTap: () async =>
+                          context.read<LocationServiceBloc>().add(
+                            LocationServiceButtonPressed(
+                              (context.mounted) ? context : context,
+                              await Functions.requestPermission(),
+                            ),
+                          ),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        height: 50,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(25.0),
+                          boxShadow: const [
+                            BoxShadow(
+                              // Adjust shadow color as needed
+                              color: Colors.grey,
+                              // Adjust shadow blur radius
+                              blurRadius: 5.0,
+                              // Adjust shadow spread radius
+                              spreadRadius: 1.0,
+                            ),
+                          ],
+                        ),
+                        child:
+                            BlocConsumer<
+                              LocationServiceBloc,
+                              LocationServiceState
+                            >(
+                              listener: (context, state) {
+                                log('State: $state');
+                                if (state is LocationServiceSuccess) {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/home',
+                                  );
+                                } else if (state is LocationServiceFailed) {
+                                  Functions.customFlutterToast(state.message);
+                                }
+                              },
+                              builder: (context, state) {
+                                if (state is LocationServiceLoading) {
+                                  return const AndroidIosLoading(
+                                    indicatorColor: Colors.white,
+                                    customizedHeight: 20.0,
+                                    customizedWidth: 20.0,
+                                    strokeWidth: 3,
+                                    iosRadius: 12,
+                                  );
+                                } else {
+                                  return Text(
+                                    'Continue',
+                                    style: TextThemes.title2.copyWith(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      fontFamily: TextFontFamily.rubik,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );

@@ -36,222 +36,223 @@ class _UserProfileTemplateState extends State<UserProfileTemplate> {
   Widget build(BuildContext context) {
     // ~:Salesman:~
     if (widget.employee.code == 1) {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        height: 98,
-        // height: 140,
-        alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.025,
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
+      return BlocListener<LoginBloc, LoginState>(
+        listenWhen: (_, state) => state is LoginSuccess && state.isRefresh,
+        listener: (context, state) async {
+          if (state is LoginSuccess) {
+            await Functions.enrollFaceIfNeeded(context, state.user);
+          }
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 98,
+          // height: 140,
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.025,
-            // vertical: MediaQuery.of(context).size.height * 0.02,
           ),
-          child: Row(
-            spacing: 20,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // ~:Avatar Section:~
-              BlocBuilder<LoginBloc, LoginState>(
-                builder: (context, state) {
-                  if (state is LoginSuccess &&
-                      state.user.profilePicture.isNotEmpty) {
-                    return InkWell(
-                      onTap: () => Functions.viewPhoto(
-                        context,
-                        state.user.profilePicture,
-                        isCircular: true,
-                      ),
-                      child: CircleAvatar(
-                        radius: 30.0,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: SizedBox.fromSize(
-                            size: Size.fromRadius(28),
-                            child: Image.memory(
-                              base64Decode(
-                                state.user.profilePicture,
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.025,
+              // vertical: MediaQuery.of(context).size.height * 0.02,
+            ),
+            child: Row(
+              spacing: 20,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // ~:Avatar Section:~
+                BlocBuilder<LoginBloc, LoginState>(
+                  builder: (context, state) {
+                    if (state is LoginSuccess &&
+                        state.user.profilePicture.isNotEmpty) {
+                      return InkWell(
+                        onTap: () => Functions.viewPhoto(
+                          context,
+                          state.user.profilePicture,
+                          isCircular: true,
                         ),
-                      ),
-                    );
-                  } else {
-                    return Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        // ~:Profile Picture:~
-                        CircleAvatar(
+                        child: CircleAvatar(
                           radius: 30.0,
                           backgroundColor: Colors.white,
-                          child: BlocBuilder<ImageCubit, ImageState>(
-                            builder: (context, state) {
-                              if (state is ImageLoading) {
-                                return const AndroidIosLoading(
-                                  indicatorColor: Colors.black,
-                                  strokeWidth: 3,
-                                  customizedHeight: 24,
-                                  customizedWidth: 24,
-                                  iosRadius: 12,
-                                );
-                              } else {
-                                return Icon(
-                                  Icons.person,
-                                  size: 25.0,
-                                  color: Colors.black,
-                                );
-                              }
-                            },
+                          child: ClipOval(
+                            child: SizedBox.fromSize(
+                              size: Size.fromRadius(28),
+                              child: Image.memory(
+                                base64Decode(
+                                  state.user.profilePicture,
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
+                      );
+                    } else {
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // ~:Profile Picture:~
+                          CircleAvatar(
+                            radius: 30.0,
+                            backgroundColor: Colors.white,
+                            child: BlocBuilder<ImageCubit, ImageState>(
+                              builder: (context, state) {
+                                if (state is ImageLoading) {
+                                  return const AndroidIosLoading(
+                                    indicatorColor: Colors.black,
+                                    strokeWidth: 3,
+                                    customizedHeight: 24,
+                                    customizedWidth: 24,
+                                    iosRadius: 12,
+                                  );
+                                } else {
+                                  return Icon(
+                                    Icons.person,
+                                    size: 25.0,
+                                    color: Colors.black,
+                                  );
+                                }
+                              },
+                            ),
+                          ),
 
-                        // ~:Camera Icon:~
-                        // Users are allowed to upload their own profile picture
-                        BlocListener<ImageCubit, ImageState>(
-                          listener: (context, state) async {
-                            if (state is ImageLoading) {
-                              Functions.customFlutterToast(
-                                'Uploading photo...',
-                              );
-                            } else if (state is ImageError) {
-                              log('Image upload failed: ${state.message}');
-                              Functions.customFlutterToast(state.message);
-                            } else if (state is ImageCaptured) {
-                              log('Image uploaded successfully');
-                              Functions.customFlutterToast(
-                                'Foto berhasil diupload.',
-                              );
-
-                              await Functions.enrollFaceIfNeeded(
-                                context,
-                                widget.employee,
-                                // isEnrollmentRequired: true,
-                              ).then((_) {
-                                log('Face enrolled');
-                              });
-
-                              if (context.mounted) {
-                                context.read<LoginBloc>().add(
-                                  LoginButtonPressed(
-                                    context: (context.mounted)
-                                        ? context
-                                        : context,
-                                    id: await Functions.readAndWriteEmployeeId(),
-                                    pass:
-                                        await Functions.readAndWriteUserPass(),
-                                    isRefresh: true,
-                                  ),
+                          // ~:Camera Icon:~
+                          // Users are allowed to upload their own profile picture
+                          BlocListener<ImageCubit, ImageState>(
+                            listener: (context, state) async {
+                              if (state is ImageLoading) {
+                                Functions.customFlutterToast(
+                                  'Uploading photo...',
                                 );
-                              }
-                            }
-                          },
-                          child: Positioned(
-                            right: -5,
-                            bottom: -5,
-                            child: Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400],
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: IconButton(
-                                icon: const Icon(Icons.camera_alt, size: 16),
-                                color: Colors.black,
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                onPressed: () async {
-                                  log('uploading photo');
-                                  final employeeId =
-                                      await Functions.readAndWriteEmployeeId();
-                                  if (!context.mounted) return;
-                                  final XFile?
-                                  photo = await Navigator.push<XFile>(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => BlocProvider(
-                                        create: (_) =>
-                                            FaceRecognitionDependencies.instance
-                                                .createBloc(),
-                                        child:
-                                            const ProfilePhotoCaptureScreen(),
-                                      ),
+                              } else if (state is ImageError) {
+                                log('Image upload failed: ${state.message}');
+                                Functions.customFlutterToast(state.message);
+                              } else if (state is ImageCaptured) {
+                                log('Image uploaded successfully');
+                                Functions.customFlutterToast(
+                                  'Foto berhasil diupload.',
+                                );
+
+                                if (context.mounted) {
+                                  context.read<LoginBloc>().add(
+                                    LoginButtonPressed(
+                                      context: (context.mounted)
+                                          ? context
+                                          : context,
+                                      id: await Functions.readAndWriteEmployeeId(),
+                                      pass:
+                                          await Functions.readAndWriteUserPass(),
+                                      isRefresh: true,
                                     ),
                                   );
-                                  if (photo != null && context.mounted) {
-                                    context
-                                        .read<ImageCubit>()
-                                        .uploadCapturedImage(
-                                          employeeId,
-                                          photo,
-                                        );
-                                  }
-                                },
+                                }
+                              }
+                            },
+                            child: Positioned(
+                              right: -5,
+                              bottom: -5,
+                              child: Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[400],
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.camera_alt, size: 16),
+                                  color: Colors.black,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () async {
+                                    log('uploading photo');
+                                    final employeeId =
+                                        await Functions.readAndWriteEmployeeId();
+                                    if (!context.mounted) return;
+                                    final XFile?
+                                    photo = await Navigator.push<XFile>(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider(
+                                          create: (_) =>
+                                              FaceRecognitionDependencies
+                                                  .instance
+                                                  .createBloc(),
+                                          child:
+                                              const ProfilePhotoCaptureScreen(),
+                                        ),
+                                      ),
+                                    );
+                                    if (photo != null && context.mounted) {
+                                      context
+                                          .read<ImageCubit>()
+                                          .uploadCapturedImage(
+                                            employeeId,
+                                            photo,
+                                          );
+                                    }
+                                  },
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  }
-                },
-              ),
-
-              // ~:Profile Section:~
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Builder(
-                      builder: (context) {
-                        if (widget.employee.employeeName.isNotEmpty) {
-                          return Text(
-                            widget.employee.employeeName,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextThemes.subtitle.copyWith(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        } else {
-                          return Text(
-                            'GUEST',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextThemes.subtitle.copyWith(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                    Text(
-                      widget.employee.employeeID.isNotEmpty
-                          ? widget.employee.employeeID
-                          : 'XXXX/XXXXXX',
-                      style: TextThemes.subtitle.copyWith(fontSize: 18),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      Formatter.toTitleCase(widget.employee.bsName),
-                      style: TextThemes.subtitle.copyWith(
-                        fontSize: 18,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                        ],
+                      );
+                    }
+                  },
                 ),
-              ),
-            ],
+
+                // ~:Profile Section:~
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          if (widget.employee.employeeName.isNotEmpty) {
+                            return Text(
+                              widget.employee.employeeName,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextThemes.subtitle.copyWith(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          } else {
+                            return Text(
+                              'GUEST',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextThemes.subtitle.copyWith(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      Text(
+                        widget.employee.employeeID.isNotEmpty
+                            ? widget.employee.employeeID
+                            : 'XXXX/XXXXXX',
+                        style: TextThemes.subtitle.copyWith(fontSize: 18),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        Formatter.toTitleCase(widget.employee.bsName),
+                        style: TextThemes.subtitle.copyWith(
+                          fontSize: 18,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
