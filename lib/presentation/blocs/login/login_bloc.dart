@@ -85,8 +85,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         );
 
         log(loginRes.toString());
-        log('Flag: ${loginRes['data'].flag}');
         if (loginRes['status'] == 'success') {
+          log('Flag: ${(loginRes['data'] as EmployeeModel).flag}');
           log('Is Flagged: ${(loginRes['data'] as EmployeeModel).flag == 1}');
           if ((loginRes['data'] as EmployeeModel).isLoginAllowed == 0) {
             emit(
@@ -202,6 +202,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                 }
                 break;
             }
+
+            // Log device session on successful login (Supabase)
+            await Functions.logDeviceSession(
+              (loginRes['data'] as EmployeeModel).employeeID,
+            );
 
             emit(
               LoginSuccess(

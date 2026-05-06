@@ -31,6 +31,8 @@ class FaceRecognitionDependencies {
 
   /// Call this once at app startup. It loads the TFLite model.
   static Future<FaceRecognitionDependencies> initialize() async {
+    if (_instance != null) return _instance!;
+
     // 1. Secure storage for biometric data
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),

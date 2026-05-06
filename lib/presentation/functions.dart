@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:safe_device/safe_device.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_sales_clean/data/models/head_store.dart';
@@ -33,6 +34,7 @@ import 'package:sip_sales_clean/presentation/screens/request_id_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/reset_password_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/tnc_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -43,6 +45,27 @@ import 'package:sip_sales_clean/data/models/employee.dart';
 import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 
 class Functions {
+  static Future<void> logDeviceSession(String employeeId) async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      await Supabase.instance.client.from('user_device_logs').upsert(
+        {
+          'employee_id': employeeId,
+          'app_version': info.version,
+          'platform': Platform.isIOS ? 'ios' : 'android',
+          'last_seen': DateTime.now()
+              .toUtc()
+              .add(const Duration(hours: 7))
+              .toIso8601String(),
+        },
+        onConflict: 'employee_id',
+      );
+      log('Device session logged for $employeeId');
+    } catch (e) {
+      log('logDeviceSession error: $e');
+    }
+  }
+
   static Future<void> runSecurityCheck(BuildContext context) async {
     final isRealDevice = await SafeDevice.isRealDevice;
     final isJailBroken = await SafeDevice.isJailBroken;

@@ -5,47 +5,99 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/constant/state_manager.dart';
 import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/routes.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:upgrader/upgrader.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final String deviceOS = await Functions.readDeviceOS();
-
-  await FaceRecognitionDependencies.initialize();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  if (deviceOS.isNotEmpty && Platform.isAndroid) {
-    if (int.parse(deviceOS.split('.')[0]) >= 10) {
-      log('Device OS $deviceOS is above OS 10.');
-      await Functions.initStorageConfig(false);
-    } else {
-      log('Device OS $deviceOS is below OS 10.');
-      await Functions.initStorageConfig(true);
-    }
-  }
+  await Future.wait([
+    FaceRecognitionDependencies.initialize(),
+    _initSupabase(),
+    _initAndroidStorage(),
+  ]);
+
+  // final String deviceOS = await Functions.readDeviceOS();
+  //
+  // await FaceRecognitionDependencies.initialize();
+  //
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  //
+  // if (deviceOS.isNotEmpty && Platform.isAndroid) {
+  //   if (int.parse(deviceOS.split('.')[0]) >= 10) {
+  //     log('Device OS $deviceOS is above OS 10.');
+  //     await Functions.initStorageConfig(false);
+  //   } else {
+  //     log('Device OS $deviceOS is below OS 10.');
+  //     await Functions.initStorageConfig(true);
+  //   }
+  // }
+  //
+  // try {
+  //   await dotenv.load(fileName: '.env');
+  //   final url = dotenv.env['SUPABASE_URL'];
+  //   final anonKey = dotenv.env['SUPABASE_ANON_KEY'];
+  //   if (url != null && anonKey != null) {
+  //     await Supabase.initialize(url: url, anonKey: anonKey);
+  //   } else {
+  //     log('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
+  //   }
+  // } catch (e) {
+  //   log('Supabase init error: $e');
+  // }
 
   runApp(const MyApp());
+}
+
+Future<void> _initSupabase() async {
+  try {
+    await dotenv.load(fileName: '.env');
+    final url = dotenv.env['SUPABASE_URL'];
+    final anonKey = dotenv.env['SUPABASE_ANON_KEY'];
+    if (url != null && anonKey != null) {
+      await Supabase.initialize(url: url, anonKey: anonKey);
+    } else {
+      log('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
+    }
+  } catch (e) {
+    log('Supabase init error: $e');
+  }
+}
+
+Future<void> _initAndroidStorage() async {
+  if (!Platform.isAndroid) return;
+  final String deviceOS = await Functions.readDeviceOS();
+  if (deviceOS.isEmpty) return;
+  final int major = int.parse(deviceOS.split('.')[0]);
+  if (major >= 10) {
+    log('Device OS $deviceOS is above OS 10.');
+    await Functions.initStorageConfig(false);
+  } else {
+    log('Device OS $deviceOS is below OS 10.');
+    await Functions.initStorageConfig(true);
+  }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return UpgradeAlert(
-      barrierDismissible: false, // ← force update (can't tap outside to close)
-      showIgnore: false, // ← removes "Ignore" button
-      showLater: false, // ← removes "Later" button
+      barrierDismissible: false,
+      showIgnore: false,
+      showLater: false,
       upgrader: Upgrader(
         durationUntilAlertAgain: const Duration(days: 1),
       ),
