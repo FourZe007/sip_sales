@@ -530,7 +530,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // maxHeight: (MediaQuery.of(context).size.width < 800)
         //     ? MediaQuery.of(context).size.height * 0.4
         //     : MediaQuery.of(context).size.height * 0.35
-        maxHeight: 325,
+        maxHeight: Platform.isIOS
+            ? 325
+            : 325 + MediaQuery.of(context).padding.bottom,
         controller: panelController,
         panel: Material(
           color: Colors.transparent,

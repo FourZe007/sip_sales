@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/switch/text.dart';
@@ -80,147 +81,159 @@ class _TermsConditionScreenState extends State<TermsConditionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        backgroundColor: Colors.grey[300],
-        centerTitle: true,
-        // toolbarHeight: 60,
-        elevation: 0.0,
-        scrolledUnderElevation: 0.0,
-        title: Text(
-          'Syarat & Ketentuan',
-          style: TextThemes.normalTextButton.copyWith(fontSize: 18),
-        ),
-        leading: Builder(
-          builder: (context) {
-            if (Platform.isIOS) {
-              return IconButton(
-                onPressed: () => Navigator.pop(context, false),
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            } else {
-              return IconButton(
-                onPressed: () => Navigator.pop(context, false),
-                icon: Icon(
-                  Icons.arrow_back_rounded,
-                  size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-                  color: Colors.black,
-                ),
-              );
-            }
-          },
-        ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarContrastEnforced: false,
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.grey[300],
-        padding: Platform.isIOS
-            ? EdgeInsets.symmetric(horizontal: 20, vertical: 8)
-            : EdgeInsets.fromLTRB(
-                20,
-                8,
-                20,
-                MediaQuery.of(context).padding.bottom,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.grey[300],
+          centerTitle: true,
+          // toolbarHeight: 60,
+          elevation: 0.0,
+          scrolledUnderElevation: 0.0,
+          title: Text(
+            'Syarat & Ketentuan',
+            style: TextThemes.normalTextButton.copyWith(fontSize: 18),
+          ),
+          leading: Builder(
+            builder: (context) {
+              if (Platform.isIOS) {
+                return IconButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: (MediaQuery.of(context).size.width < 800)
+                        ? 20.0
+                        : 35.0,
+                    color: Colors.black,
+                  ),
+                );
+              } else {
+                return IconButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  icon: Icon(
+                    Icons.arrow_back_rounded,
+                    size: (MediaQuery.of(context).size.width < 800)
+                        ? 20.0
+                        : 35.0,
+                    color: Colors.black,
+                  ),
+                );
+              }
+            },
+          ),
+        ),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.grey[300],
+          padding: Platform.isIOS
+              ? EdgeInsets.symmetric(horizontal: 20, vertical: 8)
+              : EdgeInsets.fromLTRB(
+                  20,
+                  8,
+                  20,
+                  MediaQuery.of(context).padding.bottom,
+                ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                spacing: 12,
+                children: [
+                  // User Location Permission
+                  TextSwitch(
+                    '1. ',
+                    'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
+                    isLocationGranted,
+                    toggleLocationSwitch,
+                  ),
+
+                  // User Photo Permission
+                  TextSwitch(
+                    '2. ',
+                    'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                    isPhotoGranted,
+                    togglePhotoSwitch,
+                  ),
+
+                  // User Camera Permission
+                  TextSwitch(
+                    '3. ',
+                    'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
+                    isCameraGranted,
+                    toggleCameraSwitch,
+                  ),
+
+                  // App Privacy Policy
+                  TextSwitch(
+                    '4. ',
+                    'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
+                    isPolicyGranted,
+                    togglePolicySwitch,
+                    isLinkAvailable: true,
+                    link:
+                        'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
+                    linkFunction: (dynamic) => launchLink(context),
+                  ),
+                ],
               ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              spacing: 12,
-              children: [
-                // User Location Permission
-                TextSwitch(
-                  '1. ',
-                  'SIP Sales ingin menggunakan layanan lokasi perangkat untuk menggunakan fitur utama, yaitu penambahan aktivitas berfungsi.',
-                  isLocationGranted,
-                  toggleLocationSwitch,
-                ),
 
-                // User Photo Permission
-                TextSwitch(
-                  '2. ',
-                  'SIP Sales ingin menggunakan foto dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                  isPhotoGranted,
-                  togglePhotoSwitch,
-                ),
-
-                // User Camera Permission
-                TextSwitch(
-                  '3. ',
-                  'SIP Sales ingin menggunakan kamera dari perangkat untuk mengambil gambar langsung dari perangkat Anda.',
-                  isCameraGranted,
-                  toggleCameraSwitch,
-                ),
-
-                // App Privacy Policy
-                TextSwitch(
-                  '4. ',
-                  'SIP Sales ingin meminta persetujuan Pengguna mengenai Kebijakan Privasi SIP.',
-                  isPolicyGranted,
-                  togglePolicySwitch,
-                  isLinkAvailable: true,
-                  link: 'https://yamaha-jatim.co.id/PrivacyPolicySIPSales.html',
-                  linkFunction: (dynamic) => launchLink(context),
-                ),
-              ],
-            ),
-
-            // Return Button
-            ValueListenableBuilder(
-              valueListenable: userPermissionNotifier,
-              builder: (context, value, child) {
-                if (value[0] || value[1] || value[2] || value[3]) {
-                  return InkWell(
-                    onTap: () => Navigator.pop(context, true),
-                    child: AnimatedContainer(
-                      duration: const Duration(seconds: 1),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.055,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(40.0),
-                      ),
-                      child: Text(
-                        'Return',
-                        style: TextThemes.normalTextButton.copyWith(
-                          color: Colors.white,
+              // Return Button
+              ValueListenableBuilder(
+                valueListenable: userPermissionNotifier,
+                builder: (context, value, child) {
+                  if (value[0] || value[1] || value[2] || value[3]) {
+                    return InkWell(
+                      onTap: () => Navigator.pop(context, true),
+                      child: AnimatedContainer(
+                        duration: const Duration(seconds: 1),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.055,
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(40.0),
                         ),
-                        textAlign: TextAlign.center,
+                        child: Text(
+                          'Return',
+                          style: TextThemes.normalTextButton.copyWith(
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  );
-                } else {
-                  return InkWell(
-                    onTap: () => Navigator.pop(context, false),
-                    child: AnimatedContainer(
-                      duration: const Duration(seconds: 1),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.055,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(40.0),
+                    );
+                  } else {
+                    return InkWell(
+                      onTap: () => Navigator.pop(context, false),
+                      child: AnimatedContainer(
+                        duration: const Duration(seconds: 1),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.055,
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(40.0),
+                        ),
+                        child: Text(
+                          'Return',
+                          style: TextThemes.normalTextButton,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                      child: Text(
-                        'Return',
-                        style: TextThemes.normalTextButton,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

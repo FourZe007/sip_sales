@@ -740,7 +740,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       width: MediaQuery.of(context).size.width,
       height: 350,
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(25.0),
@@ -750,7 +750,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Column(
         children: [
           Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerRight,
             child: Container(
               height: MediaQuery.of(context).size.height * 0.1,
               padding: EdgeInsets.symmetric(
@@ -1122,7 +1122,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backdropColor: Colors.black.withValues(alpha: 0.5),
       borderRadius: BorderRadius.circular(20.0),
       minHeight: 0.0,
-      maxHeight: getPanelMaxHeight,
+      maxHeight: Platform.isIOS
+          ? getPanelMaxHeight
+          : getPanelMaxHeight + MediaQuery.of(context).padding.bottom,
       defaultPanelState: PanelState.CLOSED,
       onPanelClosed: () => context.read<DashboardSlidingUpCubit>().closePanel(),
       panel: Material(
@@ -1497,7 +1499,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backdropColor: Colors.black.withValues(alpha: 0.5),
       borderRadius: BorderRadius.circular(20.0),
       minHeight: 0.0,
-      maxHeight: panelMaxHeight,
+      maxHeight: Platform.isIOS
+          ? panelMaxHeight
+          : panelMaxHeight + MediaQuery.of(context).padding.bottom,
       defaultPanelState: PanelState.CLOSED,
       onPanelClosed: () => context.read<DashboardSlidingUpCubit>().closePanel(),
       panel: Material(

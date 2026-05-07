@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/cubit/forgot_cubit.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
@@ -28,157 +29,172 @@ class _RequestIdScreenState extends State<RequestIdScreen> {
       top: false,
       bottom: false,
       maintainBottomViewPadding: true,
-      child: Scaffold(
-        extendBodyBehindAppBar: false,
-        appBar: AppBar(
-          backgroundColor: Colors.blue,
-          toolbarHeight: 60,
-          elevation: 0.0,
-          scrolledUnderElevation: 0.0,
-          shadowColor: Colors.blue,
-          centerTitle: true,
-          titleSpacing: 16,
-          title: Text(
-            'Request Id',
-            style: TextThemes.normal.copyWith(fontSize: 16),
-          ),
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(
-              Platform.isIOS
-                  ? Icons.arrow_back_ios_new_rounded
-                  : Icons.arrow_back_rounded,
-              size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
-              color: Colors.black,
-            ),
-          ),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarContrastEnforced: false,
         ),
-        body: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+        child: Scaffold(
+          extendBodyBehindAppBar: false,
+          appBar: AppBar(
+            backgroundColor: Colors.blue,
+            toolbarHeight: 60,
+            elevation: 0.0,
+            scrolledUnderElevation: 0.0,
+            shadowColor: Colors.blue,
+            centerTitle: true,
+            titleSpacing: 16,
+            title: Text(
+              'Request Id',
+              style: TextThemes.normal.copyWith(fontSize: 16),
+            ),
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(
+                Platform.isIOS
+                    ? Icons.arrow_back_ios_new_rounded
+                    : Icons.arrow_back_rounded,
+                size: (MediaQuery.of(context).size.width < 800) ? 20.0 : 35.0,
+                color: Colors.black,
               ),
             ),
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-            child: Column(
-              spacing: 16,
-              children: [
-                // ~:Header:~
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Column(
-                      spacing: 8,
-                      children: [
-                        // ~:Title Section:~
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ~:Page Title:~
-                            Text(
-                              'Detail Pengajuan',
-                              style: TextThemes.normal.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            // ~:Page Subtitle:~
-                            Text(
-                              'Masukkan informasi lengkap terkait request id karyawan.',
-                              style: TextThemes.normal.copyWith(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // ~:Body Section:~
-                        Column(
-                          children: [
-                            // ~:Phone Number Form:~
-                            CustomUserInput(
-                              setPhoneNumber,
-                              phoneNumber,
-                              mode: 0,
-                              isIcon: true,
-                              icon: Icons.phone_rounded,
-                              label: 'Nomor telepon',
-                              isNumber: true,
-                            ),
-
-                            // ~:Additional Note:~
-                            Text(
-                              'Note: pastikan nomor telepon yang diinputkan sesuai dengan nomor yang terdaftar di SIP.',
-                              style: TextThemes.normal.copyWith(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+          ),
+          body: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
+              ),
+              padding: Platform.isIOS
+                  ? EdgeInsets.only(bottom: 8)
+                  : EdgeInsets.fromLTRB(
+                      16,
+                      20,
+                      16,
+                      MediaQuery.of(context).padding.bottom,
+                    ),
+              // padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+              child: Column(
+                spacing: 16,
+                children: [
+                  // ~:Header:~
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        spacing: 8,
+                        children: [
+                          // ~:Title Section:~
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ~:Page Title:~
+                              Text(
+                                'Detail Pengajuan',
+                                style: TextThemes.normal.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
 
-                // ~:Footer:~
-                ElevatedButton(
-                  onPressed: () =>
-                      context.read<ForgotCubit>().requestId(phoneNumber),
-                  style: ElevatedButton.styleFrom(
-                    alignment: Alignment.center,
-                    fixedSize: Size(
-                      MediaQuery.of(context).size.width * 0.95,
-                      MediaQuery.of(context).size.height * 0.04,
+                              // ~:Page Subtitle:~
+                              Text(
+                                'Masukkan informasi lengkap terkait request id karyawan.',
+                                style: TextThemes.normal.copyWith(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // ~:Body Section:~
+                          Column(
+                            children: [
+                              // ~:Phone Number Form:~
+                              CustomUserInput(
+                                setPhoneNumber,
+                                phoneNumber,
+                                mode: 0,
+                                isIcon: true,
+                                icon: Icons.phone_rounded,
+                                label: 'Nomor telepon',
+                                isNumber: true,
+                              ),
+
+                              // ~:Additional Note:~
+                              Text(
+                                'Note: pastikan nomor telepon yang diinputkan sesuai dengan nomor yang terdaftar di SIP.',
+                                style: TextThemes.normal.copyWith(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    backgroundColor: Colors.blue[300],
                   ),
-                  child: BlocConsumer<ForgotCubit, ForgotState>(
-                    listener: (context, state) async {
-                      if (state is RequestIdFailed) {
-                        Functions.customFlutterToast(state.message);
-                      } else if (state is RequestIdSucceed) {
-                        Functions.customFlutterToast(
-                          'Request ID berhasil!',
-                        );
 
-                        if (context.mounted) {
-                          context.read<ForgotCubit>().resetState();
-                          Navigator.pop(context);
+                  // ~:Footer:~
+                  ElevatedButton(
+                    onPressed: () =>
+                        context.read<ForgotCubit>().requestId(phoneNumber),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                      fixedSize: Size(
+                        MediaQuery.of(context).size.width * 0.95,
+                        MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      backgroundColor: Colors.blue[300],
+                    ),
+                    child: BlocConsumer<ForgotCubit, ForgotState>(
+                      listener: (context, state) async {
+                        if (state is RequestIdFailed) {
+                          Functions.customFlutterToast(state.message);
+                        } else if (state is RequestIdSucceed) {
+                          Functions.customFlutterToast(
+                            'Request ID berhasil!',
+                          );
+
+                          if (context.mounted) {
+                            context.read<ForgotCubit>().resetState();
+                            Navigator.pop(context);
+                          }
                         }
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is ForgotLoading) {
-                        return const AndroidIosLoading(
-                          indicatorColor: Colors.black,
-                          strokeWidth: 3,
-                          customizedHeight: 24,
-                          customizedWidth: 24,
-                          iosRadius: 12,
-                        );
-                      } else {
-                        return Text(
-                          'Submit',
-                          style: TextThemes.normal.copyWith(fontSize: 16),
-                        );
-                      }
-                    },
+                      },
+                      builder: (context, state) {
+                        if (state is ForgotLoading) {
+                          return const AndroidIosLoading(
+                            indicatorColor: Colors.black,
+                            strokeWidth: 3,
+                            customizedHeight: 24,
+                            customizedWidth: 24,
+                            iosRadius: 12,
+                          );
+                        } else {
+                          return Text(
+                            'Submit',
+                            style: TextThemes.normal.copyWith(fontSize: 16),
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -592,14 +592,18 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                 backdropColor: Colors.black.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(20.0),
                 minHeight: 0.0,
-                maxHeight: 175,
+                maxHeight: Platform.isIOS
+                    ? 175
+                    : 175 + MediaQuery.of(context).padding.bottom,
                 defaultPanelState: PanelState.CLOSED,
                 onPanelClosed: () =>
                     context.read<DashboardSlidingUpCubit>().closePanel(),
                 panel: Material(
                   color: Colors.transparent,
                   child: Container(
-                    height: 175,
+                    height: Platform.isIOS
+                        ? 175
+                        : 175 + MediaQuery.of(context).padding.bottom,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: Colors.white,

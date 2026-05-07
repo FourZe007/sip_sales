@@ -220,7 +220,9 @@ class _ProfilePhotoCaptureScreenState extends State<ProfilePhotoCaptureScreen> {
       child: SlidingUpPanel(
         controller: _panelController,
         minHeight: 0,
-        maxHeight: 360,
+        maxHeight: Platform.isIOS
+            ? 360
+            : 360 + MediaQuery.of(context).padding.bottom,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         backdropEnabled: true,
         backdropColor: Colors.black,
