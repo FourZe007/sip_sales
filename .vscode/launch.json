@@ -6,7 +6,8 @@
       "request": "launch",
       "type": "dart",
       "pauseIsolatesOnStart": false,
-      "pauseIsolatesOnExit": false
+      "pauseIsolatesOnExit": false,
+      "preLaunchTask": "Kill stale Dart/Flutter processes"
     }
   ]
 }
