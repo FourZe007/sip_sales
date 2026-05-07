@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sip_sales_clean/main.dart' show supabaseInitFuture;
 import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_state.dart';
@@ -23,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
       Functions.runSecurityCheck(context);
     });
   }

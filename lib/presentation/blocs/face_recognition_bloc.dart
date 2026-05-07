@@ -11,6 +11,7 @@ import 'package:sip_sales_clean/core/constant/face_recognition_constants.dart';
 import '../../core/helpers/image_helper.dart';
 import '../../domain/usecases/enroll_face_usecase.dart';
 import '../../domain/usecases/verify_face_usecase.dart';
+import '../functions.dart';
 
 // ── Events ──
 
@@ -133,10 +134,16 @@ class FaceRecognitionBloc
   ) async {
     emit(FaceRecognitionLoading(message: 'Enrolling face...'));
     try {
-      await _enrollFaceUseCase(
+      final result = await _enrollFaceUseCase(
         userId: event.userId,
         base64Image: event.base64Image,
       );
+      if (result == null) {
+        log('Enrollment skipped: no face detected in profile photo');
+        // Functions.customFlutterToast('Foto profil tidak terdeteksi wajah. Pendaftaran wajah dilewati.');
+        emit(FaceRecognitionInitial());
+        return;
+      }
       log('Enrollment success');
       emit(EnrollmentSuccess());
     } on EnrollmentException catch (e) {

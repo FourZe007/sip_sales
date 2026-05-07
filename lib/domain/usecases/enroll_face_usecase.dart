@@ -19,8 +19,8 @@ class EnrollFaceUseCase {
        _faceDetector = faceDetector;
 
   /// Enrolls a face from a base64 image string (the user's uploaded photo).
-  /// Returns the entity on success, or throws on failure.
-  Future<FaceEmbeddingEntity> call({
+  /// Returns the entity on success, null if no face was detected, or throws on failure.
+  Future<FaceEmbeddingEntity?> call({
     required String userId,
     required String base64Image,
   }) async {
@@ -45,8 +45,10 @@ class EnrollFaceUseCase {
     } finally {
       await tempFile.delete();
     }
+
     if (faces.isEmpty) {
-      throw EnrollmentException('No face detected in the uploaded photo');
+      log('EnrollFaceUseCase: no face detected for $userId — skipping enrollment');
+      return null;
     }
 
     // 3. Save reference image for Regula matching

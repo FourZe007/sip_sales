@@ -17,16 +17,20 @@ import 'package:upgrader/upgrader.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  await Future.wait([
-    FaceRecognitionDependencies.initialize(),
-    _initSupabase(),
-    _initAndroidStorage(),
-  ]);
+  // Fast inits first — neither spawns a Dart isolate.
+  await Future.wait([_initSupabase(), _initAndroidStorage()]);
+
+  // Yield so the debug adapter can finish applying pauseIsolatesOnStart:false
+  // before the Regula SDK (FaceSDK.initialize) spawns its background isolate.
+  await Future.delayed(Duration.zero);
+
+  // Heavy init last — Regula SDK spawns a background isolate here.
+  await FaceRecognitionDependencies.initialize();
 
   // final String deviceOS = await Functions.readDeviceOS();
   //
@@ -69,7 +73,7 @@ Future<void> _initSupabase() async {
       await Supabase.initialize(
         url: url,
         anonKey: anonKey,
-        authOptions: FlutterAuthClientOptions(),
+        // authOptions: FlutterAuthClientOptions(),
       );
     } else {
       log('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
@@ -84,19 +88,6 @@ Future<void> _initSupabase() async {
     log('Supabase init error: $e');
   } catch (e) {
     log('Supabase Init Error: $e');
-    // if (e is FormatException) {
-    //   log('Supabase init error: $e');
-    // } else if (e is TypeError) {
-    //   log('Supabase init error: $e');
-    // } else if (e is ArgumentError) {
-    //   log('Supabase init error: $e');
-    // } else if (e is Error) {
-    //   log('Supabase init error: $e');
-    // } else if (e is Exception) {
-    //   log('Supabase init error: $e');
-    // } else {
-    //   log('Supabase init error: $e');
-    // }
   }
 }
 
