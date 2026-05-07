@@ -285,9 +285,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(HeadStoreInsertSucceed(HeadStoreActTypes.morningBriefing));
         } else if (res['status'] == 'fail' &&
             res['code'] == '200' &&
-            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
-              'duplicate key',
-            )) {
+            res['data'].toString().toLowerCase().contains('duplicate key')) {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.morningBriefing,
@@ -726,9 +724,7 @@ class HeadStoreBloc extends Bloc<HeadStoreEvent, HeadStoreState> {
           emit(HeadStoreInsertSucceed(HeadStoreActTypes.dailyReport));
         } else if (res['status'] == 'fail' &&
             res['code'] == '200' &&
-            (res['data'] as List)[0].resultMessage.toLowerCase().contains(
-              'duplicate key',
-            )) {
+            res['data'].toString().toLowerCase().contains('duplicate key')) {
           emit(
             HeadStoreInsertFailed(
               HeadStoreActTypes.dailyReport,
