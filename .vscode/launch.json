@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter (debug)",
+      "request": "launch",
+      "type": "dart",
+      "pauseIsolatesOnStart": false,
+      "pauseIsolatesOnExit": false
+    }
+  ]
+}

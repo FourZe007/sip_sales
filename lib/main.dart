@@ -62,16 +62,50 @@ void main() async {
 
 Future<void> _initSupabase() async {
   try {
+    // final url = 'https://kfgfbaitkcbfuifzpgpq.supabase.co';
+    // final anonKey =
+    //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmd2ZiYWl0a2NiZnVpZnpwZ3BxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzY0MjYsImV4cCI6MjA3NTA1MjQyNn0.28009330032201203300';
+    // await Supabase.initialize(
+    //   url: url,
+    //   anonKey: anonKey,
+    //   authOptions: FlutterAuthClientOptions(),
+    // );
+
     await dotenv.load(fileName: '.env');
     final url = dotenv.env['SUPABASE_URL'];
     final anonKey = dotenv.env['SUPABASE_ANON_KEY'];
     if (url != null && anonKey != null) {
-      await Supabase.initialize(url: url, anonKey: anonKey);
+      await Supabase.initialize(
+        url: url,
+        anonKey: anonKey,
+        authOptions: FlutterAuthClientOptions(),
+      );
     } else {
       log('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
     }
-  } catch (e) {
+  } on TypeError catch (e) {
     log('Supabase init error: $e');
+  } on ArgumentError catch (e) {
+    log('Supabase init error: $e');
+  } on Exception catch (e) {
+    log('Supabase init error: $e');
+  } on Error catch (e) {
+    log('Supabase init error: $e');
+  } catch (e) {
+    log('Supabase Init Error: $e');
+    // if (e is FormatException) {
+    //   log('Supabase init error: $e');
+    // } else if (e is TypeError) {
+    //   log('Supabase init error: $e');
+    // } else if (e is ArgumentError) {
+    //   log('Supabase init error: $e');
+    // } else if (e is Error) {
+    //   log('Supabase init error: $e');
+    // } else if (e is Exception) {
+    //   log('Supabase init error: $e');
+    // } else {
+    //   log('Supabase init error: $e');
+    // }
   }
 }
 

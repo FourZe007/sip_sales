@@ -209,7 +209,9 @@ class _HeadDashboardScreenState extends State<HeadDashboardScreen> {
               child: ListView.builder(
                 itemCount: state.headStoreDashboard.length,
                 physics: BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 8.0),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom + 8.0,
+                ),
                 itemBuilder: (context, index) {
                   final headDashboardData = state.headStoreDashboard[index];
                   double salesProspectHeight =

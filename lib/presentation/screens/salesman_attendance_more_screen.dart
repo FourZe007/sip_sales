@@ -184,7 +184,12 @@ class _SalesmanAttendanceMoreScreenState
                 topRight: Radius.circular(20),
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+            padding: EdgeInsets.fromLTRB(
+              12,
+              20,
+              12,
+              MediaQuery.of(context).padding.bottom + 20,
+            ),
             child: BlocBuilder<SalesmanBloc, SalesmanState>(
               buildWhen: (previous, current) =>
                   current is SalesmanLoading ||

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String employeeId = '';
   String password = '';
 
-  double panelHeight = 230;
   final PanelController slidingPanelController = PanelController();
 
   void setEmployeeId(String id) {
@@ -43,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double panelHeight = 230 + MediaQuery.of(context).padding.bottom;
     DateTime? currentBackPressTime;
 
     return PopScope(
@@ -212,9 +213,11 @@ class _LoginScreenState extends State<LoginScreen> {
             height: MediaQuery.of(context).size.height,
             alignment: Alignment.center,
             color: Colors.grey[300],
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
+            padding: Platform.isIOS
+                ? EdgeInsets.only(bottom: 8)
+                : EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                  ),
             child: Column(
               spacing: 8,
               children: [
@@ -376,6 +379,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             customizedHeight: 20,
                                             customizedWidth: 20,
                                             strokeWidth: 3,
+                                            iosRadius: 10,
                                           );
                                         } else {
                                           return CustomText(
@@ -402,7 +406,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  padding: Platform.isIOS
+                      ? EdgeInsets.symmetric(horizontal: 16)
+                      : EdgeInsets.symmetric(horizontal: 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

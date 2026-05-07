@@ -59,7 +59,9 @@ class FollowupDashboard extends StatelessWidget {
           return ListView.builder(
             itemCount: state.fuData.length,
             physics: BouncingScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 8.0,
+            ),
             itemBuilder: (context, index) {
               final fuData = state.fuData[index];
 

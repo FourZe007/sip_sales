@@ -120,7 +120,14 @@ class _TermsConditionScreenState extends State<TermsConditionScreen> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         color: Colors.grey[300],
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: Platform.isIOS
+            ? EdgeInsets.symmetric(horizontal: 20, vertical: 8)
+            : EdgeInsets.fromLTRB(
+                20,
+                8,
+                20,
+                MediaQuery.of(context).padding.bottom,
+              ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

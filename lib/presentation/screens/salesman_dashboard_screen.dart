@@ -82,7 +82,9 @@ class _SalesmanDashboardScreenState extends State<SalesmanDashboardScreen> {
             child: ListView.builder(
               itemCount: state.data.length,
               physics: BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom + 8.0,
+              ),
               itemBuilder: (context, index) {
                 final salesData = state.data[index];
                 double categoryHeight = 52 + salesData.categoryList.length * 50;

@@ -48,7 +48,8 @@ class Functions {
   static Future<void> logDeviceSession(String employeeId) async {
     try {
       final info = await PackageInfo.fromPlatform();
-      await Supabase.instance.client.from('user_device_logs').upsert(
+      final supabaseClient = Supabase.instance.client;
+      await supabaseClient.from('user_device_logs').upsert(
         {
           'employee_id': employeeId,
           'app_version': info.version,
