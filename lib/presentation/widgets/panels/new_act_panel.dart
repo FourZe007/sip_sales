@@ -4,14 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/helpers/formatter.dart';
 import 'package:sip_sales_clean/data/models/act_types.dart';
-import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/leasing_table/leasing_table_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/payment_table/payment_table_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/salesman_table/salesman_table_event.dart';
-import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart';
-import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_event.dart';
 import 'package:sip_sales_clean/presentation/cubit/briefing_desc.dart';
 import 'package:sip_sales_clean/presentation/cubit/counter_cubit.dart';
 import 'package:sip_sales_clean/presentation/cubit/dashboard_slidingup_cubit.dart';
@@ -131,40 +123,6 @@ class _NewActPanelState extends State<NewActPanel> {
         log('Not considered as Recruitment or Interview');
       }
     } else if (actName.contains('report')) {
-      if (context.read<HeadActsMasterCubit>().state is HeadActsMasterLoaded) {
-        log('Load Report Data');
-        context.read<StuTableBloc>().add(
-          ResetStuData(
-            (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
-                .reportMaster[0]
-                .stuCategories,
-          ),
-        );
-        context.read<PaymentTableBloc>().add(
-          ResetPaymentData(
-            (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
-                .reportMaster[0]
-                .payment,
-          ),
-        );
-        context.read<LeasingTableBloc>().add(
-          ResetLeasingData(
-            (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
-                .reportMaster[0]
-                .spkLeasing,
-          ),
-        );
-        context.read<SalesmanTableBloc>().add(
-          ResetSalesman(
-            (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
-                .reportMaster[0]
-                .employee,
-          ),
-        );
-      } else {
-        log('Master data is not loaded');
-      }
-
       Navigator.push(
         context,
         MaterialPageRoute(

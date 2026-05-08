@@ -51,4 +51,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'sip-sales-b5656.firebasestorage.app',
     iosBundleId: 'com.stsj.sipsales',
   );
+
 }

@@ -48,6 +48,7 @@ import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 class Functions {
   static Future<void> logDeviceSession(String employeeId) async {
     try {
+      log('logDeviceSession');
       final info = await PackageInfo.fromPlatform();
 
       // Supabase (replaced by Firebase below)
@@ -68,10 +69,10 @@ class Functions {
       // Firebase — slashes in employeeId (e.g. S2501/012292) would be treated as
       // path separators by Firestore, so we sanitize the doc ID while keeping
       // the original value in the employee_id field.
-      // final docId = employeeId.replaceAll('/', '_');
+      final docId = employeeId.replaceAll('/', '_');
       await FirebaseFirestore.instance
           .collection('user_device_logs')
-          .doc(employeeId)
+          .doc(docId)
           .set(
             {
               'employee_id': employeeId,

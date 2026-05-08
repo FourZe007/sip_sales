@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';  // Replaced by Firebase
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/constant/state_manager.dart';
 import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
@@ -97,6 +98,9 @@ Future<void> _initFirebase() async {
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
+    );
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: false,
     );
     log('Firebase initialized successfully');
   } catch (e) {

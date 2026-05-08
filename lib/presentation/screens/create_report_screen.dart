@@ -24,6 +24,7 @@ import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_bloc.dart
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_event.dart';
 import 'package:sip_sales_clean/presentation/blocs/stu_table/stu_table_state.dart';
 import 'package:sip_sales_clean/presentation/cubit/date_cubit.dart';
+import 'package:sip_sales_clean/presentation/cubit/head_acts_master.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
 import 'package:sip_sales_clean/presentation/widgets/datagrids/report.dart';
@@ -207,6 +208,22 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         newValue,
       ),
     );
+
+    final masterState = context.read<HeadActsMasterCubit>().state;
+    if (masterState is HeadActsMasterLoaded) {
+      context.read<StuTableBloc>().add(
+        ResetStuData(masterState.reportMaster[0].stuCategories),
+      );
+      context.read<PaymentTableBloc>().add(
+        ResetPaymentData(masterState.reportMaster[0].payment),
+      );
+      context.read<LeasingTableBloc>().add(
+        ResetLeasingData(masterState.reportMaster[0].spkLeasing),
+      );
+      context.read<SalesmanTableBloc>().add(
+        ResetSalesman(masterState.reportMaster[0].employee),
+      );
+    }
   }
 
   @override
