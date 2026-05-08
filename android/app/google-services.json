@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "689711972244",
+    "project_id": "sip-sales-b5656",
+    "storage_bucket": "sip-sales-b5656.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689711972244:android:be81e54671888e0d0d5981",
+        "android_client_info": {
+          "package_name": "com.stsj.sipsales"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPQJl5tEYZSvEcY8l7-kRwdQdeUwplqr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -34,7 +34,8 @@ import 'package:sip_sales_clean/presentation/screens/request_id_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/reset_password_screen.dart';
 import 'package:sip_sales_clean/presentation/screens/tnc_screen.dart';
 import 'package:sip_sales_clean/presentation/themes/styles.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';  // Replaced by Firebase
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,19 +49,42 @@ class Functions {
   static Future<void> logDeviceSession(String employeeId) async {
     try {
       final info = await PackageInfo.fromPlatform();
-      final supabaseClient = Supabase.instance.client;
-      await supabaseClient.from('user_device_logs').upsert(
-        {
-          'employee_id': employeeId,
-          'app_version': info.version,
-          'platform': Platform.isIOS ? 'ios' : 'android',
-          'last_seen': DateTime.now()
-              .toUtc()
-              .add(const Duration(hours: 7))
-              .toIso8601String(),
-        },
-        onConflict: 'employee_id',
-      );
+
+      // Supabase (replaced by Firebase below)
+      // final supabaseClient = Supabase.instance.client;
+      // await supabaseClient.from('user_device_logs').upsert(
+      //   {
+      //     'employee_id': employeeId,
+      //     'app_version': info.version,
+      //     'platform': Platform.isIOS ? 'ios' : 'android',
+      //     'last_seen': DateTime.now()
+      //         .toUtc()
+      //         .add(const Duration(hours: 7))
+      //         .toIso8601String(),
+      //   },
+      //   onConflict: 'employee_id',
+      // );
+
+      // Firebase — slashes in employeeId (e.g. S2501/012292) would be treated as
+      // path separators by Firestore, so we sanitize the doc ID while keeping
+      // the original value in the employee_id field.
+      // final docId = employeeId.replaceAll('/', '_');
+      await FirebaseFirestore.instance
+          .collection('user_device_logs')
+          .doc(employeeId)
+          .set(
+            {
+              'employee_id': employeeId,
+              'app_version': info.version,
+              'platform': Platform.isIOS ? 'ios' : 'android',
+              'last_seen': DateTime.now()
+                  .toUtc()
+                  .add(const Duration(hours: 7))
+                  .toIso8601String(),
+            },
+            SetOptions(merge: true),
+          );
+
       log('Device session logged for $employeeId');
     } catch (e) {
       log('logDeviceSession error: $e');

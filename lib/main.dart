@@ -5,14 +5,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';  // Replaced by Firebase
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:sip_sales_clean/core/constant/state_manager.dart';
 import 'package:sip_sales_clean/core/dependencies/face_recognition_dependencies.dart';
 import 'package:sip_sales_clean/presentation/functions.dart';
 import 'package:sip_sales_clean/presentation/providers/filter_state_provider.dart';
 import 'package:sip_sales_clean/routes.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';  // Replaced by Firebase
+import 'package:sip_sales_clean/firebase_options.dart';
 import 'package:upgrader/upgrader.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -23,7 +25,7 @@ Future<void> main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   // Fast inits first — neither spawns a Dart isolate.
-  await Future.wait([_initSupabase(), _initAndroidStorage()]);
+  await Future.wait([_initFirebase(), _initAndroidStorage()]);
 
   // Yield so the debug adapter can finish applying pauseIsolatesOnStart:false
   // before the Regula SDK (FaceSDK.initialize) spawns its background isolate.
@@ -64,30 +66,41 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-Future<void> _initSupabase() async {
+// Replaced by Firebase — kept for reference
+// Future<void> _initSupabase() async {
+//   try {
+//     await dotenv.load(fileName: '.env');
+//     final url = dotenv.env['SUPABASE_URL'];
+//     final anonKey = dotenv.env['SUPABASE_ANON_KEY'];
+//     if (url != null && anonKey != null) {
+//       await Supabase.initialize(
+//         url: url,
+//         anonKey: anonKey,
+//       );
+//     } else {
+//       log('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
+//     }
+//   } on TypeError catch (e) {
+//     log('Supabase init error: $e');
+//   } on ArgumentError catch (e) {
+//     log('Supabase init error: $e');
+//   } on Exception catch (e) {
+//     log('Supabase init error: $e');
+//   } on Error catch (e) {
+//     log('Supabase init error: $e');
+//   } catch (e) {
+//     log('Supabase Init Error: $e');
+//   }
+// }
+
+Future<void> _initFirebase() async {
   try {
-    await dotenv.load(fileName: '.env');
-    final url = dotenv.env['SUPABASE_URL'];
-    final anonKey = dotenv.env['SUPABASE_ANON_KEY'];
-    if (url != null && anonKey != null) {
-      await Supabase.initialize(
-        url: url,
-        anonKey: anonKey,
-        // authOptions: FlutterAuthClientOptions(),
-      );
-    } else {
-      log('Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');
-    }
-  } on TypeError catch (e) {
-    log('Supabase init error: $e');
-  } on ArgumentError catch (e) {
-    log('Supabase init error: $e');
-  } on Exception catch (e) {
-    log('Supabase init error: $e');
-  } on Error catch (e) {
-    log('Supabase init error: $e');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    log('Firebase initialized successfully');
   } catch (e) {
-    log('Supabase Init Error: $e');
+    log('Firebase init error: $e');
   }
 }
 

@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Kill stale Dart/Flutter processes",
+      "type": "shell",
+      "command": "pkill -9 -f 'dart' || true; pkill -9 -f 'flutter' || true",
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared",
+        "close": true
+      }
+    }
+  ]
+}
