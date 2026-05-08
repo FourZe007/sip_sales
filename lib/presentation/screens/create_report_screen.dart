@@ -210,7 +210,8 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
     );
 
     final masterState = context.read<HeadActsMasterCubit>().state;
-    if (masterState is HeadActsMasterLoaded) {
+    if (masterState is HeadActsMasterLoaded &&
+        masterState.reportMaster.isNotEmpty) {
       context.read<StuTableBloc>().add(
         ResetStuData(masterState.reportMaster[0].stuCategories),
       );
