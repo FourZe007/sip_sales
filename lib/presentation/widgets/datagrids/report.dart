@@ -11,6 +11,7 @@ class ReportDataGrid extends StatelessWidget {
     this.allowEditing = false,
     this.headerRowHeight = 48,
     this.rowHeight = 48,
+    this.shrinkWrapRows = false,
     this.columnWidthMode = ColumnWidthMode.fitByColumnName,
     this.horizontalScrollPhysics = const NeverScrollableScrollPhysics(),
     this.verticalScrollPhysics = const NeverScrollableScrollPhysics(),
@@ -28,6 +29,7 @@ class ReportDataGrid extends StatelessWidget {
   final bool allowEditing;
   final double headerRowHeight;
   final double rowHeight;
+  final bool shrinkWrapRows;
   final ColumnWidthMode columnWidthMode;
   final ScrollPhysics horizontalScrollPhysics;
   final ScrollPhysics verticalScrollPhysics;
@@ -41,82 +43,94 @@ class ReportDataGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     String firstValue = loadedData[0];
 
+    final grid = SfDataGrid(
+      source: dataSource,
+      allowEditing: allowEditing,
+      columnWidthMode: columnWidthMode,
+      headerRowHeight: headerRowHeight,
+      rowHeight: rowHeight,
+      shrinkWrapRows: shrinkWrapRows,
+      horizontalScrollPhysics: horizontalScrollPhysics,
+      verticalScrollPhysics: verticalScrollPhysics,
+      footerHeight: 0.0,
+      footer: const SizedBox.shrink(),
+      stackedHeaderRows: [
+        StackedHeaderRow(
+          cells: [
+            StackedHeaderCell(
+              columnNames: loadedData,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (enableAddRow)
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      tooltip: 'Add Row',
+                      onPressed: addFunction,
+                    ),
+                  Text(
+                    firstValue == 'sales'
+                        ? 'Daftar ${(firstValue[0].toUpperCase() + firstValue.substring(1))}man'
+                        : firstValue != 'stu'
+                        ? 'Laporan ${(firstValue[0].toUpperCase() + firstValue.substring(1))}'
+                        : 'Laporan ${firstValue.toUpperCase()}',
+                    style: textStyle?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+      columns: loadedData.asMap().entries.map((name) {
+        final int index = name.key;
+        final String data = name.value;
+
+        if (index == 0) {
+          return GridColumn(
+            columnName: data,
+            width: rowHeaderWidth,
+            label: Container(
+              alignment: textAlignment,
+              child: Text(
+                data != 'stu'
+                    ? data[0].toUpperCase() + data.substring(1)
+                    : data.toUpperCase(),
+                style: textStyle?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
+        } else {
+          return GridColumn(
+            columnName: data,
+            width: rowHeaderWidth,
+            label: Container(
+              alignment: textAlignment,
+              child: Text(
+                data == 'stu' || data == 'stuLm' || data == 'spk'
+                    ? data == 'stuLm'
+                          ? 'STU LM'
+                          : data.toUpperCase()
+                    : data[0].toUpperCase() + data.substring(1),
+                style: textStyle?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
+        }
+      }).toList(),
+    );
+
+    if (shrinkWrapRows) {
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: grid,
+      );
+    }
+
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: tableHeight,
-      child: SfDataGrid(
-        source: dataSource,
-        allowEditing: allowEditing,
-        columnWidthMode: columnWidthMode,
-        horizontalScrollPhysics: horizontalScrollPhysics,
-        verticalScrollPhysics: verticalScrollPhysics,
-        footerHeight: 0.0,
-        footer: const SizedBox(),
-        stackedHeaderRows: [
-          StackedHeaderRow(
-            cells: [
-              StackedHeaderCell(
-                columnNames: loadedData,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (enableAddRow)
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        tooltip: 'Add Row',
-                        onPressed: addFunction,
-                      ),
-                    Text(
-                      firstValue == 'sales'
-                          ? 'Daftar ${(firstValue[0].toUpperCase() + firstValue.substring(1))}man'
-                          : firstValue != 'stu'
-                          ? 'Laporan ${(firstValue[0].toUpperCase() + firstValue.substring(1))}'
-                          : 'Laporan ${firstValue.toUpperCase()}',
-                      style: textStyle?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-        columns: loadedData.asMap().entries.map((name) {
-          final int index = name.key;
-          final String data = name.value;
-
-          if (index == 0) {
-            return GridColumn(
-              columnName: data,
-              width: rowHeaderWidth,
-              label: Container(
-                alignment: textAlignment,
-                child: Text(
-                  data != 'stu'
-                      ? data[0].toUpperCase() + data.substring(1)
-                      : data.toUpperCase(),
-                  style: textStyle?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
-            );
-          } else {
-            return GridColumn(
-              columnName: data,
-              width: rowHeaderWidth,
-              label: Container(
-                alignment: textAlignment,
-                child: Text(
-                  data == 'stu' || data == 'stuLm' || data == 'spk'
-                      ? data == 'stuLm'
-                            ? 'STU LM'
-                            : data.toUpperCase()
-                      : data[0].toUpperCase() + data.substring(1),
-                  style: textStyle?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
-            );
-          }
-        }).toList(),
-      ),
+      child: grid,
     );
   }
 }

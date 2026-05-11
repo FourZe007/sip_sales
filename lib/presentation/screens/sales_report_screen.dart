@@ -860,7 +860,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                                           context,
                                           'https://wa.me/62${state.optionalData.replaceFirst('0', '')}',
                                         ),
-                                        icon: Icon(
+                                        icon: FaIcon(
                                           FontAwesomeIcons.whatsapp,
                                           color: Colors.black,
                                         ),

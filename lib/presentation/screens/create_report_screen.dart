@@ -35,7 +35,6 @@ import 'package:sip_sales_clean/presentation/widgets/insertation/payment_report.
 import 'package:sip_sales_clean/presentation/widgets/insertation/salesman_report.dart';
 import 'package:sip_sales_clean/presentation/widgets/insertation/stu_report.dart';
 import 'package:sip_sales_clean/presentation/widgets/textfields/custom_textformfield.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class CreateReportScreen extends StatefulWidget {
   const CreateReportScreen({super.key});
@@ -54,7 +53,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   double stuTableHeight = 0;
   double paymentTableHeight = 0;
   double leasingTableHeight = 0;
-  double salesmanTableHeight = 260;
+  double salesmanTableHeight = 0;
 
   List<HeadStuCategoriesMasterModel> stuData = [];
   List<HeadPaymentMasterModel> paymentData = [];
@@ -188,9 +187,22 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   void initState() {
     super.initState();
 
-    // Initialize data source with initial empty data
+    log('Initializing CreateReportScreen');
+    final master = context.read<HeadActsMasterCubit>().state;
+    if (master is HeadActsMasterLoaded && master.reportMaster.isNotEmpty) {
+      stuData = master.reportMaster[0].stuCategories;
+      paymentData = master.reportMaster[0].payment;
+      leasingData = master.reportMaster[0].spkLeasing;
+      salesmanData = master.reportMaster[0].employee;
+
+      context.read<StuTableBloc>().add(ResetStuData(stuData));
+      context.read<PaymentTableBloc>().add(ResetPaymentData(paymentData));
+      context.read<LeasingTableBloc>().add(ResetLeasingData(leasingData));
+      context.read<SalesmanTableBloc>().add(ResetSalesman(salesmanData));
+    }
+
     _leasingDataSource = LeasingInsertDataSource(
-      [],
+      leasingData,
       onCellValueEdited: (rowIndex, columnName, newValue) => editLeasingValue(
         context.read<LeasingTableBloc>(),
         rowIndex,
@@ -200,7 +212,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
     );
 
     _salesmanDataSource = SalesmanInsertDataSource(
-      [],
+      salesmanData,
       onCellValueEdited: (rowIndex, columnName, newValue) => editSalesmanValue(
         context.read<SalesmanTableBloc>(),
         rowIndex,
@@ -208,23 +220,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         newValue,
       ),
     );
-
-    final masterState = context.read<HeadActsMasterCubit>().state;
-    if (masterState is HeadActsMasterLoaded &&
-        masterState.reportMaster.isNotEmpty) {
-      context.read<StuTableBloc>().add(
-        ResetStuData(masterState.reportMaster[0].stuCategories),
-      );
-      context.read<PaymentTableBloc>().add(
-        ResetPaymentData(masterState.reportMaster[0].payment),
-      );
-      context.read<LeasingTableBloc>().add(
-        ResetLeasingData(masterState.reportMaster[0].spkLeasing),
-      );
-      context.read<SalesmanTableBloc>().add(
-        ResetSalesman(masterState.reportMaster[0].employee),
-      );
-    }
   }
 
   @override
@@ -458,6 +453,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     loadedData: PaymentType.values
                                         .map((e) => e.name.toString())
                                         .toList(),
+                                    rowHeaderWidth: 64,
                                     tableHeight: paymentTableHeight,
                                     allowEditing: true,
                                     horizontalScrollPhysics:
@@ -469,36 +465,32 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
 
                               // ~:Leasing Input Table:~
                               BlocBuilder<LeasingTableBloc, LeasingTableState>(
-                                builder: (context, state) {
+                                buildWhen: (previous, current) =>
+                                    current is AddLeasingData ||
+                                    current is LeasingInitial,
+                                builder: (_, state) {
                                   leasingData = state.data;
                                   leasingTableHeight =
-                                      (115 +
-                                      double.parse(
-                                        (50 * leasingData.length).toString(),
-                                      ));
+                                      (132) + (leasingData.length * 48);
 
                                   if (state is AddLeasingData) {
                                     leasingData = state.newData;
-                                    // Update the existing data source with new data
                                     _leasingDataSource.updateData(
                                       leasingData,
                                     );
                                   } else if (state is LeasingInitial) {
-                                    // Handle initial state
                                     _leasingDataSource.updateData(
                                       leasingData,
                                     );
                                   }
 
-                                  log(
-                                    'Leasing length: ${state.data.length}',
-                                  );
                                   return ReportDataGrid(
                                     dataSource: _leasingDataSource,
                                     loadedData: LeasingType.values
                                         .map((e) => e.name.toString())
                                         .toList(),
                                     tableHeight: leasingTableHeight,
+                                    rowHeaderWidth: 68,
                                     allowEditing: true,
                                     horizontalScrollPhysics:
                                         const BouncingScrollPhysics(),
@@ -525,27 +517,10 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                     );
                                   }
 
-                                  // salesmanTableHeight = 120;
-                                  if (salesmanData.length <= 5) {
-                                    salesmanTableHeight =
-                                        (120 +
-                                        double.parse(
-                                          (50 * salesmanData.length).toString(),
-                                        ));
-                                  } else {
-                                    salesmanTableHeight = 410;
-                                  }
+                                  salesmanTableHeight = 108 + (56 * 6);
 
-                                  // ~:Set a dynamic table height:~
                                   if (salesmanData.isEmpty) {
-                                    log(
-                                      'Salesman data is empty, ${salesmanData.length}',
-                                    );
                                     return const SizedBox();
-                                  } else {
-                                    log(
-                                      'Salesman data is not empty, ${salesmanData.length}',
-                                    );
                                   }
 
                                   return ReportDataGrid(
@@ -554,16 +529,15 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                                         .map((e) => e.name.toString())
                                         .toList(),
                                     tableHeight: salesmanTableHeight,
-                                    rowHeaderWidth: 75,
+                                    rowHeaderWidth: 72,
+                                    rowHeight: 52,
                                     allowEditing: true,
                                     horizontalScrollPhysics:
                                         const BouncingScrollPhysics(),
                                     verticalScrollPhysics:
-                                        salesmanData.length <= 5
+                                        salesmanData.length <= 6
                                         ? const NeverScrollableScrollPhysics()
                                         : const AlwaysScrollableScrollPhysics(),
-                                    columnWidthMode:
-                                        ColumnWidthMode.fitByCellValue,
                                     textStyle: TextThemes.normal,
                                   );
                                 },

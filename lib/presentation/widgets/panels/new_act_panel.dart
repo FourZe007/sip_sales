@@ -123,11 +123,42 @@ class _NewActPanelState extends State<NewActPanel> {
         log('Not considered as Recruitment or Interview');
       }
     } else if (actName.contains('report')) {
+      // if (context.read<HeadActsMasterCubit>().state is HeadActsMasterLoaded) {
+      //   log('Load Report Data');
+      //   context.read<StuTableBloc>().add(
+      //     ResetStuData(
+      //       (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+      //           .reportMaster[0]
+      //           .stuCategories,
+      //     ),
+      //   );
+      //   context.read<PaymentTableBloc>().add(
+      //     ResetPaymentData(
+      //       (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+      //           .reportMaster[0]
+      //           .payment,
+      //     ),
+      //   );
+      //   context.read<LeasingTableBloc>().add(
+      //     ResetLeasingData(
+      //       (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+      //           .reportMaster[0]
+      //           .spkLeasing,
+      //     ),
+      //   );
+      //   context.read<SalesmanTableBloc>().add(
+      //     ResetSalesman(
+      //       (context.read<HeadActsMasterCubit>().state as HeadActsMasterLoaded)
+      //           .reportMaster[0]
+      //           .employee,
+      //     ),
+      //   );
+      // } else {
+      //   log('Master data is not loaded');
+      // }
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const CreateReportScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const CreateReportScreen()),
       );
     } else {
       // log('Activity not found');

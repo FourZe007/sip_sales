@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/face_recognition_bloc.dart';
 import 'package:sip_sales_clean/presentation/blocs/login/login_bloc.dart';
@@ -30,10 +31,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      bottom: false,
-      maintainBottomViewPadding: true,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarContrastEnforced: false,
+      ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -67,7 +70,9 @@ class _SplashScreenState extends State<SplashScreen> {
               }
             } else if (state is LoginUnauthenticated || state is LoginFailed) {
               if (state is LoginFailed &&
-                  state.message.toLowerCase().contains('failed host lookup')) {
+                  state.message.toLowerCase().contains(
+                    'failed host lookup',
+                  )) {
                 Functions.customFlutterToast('No internet connection');
               } else if (context.mounted) {
                 Navigator.pushReplacementNamed(context, ConstantRoutes.login);

@@ -1084,7 +1084,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             context,
                             'https://wa.me/62${state.optionalData.replaceFirst('0', '')}',
                           ),
-                          icon: Icon(
+                          icon: FaIcon(
                             FontAwesomeIcons.whatsapp,
                             color: Colors.black,
                           ),
@@ -1129,31 +1129,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       onPanelClosed: () => context.read<DashboardSlidingUpCubit>().closePanel(),
       panel: Material(
         color: Colors.transparent,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-          ),
-          child: BlocBuilder<DashboardSlidingUpCubit, DashboardSlidingUpState>(
-            builder: (context, state) {
-              log('Head Sliding Panel State: ${state.type}');
-              if (state.type == DashboardSlidingUpType.logout) {
-                return logout();
-              } else if (state.type ==
-                  DashboardSlidingUpType.deleteManagerActivity) {
-                return deleteActs(state.optionalData);
-              } else if (state.type ==
-                  DashboardSlidingUpType.newManagerActivity) {
-                return NewActPanel();
-              } else if (state.type == DashboardSlidingUpType.dealer) {
-                return DealerFilterPanel();
-              } else if (state.type == DashboardSlidingUpType.leasing) {
-                return LeasingFilterPanel();
-              } else if (state.type == DashboardSlidingUpType.category) {
-                return CategoryFilterPanel();
-              }
-              return const SizedBox.shrink();
-            },
-          ),
+        child: BlocBuilder<DashboardSlidingUpCubit, DashboardSlidingUpState>(
+          builder: (context, state) {
+            log('Head Sliding Panel State: ${state.type}');
+            if (state.type == DashboardSlidingUpType.logout) {
+              return logout();
+            } else if (state.type ==
+                DashboardSlidingUpType.deleteManagerActivity) {
+              return deleteActs(state.optionalData);
+            } else if (state.type ==
+                DashboardSlidingUpType.newManagerActivity) {
+              return NewActPanel();
+            } else if (state.type == DashboardSlidingUpType.dealer) {
+              return DealerFilterPanel();
+            } else if (state.type == DashboardSlidingUpType.leasing) {
+              return LeasingFilterPanel();
+            } else if (state.type == DashboardSlidingUpType.category) {
+              return CategoryFilterPanel();
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
       body: DefaultTabController(
