@@ -69,7 +69,6 @@ dependencies:
   image: ^4.8.0
   flutter_face_api: ^8.2.971
   flutter_face_core_basic: 8.2.461
-  location: ^8.0.1
   package_info_plus: ^9.0.1
   # flutter_dotenv: ^6.0.1    # Replaced by Firebase (no longer needs .env for DB config)
   # supabase_flutter: ^2.12.4  # Replaced by Firebase

@@ -100,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
               }
             }
           },
-          buildWhen: (_, __) => false,
+          buildWhen: (_, _) => false,
           builder: (context, state) {
             return Container(
               color: Colors.white,

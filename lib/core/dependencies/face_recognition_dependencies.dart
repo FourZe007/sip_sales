@@ -35,7 +35,7 @@ class FaceRecognitionDependencies {
 
     // 1. Secure storage for biometric data
     const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(),
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     );
 

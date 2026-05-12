@@ -11,7 +11,6 @@ import 'package:sip_sales_clean/core/constant/face_recognition_constants.dart';
 import '../../core/helpers/image_helper.dart';
 import '../../domain/usecases/enroll_face_usecase.dart';
 import '../../domain/usecases/verify_face_usecase.dart';
-import '../functions.dart';
 
 // ── Events ──
 
