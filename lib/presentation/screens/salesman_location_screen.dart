@@ -33,7 +33,7 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.dark,
         systemNavigationBarContrastEnforced: false,
@@ -45,8 +45,8 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           scrolledUnderElevation: 0.0,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarBrightness: Brightness.light,
           ),
           leading: IconButton(
             onPressed: () => Navigator.pop(context),
@@ -137,7 +137,9 @@ class _SalesmanLocationScreenState extends State<SalesmanLocationScreen> {
                 Positioned(
                   left: 10,
                   right: 10,
-                  bottom: MediaQuery.of(context).padding.bottom - 20,
+                  bottom: Platform.isIOS
+                      ? MediaQuery.of(context).padding.bottom - 20
+                      : MediaQuery.of(context).padding.bottom,
                   child: Container(
                     height: 75,
                     alignment: Alignment.center,
