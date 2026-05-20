@@ -36,7 +36,10 @@ class FaceRecognitionDependencies {
     // 1. Secure storage for biometric data
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(),
-      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+      iOptions: IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock,
+        synchronizable: false,
+      ),
     );
 
     // 2. TFLite datasource — owns the TFLite interpreter and local cache

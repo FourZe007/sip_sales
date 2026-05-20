@@ -447,7 +447,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 top: MediaQuery.of(context).size.height * 0.01,
               ),
               child: Text(
-                'Version 1.2.4',
+                'Version 1.2.5',
                 style: TextThemes.normal.copyWith(
                   fontSize: 16,
                 ),

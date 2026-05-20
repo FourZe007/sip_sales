@@ -172,6 +172,7 @@ class Functions {
 
   static IOSOptions getIOSOptions() => const IOSOptions(
     accessibility: KeychainAccessibility.first_unlock,
+    synchronizable: false,
   );
 
   static FlutterSecureStorage? storage = FlutterSecureStorage(
@@ -187,6 +188,19 @@ class Functions {
       iOptions: getIOSOptions(),
     );
     await prefs?.clear();
+  }
+
+  /// On iOS, Keychain data survives app uninstall. SharedPreferences (NSUserDefaults)
+  /// does not. We use this asymmetry as a reinstall detector: if the prefs flag is
+  /// absent but Keychain data exists, this must be a fresh install — wipe the stale
+  /// Keychain entries before any credential reads happen.
+  static Future<void> clearOnFreshInstall() async {
+    final localPrefs = await SharedPreferences.getInstance();
+    final isInstalled = localPrefs.getBool('app_installed') ?? false;
+    if (!isInstalled) {
+      await clearAllData();
+      await localPrefs.setBool('app_installed', true);
+    }
   }
 
   static Future<void> initStorageConfig(

@@ -25,6 +25,10 @@ Future<void> main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+  // Wipe stale iOS Keychain data left over from a previous install.
+  // Must run before any credential reads (Firebase/storage inits below).
+  await Functions.clearOnFreshInstall();
+
   // Fast inits first — neither spawns a Dart isolate.
   await Future.wait([_initFirebase(), _initAndroidStorage()]);
 

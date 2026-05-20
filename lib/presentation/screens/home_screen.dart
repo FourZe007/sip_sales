@@ -547,7 +547,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                         // Sticky bottom: version, never scrolls, never clipped
                         Text(
-                          'Versi 1.2.4',
+                          'Versi 1.2.5',
                           style: TextThemes.normal.copyWith(fontSize: 16),
                         ),
                       ],
