@@ -575,7 +575,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           topRight: Radius.circular(20.0),
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        0,
+        20,
+        MediaQuery.of(context).padding.bottom,
+      ),
       child: Column(
         spacing: 12,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1127,6 +1132,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           : getPanelMaxHeight + MediaQuery.of(context).padding.bottom,
       defaultPanelState: PanelState.CLOSED,
       onPanelClosed: () => context.read<DashboardSlidingUpCubit>().closePanel(),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       panel: Material(
         color: Colors.transparent,
         child: BlocBuilder<DashboardSlidingUpCubit, DashboardSlidingUpState>(
@@ -1166,8 +1172,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 state.type == DashboardSlidingUpType.leasing ||
                 state.type == DashboardSlidingUpType.category) {
               if (state.type == DashboardSlidingUpType.deleteManagerActivity) {
-                setPanelMaxHeight(150);
+                setPanelMaxHeight(160);
               }
+
               log('Opening Sliding Up Panel - State: ${state.type}');
               slidingPanelController.open();
             } else {

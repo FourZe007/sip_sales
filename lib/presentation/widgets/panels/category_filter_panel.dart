@@ -50,7 +50,12 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        12,
+        20,
+        MediaQuery.of(context).padding.bottom,
+      ),
       child: BlocBuilder<SpkLeasingFilterCubit, SpkLeasingFilterState>(
         builder: (context, state) {
           if (state is SpkLeasingFilterLoading) {
@@ -118,8 +123,8 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                   valueListenable: ValueNotifier(isActive),
                   builder: (context, value, _) {
                     if (value.isNotEmpty) {
-                      return ElevatedButton(
-                        onPressed: () {
+                      return GestureDetector(
+                        onTap: () {
                           log('Category Value: $value');
                           // ~:Close Sliding Panel:~
                           context.read<DashboardSlidingUpCubit>().closePanel();
@@ -180,22 +185,22 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                             '',
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size.fromWidth(
-                            MediaQuery.of(context).size.width,
-                          ),
-                          padding: EdgeInsets.all(4),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          backgroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 40,
+                          padding: const EdgeInsets.all(4),
+                          margin: EdgeInsets.symmetric(vertical: 4),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                        child: Text(
-                          'Simpan',
-                          style: TextThemes.normal.copyWith(
-                            fontSize: 16,
-                            color: Colors.white,
+                          child: Text(
+                            'Simpan',
+                            style: TextThemes.normal.copyWith(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       );

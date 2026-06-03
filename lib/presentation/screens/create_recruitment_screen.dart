@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -57,7 +59,12 @@ class _CreateRecruitmentScreenState extends State<CreateRecruitmentScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
+          padding: EdgeInsets.fromLTRB(
+            24,
+            20,
+            24,
+            Platform.isIOS ? 8 : MediaQuery.of(context).padding.bottom + 4,
+          ),
           child: Column(
             spacing: 8,
             children: [

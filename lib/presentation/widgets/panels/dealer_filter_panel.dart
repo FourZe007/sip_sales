@@ -120,8 +120,8 @@ class DealerFilterPanelState extends State<DealerFilterPanel> {
                 ValueListenableBuilder(
                   valueListenable: ValueNotifier(isActive),
                   builder: (context, value, _) {
-                    return ElevatedButton(
-                      onPressed: () {
+                    return GestureDetector(
+                      onTap: () {
                         log('Dealer Value: $value');
                         // ~:Close Sliding Panel:~
                         context.read<DashboardSlidingUpCubit>().closePanel();
@@ -174,22 +174,22 @@ class DealerFilterPanelState extends State<DealerFilterPanel> {
                           '',
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: Size.fromWidth(
-                          MediaQuery.of(context).size.width,
-                        ),
-                        padding: EdgeInsets.all(4),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 40,
+                        padding: const EdgeInsets.all(4),
+                        margin: EdgeInsets.symmetric(vertical: 4),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                      ),
-                      child: Text(
-                        'Simpan',
-                        style: TextThemes.normal.copyWith(
-                          fontSize: 16,
-                          color: Colors.white,
+                        child: Text(
+                          'Simpan',
+                          style: TextThemes.normal.copyWith(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     );

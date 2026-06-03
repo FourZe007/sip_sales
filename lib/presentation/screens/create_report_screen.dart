@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -261,7 +262,12 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
+          padding: EdgeInsets.fromLTRB(
+            24,
+            20,
+            24,
+            Platform.isIOS ? 8 : MediaQuery.of(context).padding.bottom + 4,
+          ),
           child: Column(
             spacing: 12,
             children: [
