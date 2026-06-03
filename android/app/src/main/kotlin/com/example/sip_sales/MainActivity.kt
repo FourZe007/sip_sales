@@ -1,13 +1,14 @@
 package com.stsj.sipsales
 
 import android.os.Bundle
+import com.google.android.gms.security.ProviderInstaller
 import io.flutter.embedding.android.FlutterActivity
-import org.conscrypt.Conscrypt
-import java.security.Security
 
 class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        Security.insertProviderAt(Conscrypt.newProvider(), 1)
+        try {
+            ProviderInstaller.installIfNeeded(this)
+        } catch (_: Exception) {}
         super.onCreate(savedInstanceState)
     }
 }
